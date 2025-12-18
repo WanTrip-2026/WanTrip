@@ -38,7 +38,7 @@
 
 - 平時作業流程
   - 開票：建立issue -> 5️⃣Issue命名規則
-  - 接票者：更改assignee，在issue上新增分支
+  - 接票者：更改assignee，在issue上新增分支: issue/數字
   - 在新分支進行作業
 
 - PR流程
