@@ -48,7 +48,7 @@
     `git fetch origin`
     `git rebase origin/dev`
     提交PR
-    `git push origin#3` (當下分支名稱,不用斜線)
+    `git push origin "#12" --force` (當下分支名稱,不用斜線)
 
   - 提交PR填寫
     情況1.完成：Close Issue/4
