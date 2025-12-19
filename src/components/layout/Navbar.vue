@@ -34,7 +34,7 @@
           <RouterLink to="/" class="text-black font-medium px-4 py-2 hover:text-primary">常見問題</RouterLink>
         </li>
         <li>
-          <RouterLink to="/" class="text-white rounded-full bg-[#2F3D4D] px-4 py-2 border border-white/15">登入/註冊</RouterLink>
+          <RouterLink to="/" class="text-white rounded-full bg-primary px-4 py-2 border border-white/15 hover:bg-[#455A71]">登入/註冊</RouterLink>
         </li>
       </ul>
     </nav>
