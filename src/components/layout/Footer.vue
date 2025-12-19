@@ -13,10 +13,10 @@
 </script>
 
 <template>
-  <footer class="bg-primary m-0 p-0">
+  <footer class="bg-primary">
     <div class="max-w-[1240px] mx-auto px-5 pt-10 text-white flex flex-col gap-5 items-center">
       <div class="w-full flex flex-row justify-between">
-        <div class="flex flex-row gap-10">
+        <div class="grid grid-cols-7 gap-10">
           <div class="w-[82px]" v-for="column in footerLinks" :key="column.title">
             <h4 class="font-bold text-lg text-nowrap mb-2">{{ column.title }}</h4>
             <ul class="opacity-80">
@@ -110,7 +110,7 @@
         </div>
       </div>
     </div>
-    <div class="bg-secondary py-2 mx-auto w-full">
+    <div class="bg-secondary py-2 w-full">
       <p class="mx-5 text-center">copyright © 2025-2026 WanTrip 版權所有</p>
     </div>
   </footer>
