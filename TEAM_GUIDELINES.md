@@ -5,7 +5,7 @@
 | 類型        | 命名方式         | 範例                          |
 | ----------- | ---------------- | ----------------------------- |
 | Vue 組件    | PascalCase       | `Navbar.vue`, `HotelCard.vue` |
-| 變數 / 函式 | camelCase        | `userName`, `fetchHotels()`   |
+| 變數 / 函式 | PascalCase       | `UserName`, `FetchHotels()`   |
 | 常數        | UPPER_SNAKE_CASE | `API_BASE_URL`                |
 | HTML / CSS  | kebab-case       | `hotel-card`                  |
 
@@ -24,7 +24,7 @@
 
 | type     | 說明                       |
 | -------- | -------------------------- |
-| feat     | 新增飯店搜尋元件           |
+| feature  | 新增飯店搜尋元件           |
 | fix      | 修正 Navbar 在小螢幕的排版 |
 | style    | 調整按鈕樣式               |
 | refactor | 重構 HotelCard 組件        |
@@ -38,7 +38,7 @@
 
 - 平時作業流程
   - 開票：建立issue -> 5️⃣Issue命名規則
-  - 接票者：更改assignee，在issue上新增分支: issue/數字
+  - 接票者：更改assignee，在issue上新增分支: 大家都看得懂的英文 (不能#)
   - 在新分支進行作業
 
 - PR流程
@@ -47,18 +47,19 @@
     `git commit -m"commit訊息"`
     `git fetch origin`
     `git rebase origin/dev`
-    提交PR
     `git push origin "#12" --force` (當下分支名稱,不用斜線)
+    提交PR >通知大家
 
   - 提交PR填寫
     情況1.完成：Close Issue/4
-    描述：做了什麼
+    描述：做了什麼，附上圖片
     情況2.更新：做了什麼
+    描述
 
   - 審核PR
     最後同意的人：rebase&merge，issue即自動關閉
     - 審核中發生衝突，請在群組通知，並由”PR 提交者“解決，解決後可以直接合併
-    - 若用vscode查看code，可先暫停當下作業commit/stash 當下任務
+    - 若用vscode查看code，可先暫停當下作業commit/stash 當下任務，才能切換分支
       (commit:WIP on branch)
 
 # 5️⃣ Issue命名規則
