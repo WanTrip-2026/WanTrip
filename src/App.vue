@@ -1,13 +1,11 @@
 <template>
   <Navbar />
-  <h1>WanTrip</h1>
-  <p>My first Vue project :rocket:</p>
-  <div class="text-3xl font-bold text-red-500">Tailwind 安裝成功！</div>
+  <Footer />
 </template>
 
 <script setup>
-import Navbar from './components/layout/Navbar.vue';
-
+  import Navbar from './components/layout/Navbar.vue';
+  import Footer from './components/layout/Footer.vue';
 </script>
 
 <style>
