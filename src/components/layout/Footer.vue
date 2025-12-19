@@ -1,5 +1,5 @@
-<script setup>
-  import { RouterLink } from 'vue-router'
+<script setup lang="ts">
+  // import { RouterLink } from 'vue-router'
 
   const footerLinks = [
     { title: '住宿', links: ['飯店', '旅館', '民宿', '度假村', '住宿+交通'] },
@@ -17,10 +17,10 @@
     <div class="max-w-[1240px] mx-auto px-5 pt-10 text-white flex flex-col gap-5 items-center">
       <div class="w-full flex flex-row justify-between">
         <div class="grid grid-cols-7 gap-10">
-          <div class="w-[82px]" v-for="column in footerLinks" :key="column.title">
-            <h4 class="font-bold text-lg text-nowrap mb-2">{{ column.title }}</h4>
+          <div class="w-[82px]" v-for="footerMenu in footerLinks" :key="footerMenu.title">
+            <h4 class="font-bold text-lg text-nowrap mb-2">{{ footerMenu.title }}</h4>
             <ul class="opacity-80">
-              <li v-for="link in column.links" :key="link">
+              <li v-for="link in footerMenu.links" :key="link">
                 <a href="#" class="text-nowrap hover:opacity-100 hover:font-bold transition-opacity">{{ link }}</a>
               </li>
             </ul>
