@@ -2,6 +2,41 @@
 import Navbar from '../components/layout/Navbar.vue'
 // import Footer from '../components/layout/Footer.vue'
 // import { RouterLink } from 'vue-router'
+
+const HotelFiltered = [
+  { title: '星級', options: ['五星級', '四星級', '三星級'] },
+  {
+    title: '評價',
+    options: ['好極了:9分以上', '非常好:8分以上', '好:7分以上', '令人愉悅:6分以上'],
+  },
+  { title: '住宿類型', options: ['飯店', '旅館', '民宿', '度假村'] },
+  { title: '付款政策', options: ['免費取消', '立即付款', '延後付款', '到店付款'] },
+  {
+    title: '設施＆服務',
+    options: [
+      '健身房',
+      '游泳池',
+      'SPA服務',
+      '停車場',
+      '24小時櫃檯服務',
+      '可帶寵物',
+      '浴缸',
+      '山景',
+      '夜景',
+    ],
+  },
+  { title: '地區', options: ['中正區', '中山區', '萬華區', '大同區', '松山區'] },
+  {
+    title: '距離市中心',
+    options: [
+      '位於市中心',
+      '距市中心1.5公里內',
+      '距市中心1.5-3公里內',
+      '距市中心3-5公里內',
+      '距市中心5公里以上',
+    ],
+  },
+]
 </script>
 
 <template>
@@ -44,7 +79,17 @@ import Navbar from '../components/layout/Navbar.vue'
       </div>
     </section>
     <!-- result-list -->
-    <section></section>
+    <section class="grid">
+      <aside class="grid-cols-1">
+        <!-- 思考：1.太多的項目要怎麼開啟下拉 2.清除按鈕 -->
+        <div>地圖找房</div>
+        <div>篩選欄位</div>
+      </aside>
+      <div class="grid-cols-3">
+        <div class="flex flex-row">排序</div>
+        <div class="hotel-card">飯店資訊</div>
+      </div>
+    </section>
   </main>
 </template>
 
