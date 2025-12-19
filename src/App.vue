@@ -5,7 +5,7 @@
   <div class="text-3xl font-bold text-red-500">Tailwind 安裝成功！</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import Navbar from './components/layout/Navbar.vue';
 </script>
 
