@@ -1,5 +1,7 @@
 <script setup>
 import Navbar from '../components/layout/Navbar.vue'
+import HotelCard from '../components/layout/HotelCard.vue'
+
 // import Footer from '../components/layout/Footer.vue'
 // import { RouterLink } from 'vue-router'
 
@@ -40,7 +42,7 @@ const HotelFiltered = [
 </script>
 
 <template>
-  <Navbar class="relative top-0" />
+  <!-- <Navbar class="relative top-0" /> -->
   <main class="max-w-[1200px] mx-auto">
     <!-- search-bar -->
     <section
@@ -79,15 +81,51 @@ const HotelFiltered = [
       </div>
     </section>
     <!-- result-list -->
-    <section class="grid">
-      <aside class="grid-cols-1">
+    <section class="grid grid-cols-4 gap-[20px] m-[40px]">
+      <aside class="col-span-1 flex flex-col gap-5">
         <!-- 思考：1.太多的項目要怎麼開啟下拉 2.清除按鈕 -->
-        <div>地圖找房</div>
-        <div>篩選欄位</div>
+        <div class="rounded-[20px]">地圖找房</div>
+        <div class="mx-auto p-[40px] bg-red-200 rounded-[20px]">
+          <h3 class="font-bold text-xl mb-[20px]">篩選條件</h3>
+          <div class="flex flex-col gap-5">
+            <!-- Price Filter -->
+            <div>
+              <h4 class="font-medium">
+                每晚價格
+                <p>(TWD 1 - 15000)</p>
+              </h4>
+              <input
+                v-model.number="Price"
+                type="range"
+                min="0"
+                max="15000"
+                step="500"
+                class="w-full accent-secondary"
+              />
+            </div>
+            <!-- Option Filter -->
+            <div
+              class="border-b-[1px] pb-[20px] border-secondary border-solid last:border-b-0"
+              v-for="HotelMenu in HotelFiltered"
+              :key="HotelMenu.title"
+            >
+              <h4 class="font-medium mb-2 text-base">{{ HotelMenu.title }}</h4>
+              <div class="space-y-2">
+                <label
+                  class="flex cursor-pointer text-[14px]"
+                  v-for="option in HotelMenu.options"
+                  :key="option"
+                >
+                  <input type="checkbox" class="text-nowrap focus:ring-primary" />{{ option }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
       </aside>
-      <div class="grid-cols-3">
+      <div class="col-span-3 bg-red-500">
         <div class="flex flex-row">排序</div>
-        <div class="hotel-card">飯店資訊</div>
+        <div class="hotel-card rounded-[20px]"><HotelCard /></div>
       </div>
     </section>
   </main>
