@@ -1,8 +1,6 @@
 <template>
   <Navbar />
-  <h1>WanTrip</h1>
-  <p>My first Vue project :rocket:</p>
-  <div class="text-3xl font-bold text-red-500">Tailwind 安裝成功！</div>
+  <AppFooter />
 </template>
 
 <script setup lang="ts">
