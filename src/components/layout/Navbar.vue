@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
   import { RouterLink } from 'vue-router'
 </script>
 
 <template>
-  <header class="max-w-[1200px] mx-auto fixed top-[20px] inset-x-0 z-50">
-    <nav class="flex flex-row justify-between h-[64px] rounded-full bg-white/45 backdrop-blur-md mx-auto p-[10px] border border-black">
+  <header class="max-w-[1240px] mx-auto fixed top-[20px] inset-x-0 z-50">
+    <nav class="flex flex-row justify-between h-[56px] rounded-full bg-white/45 backdrop-blur-md mx-[20px] p-[10px] border border-white/50">
       <div class="flex flex-row items-center gap-[16px]">
         <h1>
           <a href="#">
@@ -16,25 +16,25 @@
         </h1>
         <ul class="flex flex-row">
           <li>
-            <RouterLink to="/" class="text-black px-4 py-2">住宿</RouterLink>
+            <RouterLink to="/" class="text-black font-medium px-4 py-2 hover:text-primary">住宿</RouterLink>
           </li>
           <li>
-            <RouterLink to="/" class="text-black px-4 py-2">交通</RouterLink>
+            <RouterLink to="/" class="text-black font-medium px-4 py-2 hover:text-primary">交通</RouterLink>
           </li>
           <li>
-            <RouterLink to="/" class="text-black px-4 py-2">體驗</RouterLink>
+            <RouterLink to="/" class="text-black font-medium px-4 py-2 hover:text-primary">體驗</RouterLink>
           </li>
           <li>
-            <RouterLink to="/" class="text-black px-4 py-2">比較</RouterLink>
+            <RouterLink to="/" class="text-black font-medium px-4 py-2 hover:text-primary">比較</RouterLink>
           </li>
         </ul>
       </div>
       <ul class="flex flex-row items-center">
-        <li class="px-6 py-3">
-          <RouterLink to="/" class="text-black">常見問題</RouterLink>
+        <li>
+          <RouterLink to="/" class="text-black font-medium px-4 py-2 hover:text-primary">常見問題</RouterLink>
         </li>
-        <li class="rounded-full bg-[#2F3D4D] px-6 py-3">
-          <RouterLink to="/" class="text-white">登入/註冊</RouterLink>
+        <li>
+          <RouterLink to="/" class="text-white rounded-full bg-primary px-4 py-2 border border-white/15 hover:bg-[#455A71]">登入/註冊</RouterLink>
         </li>
       </ul>
     </nav>

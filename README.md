@@ -9,7 +9,7 @@ This template should help get you started developing with Vue 3 in Vite.
 ## Recommended Browser Setup
 
 - Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
+  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
   - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
 - Firefox:
   - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
@@ -23,32 +23,37 @@ TypeScript cannot handle type information for `.vue` imports by default, so we r
 
 See [Vite Configuration Reference](https://vite.dev/config/).
 
-## Project Setup
+## 環境需求
 
-```sh
-npm install
-```
+- Node.js
+- npm 或 yarn
 
-### Compile and Hot-Reload for Development
+## 安裝步驟
 
-```sh
-npm run dev
-```
+1. Clone 或下載此專案
+2. 安裝依賴套件：`npm install`
+3. 確認tailWind版本：`npm list tailwindcss`
+   建議版本 為^3.4.19
+   若版本不符或尚未安裝，請執行下載指令：`npm install -D tailwindcss@3 postcss autoprefixer`
+4. 啟動開發伺服器：`npm run dev`
+5. 開啟瀏覽器訪問：`http://localhost:5173`
 
-### Type-Check, Compile and Minify for Production
+### 提交程式碼或準備部署前，進行型別檢查，
 
-```sh
-npm run build
-```
+`npm run build`
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+### 執行單元測試（Unit Test）[Vitest](https://vitest.dev/)
 
-```sh
-npm run test:unit
-```
+`npm run test:unit`
 
-### Lint with [ESLint](https://eslint.org/)
+### 程式碼風格檢查[ESLint](https://eslint.org/)
 
-```sh
-npm run lint
-```
+`npm run lint`
+
+### 組員資料
+
+張峻瑋
+陳仟龍
+彭奕翔
+莊珈毓
+顏文琳
