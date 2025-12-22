@@ -10,85 +10,92 @@
   >
     <div class="mx-auto w-full max-w-6xl px-6 pb-10 pt-5">
       <!-- Banner -->
-      <section>
-        <div
-          class="relative w-full overflow-hidden rounded-[40px] bg-gray-200 shadow-[0_10px_30px_rgba(47,61,77,0.12)]"
-        >
-          <div class="flex h-[340px] items-center justify-center md:h-[420px]">
-            <span class="select-none text-sm text-primary/60">banner</span>
-          </div>
-        </div>
-
-        <!-- Search Bar -->
-        <div class="-mt-6 flex justify-center">
-          <form
-            class="w-full max-w-4xl rounded-full border border-primary/25 bg-white px-3 py-2 shadow-[0_10px_25px_rgba(47,61,77,0.10)]"
-            @submit.prevent="onSearch"
+      <section class="relative pb-32 md:pb-20">
+        <!-- wrapper：讓 Search Bar 以 banner 為定位基準 -->
+        <div class="relative">
+          <div
+            class="relative w-full overflow-hidden rounded-[40px] bg-gray-200 shadow-[0_10px_30px_rgba(47,61,77,0.12)]"
           >
-            <div class="flex flex-col gap-2 md:flex-row md:items-center">
-              <!-- Tabs -->
-              <div class="flex items-center gap-2 rounded-full border border-primary/25 bg-white p-1">
-                <button
-                  type="button"
-                  class="rounded-full px-4 py-2 text-sm font-semibold transition"
-                  :class="activeTab === 'package'
-                    ? 'bg-secondary text-white'
-                    : 'text-primary/80 hover:bg-primary/5'"
-                  @click="activeTab = 'package'"
-                >
-                  找套票
-                </button>
-                <button
-                  type="button"
-                  class="rounded-full px-4 py-2 text-sm font-semibold transition"
-                  :class="activeTab === 'stay'
-                    ? 'bg-secondary text-white'
-                    : 'text-primary/80 hover:bg-primary/5'"
-                  @click="activeTab = 'stay'"
-                >
-                  找住宿
-                </button>
-              </div>
-
-              <!-- Fields -->
-              <div class="grid flex-1 grid-cols-1 gap-2 md:grid-cols-3">
-                <label class="flex items-center rounded-full border border-primary/25 bg-white px-4 py-2">
-                  <span class="mr-3 text-sm font-semibold text-primary/80">去哪</span>
-                  <input
-                    v-model="form.destination"
-                    class="w-full bg-transparent text-sm outline-none placeholder:text-primary/35"
-                    placeholder="輸入城市、景點"
-                  />
-                </label>
-
-                <label class="flex items-center rounded-full border border-primary/25 bg-white px-4 py-2">
-                  <span class="mr-3 text-sm font-semibold text-primary/80">入住退房日期</span>
-                  <input
-                    v-model="form.dateRange"
-                    class="w-full bg-transparent text-sm outline-none placeholder:text-primary/35"
-                    placeholder="選擇日期"
-                  />
-                </label>
-
-                <label class="flex items-center rounded-full border border-primary/25 bg-white px-4 py-2">
-                  <span class="mr-3 text-sm font-semibold text-primary/80">人數、需求</span>
-                  <input
-                    v-model="form.people"
-                    class="w-full bg-transparent text-sm outline-none placeholder:text-primary/35"
-                    placeholder="2 人｜1 間｜可帶寵物"
-                  />
-                </label>
-              </div>
-
-              <!-- Submit -->
-              <button
-                type="submit"
-                class="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:opacity-95 active:scale-[0.99]"
-              >
-                搜尋
-              </button>
+            <div class="flex h-[340px] items-center justify-center md:h-[420px]">
+              <span class="select-none text-sm text-primary/60">banner</span>
             </div>
-          </form>
+          </div>
+
+          <!-- Search Bar (floating on banner) -->
+          <div class="absolute inset-x-0 bottom-0 z-20 flex justify-center translate-y-1/2 px-2">
+            <form
+              class="w-full max-w-4xl rounded-full border border-primary/25 bg-white px-3 py-2 shadow-[0_10px_25px_rgba(47,61,77,0.10)]"
+              @submit.prevent="onSearch"
+            >
+              <div class="flex flex-col gap-2 md:flex-row md:items-center">
+                <!-- Tabs -->
+                <div class="flex items-center gap-2 rounded-full border border-primary/25 bg-white p-1">
+                  <button
+                    type="button"
+                    class="rounded-full px-4 py-2 text-sm font-semibold transition"
+                    :class="
+                      activeTab === 'package'
+                        ? 'bg-secondary text-white'
+                        : 'text-primary/80 hover:bg-primary/5'
+                    "
+                    @click="activeTab = 'package'"
+                  >
+                    找套票
+                  </button>
+                  <button
+                    type="button"
+                    class="rounded-full px-4 py-2 text-sm font-semibold transition"
+                    :class="
+                      activeTab === 'stay'
+                        ? 'bg-secondary text-white'
+                        : 'text-primary/80 hover:bg-primary/5'
+                    "
+                    @click="activeTab = 'stay'"
+                  >
+                    找住宿
+                  </button>
+                </div>
+
+                <!-- Fields -->
+                <div class="grid flex-1 grid-cols-1 gap-2 md:grid-cols-3">
+                  <label class="flex items-center rounded-full border border-primary/25 bg-white px-4 py-2">
+                    <span class="mr-3 text-sm font-semibold text-primary/80">去哪</span>
+                    <input
+                      v-model="form.destination"
+                      class="w-full bg-transparent text-sm outline-none placeholder:text-primary/35"
+                      placeholder="輸入城市、景點"
+                    />
+                  </label>
+
+                  <label class="flex items-center rounded-full border border-primary/25 bg-white px-4 py-2">
+                    <span class="mr-3 text-sm font-semibold text-primary/80">入住退房日期</span>
+                    <input
+                      v-model="form.dateRange"
+                      class="w-full bg-transparent text-sm outline-none placeholder:text-primary/35"
+                      placeholder="選擇日期"
+                    />
+                  </label>
+
+                  <label class="flex items-center rounded-full border border-primary/25 bg-white px-4 py-2">
+                    <span class="mr-3 text-sm font-semibold text-primary/80">人數、需求</span>
+                    <input
+                      v-model="form.people"
+                      class="w-full bg-transparent text-sm outline-none placeholder:text-primary/35"
+                      placeholder="2 人｜1 間｜可帶寵物"
+                    />
+                  </label>
+                </div>
+
+                <!-- Submit -->
+                <button
+                  type="submit"
+                  class="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:opacity-95 active:scale-[0.99]"
+                >
+                  搜尋
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </section>
 
@@ -197,12 +204,12 @@
       </section>
 
       <!-- 關鍵字 -->
-      <section class="mt-[60px] mb-[40px]">
-        <div class="rounded-[40px] bg-white/75 px-[20px] py-[40px] text-center shadow-[0_12px_30px_rgba(47,61,77,0.10)] ring-1 ring-primary/10">
+      <section class="mb-[40px] mt-[60px]">
+        <div
+          class="rounded-[40px] bg-white/75 px-[20px] py-[40px] text-center shadow-[0_12px_30px_rgba(47,61,77,0.10)] ring-1 ring-primary/10"
+        >
           <p class="text-base font-black">一坨關鍵字放這</p>
-          <p class="mt-4 text-sm font-semibold text-primary/75">
-            台北住宿 新北住宿 宜蘭包棟...
-          </p>
+          <p class="mt-4 text-sm font-semibold text-primary/75">台北住宿 新北住宿 宜蘭包棟...</p>
         </div>
       </section>
     </div>
@@ -253,5 +260,4 @@ function onSearch() {
 function onClickRegion(region: { key: string }) {
   console.log(region.key);
 }
-
 </script>
