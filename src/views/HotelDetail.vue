@@ -168,10 +168,15 @@
             >
               <div class="w-[30%] bg-gray-100 flex flex-col">
                 <div
-                  class="bg-gray-100 flex items-center justify-center text-gray-400 aspect-[4/3]"
+                  class="bg-gray-100 flex items-center p-5 justify-center aspect-[4/3] overflow-hidden"
                 >
-                  房型圖片
+                  <img
+                    :src="room.image"
+                    :alt="room.name"
+                    class="w-full h-full rounded-[20px] object-cover"
+                  />
                 </div>
+
                 <div class="p-[20px] text-left">
                   <div class="font-bold text-lg mb-2">{{ room.name }}</div>
                   <ul class="text-gray-600 text-sm space-y-1">
@@ -216,8 +221,8 @@
         <section class="bg-white/60 p-[20px] rounded-[20px]">
           <h3 class="text-2xl font-bold mb-6">房客評論</h3>
 
-          <div class="grid grid-cols-2 gap-8 mb-8">
-            <div class="bg-white rounded-[20px] p-6">
+          <div class="grid grid-cols-2 gap-8 mb-[20px]">
+            <div class="bg-white rounded-[20px] p-[20px]">
               <div class="font-bold text-lg mb-2">綜合評論</div>
               <div class="flex items-end gap-2 mb-2">
                 <div class="text-3xl font-bold text-secondary">{{ filteredAverageRating }}</div>
@@ -228,7 +233,7 @@
               </p>
             </div>
 
-            <div class="bg-white rounded-[20px] p-6">
+            <div class="bg-white rounded-[20px] p-[20px]">
               <div class="font-bold text-lg mb-2">AI 摘要</div>
               <p class="text-gray-600 text-sm">
                 多數房客稱讚房間整潔與飯店地點便利，少數建議增加早餐選擇。
@@ -258,7 +263,7 @@
             <div
               v-for="review in paginatedReviews"
               :key="review.id"
-              class="bg-white rounded-2xl p-6 flex gap-6"
+              class="bg-white rounded-2xl p-[20px] flex gap-6"
             >
               <div class="w-[30%] flex flex-col items-start space-y-2">
                 <div class="text-3xl font-bold text-secondary">{{ review.rating }}.0</div>
@@ -324,6 +329,7 @@ interface Room {
   capacity: number
   features: string[]
   details: string[]
+  image: string
 }
 
 interface Review {
@@ -357,7 +363,9 @@ const rooms = ref<Room[]>([
       '空調',
       '私人浴室',
     ],
+    image: '/src/assets/hoteldetail_img/Wanhao5.jpg',
   },
+
   {
     id: 2,
     name: '豪華雙床房',
@@ -373,6 +381,7 @@ const rooms = ref<Room[]>([
       '空調',
       '私人浴室',
     ],
+    image: '/src/assets/hoteldetail_img/Wanhao5.jpg',
   },
   {
     id: 3,
@@ -389,6 +398,7 @@ const rooms = ref<Room[]>([
       '空調',
       '私人浴室',
     ],
+    image: '/src/assets/hoteldetail_img/Wanhao5.jpg',
   },
 ])
 
