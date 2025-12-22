@@ -1,15 +1,21 @@
 <template>
   <Navbar />
-  <Footer />
+  <router-view />
+  <AppFooter />
 </template>
 
-<script setup>
-  import Navbar from './components/layout/Navbar.vue';
-  import Footer from './components/layout/Footer.vue';
-</script>
+<!--
+網址設定：
+ Home飯店首頁 http://localhost:5173/
+ HotelDetail飯店資訊頁 http://localhost:5173/hotelsdetail/
+ HotelSearch飯店搜尋頁 http://localhost:5173/hotelsearch
+ HotelCompare http://localhost:5173/compare
 
-<style>
-h1 {
-  color: #42b883;
-}
-</style>
+設定檔案：
+ router/index.ts
+ -->
+
+<script setup>
+import Navbar from './components/layout/Navbar.vue'
+import AppFooter from './components/layout/AppFooter.vue'
+</script>
