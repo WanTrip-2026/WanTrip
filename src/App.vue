@@ -1,11 +1,11 @@
 <template>
   <Navbar />
-  <Footer />
+  <AppFooter />
 </template>
 
 <script setup>
   import Navbar from './components/layout/Navbar.vue';
-  import Footer from './components/layout/Footer.vue';
+  import AppFooter from './components/layout/AppFooter.vue';
 </script>
 
 <style>
