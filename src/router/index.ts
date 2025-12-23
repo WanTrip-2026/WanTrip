@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 // views
-import Home from '@/views/Home.vue'
+import HomePage from '@/views/HomePage.vue'
 import HotelSearch from '@/views/HotelSearch.vue'
 import HotelDetail from '@/views/HotelDetail.vue'
 import HotelCompare from '@/views/HotelCompare.vue'
@@ -12,7 +12,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: Home,
+      component: HomePage,
     },
     {
       path: '/hotelsearch',

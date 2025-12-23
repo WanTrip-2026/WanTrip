@@ -65,12 +65,9 @@
             <h4 class="font-bold text-lg text-nowrap mb-2">{{ footerMenu.title }}</h4>
             <ul class="opacity-80">
               <li v-for="link in footerMenu.links" :key="link.to">
-                <router-link
-                  :to="link.to"
-                  class="text-nowrap opacity-80 hover:opacity-100 hover:font-bold transition-opacity"
-                >
+                <RouterLink :to="link.to" class="text-nowrap opacity-80 hover:opacity-100 hover:font-bold transition-opacity">
                   {{ link.label }}
-                </router-link>
+                </RouterLink>
               </li>
             </ul>
           </div>
