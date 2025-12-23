@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="w-full bg-[#E5DACE] min-h-screen">
-      <div class="max-w-[1200px] mx-auto pt-[100px] pb-[208px]">
+    <div class="w-full bg-[#E9F7FF] pt-24 min-h-screen">
+      <div class="max-w-[1200px] mx-auto pb-[208px]">
         <div class="grid grid-cols-[2fr_1fr_1fr_1fr] gap-[10px] mb-[40px]">
-          <div class="relative h-[400px] rounded-[20px] overflow-hidden">
+          <div class="relative h-[400px] rounded-[20px] overflow-hidden border border-black/30">
             <img
               src="/src/assets/hoteldetail_img/Wanhao.jpg"
               class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
@@ -11,14 +11,14 @@
           </div>
 
           <div class="grid grid-rows-2 gap-[10px] h-[400px]">
-            <div class="relative rounded-[20px] overflow-hidden">
+            <div class="relative rounded-[20px] overflow-hidden border border-black/30">
               <img
                 src="/src/assets/hoteldetail_img/Wanhao2.jpg"
                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
               />
             </div>
 
-            <div class="relative rounded-[20px] overflow-hidden">
+            <div class="relative rounded-[20px] overflow-hidden border border-black/30">
               <img
                 src="/src/assets/hoteldetail_img/Wanhao3.jpg"
                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
@@ -27,14 +27,14 @@
           </div>
 
           <div class="grid grid-rows-2 gap-[10px] h-[400px]">
-            <div class="relative rounded-[20px] overflow-hidden">
+            <div class="relative rounded-[20px] overflow-hidden border border-black/30">
               <img
                 src="/src/assets/hoteldetail_img/Wanhao4.jpg"
                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
               />
             </div>
 
-            <div class="relative rounded-[20px] overflow-hidden">
+            <div class="relative rounded-[20px] overflow-hidden border border-black/30">
               <img
                 src="/src/assets/hoteldetail_img/Wanhao5.jpg"
                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
@@ -43,14 +43,14 @@
           </div>
 
           <div class="grid grid-rows-2 gap-[10px] h-[400px]">
-            <div class="relative rounded-[20px] overflow-hidden">
+            <div class="relative rounded-[20px] overflow-hidden border border-black/30">
               <img
                 src="/src/assets/hoteldetail_img/Wanhao6.jpg"
                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
               />
             </div>
 
-            <div class="relative rounded-[20px] overflow-hidden">
+            <div class="relative rounded-[20px] overflow-hidden border border-black/30">
               <img
                 src="/src/assets/hoteldetail_img/Wanhao7.jpg"
                 class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
@@ -59,7 +59,9 @@
           </div>
         </div>
 
-        <div class="bg-white/60 p-[20px] rounded-[40px] border-gray-200 mb-[40px]">
+        <div
+          class="bg-white p-[20px] rounded-[40px] border-gray-200 mb-[40px] border border-black/30"
+        >
           <div class="flex justify-between items-center pb-[20px]">
             <div>
               <h2 class="text-[28px] font-bold text-black flex items-center gap-2">
@@ -81,10 +83,10 @@
 
           <div class="grid grid-cols-12 gap-[20px]">
             <div class="col-span-8 space-y-[20px]">
-              <div class="bg-white rounded-[20px] p-[20px] h-[272px] flex flex-col">
+              <div class="bg-[#EEF2F7] rounded-[20px] p-[20px] h-[272px] flex flex-col">
                 <h3 class="font-bold text-lg mb-4">設施與服務</h3>
                 <ul class="grid grid-cols-3 gap-[20px] flex-1">
-                  <li class="flex flex-col items-center justify-center bg-gray-100 rounded-[20px]">
+                  <li class="flex flex-col items-center justify-center bg-white rounded-[20px]">
                     <img
                       src="/src/assets/hoteldetail_img/icon/freeParking.png"
                       class="w-16 h-16 mb-[10px]"
@@ -92,7 +94,7 @@
                     />
                     免費停車
                   </li>
-                  <li class="flex flex-col items-center justify-center bg-gray-100 rounded-[20px]">
+                  <li class="flex flex-col items-center justify-center bg-white rounded-[20px]">
                     <img
                       src="/src/assets/hoteldetail_img/icon/convenient.png"
                       class="w-16 h-16 mb-[10px]"
@@ -100,7 +102,7 @@
                     />
                     位置便利
                   </li>
-                  <li class="flex flex-col items-center justify-center bg-gray-100 rounded-[20px]">
+                  <li class="flex flex-col items-center justify-center bg-white rounded-[20px]">
                     <img
                       src="/src/assets/hoteldetail_img/icon/breakfast.png"
                       class="w-16 h-16 mb-[10px]"
@@ -111,7 +113,7 @@
                 </ul>
               </div>
 
-              <div class="bg-white rounded-[20px] p-[20px] h-[204px]">
+              <div class="bg-[#EEF2F7] rounded-[20px] p-[20px] h-[204px]">
                 <h3 class="font-bold text-lg mb-2">住宿簡介</h3>
                 <ul class="text-gray-600 text-sm leading-relaxed">
                   <li><span class="font-medium text-black">電話：</span>+886-2-8502-9999</li>
@@ -129,7 +131,7 @@
             </div>
 
             <div class="col-span-4 space-y-[20px]">
-              <div class="bg-white rounded-[20px] p-[20px]">
+              <div class="bg-[#EEF2F7] rounded-[20px] p-[20px]">
                 <div class="flex items-center gap-[12px] pb-[10px]">
                   <div class="text-3xl font-bold text-secondary">9.2</div>
                   <div>
@@ -141,16 +143,16 @@
                   除了飯店地理位置方便，還提供行李寄放以及退房後的洗澡需求，真的很感謝！
                 </p>
               </div>
-              <div class="bg-white rounded-2xl p-[20px]">
+              <div class="bg-[#EEF2F7] rounded-2xl p-[20px]">
                 <h3 class="font-bold text-lg mb-[10px]">地圖 & 周邊景點</h3>
-                <div class="bg-gray-100 w-full h-[272px] rounded-xl"></div>
+                <div class="bg-white w-full h-[272px] rounded-xl"></div>
               </div>
             </div>
           </div>
         </div>
 
         <section class="mb-[40px]">
-          <div class="flex gap-[12px] mb-[20px] bg-white/60 rounded-[20px] p-[20px]">
+          <div class="flex gap-[12px]">
             <button
               v-for="tag in ['房型', '房客評論', '服務及設施', '政策']"
               :key="tag"
@@ -160,15 +162,15 @@
             </button>
           </div>
 
-          <div class="space-y-[20px] bg-white/60 p-[20px] rounded-[20px]">
+          <div class="space-y-[20px] pt-4 rounded-[20px]">
             <div
               v-for="room in rooms"
               :key="room.id"
-              class="flex bg-white rounded-[20px] overflow-hidden"
+              class="flex bg-white rounded-[20px] overflow-hidden border border-black/30"
             >
-              <div class="w-[30%] bg-gray-100 flex flex-col">
+              <div class="w-[30%] bg-[#EEF2F7] flex flex-col">
                 <div
-                  class="bg-gray-100 flex items-center p-5 justify-center aspect-[4/3] overflow-hidden"
+                  class="bg-[#EEF2F7] flex items-center p-5 justify-center aspect-[4/3] overflow-hidden"
                 >
                   <img
                     :src="room.image"
@@ -177,7 +179,7 @@
                   />
                 </div>
 
-                <div class="p-[20px] text-left">
+                <div class="px-5 pb-5 text-left">
                   <div class="font-bold text-lg mb-2">{{ room.name }}</div>
                   <ul class="text-gray-600 text-sm space-y-1">
                     <li v-for="(item, index) in room.details" :key="index">{{ item }}</li>
@@ -218,11 +220,11 @@
           </div>
         </section>
 
-        <section class="bg-white/60 p-[20px] rounded-[20px]">
+        <section class="p-[20px] rounded-[20px] border border-black/30 bg-[white]">
           <h3 class="text-2xl font-bold mb-6">房客評論</h3>
 
           <div class="grid grid-cols-2 gap-8 mb-[20px]">
-            <div class="bg-white rounded-[20px] p-[20px]">
+            <div class="rounded-[20px] p-[20px] bg-[#EEF2F7]">
               <div class="font-bold text-lg mb-2">綜合評論</div>
               <div class="flex items-end gap-2 mb-2">
                 <div class="text-3xl font-bold text-secondary">{{ filteredAverageRating }}</div>
@@ -233,7 +235,7 @@
               </p>
             </div>
 
-            <div class="bg-white rounded-[20px] p-[20px]">
+            <div class="bg-[#EEF2F7] rounded-[20px] p-[20px]">
               <div class="font-bold text-lg mb-2">AI 摘要</div>
               <p class="text-gray-600 text-sm">
                 多數房客稱讚房間整潔與飯店地點便利，少數建議增加早餐選擇。
@@ -242,17 +244,26 @@
           </div>
 
           <div class="pb-[20px] flex gap-[20px]">
-            <select v-model="filterMemberType" class="rounded-[12px] px-[20px] py-[10px]">
+            <select
+              v-model="filterMemberType"
+              class="rounded-[12px] px-[20px] py-[10px] border border-black/30"
+            >
               <option value="">所有住客類型</option>
               <option v-for="type in memberTypes" :key="type" :value="type">{{ type }}</option>
             </select>
 
-            <select v-model="filterRoomType" class="rounded-[12px] px-[20px] py-[10px]">
+            <select
+              v-model="filterRoomType"
+              class="rounded-[12px] px-[20px] py-[10px] border border-black/30"
+            >
               <option value="">所有房型</option>
               <option v-for="room in roomTypes" :key="room" :value="room">{{ room }}</option>
             </select>
 
-            <select v-model="sortOption" class="rounded-[12px] px-[20px] py-[10px]">
+            <select
+              v-model="sortOption"
+              class="rounded-[12px] px-[20px] py-[10px] border border-black/30"
+            >
               <option value="ratingDesc">評分高到低</option>
               <option value="ratingAsc">評分低到高</option>
               <option value="recent">最新評論</option>
@@ -263,7 +274,7 @@
             <div
               v-for="review in paginatedReviews"
               :key="review.id"
-              class="bg-white rounded-2xl p-[20px] flex gap-6"
+              class="bg-[#EEF2F7] rounded-2xl p-[20px] flex gap-6"
             >
               <div class="w-[30%] flex flex-col items-start space-y-2">
                 <div class="text-3xl font-bold text-secondary">{{ review.rating }}.0</div>
