@@ -1,14 +1,59 @@
 <script setup>
-  // import { RouterLink } from 'vue-router'
+  import { RouterLink } from 'vue-router'
 
   const footerLinks = [
-    { title: '住宿', links: ['飯店', '旅館', '民宿', '度假村', '住宿+交通'] },
-    { title: '體驗', links: ['活動', '景點', '美食', '購物', '門票'] },
-    { title: '比較', links: ['飯店比較', '旅館比較', '民宿比較'] },
-    { title: '關於', links: ['關於WanTrip', '客服中心'] },
-    { title: '條款與規則', links: ['常見問題', '服務條款', '隱私權聲明'] },
-    { title: '會員中心', links: ['我的訂單', '收藏清單', '個資管理'] },
-  ];
+  {
+    title: '住宿',
+    links: [
+      { label: '飯店', to: '/hotels' },
+      { label: '旅館', to: '/inns' },
+      { label: '民宿', to: '/bnb' },
+      { label: '度假村', to: '/resorts' },
+      { label: '住宿+交通', to: '/packages' },
+    ],
+  },
+  {
+    title: '體驗',
+    links: [
+      { label: '活動', to: '/activities' },
+      { label: '景點', to: '/attractions' },
+      { label: '美食', to: '/food' },
+      { label: '購物', to: '/shopping' },
+      { label: '門票', to: '/tickets' },
+    ],
+  },
+  {
+    title: '比較',
+    links: [
+      { label: '飯店比較', to: '/compare/hotel' },
+      { label: '旅館比較', to: '/compare/inn' },
+      { label: '民宿比較', to: '/compare/bnb' },
+    ],
+  },
+  {
+    title: '關於',
+    links: [
+      { label: '關於 WanTrip', to: '/about' },
+      { label: '客服中心', to: '/support' },
+    ],
+  },
+  {
+    title: '條款與規則',
+    links: [
+      { label: '常見問題', to: '/faq' },
+      { label: '服務條款', to: '/terms' },
+      { label: '隱私權聲明', to: '/privacy' },
+    ],
+  },
+  {
+    title: '會員中心',
+    links: [
+      { label: '我的訂單', to: '/member/orders' },
+      { label: '收藏清單', to: '/member/favorites' },
+      { label: '個資管理', to: '/member/profile' },
+    ],
+  },
+];
 </script>
 
 <template>
@@ -19,8 +64,13 @@
           <div class="w-[82px]" v-for="footerMenu in footerLinks" :key="footerMenu.title">
             <h4 class="font-bold text-lg text-nowrap mb-2">{{ footerMenu.title }}</h4>
             <ul class="opacity-80">
-              <li v-for="link in footerMenu.links" :key="link">
-                <a href="#" class="text-nowrap hover:opacity-100 hover:font-bold transition-opacity">{{ link }}</a>
+              <li v-for="link in footerMenu.links" :key="link.to">
+                <router-link
+                  :to="link.to"
+                  class="text-nowrap opacity-80 hover:opacity-100 hover:font-bold transition-opacity"
+                >
+                  {{ link.label }}
+                </router-link>
               </li>
             </ul>
           </div>
