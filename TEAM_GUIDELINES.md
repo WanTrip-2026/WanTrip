@@ -46,6 +46,9 @@
     `git add 檔案`
     `git commit -m"commit訊息"`
     `git fetch origin`
+    切到dev分支
+    下`git pull`(同步遠端dev)
+    切回自己的分支
     `git rebase origin/dev`
     `git push origin "#12" --force` (當下分支名稱,不用斜線)
     提交PR >通知大家
