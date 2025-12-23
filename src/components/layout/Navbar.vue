@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
   import { RouterLink } from 'vue-router'
 </script>
 
@@ -17,9 +17,6 @@
         <ul class="flex flex-row">
           <li>
             <RouterLink to="/" class="text-black font-medium px-4 py-2 hover:text-primary">住宿</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/" class="text-black font-medium px-4 py-2 hover:text-primary">交通</RouterLink>
           </li>
           <li>
             <RouterLink to="/" class="text-black font-medium px-4 py-2 hover:text-primary">體驗</RouterLink>
