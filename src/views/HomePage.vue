@@ -8,7 +8,7 @@
         linear-gradient(#F7F3EA, #EFE7D8);
     "
   >
-    <div class="mx-auto w-full max-w-6xl px-6 pb-10 pt-5">
+    <div class="mx-auto w-full max-w-6xl px-6 pb-10 pt-5 mt-24">
       <!-- Banner -->
       <section class="relative pb-32 md:pb-20">
         <!-- wrapper：讓 Search Bar 以 banner 為定位基準 -->
