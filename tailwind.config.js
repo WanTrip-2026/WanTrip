@@ -5,14 +5,13 @@ export default {
     extend: {
       colors: {
         primary: '#2F3D4D', // 主色
-        //'primary-hover': '#6D8FA3', // Button hover color
+        primary_hover: '#3C5572', // Button hover color
         secondary: '#6D8FA3', // 輔色
         accent: '#93ACAA', // 點綴色
-        //'page-bg': '#DBD0BE', // Global background
-        //title: '#000000', // Title color
+        page: '#F8FDFF', // Global background
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Helvetica', 'Arial', 'SF Pro', 'Noto Sans TC', '微軟正黑體', sans-serif],
       },
     },
   },
