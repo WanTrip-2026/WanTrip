@@ -11,7 +11,7 @@ export default {
         page: '#F8FDFF', // Global background
       },
       fontFamily: {
-        sans: ['Helvetica', 'Arial', 'SF Pro', 'Noto Sans TC', '微軟正黑體', sans-serif],
+        sans: ['Helvetica', 'Arial', 'SF Pro', 'Noto Sans TC', '微軟正黑體', 'sans-serif'],
       },
     },
   },
