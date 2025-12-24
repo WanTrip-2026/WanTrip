@@ -74,7 +74,7 @@
               <span class="text-gray-400 text-sm">每晚最低自</span>
               <div class="text-[#D14D4D] text-3xl font-bold">NT$ 6,166</div>
               <button
-                class="bg-secondary text-white text-[16px] px-[40px] py-[10px] rounded-[20px] hover:bg-[#4a6b78] transition mt-2"
+                class="bg-primary text-white text-[16px] px-[40px] py-[10px] rounded-[20px] hover:bg-[#4a6b78] transition mt-2"
               >
                 查看房間詳情
               </button>
@@ -156,7 +156,7 @@
             <button
               v-for="tag in ['房型', '房客評論', '服務及設施', '政策']"
               :key="tag"
-              class="px-6 py-2 bg-secondary text-white rounded-[12px] text-lg"
+              class="px-6 py-2 bg-primary text-white rounded-[12px] text-lg"
             >
               {{ tag }}
             </button>
@@ -206,12 +206,12 @@
               >
                 <span class="text-[#D14D4D] font-bold text-2xl self-end">NT$ {{ room.price }}</span>
                 <button
-                  class="bg-secondary text-white px-[40px] py-[10px] rounded-[10px] mt-4 font-bold"
+                  class="bg-primary text-white px-[40px] py-[10px] rounded-[10px] mt-4 font-bold"
                 >
                   立即預定
                 </button>
                 <button
-                  class="bg-white text-secondary border border-secondary px-[40px] py-[10px] rounded-[10px] mt-4 font-bold"
+                  class="bg-white text-primary border border-primary px-[40px] py-[10px] rounded-[10px] mt-4 font-bold"
                 >
                   加入收藏
                 </button>
@@ -317,7 +317,7 @@
               @click="currentPage = page"
               :class="
                 page === currentPage
-                  ? 'bg-secondary text-white px-3 py-1 rounded-[20px]'
+                  ? 'bg-primary text-white px-3 py-1 rounded-[20px]'
                   : 'bg-gray-200 text-primary px-3 py-1 rounded-[20px]'
               "
             >
