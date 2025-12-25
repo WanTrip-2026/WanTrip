@@ -64,7 +64,7 @@
             <span class="hidden md:inline">|</span>
             <span>已售出 {{ ticketIntro.soldCount }}</span>
             <span class="hidden md:inline">|</span>
-            <span class="text-blue-600 font-medium">{{ ticketIntro.status }}</span>
+            <span class="font-medium">{{ ticketIntro.status }}</span>
           </div>
           <hr class="border-gray-300 my-4" />
           <div>
