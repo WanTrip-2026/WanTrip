@@ -30,15 +30,15 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-2 gap-5">
+        <div class="grid grid-cols-1 gap-5">
           <button
             v-for="(option, index) in currentQuestion.options"
             :key="index"
             @click="handleAnswer(option, index)"
             :class="
               selectedOptionIndex === index
-                ? 'bg-white/80 border-black/30 p-5 rounded-[20px] text-xl font-medium border-2 min-h-[160px]'
-                : 'bg-[#EEF2F7] hover:bg-white/80 hover:border-black/30 p-5 rounded-[20px] text-xl font-medium border-2 min-h-[160px]'
+                ? 'bg-white/80 border-black/30 p-5 rounded-[20px] text-xl font-medium border-2 '
+                : 'bg-[#EEF2F7] hover:bg-white/80 hover:border-black/30 p-5 rounded-[20px] text-xl font-medium border-2 '
             "
           >
             {{ option.text }}
