@@ -1,6 +1,12 @@
 <template>
-  <div class="w-full bg-page pt-24 min-h-screen">
-    <div class="max-w-[1200px] mx-auto pb-[208px]">
+  <div class="w-full min-h-screen relative">
+    <img
+      src="/src/assets/traveldna_img/IntroBg.png"
+      alt="Background"
+      class="absolute inset-0 w-full h-full object-cover z-0"
+    />
+    <div class="absolute inset-0 w-full h-full bg-primary/50 backdrop-blur-sm"></div>
+    <div class="relative z-10 max-w-[1200px] mx-auto pt-24">
       <div class="relative w-[800px] h-4 mt-5 mb-12 mx-auto">
         <div class="w-full h-4 bg-[#EEF2F7] rounded-full"></div>
         <div
@@ -16,10 +22,12 @@
       </div>
 
       <main class="max-w-[800px] mx-auto text-center">
-        <div class="mb-10 { 'animate-progress-bounce': animateProgress }">
-          <h2 class="text-5xl font-bold text-primary mb-4">Q{{ currentStep }}</h2>
-          <h3 class="text-2xl font-semibold text-primary mb-5">{{ currentQuestion.title }}</h3>
-          <p class="text-secondary font-semibold text-lg">{{ currentQuestion.subTitle }}</p>
+        <div class="pb-10 { 'animate-progress-bounce': animateProgress }">
+          <h2 class="text-5xl font-bold text-primary pb-4">Q{{ currentStep }}</h2>
+          <h3 class="text-2xl font-semibold text-primary pb-5">{{ currentQuestion.title }}</h3>
+          <p class="text-white tracking-wider font-semibold drop-shadow-lg text-lg">
+            {{ currentQuestion.subTitle }}
+          </p>
         </div>
 
         <div class="grid grid-cols-2 gap-5">
