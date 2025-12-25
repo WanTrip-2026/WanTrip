@@ -7,6 +7,7 @@ import HotelDetail from '@/views/HotelDetail.vue'
 import HotelCompare from '@/views/HotelCompare.vue'
 import TravelDNA from '@/views/TravelDNA.vue'
 import TravelDNAIntro from '@/views/TravelDNAIntro.vue'
+import TravelDNAResult from '@/views/TravelDNAResult.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +41,11 @@ const router = createRouter({
       path: '/travelDNAintro',
       name: 'travel-DNA-intro',
       component: TravelDNAIntro,
+    },
+    {
+      path: '/travelDNAresult',
+      name: 'travel-DNA-result',
+      component: TravelDNAResult,
     },
     // 404 頁（選擇性，但很推薦）
     {
