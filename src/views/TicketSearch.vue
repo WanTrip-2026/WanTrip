@@ -341,7 +341,7 @@ const searchCity = route.query.city || ''
   <main class="mx-auto w-full bg-page pt-24 min-h-screen">
     <div class="max-w-[1200px] mx-auto">
       <section
-        class="max-w-[800px] h-[60px] bg-white border border-gray-300 px-5 py-2.5 mx-auto bg-page rounded-full flex flex-row justify-between gap-2.5"
+        class="max-w-[800px] h-[60px] border border-gray-300 px-5 py-2.5 mx-auto bg-white rounded-full flex flex-row justify-between gap-2.5"
       >
         <div
           class="relative flex-auto h-full focus:ring-primary focus:border-primary"
