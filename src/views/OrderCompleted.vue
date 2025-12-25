@@ -1,15 +1,34 @@
-<script setup></script>
+<script setup>
+const order = {
+  id: '202512310936001',
+  name: '高雄洲際酒店',
+  amount: 50000,
+  createdAt: '12/31 09:36',
+}
+</script>
 <template>
   <main class="w-full bg-page pt-24">
     <section class="max-w-[1200px] mx-auto flex flex-col gap-5">
       <div class="w-full p-5 bg-white flex flex-col flex-nowrap items-center gap-10 rounded-[20px]">
         <h3 class="text-[40px] font-bold text-black">付款完成</h3>
-        <div class="flex flex-col flex-nowrap gap-5 text-base">
-          <p>訂單編號：202512310936001</p>
-          <p>飯店/票券名稱：高雄洲際酒店</p>
-          <p class="text-red-600">金額：NT 50,000</p>
-          <p>訂單建立日期：12/31 09:36</p>
-        </div>
+        <dl class="flex flex-col flex-nowrap gap-5 text-base">
+          <div class="flex">
+            <dt class="text-gray-700">訂單編號：</dt>
+            <dd>{{ order.id }}</dd>
+          </div>
+          <div class="flex">
+            <dt class="text-gray-700">商品名稱：</dt>
+            <dd>{{ order.name }}</dd>
+          </div>
+          <div class="flex">
+            <dt>金額：</dt>
+            <dd class="text-red-600">NT {{ order.amount.toLocaleString() }}</dd>
+          </div>
+          <div class="flex">
+            <dt class="text-gray-700">訂單建立日期：</dt>
+            <dd>{{ order.createdAt }}</dd>
+          </div>
+        </dl>
       </div>
       <div
         class="w-full bg-page p-5 mb-5 flex flex-col flex-nowrap items-center gap-10 rounded-[20px]"
@@ -23,7 +42,7 @@
             href="https://www.thsrc.com.tw/"
           >
             <img
-              class="object-cover w-full h-full"
+              class="w-full h-full"
               src="../assets/traffic_photo/高鐵logo.svg"
               alt="高鐵官方logo"
             />
