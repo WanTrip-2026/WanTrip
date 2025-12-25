@@ -34,7 +34,7 @@ const order = {
         class="w-full bg-page p-5 mb-5 flex flex-col flex-nowrap items-center gap-10 rounded-[20px]"
       >
         <h3 class="text-[30px] font-bold text-center">
-          搭乘大眾運輸交通資訊<br />請參考以下資訊：
+          搭乘大眾運輸交通工具<br />請參考以下資訊：
         </h3>
         <div class="flex justify-around gap-5">
           <a
