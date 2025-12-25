@@ -63,6 +63,9 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const goToResult = () => {
+  router.push('/travelDNAresult')
+}
 
 // 題目資料定義
 const totalSteps = 6
@@ -163,11 +166,6 @@ const handleAnswer = (option: Option, index: number) => {
   } else {
     showResultButton.value = true
   }
-}
-
-// 跳轉結果頁
-const goToResult = () => {
-  router.push('/quiz-result')
 }
 </script>
 
