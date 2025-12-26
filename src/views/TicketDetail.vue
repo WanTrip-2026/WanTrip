@@ -168,22 +168,22 @@
       </div>
 
       <div
-        class="fixed bottom-[86px] left-0 right-0 bg-white rounded-[20px] z-50 p-5 mx-5 border border-white-300 lg:relative lg:bottom-auto lg:left-auto lg:w-full lg:right-auto lg:z-0 lg:p-0 lg:mr-5 lg:ml-0 lg:col-span-4 lg:border-0 lg:bg-transparent">
+        class="fixed bottom-[84px] left-0 right-0 bg-white rounded-[20px] z-50 p-5 mx-5 border border-white-300 lg:relative lg:bottom-auto lg:left-auto lg:w-full lg:right-auto lg:z-0 lg:p-0 lg:mr-5 lg:ml-0 lg:col-span-4 lg:border-0 lg:bg-transparent">
         <div
           class="lg:sticky lg:top-[96px] bg-white lg:rounded-[20px] lg:shadow-sm lg:border lg:border-gray-300 lg:p-5">
-          <div class="mb-4 flex flex-row gap-5 lg:flex-col">
-            <h2 class="text-2xl line-clamp-2 md:text-xl font-bold text-black">
+          <div class="mb-4 flex flex-row gap-2 lg:gap-5 lg:flex-col">
+            <h2 class="w-full text-lg lg:text-2xl line-clamp-1 lg:line-clamp-2 md:text-xl font-bold text-black">
               {{ ticketIntro.title }}
             </h2>
             <div>
-              <span class="text-sm text-gray-500 line-through text-nowrap">TWD 1,200</span>
-              <div class="flex items-end gap-2">
-                <span class="text-2xl font-bold text-red-500 text-nowrap">TWD 880</span>
-                <span class="text-sm text-gray-500 mb-1 text-nowrap">/ 每人</span>
+              <span class="text-xs lg:text-sm text-gray-500 line-through text-nowrap">TWD 1,200</span>
+              <div class="flex items-end gap-1 lg:gap-2">
+                <span class="text-lg lg:text-2xl font-bold text-red-500 text-nowrap">TWD 880</span>
+                <span class="text-sm text-gray-500 mb-0.5 lg:mb-1 text-nowrap">/ 每人</span>
               </div>
             </div>
           </div>
-          <div class="mb-4 flex flex-row gap-5 lg:gap-2.5 lg:flex-col">
+          <div class="flex flex-row items-stretch gap-5 text-nowrap lg:gap-2.5 lg:flex-col">
             <div class="p-3 w-full border rounded-[10px] hover:border-[#365475] cursor-pointer transition">
               <div class="text-xs text-gray-700 mb-1">選擇日期</div>
               <div class="font-medium text-black">2023-12-25 (週一)</div>
@@ -192,16 +192,12 @@
               <div class="text-xs text-gray-700 mb-1">選擇方案</div>
               <div class="font-medium text-black">成人票 x 2</div>
             </div>
-          </div>
-          <div class="space-y-2.5">
-            <button
-              class="w-full bg-primary hover:bg-[#365475] text-white font-bold py-3 px-6 rounded-[10px] transition duration-200 shadow-md">
-              立即預訂
-            </button>
-            <!-- <button
-              class="w-full bg-white border border-primary text-primary hover:bg-blue-50 font-bold py-3 px-6 rounded-[10px] transition duration-200">
-              加入購物車
-            </button> -->
+            <div class="flex-shrink-0">
+              <button
+                class="h-full flex items-center justify-center lg:w-full bg-primary hover:bg-[#365475] text-white font-bold py-3 px-6 rounded-[10px] transition duration-200 shadow-md">
+                立即預訂
+              </button>
+            </div>
           </div>
         </div>
       </div>
