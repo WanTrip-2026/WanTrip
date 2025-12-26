@@ -399,7 +399,7 @@ const searchCity = route.query.city || ''
       </section>
       <section class="gap-[20px] mt-[40px] mx-auto flex">
         <aside class="flex flex-col gap-5 w-[285px]">
-          <div class="rounded-[20px] p-10 bg-white">
+          <div class="rounded-[20px] p-10 bg-white border">
             <h3 class="font-bold text-xl mb-[20px]">篩選條件</h3>
             <div class="flex flex-col gap-5">
               <!-- Option Filter -->
@@ -449,29 +449,13 @@ const searchCity = route.query.city || ''
           </div>
           <div class="flex justify-center gap-2 mt-5 mb-10">
             <button
-              class="px-3 py-1 border rounded text-gray-500 hover:text-black"
-              :disabled="currentPage === 1"
-              @click="goToPage(currentPage - 1)"
-            >
-              上一頁
-            </button>
-
-            <button
               v-for="page in totalPages"
               :key="page"
-              class="px-3 py-1 border rounded text-gray-500 hover:text-black"
+              class="px-3 py-1 border rounded-full text-gray-500 hover:text-black"
               :class="{ 'bg-primary text-white': currentPage === page }"
               @click="goToPage(page)"
             >
               {{ page }}
-            </button>
-
-            <button
-              class="px-3 py-1 border rounded text-gray-500 hover:text-black"
-              :disabled="currentPage === totalPages"
-              @click="goToPage(currentPage + 1)"
-            >
-              下一頁
             </button>
           </div>
         </div>
