@@ -9,7 +9,7 @@
     </div>
 
     <div class="container mx-auto px-5 mb-8">
-      <div class="grid grid-cols-[2fr_1fr_1fr_1fr] gap-[10px] mb-[40px]">
+      <div class="grid grid-cols-[2fr_1fr] lg:grid-cols-[2fr_1fr_1fr_1fr] gap-[10px] mb-[40px]">
         <div class="relative h-[400px] rounded-[20px] overflow-hidden">
           <img src="/src/assets/hoteldetail_img/Wanhao.jpg" class="absolute inset-0 w-full h-full object-cover" />
         </div>
@@ -117,7 +117,7 @@
               </p>
               <ul v-else-if="policy.type === 'list'" :class="[
                 'list-disc list-inside space-y-1',
-                policy.highlight ? 'bg-[#EEF2F7] p-5 rounded-[10px]' : ''
+                policy.highlight ? 'bg-[#EEF2F7] p-5 rounded-[10px] border border-white-300' : ''
               ]">
                 <li v-for="(item, i) in policy.items" :key="i">
                   {{ item }}
@@ -129,7 +129,6 @@
 
         <section class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
           <h3 class="text-xl font-bold text-gray-900 mb-2">常見問題</h3>
-          <hr class="border-gray-300 my-2" />
           <div class="space-y-2.5">
             <div v-for="(faq, index) in faqs" :key="index" class="border rounded-lg overflow-hidden">
               <button @click="toggleFaq(index)"
@@ -146,7 +145,7 @@
         </section>
 
         <section>
-          <h3 class="font-bold text-lg mb-4 text-gray-800">猜你喜歡</h3>
+          <h3 class="font-bold text-2xl mb-2 text-primary">熱門體驗</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
             <RouterLink v-for="recommend in recommendations" :key="recommend.id" :to="`/ticket/${recommend.id}`"
               class="group bg-white rounded-[20px] shadow-sm overflow-hidden border hover:shadow-md transition-all duration-300 cursor-pointer">
@@ -168,24 +167,28 @@
 
       </div>
 
-      <div class="lg:col-span-4">
-        <div class="sticky top-4 bg-white rounded-[20px] shadow-sm border border-gray-300 p-5">
-          <div class="mb-4">
-            <h2 class="text-2xl md:text-xl font-bold text-gray-900 mb-4">
+      <div
+        class="fixed bottom-[86px] left-0 right-0 bg-white rounded-[20px] z-50 p-5 mx-5 border border-white-300 lg:relative lg:bottom-auto lg:left-auto lg:right-auto lg:z-0 lg:p-0 lg:mr-5 lg:ml-0 lg:col-span-4 lg:border-0 lg:bg-transparent">
+        <div
+          class="lg:sticky lg:top-[96px] bg-white lg:rounded-[20px] lg:shadow-sm lg:border lg:border-gray-300 lg:p-5">
+          <div class="mb-4 flex flex-row gap-5 lg:flex-col">
+            <h2 class="text-2xl line-clamp-2 md:text-xl font-bold text-gray-900 mb-4">
               {{ ticketIntro.title }}
             </h2>
-            <span class="text-sm text-gray-500 line-through">TWD 1,200</span>
-            <div class="flex items-end gap-2">
-              <span class="text-2xl font-bold text-red-500">TWD 880</span>
-              <span class="text-sm text-gray-500 mb-1">/ 每人</span>
+            <div>
+              <span class="text-sm text-gray-500 line-through text-nowrap">TWD 1,200</span>
+              <div class="flex items-end gap-2">
+                <span class="text-2xl font-bold text-red-500 text-nowrap">TWD 880</span>
+                <span class="text-sm text-gray-500 mb-1 text-nowrap">/ 每人</span>
+              </div>
             </div>
           </div>
-          <div class="space-y-4 mb-4">
-            <div class="p-3 border rounded-[10px] hover:border-[#365475] cursor-pointer transition">
+          <div class="mb-4 flex flex-row gap-5 lg:gap-2 lg:flex-col">
+            <div class="p-3 w-full border rounded-[10px] hover:border-[#365475] cursor-pointer transition">
               <div class="text-xs text-gray-700 mb-1">選擇日期</div>
               <div class="font-medium text-black">2023-12-25 (週一)</div>
             </div>
-            <div class="p-3 border rounded-[10px] hover:border-[#365475] cursor-pointer transition">
+            <div class="p-3 w-full border rounded-[10px] hover:border-[#365475] cursor-pointer transition">
               <div class="text-xs text-gray-700 mb-1">選擇方案</div>
               <div class="font-medium text-black">成人票 x 2</div>
             </div>
@@ -268,10 +271,10 @@ const policies = ref([
   {
     title: "【注意事項】",
     items: [
-      "1. 禁止攜帶危險物品及外食入場。",
-      "2. 場內禁止吸菸，違者將依相關法規處罰。",
-      "3. 若患有心臟病、高血壓等疾病，請自行斟酌身體狀況。",
-      "4. 兒童需由成人全程陪同。"
+      "禁止攜帶危險物品及外食入場。",
+      "場內禁止吸菸，違者將依相關法規處罰。",
+      "若患有心臟病、高血壓等疾病，請自行斟酌身體狀況。",
+      "兒童需由成人全程陪同。"
     ],
     type: "list",
     highlight: false
