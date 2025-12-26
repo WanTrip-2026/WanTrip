@@ -8,7 +8,7 @@
       <RouterLink to="/" class="hover:underline underline-offset-2">詳細資訊</RouterLink>
     </div>
 
-    <div class="max-w-[1200px] mx-auto px-5 mb-8">
+    <div class="max-w-[1200px] mx-auto px-5 lg:px-0 mb-8">
       <div class="grid grid-cols-[2fr_1fr] lg:grid-cols-[2fr_1fr_1fr_1fr] gap-[10px] mb-[40px]">
         <div class="relative h-[400px] rounded-[20px] overflow-hidden">
           <img src="/src/assets/hoteldetail_img/Wanhao.jpg" class="absolute inset-0 w-full h-full object-cover" />
@@ -50,7 +50,7 @@
       </div>
     </div>
 
-    <div class="max-w-[1200px] mx-auto px-5 grid grid-cols-1 lg:grid-cols-12 gap-5 relative">
+    <div class="max-w-[1200px] mx-auto px-5 lg:px-0 grid grid-cols-1 lg:grid-cols-12 gap-5 relative">
       <div class="col-span-12 lg:col-span-8 space-y-5">
         <section class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
           <h2 class="text-2xl line-clamp-2 md:text-3xl font-bold text-gray-900 mb-4">
