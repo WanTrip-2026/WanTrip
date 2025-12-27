@@ -12,7 +12,7 @@ const order = {
   <main class="w-full bg-page pt-24">
     <section class="max-w-[1200px] mx-auto pb-10">
       <div
-        class="w-[600px] mx-auto lg:w-[800px] lg:p-10 bg-white flex flex-col gap-10 items-center rounded-[20px]"
+        class="w-[600px] mx-auto lg:w-[800px] p-5 lg:p-10 bg-white flex flex-col gap-5 lg:gap-10 items-center rounded-[20px]"
       >
         <h3 class="text-[40px] font-bold text-black">訂購完成✅</h3>
         <div class="flex flex-col gap-2 items-center lg:flex-row lg:gap-6 lg:justify-start w-full">
