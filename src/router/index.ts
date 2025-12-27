@@ -11,6 +11,7 @@ import TravelDNA from '@/views/TravelDNA.vue'
 import TravelDNAIntro from '@/views/TravelDNAIntro.vue'
 import TravelDNAResult from '@/views/TravelDNAResult.vue'
 import OrderCompleted from '@/views/OrderCompleted.vue'
+import Support from '@/views/Support.vue'
 
 
 const router = createRouter({
@@ -65,6 +66,11 @@ const router = createRouter({
       path: '/ordercompleted',
       name: 'order-completed',
       component: OrderCompleted,
+    },
+    {
+      path: '/support',
+      name: 'support',
+      component: Support,
     },
     // 404 頁（選擇性，但很推薦）
     {
