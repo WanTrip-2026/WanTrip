@@ -1,4 +1,6 @@
 <script setup>
+import { computed } from 'vue'
+
 const order = {
   id: '202512310936001',
   name: '高雄洲際酒店',
@@ -7,12 +9,14 @@ const order = {
   telephone: '(07)339-1888',
   address: '高雄市前鎮區新光路33號',
 }
+const formattedAmount = computed(() => `NT$ ${order.amount.toLocaleString()}`)
 </script>
+
 <template>
   <main class="w-full bg-page pt-24">
     <section class="max-w-[1200px] mx-auto pb-10">
       <div
-        class="w-[600px] mx-auto lg:w-[800px] p-5 lg:p-10 bg-white flex flex-col gap-5 lg:gap-10 items-center rounded-[20px]"
+        class="mx-auto w-[600px] lg:w-[800px] p-5 lg:p-10 bg-white rounded-[20px] flex flex-col items-center gap-5 lg:gap-10"
       >
         <h3 class="text-[40px] font-bold text-black">訂購完成✅</h3>
         <div class="flex flex-col gap-2 items-center lg:flex-row lg:gap-6 lg:justify-start w-full">
@@ -43,7 +47,7 @@ const order = {
             </div>
             <div class="flex flex-col items-center lg:items-stretch">
               <p>總價</p>
-              <p class="text-black font-bold text-xl">NT {{ order.amount.toLocaleString() }}</p>
+              <p class="text-black font-bold text-xl">NT {{ formattedAmount }}</p>
             </div>
           </div>
         </div>
