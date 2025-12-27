@@ -3,60 +3,64 @@ const order = {
   id: '202512310936001',
   name: '高雄洲際酒店',
   amount: 50000,
-  createdAt: '12/31 09:36',
+  createdAt: '2025年12月31日 09:36:50',
+  telephone: '(07)339-1888',
+  address: '高雄市前鎮區新光路33號',
 }
 </script>
 <template>
   <main class="w-full bg-page pt-24">
-    <section class="max-w-[1200px] mx-auto flex flex-col gap-5">
-      <div class="w-full p-5 bg-white flex flex-col flex-nowrap items-center gap-10 rounded-[20px]">
-        <h3 class="text-[40px] font-bold text-black">付款完成</h3>
-        <dl class="flex flex-col flex-nowrap gap-5 text-base">
-          <div class="flex">
-            <dt class="text-gray-700">訂單編號：</dt>
-            <dd>{{ order.id }}</dd>
-          </div>
-          <div class="flex">
-            <dt class="text-gray-700">商品名稱：</dt>
-            <dd>{{ order.name }}</dd>
-          </div>
-          <div class="flex">
-            <dt>金額：</dt>
-            <dd class="text-red-600">NT {{ order.amount.toLocaleString() }}</dd>
-          </div>
-          <div class="flex">
-            <dt class="text-gray-700">訂單建立日期：</dt>
-            <dd>{{ order.createdAt }}</dd>
-          </div>
-        </dl>
-      </div>
+    <section class="max-w-[1200px] mx-auto pb-10">
       <div
-        class="w-full bg-page p-5 mb-5 flex flex-col flex-nowrap items-center gap-10 rounded-[20px]"
+        class="w-[600px] mx-auto lg:w-[800px] lg:p-10 bg-white flex flex-col gap-10 items-center rounded-[20px]"
       >
-        <h3 class="text-[30px] font-bold text-center">
-          搭乘大眾運輸交通工具<br />請參考以下資訊：
-        </h3>
-        <div class="flex justify-around gap-5">
-          <a
-            class="bg-white h-[250px] flex-1 w-full rounded-[20px]"
-            href="https://www.thsrc.com.tw/"
-          >
+        <h3 class="text-[40px] font-bold text-black">訂購完成✅</h3>
+        <div class="flex flex-col gap-2 items-center lg:flex-row lg:gap-6 lg:justify-start w-full">
+          <div class="w-[200px] aspect-[1/1] overflow-hidden">
             <img
-              class="w-full h-full"
-              src="../assets/traffic_photo/高鐵logo.svg"
-              alt="高鐵官方logo"
+              src="/src/assets/hoteldetail_img/Wanhao.jpg"
+              alt="訂購飯店圖"
+              class="w-full h-full object-cover rounded-[10px]"
             />
-          </a>
-          <a
-            class="bg-white flex-1 w-full h-[250px] rounded-[20px]"
-            href="https://www.railway.gov.tw/tra-tip-web/tip"
+          </div>
+
+          <div
+            class="flex flex-col items-center lg:items-stretch flex-nowrap gap-2 text-base text-nowrap"
           >
-            <img
-              class="h-full object-contain w-full"
-              src="../assets/traffic_photo/台鐵logo.png"
-              alt="台鐵官方logo"
-            />
-          </a>
+            <div class="flex flex-nowrap">
+              <p class="text-gray-700">訂單編號：</p>
+              <p>{{ order.id }}</p>
+            </div>
+
+            <div class="flex">
+              <dt class="text-gray-700">訂單建立日期：</dt>
+              <dd>{{ order.createdAt }}</dd>
+            </div>
+            <div class="flex flex-col items-center lg:items-stretch gap-1">
+              <p class="text-black text-2xl font-bold">{{ order.name }}</p>
+              <p class="text-gray-700 text-base">{{ order.address }}</p>
+              <p class="text-gray-700 text-base">{{ order.telephone }}</p>
+            </div>
+            <div class="flex flex-col items-center lg:items-stretch">
+              <p>總價</p>
+              <p class="text-black font-bold text-xl">NT {{ order.amount.toLocaleString() }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-2.5">
+          <router-link
+            to="/"
+            class="rounded-full bg-primary text-white px-12 py-3 inline-block hover:bg-secondary"
+          >
+            回到首頁
+          </router-link>
+
+          <router-link
+            to="/orders"
+            class="rounded-full bg-gray-500 text-white px-12 py-3 inline-block hover:bg-gray-500/50"
+          >
+            前往訂單
+          </router-link>
         </div>
       </div>
     </section>
