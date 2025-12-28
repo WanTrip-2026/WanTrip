@@ -1,5 +1,5 @@
 <template>
-  <header class="max-w-[1200px] mx-auto fixed top-5 inset-x-0 z-50">
+  <header class="max-w-[1160px] mx-auto fixed top-5 inset-x-0 z-50">
     <nav class="h-14 rounded-full bg-white/45 backdrop-blur-md mx-5 p-2.5 border border-white/50">
       <div class="flex flex-row justify-between h-full">
         <div class="flex flex-row items-center gap-[16px]">
