@@ -8,12 +8,13 @@
       <div
         class="bg-white/20 backdrop-blur-md rounded-[20px] border border-white/30 p-5 m-24 shadow-xl max-w-md w-full"
       >
-        <img :src="roleMap[role].img" alt="Result" class="w-full mb-5 mx-auto" />
+        <img :src="roleMap[role].img" alt="Result" ref="roleImgRef" class="w-full mb-5 mx-auto" />
         <p class="text-white text-lg font-bold tracking-wider text-center mb-10 drop-shadow-lg">
           🎫 推薦票券：{{ roleMap[role].tickets }}
         </p>
         <div class="flex gap-5 justify-center flex-wrap">
           <button
+            @click="saveRoleImage"
             class="bg-primary hover:bg-primary_hover text-white px-8 py-3 rounded-full text-lg font-bold shadow-lg transition"
           >
             儲存結果
@@ -38,6 +39,7 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router'
 import { computed } from 'vue'
+import { ref } from 'vue'
 
 type RoleKey = 'bear' | 'lion' | 'turtle' | 'sheep' | 'owl' | 'cat' | 'fox' | 'rabbit'
 
@@ -91,6 +93,33 @@ const role = computed<RoleKey>(() => {
   }
   return 'turtle'
 })
+
+// 參考角色圖元素
+const roleImgRef = ref<HTMLImageElement>()
+
+// 儲存角色圖
+const saveRoleImage = () => {
+  const img = roleImgRef.value
+  if (!img) return
+
+  const canvas = document.createElement('canvas')
+  canvas.width = img.naturalWidth
+  canvas.height = img.naturalHeight
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+
+  ctx.drawImage(img, 0, 0)
+
+  canvas.toBlob((blob) => {
+    if (!blob) return
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'WanTripTravelDNA.png'
+    link.click()
+    URL.revokeObjectURL(url)
+  }, 'image/png')
+}
 
 const goToIntro = () => {
   router.push('/travelDNAintro')
