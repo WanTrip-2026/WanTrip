@@ -8,13 +8,9 @@
       <div
         class="bg-white/20 backdrop-blur-md rounded-[20px] border border-white/30 p-5 m-24 shadow-xl max-w-md w-full"
       >
-        <img
-          src="/src/assets/traveldna_img/ResultTest.png"
-          alt="Result"
-          class="w-full mb-5 mx-auto"
-        />
+        <img :src="roleMap[role].img" alt="Result" class="w-full mb-5 mx-auto" />
         <p class="text-white text-lg font-bold tracking-wider text-center mb-10 drop-shadow-lg">
-          🎫 推薦票券：六福村一日券、 溯溪體驗活動
+          🎫 推薦票券：{{ roleMap[role].tickets }}
         </p>
         <div class="flex gap-5 justify-center flex-wrap">
           <button
@@ -40,9 +36,62 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { computed } from 'vue'
+
+type RoleKey = 'bear' | 'lion' | 'turtle' | 'sheep' | 'owl' | 'cat' | 'fox' | 'rabbit'
+
+interface RoleData {
+  img: string
+  tickets: string
+}
 
 const router = useRouter()
+const route = useRoute()
+
+const roleMap: Record<RoleKey, RoleData> = {
+  bear: {
+    img: '/src/assets/traveldna_img/Bear.svg',
+    tickets: '六福村一日券、溯溪體驗活動',
+  },
+  lion: {
+    img: '/src/assets/traveldna_img/Lion.svg',
+    tickets: '六福村一日券、衝浪活動券',
+  },
+  turtle: {
+    img: '/src/assets/traveldna_img/Turtle.svg',
+    tickets: '古蹟漫遊票、博物館票券',
+  },
+  sheep: {
+    img: '/src/assets/traveldna_img/Sheep.svg',
+    tickets: '植物園入場券、河岸咖啡館下午茶券',
+  },
+  owl: {
+    img: '/src/assets/traveldna_img/Owl.svg',
+    tickets: '博物館門票、文創市集入場券',
+  },
+  cat: {
+    img: '/src/assets/traveldna_img/Cat.svg',
+    tickets: '藝術展門票、城市觀光導覽票',
+  },
+  fox: {
+    img: '/src/assets/traveldna_img/Fox.svg',
+    tickets: '夜市美食券、密室逃脫活動',
+  },
+  rabbit: {
+    img: '/src/assets/traveldna_img/Rabbit.svg',
+    tickets: '自助餐券、特色小吃套票',
+  },
+}
+
+const role = computed<RoleKey>(() => {
+  const r = route.query.role
+  if (r && typeof r === 'string' && r in roleMap) {
+    return r as RoleKey
+  }
+  return 'turtle'
+})
+
 const goToIntro = () => {
   router.push('/travelDNAintro')
 }
