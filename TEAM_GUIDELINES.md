@@ -34,10 +34,10 @@
     * 一行完成，不加句號
     * 舉例：feature/功能名稱、 fix/問題描述
 
-# 4️⃣ GitHub 規範
+# :four: GitHub 規範
 
 - 平時作業流程
-  - 開票：建立issue -> 5️⃣Issue命名規則
+  - 開票：建立issue -> :five:Issue命名規則
   - 接票者：更改assignee，在issue上新增分支: 大家都看得懂的英文 (不能#)
   - 在新分支進行作業
 
@@ -46,7 +46,7 @@
     `git add 檔案`
     `git commit -m"commit訊息"`
     `git fetch origin`
-    切到dev分支
+    —如果需要最新的dev進度 切到dev分支
     下`git pull`(同步遠端dev)
     切回自己的分支
     `git rebase origin/dev`
@@ -64,6 +64,31 @@
     - 審核中發生衝突，請在群組通知，並由”PR 提交者“解決，解決後可以直接合併
     - 若用vscode查看code，可先暫停當下作業commit/stash 當下任務，才能切換分支
       (commit:WIP on branch)
+
+  - 審核中做修改
+    切回要修改的分支，
+    修改code完成後，
+    `git commit -m"commit訊息"`
+    `git fetch origin`
+    `git rebase origin/dev` (視狀況)
+    `git push origin "#12" --force`
+
+  - 關票後，負責人需更新自己的git graph
+    `git fetch --prune` 更新GitHub上已經刪除的遠端分支
+    `git switch dev` 切回主線抓取進度
+    `git pull`
+    `git branch -d 分支名` 刪掉本機已完成的分支
+
+  - 在自己的分支想要接到某個分支的最新 commit 之後 (吃到某個分支最新進度) 的方法
+    1. 如果有新的修改，先 commit：
+       `git commit -m "訊息"`
+    2. 抓取遠端最新狀態：
+       `git fetch origin`
+    3. 將自己的分支接到目標分支（例如 dev）的最新 commit：
+       `git rebase origin/dev`
+       - 若出現衝突，解決後 `git rebase --continue`
+    4. 推回遠端分支（同步重寫的歷史）：
+       `git push origin <你的分支> --force-with-lease`
 
 # 5️⃣ Issue命名規則
 
