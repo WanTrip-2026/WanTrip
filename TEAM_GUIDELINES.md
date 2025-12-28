@@ -34,10 +34,10 @@
     * 一行完成，不加句號
     * 舉例：feature/功能名稱、 fix/問題描述
 
-# :four: GitHub 規範
+# 4️⃣ GitHub 規範
 
 - 平時作業流程
-  - 開票：建立issue -> :five:Issue命名規則
+  - 開票：建立issue -> 5️⃣Issue命名規則
   - 接票者：更改assignee，在issue上新增分支: 大家都看得懂的英文 (不能#)
   - 在新分支進行作業
 
