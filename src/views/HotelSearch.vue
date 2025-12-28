@@ -1,5 +1,4 @@
 <script setup>
-import Navbar from '../components/layout/Navbar.vue'
 import HotelCard from '../components/layout/HotelCard.vue'
 import { ref } from 'vue'
 
