@@ -90,28 +90,28 @@ const questions: Question[] = [
     subTitle: '你在陌生城市醒來，窗外的陽光灑進房間，你會如何開始一天？',
     options: [
       {
-        text: '穿上登山鞋、背上背包',
+        text: '迫不及待踏出門去看看街道的另一端',
         score: [
           { role: 'bear', point: 2 },
           { role: 'lion', point: 1 },
         ],
       },
       {
-        text: '慢慢梳洗，泡杯咖啡',
+        text: '慢慢梳洗，泡杯咖啡，坐在窗邊看人來人往',
         score: [
           { role: 'sheep', point: 2 },
           { role: 'turtle', point: 1 },
         ],
       },
       {
-        text: '查好博物館、展覽行程',
+        text: '隨意穿好衣服，漫步到街角，探索陌生的小巷',
         score: [
           { role: 'owl', point: 2 },
           { role: 'cat', point: 1 },
         ],
       },
       {
-        text: '約朋友討論今天計畫',
+        text: '拿起手機聯絡朋友，討論今天的計畫和路線',
         score: [
           { role: 'fox', point: 2 },
           { role: 'rabbit', point: 1 },
@@ -121,31 +121,31 @@ const questions: Question[] = [
   },
   {
     title: '早餐奇遇',
-    subTitle: '走在街上，香味吸引你到了一家小店，你想怎麼吃早餐？',
+    subTitle: '街道上傳來誘人的香氣，你走進一家早餐店，你想怎麼用餐？',
     options: [
       {
-        text: '速戰速決，趕去第一個景點',
+        text: '快速點餐，邊吃邊期待接下來的行程',
         score: [
           { role: 'bear', point: 2 },
           { role: 'lion', point: 1 },
         ],
       },
       {
-        text: '慢慢慢品味，拍照分享',
+        text: '慢慢品嘗每一口，拍照留念',
         score: [
           { role: 'cat', point: 2 },
           { role: 'owl', point: 1 },
         ],
       },
       {
-        text: '和同伴聊天，互相推薦餐點',
+        text: '和同行的朋友討論推薦菜色，順便聊天',
         score: [
           { role: 'fox', point: 2 },
           { role: 'rabbit', point: 1 },
         ],
       },
       {
-        text: '找個安靜角落，一邊吃一邊觀察路人 ',
+        text: '找個安靜角落，一邊吃一邊觀察店裡的人群',
         score: [
           { role: 'sheep', point: 2 },
           { role: 'turtle', point: 1 },
@@ -155,31 +155,31 @@ const questions: Question[] = [
   },
   {
     title: '突發事件',
-    subTitle: '行程中突然下雨，交通也延誤，你會怎麼應對？',
+    subTitle: '行程中突然下起小雨，街道濕滑，交通也稍微延誤，你會怎麼做？',
     options: [
       {
-        text: '立刻找新的刺激活動',
+        text: '不被打亂，立刻改變計畫，看看新的探索機會',
         score: [
           { role: 'lion', point: 2 },
           { role: 'bear', point: 1 },
         ],
       },
       {
-        text: '找個咖啡館避雨',
+        text: '找家咖啡館，坐下享受雨聲與溫暖飲品',
         score: [
           { role: 'sheep', point: 2 },
           { role: 'turtle', point: 1 },
         ],
       },
       {
-        text: '參觀博物館或文創展覽',
+        text: '靜靜思考下一步，找自己最想做的方式前進',
         score: [
           { role: 'owl', point: 2 },
           { role: 'cat', point: 1 },
         ],
       },
       {
-        text: '與朋友討論下一步',
+        text: '跟朋友一起討論接下來去哪裡比較好',
         score: [
           { role: 'fox', point: 2 },
           { role: 'rabbit', point: 1 },
@@ -189,31 +189,31 @@ const questions: Question[] = [
   },
   {
     title: '下午旅程',
-    subTitle: '吃完午餐休息過後，你會如何活動？',
+    subTitle: '你到了一個景點，周遭充滿各種活動選項，你想如何度過這個下午？',
     options: [
       {
-        text: '戶外冒險、刺激設施',
+        text: '嘗試不一樣的體驗，挑戰自己的舒適圈',
         score: [
           { role: 'bear', point: 2 },
           { role: 'lion', point: 1 },
         ],
       },
       {
-        text: '河岸漫步、慢慢散步拍照',
+        text: '沿著小路慢慢散步，欣賞周遭的景色',
         score: [
           { role: 'turtle', point: 2 },
           { role: 'sheep', point: 1 },
         ],
       },
       {
-        text: '參觀藝術展或歷史館',
+        text: '發掘角落裡的小驚喜，沉浸在細節中',
         score: [
           { role: 'owl', point: 2 },
           { role: 'cat', point: 1 },
         ],
       },
       {
-        text: '跟朋友探索美食景點',
+        text: '參加導覽或互動活動，和其他人一起體驗',
         score: [
           { role: 'rabbit', point: 2 },
           { role: 'fox', point: 1 },
@@ -223,10 +223,10 @@ const questions: Question[] = [
   },
   {
     title: '夜晚旅程',
-    subTitle: '太陽下山，夜幕降臨，你打算如何度過？',
+    subTitle: '太陽下山，城市燈光逐漸亮起，你打算如何度過這個夜晚？',
     options: [
       {
-        text: '去夜間樂園',
+        text: '嘗試夜間的特色體驗，看看不同的夜晚景象',
         score: [
           { role: 'lion', point: 2 },
           { role: 'bear', point: 1 },
@@ -240,14 +240,14 @@ const questions: Question[] = [
         ],
       },
       {
-        text: '看城市夜景拍照',
+        text: '漫步街頭或沿河邊欣賞夜景，拍下美麗瞬間',
         score: [
           { role: 'cat', point: 2 },
           { role: 'owl', point: 1 },
         ],
       },
       {
-        text: '帶朋友去夜市',
+        text: '逛夜市或參加晚間活動，感受熱鬧氛圍',
         score: [
           { role: 'rabbit', point: 2 },
           { role: 'fox', point: 1 },
@@ -257,7 +257,7 @@ const questions: Question[] = [
   },
   {
     title: '旅程回顧',
-    subTitle: '旅行結束，你最想留下什麼？',
+    subTitle: '旅行結束了，你最想做什麼？',
     options: [
       {
         text: '記錄那些讓人心跳加速的瞬間',
@@ -274,7 +274,7 @@ const questions: Question[] = [
         ],
       },
       {
-        text: '整理文化收藏與旅行照片',
+        text: '收集小物或紀念品，作為旅途的專屬印記',
         score: [
           { role: 'owl', point: 2 },
           { role: 'cat', point: 1 },
