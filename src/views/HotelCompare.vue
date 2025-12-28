@@ -17,7 +17,7 @@
             選擇住宿
           </RouterLink>
 
-          <div class="w-full aspect-[4/3] bg-gray-100 rounded-[20px] overflow-hidden border border-gray-100">
+          <div class="w-full aspect-[16/9] bg-gray-100 rounded-[20px] overflow-hidden border border-gray-100">
             <img :src="hotel.image || 'https://via.placeholder.com/400x300?text=No+Image'"
               class="w-full h-full object-cover" alt="Hotel Photo">
           </div>
