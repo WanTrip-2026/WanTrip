@@ -7,9 +7,9 @@
         linear-gradient(#FFFFFF, #FFFFFF);
     "
   >
-    <div class="mx-auto w-full max-w-6xl px-6 pt-[96px] pb-[40px]">
+    <div class="mx-auto w-full max-w-[1200px] pt-[96px] pb-[40px]">
 
-      <section class="mb-10 relative group h-[350px] md:h-[450px] overflow-hidden rounded-[40px] shadow-2xl">
+      <section class="mb-10 relative group h-[350px] md:h-[450px] overflow-hidden rounded-[40px] shadow-2xl px-5">
         <div v-for="(img, index) in hotelImages" :key="index">
           <transition name="fade-slide">
             <div v-if="currentSlide === index" class="absolute inset-0">
