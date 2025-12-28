@@ -94,7 +94,6 @@ const role = computed<RoleKey>(() => {
   return 'turtle'
 })
 
-// 參考角色圖元素
 const roleImgRef = ref<HTMLImageElement>()
 
 // 儲存角色圖
@@ -102,13 +101,18 @@ const saveRoleImage = () => {
   const img = roleImgRef.value
   if (!img) return
 
+  const scale = 2
   const canvas = document.createElement('canvas')
-  canvas.width = img.naturalWidth
-  canvas.height = img.naturalHeight
+  canvas.width = img.naturalWidth * scale
+  canvas.height = img.naturalHeight * scale
   const ctx = canvas.getContext('2d')
   if (!ctx) return
 
-  ctx.drawImage(img, 0, 0)
+  // 提升畫質
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
+
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
 
   canvas.toBlob((blob) => {
     if (!blob) return
