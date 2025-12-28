@@ -18,13 +18,13 @@
           <div class="hidden md:block">
             <ul class="flex flex-row">
               <li>
-                <RouterLink to="/" class="text-black font-medium px-4 py-2 hover:text-primary">住宿</RouterLink>
+                <RouterLink to="/hotel" class="text-black font-medium px-4 py-2 hover:text-primary">住宿</RouterLink>
               </li>
               <li>
-                <RouterLink to="/" class="text-black font-medium px-4 py-2 hover:text-primary">體驗</RouterLink>
+                <RouterLink to="/ticket" class="text-black font-medium px-4 py-2 hover:text-primary">體驗</RouterLink>
               </li>
               <li>
-                <RouterLink to="/" class="text-black font-medium px-4 py-2 hover:text-primary">比較</RouterLink>
+                <RouterLink to="/compare" class="text-black font-medium px-4 py-2 hover:text-primary">比較</RouterLink>
               </li>
             </ul>
           </div>
@@ -35,7 +35,7 @@
             </RouterLink>
           </li>
           <li>
-            <RouterLink to="/"
+            <RouterLink to="/login"
               class="text-white rounded-full bg-primary px-4 py-2 border border-white/15 hover:bg-[#455A71]">登入/註冊
             </RouterLink>
           </li>
@@ -57,21 +57,21 @@
           <path
             d="M16 24C16 10.7 26.7 0 40 0L472 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-8 0 0 416 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L40 512c-13.3 0-24-10.7-24-24s10.7-24 24-24l8 0 0-416-8 0C26.7 48 16 37.3 16 24zm208 88l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zM128 96c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zm96 112l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zM352 96c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM112 208l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm240-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM288 384l43.8 0c9.9 0 17.5-9 14-18.2-13.8-36.1-48.8-61.8-89.7-61.8s-75.9 25.7-89.7 61.8c-3.5 9.2 4.1 18.2 14 18.2l43.8 0 0 80 64 0 0-80z" />
         </svg>
-        <RouterLink to="/" class="font-medium text-xs">住宿</RouterLink>
+        <RouterLink to="/hotel" class="font-medium text-xs">住宿</RouterLink>
       </li>
       <li class=" flex flex-col gap-1 justify-center text-center items-center text-gray-500 px-4 py-2">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="20" viewBox="0 0 22 20" fill="currentColor">
           <path
             d="M13 3C13 4.10457 13.8954 5 15 5C16.1046 5 17 4.10457 17 3H19C20.6569 3 22 4.34315 22 6V14C22 15.6569 20.6569 17 19 17H17C17 15.8954 16.1046 15 15 15C13.8954 15 13 15.8954 13 17H3C1.34315 17 0 15.6569 0 14V6C1.28853e-07 4.34315 1.34315 3 3 3H13ZM4 12C3.44772 12 3 12.4477 3 13C3 13.5523 3.44772 14 4 14H8C8.55228 14 9 13.5523 9 13C9 12.4477 8.55228 12 8 12H4ZM15 7C13.8954 7 13 7.89543 13 9V11C13 12.1046 13.8954 13 15 13C16.1046 13 17 12.1046 17 11V9C17 7.89543 16.1046 7 15 7ZM4 9C3.44772 9 3 9.44772 3 10C3 10.5523 3.44772 11 4 11H8C8.55228 11 9 10.5523 9 10C9 9.44772 8.55228 9 8 9H4ZM4 6C3.44772 6 3 6.44772 3 7C3 7.55228 3.44772 8 4 8H10C10.5523 8 11 7.55228 11 7C11 6.44772 10.5523 6 10 6H4Z" />
         </svg>
-        <RouterLink to="/" class="font-medium text-xs">體驗</RouterLink>
+        <RouterLink to="/ticket" class="font-medium text-xs">體驗</RouterLink>
       </li>
       <li class=" flex flex-col gap-1 justify-center text-center items-center text-gray-500 px-4 py-2">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
           <path
             d="M18 10.5861C19.1046 10.5861 20 11.4815 20 12.5861C19.9999 13.6906 19.1045 14.5861 18 14.5861H8.82812L10 15.7579C10.7809 16.5389 10.781 17.8051 10 18.5861C9.21905 19.367 7.95289 19.3669 7.17188 18.5861L2.6709 14.0861C1.37949 12.7946 2.29471 10.5861 4.12109 10.5861H18ZM10 0.586058C10.7809 -0.194814 12.0471 -0.195566 12.8281 0.585081L17.3291 5.08606C18.6202 6.37749 17.7052 8.58606 15.8789 8.58606H2C0.895557 8.58606 0.000204757 7.69045 0 6.58606C0 5.48149 0.895431 4.58606 2 4.58606H11.1719L10 3.41418C9.21909 2.63327 9.21925 1.36708 10 0.586058Z" />
         </svg>
-        <RouterLink to="/" class="font-medium text-xs">比較</RouterLink>
+        <RouterLink to="/compare" class="font-medium text-xs">比較</RouterLink>
       </li>
       <li @click="isOpen = true"
         class=" flex flex-col gap-1 justify-center text-center items-center text-gray-500 px-4 py-2">
