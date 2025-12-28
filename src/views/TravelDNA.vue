@@ -62,99 +62,268 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
+type RoleKey = 'bear' | 'lion' | 'sheep' | 'turtle' | 'owl' | 'cat' | 'fox' | 'rabbit'
+
+interface Question {
+  title: string
+  subTitle: string
+  options: Option[]
+}
+interface Option {
+  text: string
+  score: { role: RoleKey; point: number }[]
+}
+
 const router = useRouter()
 const goToResult = () => {
-  router.push('/travelDNAresult')
+  router.push({
+    path: '/travelDNAresult',
+    query: { role: finalRole.value },
+  })
 }
 
 // 題目資料定義
 const totalSteps = 6
-const currentStep = ref(1)
-const showResultButton = ref(false)
-const animateProgress = ref(false)
-interface Question {
-  title: string
-  subTitle: string
-  options: { text: string; type: string }[]
-}
-interface Option {
-  text: string
-  type: string
-}
-
 const questions: Question[] = [
   {
     title: '晨光甦醒',
     subTitle: '你在陌生城市醒來，窗外的陽光灑進房間，你會如何開始一天？',
     options: [
-      { text: '穿上登山鞋、背上背包', type: 'explorer' },
-      { text: '慢慢梳洗，泡杯咖啡', type: 'relax' },
-      { text: '查好博物館、展覽行程', type: 'culture' },
-      { text: '約朋友討論今天計畫', type: 'social' },
+      {
+        text: '穿上登山鞋、背上背包',
+        score: [
+          { role: 'bear', point: 2 },
+          { role: 'lion', point: 1 },
+        ],
+      },
+      {
+        text: '慢慢梳洗，泡杯咖啡',
+        score: [
+          { role: 'sheep', point: 2 },
+          { role: 'turtle', point: 1 },
+        ],
+      },
+      {
+        text: '查好博物館、展覽行程',
+        score: [
+          { role: 'owl', point: 2 },
+          { role: 'cat', point: 1 },
+        ],
+      },
+      {
+        text: '約朋友討論今天計畫',
+        score: [
+          { role: 'fox', point: 2 },
+          { role: 'rabbit', point: 1 },
+        ],
+      },
     ],
   },
   {
     title: '早餐奇遇',
     subTitle: '走在街上，香味吸引你到了一家小店，你想怎麼吃早餐？',
     options: [
-      { text: '穿速戰速決，趕去第一個景點', type: 'explorer' },
-      { text: '慢慢慢品味，拍照分享給朋友', type: 'relax' },
-      { text: '和同伴聊天，互相推薦餐點', type: 'culture' },
-      { text: '找個安靜角落，一邊吃一邊觀察路人 ', type: 'social' },
+      {
+        text: '速戰速決，趕去第一個景點',
+        score: [
+          { role: 'bear', point: 2 },
+          { role: 'lion', point: 1 },
+        ],
+      },
+      {
+        text: '慢慢慢品味，拍照分享',
+        score: [
+          { role: 'cat', point: 2 },
+          { role: 'owl', point: 1 },
+        ],
+      },
+      {
+        text: '和同伴聊天，互相推薦餐點',
+        score: [
+          { role: 'fox', point: 2 },
+          { role: 'rabbit', point: 1 },
+        ],
+      },
+      {
+        text: '找個安靜角落，一邊吃一邊觀察路人 ',
+        score: [
+          { role: 'sheep', point: 2 },
+          { role: 'turtle', point: 1 },
+        ],
+      },
     ],
   },
   {
-    title: '旅途中意外事件',
+    title: '突發事件',
     subTitle: '行程中突然下雨，交通也延誤，你會怎麼應對？',
     options: [
-      { text: '立刻找新的刺激活動', type: 'explorer' },
-      { text: '找個咖啡館避雨', type: 'relax' },
-      { text: '和朋友討論下一步', type: 'culture' },
-      { text: '找一個人思考，決定最適合自己的方案', type: 'social' },
+      {
+        text: '立刻找新的刺激活動',
+        score: [
+          { role: 'lion', point: 2 },
+          { role: 'bear', point: 1 },
+        ],
+      },
+      {
+        text: '找個咖啡館避雨',
+        score: [
+          { role: 'sheep', point: 2 },
+          { role: 'turtle', point: 1 },
+        ],
+      },
+      {
+        text: '參觀博物館或文創展覽',
+        score: [
+          { role: 'owl', point: 2 },
+          { role: 'cat', point: 1 },
+        ],
+      },
+      {
+        text: '與朋友討論下一步',
+        score: [
+          { role: 'fox', point: 2 },
+          { role: 'rabbit', point: 1 },
+        ],
+      },
     ],
   },
   {
-    title: '下午探險',
-    subTitle: '你到了景點，選擇你的活動方式',
+    title: '下午旅程',
+    subTitle: '吃完午餐休息過後，你會如何活動？',
     options: [
-      { text: '戶外冒險、刺激設施', type: 'explorer' },
-      { text: '慢慢散步拍照', type: 'relax' },
-      { text: '參加團體導覽或互動活動', type: 'culture' },
-      { text: '自己探索隱藏景點', type: 'social' },
+      {
+        text: '戶外冒險、刺激設施',
+        score: [
+          { role: 'bear', point: 2 },
+          { role: 'lion', point: 1 },
+        ],
+      },
+      {
+        text: '河岸漫步、慢慢散步拍照',
+        score: [
+          { role: 'turtle', point: 2 },
+          { role: 'sheep', point: 1 },
+        ],
+      },
+      {
+        text: '參觀藝術展或歷史館',
+        score: [
+          { role: 'owl', point: 2 },
+          { role: 'cat', point: 1 },
+        ],
+      },
+      {
+        text: '跟朋友探索美食景點',
+        score: [
+          { role: 'rabbit', point: 2 },
+          { role: 'fox', point: 1 },
+        ],
+      },
     ],
   },
   {
     title: '夜晚旅程',
     subTitle: '太陽下山，夜幕降臨，你打算如何度過？',
     options: [
-      { text: '夜市 / 夜間樂園', type: 'explorer' },
-      { text: '酒店房間放空、聽音樂', type: 'relax' },
-      { text: '夜景拍照、散步', type: 'culture' },
-      { text: '夜間刺激活動', type: 'social' },
+      {
+        text: '去夜間樂園',
+        score: [
+          { role: 'lion', point: 2 },
+          { role: 'bear', point: 1 },
+        ],
+      },
+      {
+        text: '在飯店房間放空、聽音樂',
+        score: [
+          { role: 'sheep', point: 2 },
+          { role: 'turtle', point: 1 },
+        ],
+      },
+      {
+        text: '看城市夜景拍照',
+        score: [
+          { role: 'cat', point: 2 },
+          { role: 'owl', point: 1 },
+        ],
+      },
+      {
+        text: '帶朋友去夜市',
+        score: [
+          { role: 'rabbit', point: 2 },
+          { role: 'fox', point: 1 },
+        ],
+      },
     ],
   },
   {
     title: '旅程回顧',
     subTitle: '旅行結束，你最想留下什麼？',
     options: [
-      { text: '拍大量照片 / 日記', type: 'A' },
-      { text: '拍刺激影片', type: 'B' },
-      { text: '和朋友合影、社群分享', type: 'C' },
-      { text: '個人收藏小物、手札', type: 'D' },
+      {
+        text: '記錄那些讓人心跳加速的瞬間',
+        score: [
+          { role: 'lion', point: 2 },
+          { role: 'bear', point: 1 },
+        ],
+      },
+      {
+        text: '把旅途的節奏與心情慢慢寫下來',
+        score: [
+          { role: 'sheep', point: 2 },
+          { role: 'turtle', point: 1 },
+        ],
+      },
+      {
+        text: '整理文化收藏與旅行照片',
+        score: [
+          { role: 'owl', point: 2 },
+          { role: 'cat', point: 1 },
+        ],
+      },
+      {
+        text: '和朋友分享美食與旅途趣事',
+        score: [
+          { role: 'fox', point: 2 },
+          { role: 'rabbit', point: 1 },
+        ],
+      },
     ],
   },
 ]
 
+const currentStep = ref(1)
+const showResultButton = ref(false)
+const animateProgress = ref(false)
+// 處理選擇答案
+const selectedOptionIndex = ref<number | null>(null)
+const scores = ref<Record<RoleKey, number>>({
+  bear: 0,
+  lion: 0,
+  sheep: 0,
+  turtle: 0,
+  owl: 0,
+  cat: 0,
+  fox: 0,
+  rabbit: 0,
+})
+
 // 當前題目邏輯
 const currentQuestion = computed(() => questions[currentStep.value - 1] as Question)
 
-// 處理選擇答案
-const selectedOptionIndex = ref<number | null>(null)
+const finalRole = computed<RoleKey>(
+  () =>
+    (Object.entries(scores.value) as [RoleKey, number][]).sort((a, b) => b[1] - a[1])[0]?.[0] ??
+    'bear',
+)
 
 const handleAnswer = (option: Option, index: number) => {
   console.log('User selected:', option.text)
   if (currentStep.value === totalSteps && selectedOptionIndex.value !== null) return
   selectedOptionIndex.value = index // 記錄被選的按鈕索引
+
+  option.score.forEach(({ role, point }) => {
+    scores.value[role] += point
+  })
 
   if (currentStep.value < totalSteps) {
     animateProgress.value = true
