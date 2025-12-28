@@ -56,7 +56,7 @@
           </div>
 
           <RouterLink to=""
-            class="w-full bg-primary hover:bg-opacity-90 transition-all py-3 rounded-[20px] text-white font-bold shadow-md">
+            class="w-full bg-primary hover:bg-opacity-90 transition-all py-3 rounded-[20px] text-white text-center font-bold shadow-md">
             立即預訂
           </RouterLink>
         </div>
