@@ -1,38 +1,38 @@
 <template>
-  <main class="min-h-screen bg-white text-[#2F3D4D] pb-[40px] mt-24">
-    <div class="pt-[20px] mx-auto w-full max-w-6xl px-4 md:px-6">
+  <main class="min-h-screen bg-white text-primary pb-[40px] mt-24">
+    <div class="pt-[20px] mx-auto w-full max-w-[1200px] px-4 md:px-6">
 
-      <section class="bg-white rounded-[40px] shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-[#2F3D4D]/5 p-6 md:p-10 lg:p-14 mb-[40px]">
+      <section class="bg-white rounded-[40px] shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/5 p-6 md:p-10 lg:p-14 mb-[40px]">
         <div class="flex flex-col md:flex-row justify-between items-start gap-8">
           <div class="flex flex-col sm:flex-row gap-6 items-center sm:items-start text-center sm:text-left">
             <div class="w-24 h-24 md:w-32 md:h-32 rounded-[20px] bg-gray-100 checker shrink-0"></div>
             <div>
               <h1 class="text-2xl md:text-3xl font-bold mb-2">Title</h1>
-              <p class="text-[#2F3D4D]/60 text-sm">000 台北市中山區南京西路???號</p>
-              <p class="text-[#2F3D4D]/60 text-sm">(02)XXXX-XXXX</p>
+              <p class="text-primary/60 text-sm">000 台北市中山區南京西路???號</p>
+              <p class="text-primary/60 text-sm">(02)XXXX-XXXX</p>
               <div class="mt-4">
                 <span class="text-xs md:text-sm font-bold">總價</span>
-                <span class="text-xl md:text-2xl font-black ml-2 text-[#2F3D4D]">TW$ 6,000</span>
+                <span class="text-xl md:text-2xl font-black ml-2 text-primary">TW$ 6,000</span>
               </div>
             </div>
           </div>
-          <div class="w-full md:w-auto text-left md:text-right text-xs md:text-sm text-[#2F3D4D]/60 space-y-1 border-t md:border-t-0 pt-4 md:pt-0">
-            <p>訂單編號 <span class="text-[#2F3D4D] font-mono">2025123100001</span></p>
-            <p>訂單日期 <span class="text-[#2F3D4D] font-mono">2025年12月28日</span></p>
+          <div class="w-full md:w-auto text-left md:text-right text-xs md:text-sm text-primary/60 space-y-1 border-t md:border-t-0 pt-4 md:pt-0">
+            <p>訂單編號 <span class="text-primary font-mono">2025123100001</span></p>
+            <p>訂單日期 <span class="text-primary font-mono">2025年12月28日</span></p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[20px] md:gap-[40px] mt-[40px]">
-          <div class="rounded-[20px] border border-[#2F3D4D]/10 p-5 md:p-6">
-            <p class="text-xs font-bold text-[#6D8FA3] mb-2">入住</p>
+          <div class="rounded-[20px] border border-primary/10 p-5 md:p-6">
+            <p class="text-xs font-bold text-secondary mb-2">入住</p>
             <p class="text-lg md:text-xl font-bold">2025年12月28日</p>
           </div>
-          <div class="rounded-[20px] border border-[#2F3D4D]/10 p-5 md:p-6">
-            <p class="text-xs font-bold text-[#6D8FA3] mb-2">退房</p>
+          <div class="rounded-[20px] border border-primary/10 p-5 md:p-6">
+            <p class="text-xs font-bold text-secondary mb-2">退房</p>
             <p class="text-lg md:text-xl font-bold">2025年12月29日</p>
           </div>
-          <div class="rounded-[20px] bg-[#2F3D4D]/5 p-5 md:p-6 sm:col-span-2 md:col-span-1">
-            <p class="text-xs font-bold text-[#6D8FA3] mb-2">總共</p>
+          <div class="rounded-[20px] bg-primary/5 p-5 md:p-6 sm:col-span-2 md:col-span-1">
+            <p class="text-xs font-bold text-secondary mb-2">總共</p>
             <p class="text-lg md:text-xl font-bold">1 房 1 晚</p>
           </div>
         </div>
@@ -45,60 +45,60 @@
             <h2 class="text-lg md:text-xl font-black mb-[20px] md:mb-[30px]">訂購人資訊</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4 text-sm">
               <div class="space-y-1">
-                <p class="text-[#2F3D4D]/40 font-bold text-xs uppercase">姓名</p>
+                <p class="text-primary/40 font-bold text-xs uppercase">姓名</p>
                 <p class="font-bold text-base">NAME</p>
               </div>
               <div class="space-y-1">
-                <p class="text-[#2F3D4D]/40 font-bold text-xs uppercase">電子郵件</p>
+                <p class="text-primary/40 font-bold text-xs uppercase">電子郵件</p>
                 <p class="font-bold text-base break-all">@email.com</p>
               </div>
               <div class="space-y-1">
-                <p class="text-[#2F3D4D]/40 font-bold text-xs uppercase">房型</p>
+                <p class="text-primary/40 font-bold text-xs uppercase">房型</p>
                 <p class="font-bold text-base">雅緻大床房</p>
               </div>
               <div class="space-y-1">
-                <p class="text-[#2F3D4D]/40 font-bold text-xs uppercase">入住人數/房</p>
+                <p class="text-primary/40 font-bold text-xs uppercase">入住人數/房</p>
                 <p class="font-bold text-base">2人/房，每房最多入住2人</p>
               </div>
               <div class="sm:col-span-2 space-y-1">
-                <p class="text-[#2F3D4D]/40 font-bold text-xs uppercase">餐點</p>
+                <p class="text-primary/40 font-bold text-xs uppercase">餐點</p>
                 <p class="font-bold text-base">早餐，早餐時段6:00~9:30</p>
               </div>
             </div>
           </section>
 
           <section>
-            <div class="w-full aspect-video rounded-[40px] bg-gray-50 flex items-center justify-center border border-[#2F3D4D]/5 overflow-hidden">
-              <span class="text-[#2F3D4D]/20 font-bold text-sm md:text-xl uppercase tracking-widest">google map</span>
+            <div class="w-full aspect-video rounded-[40px] bg-page flex items-center justify-center border border-primary/5 overflow-hidden">
+              <span class="text-accent font-bold text-sm md:text-xl uppercase tracking-widest">google map</span>
             </div>
           </section>
         </div>
 
         <div class="space-y-[20px] md:space-y-[40px]">
-          <section class="rounded-[20px] border border-[#2F3D4D]/10 p-[20px]">
-            <h3 class="font-bold mb-4 text-[#2F3D4D]">房間設施</h3>
-            <p class="text-sm leading-relaxed text-[#2F3D4D]/60">
+          <section class="rounded-[20px] border border-primary/10 p-[20px]">
+            <h3 class="font-bold mb-4 text-primary">房間設施</h3>
+            <p class="text-sm leading-relaxed text-primary/60">
               牙刷、牙膏、洗手乳、沐浴乳、洗髮乳、冷氣、暖氣、浴缸、乾濕分離浴室、香皂、浴帽、梳子、毛巾、浴巾、拋棄式拖鞋、吹風機、冰箱、水、茶包、濾掛式咖啡、杯子、無線網路、有線網路插槽、110V插座、USB插座、聯網電視
             </p>
           </section>
 
-          <section class="rounded-[20px] bg-[#2F3D4D]/5 p-[20px]">
-            <h3 class="font-bold mb-4 text-[#2F3D4D]">住宿付費提供</h3>
-            <p class="text-sm text-[#2F3D4D]/60">
+          <section class="rounded-[20px] bg-primary/5 p-[20px]">
+            <h3 class="font-bold mb-4 text-primary">住宿付費提供</h3>
+            <p class="text-sm text-primary/60">
               洗衣機、冰箱內飲料(瓶裝水免費)
             </p>
           </section>
 
-          <section class="rounded-[20px] border border-[#2F3D4D]/10 p-[20px]">
-            <h3 class="font-bold mb-4 text-[#2F3D4D]">大眾運輸參考資訊</h3>
+          <section class="rounded-[20px] border border-primary/10 p-[20px]">
+            <h3 class="font-bold mb-4 text-primary">大眾運輸參考資訊</h3>
             <div class="space-y-4">
               <div class="flex items-start gap-3">
-                <span class="text-lg">🚄</span>
-                <p class="text-sm text-[#2F3D4D]/60 pt-1">至台北站轉乘台北捷運</p>
+                <span class="text-secondary">🚄</span>
+                <p class="text-sm text-primary/60 pt-1">至台北站轉乘台北捷運</p>
               </div>
               <div class="flex items-start gap-3">
-                <span class="text-lg">🚇</span>
-                <p class="text-sm text-[#2F3D4D]/60 pt-1">松山車站轉乘台北捷運</p>
+                <span class="text-secondary">🚇</span>
+                <p class="text-sm text-primary/60 pt-1">松山車站轉乘台北捷運</p>
               </div>
             </div>
           </section>
@@ -106,7 +106,7 @@
       </div>
 
       <div class="mt-[60px] flex flex-col sm:flex-row justify-center gap-4">
-        <button class="w-full sm:w-auto bg-[#2F3D4D] text-white px-12 py-3 rounded-full font-bold hover:bg-[#2F3D4D]/90 transition-all active:scale-95 shadow-lg">
+        <button class="w-full sm:w-auto bg-primary text-white px-12 py-3 rounded-full font-bold hover:bg-primary_hover transition-all active:scale-95 shadow-lg">
           回到訂單列表
         </button>
       </div>
@@ -115,6 +115,7 @@
 </template>
 
 <style scoped>
+/* 這裡的 checker 顏色也統一使用 primary 的透明度 */
 .checker {
   background-image:
     linear-gradient(45deg, rgba(47, 61, 77, 0.05) 25%, transparent 25%),
