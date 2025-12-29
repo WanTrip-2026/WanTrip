@@ -11,6 +11,7 @@ import TravelDNAIntro from '@/views/TravelDNAIntro.vue'
 import TravelDNAResult from '@/views/TravelDNAResult.vue'
 import OrderCompleted from '@/views/OrderCompleted.vue'
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
