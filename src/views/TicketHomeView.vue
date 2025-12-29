@@ -82,24 +82,29 @@ function mockItems(count: number): Experience[] {
 
         <template v-if="isLoading">
           <section v-for="n in 2" :key="n" class="mb-10">
-            <div class="h-6 w-32 bg-gray-200 rounded mb-[60px] animate-pulse"></div>
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="h-6 w-32 bg-gray-200 rounded mb-[40px] animate-pulse"></div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
               <div
                 v-for="i in 4"
                 :key="i"
                 class="bg-gray-200 rounded-[40px] aspect-[4/3] animate-pulse"
               />
             </div>
+
+            <div class="mt-5 flex justify-center">
+              <div class="h-[44px] w-[120px] bg-gray-200 rounded-full animate-pulse" />
+            </div>
           </section>
         </template>
 
         <template v-else>
           <section v-for="section in sections" :key="section.title" class="mb-10">
-            <h2 class="text-lg font-extrabold mb-[60px]">
+            <h2 class="text-[24px] font-extrabold mb-[40px]">
               {{ section.title }}
             </h2>
 
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
               <article
                 v-for="item in section.items"
                 :key="item.id"
@@ -143,7 +148,7 @@ function mockItems(count: number): Experience[] {
                     <img :src="item.image" class="w-full h-full object-cover" />
                   </div>
 
-                  <div class="p-4">
+                  <div class="p-5">
                     <h3 class="text-[18px] font-bold text-black">
                       {{ item.title }}
                     </h3>
@@ -161,7 +166,7 @@ function mockItems(count: number): Experience[] {
               </article>
             </div>
 
-            <div class="mt-10 flex justify-center">
+            <div class="mt-5 flex justify-center">
               <button
                 type="button"
                 class="h-[44px] bg-primary text-white font-bold px-[30px]
@@ -176,3 +181,4 @@ function mockItems(count: number): Experience[] {
     </div>
   </main>
 </template>
+
