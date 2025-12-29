@@ -27,7 +27,7 @@
                 <RouterLink to="/compare" class="text-black font-medium px-4 py-2 hover:text-primary">比較</RouterLink>
               </li>
               <li>
-                <RouterLink to="/traveldna" class="text-black font-medium px-4 py-2 hover:text-primary">旅行DNA
+                <RouterLink to="/travelDNAintro" class="text-black font-medium px-4 py-2 hover:text-primary">旅行DNA
                 </RouterLink>
               </li>
             </ul>
@@ -49,7 +49,7 @@
   </header>
   <nav class="block md:hidden fixed w-full z-50 bottom-5 h-16 mx-auto pointer-events-none">
     <ul
-      class="flex flex-row justify-between items-center mx-5 p-1 rounded-[40px] bg-white/80 backdrop-blur-md border border-white/45 shadow-lg pointer-events-auto">
+      class="flex flex-row justify-between items-center mx-5 p-1 rounded-[40px] bg-white/80 backdrop-blur-md border border-white/45 pointer-events-auto">
 
       <template v-for="item in navItems" :key="item.name">
 
@@ -97,7 +97,8 @@
           <RouterLink to="/tos" class="text-black font-medium border-b border-primary/25 pb-2">服務條款</RouterLink>
           <RouterLink to="/privacy" class="text-black font-medium border-b border-primary/25 pb-2">隱私權聲明</RouterLink>
           <RouterLink to="/profile" class="text-black font-medium border-b border-primary/25 pb-2">會員中心</RouterLink>
-          <RouterLink to="/traveldna" class="text-black font-medium border-b border-primary/25 pb-2">旅行DNA</RouterLink>
+          <RouterLink to="/travelDNAintro" class="text-black font-medium border-b border-primary/25 pb-2">旅行DNA
+          </RouterLink>
         </nav>
       </div>
     </Transition>
