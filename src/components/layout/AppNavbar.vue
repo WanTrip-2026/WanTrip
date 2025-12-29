@@ -86,7 +86,7 @@
       enter-to-class="translate-x-0" leave-active-class="transition-transform ease-in-out duration-300"
       leave-from-class="translate-x-0" leave-to-class="translate-x-full">
       <div v-if="isOpen"
-        class="fixed inset-y-0 right-0 w-64 bg-white/45 backdrop-blur-md border border-white/50 m-5 rounded-[40px] p-6 flex flex-col gap-6">
+        class="fixed inset-y-0 right-0 w-[280px] bg-white/45 backdrop-blur-md border border-white/50 m-5 rounded-[40px] p-8 flex flex-col gap-6">
         <div class="flex justify-between items-center">
           <h2 class="text-xl font-bold text-primary">更多</h2>
           <button @click="isOpen = false" class="text-gray-500 text-2xl">&times;</button>
