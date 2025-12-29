@@ -13,6 +13,12 @@ const menus = [
 const setActive = (href) => {
   activeMenu.value = href
 }
+
+const isEditing = ref(false)
+
+const toggleEdit = () => {
+  isEditing.value = !isEditing.value
+}
 </script>
 <template>
   <main class="mx-auto w-full bg-page pt-24 min-h-screen">
@@ -40,7 +46,7 @@ const setActive = (href) => {
             id="account-section"
           >
             <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">我的帳號</h3>
-            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2">
+            <form class="max-w-md space-y-4 justify-between pt-5 px-5 flex flex-col gap-2">
               <!-- Email -->
               <div>
                 <label for="email" class="block mb-1 font-medium">帳號</label>
@@ -105,8 +111,89 @@ const setActive = (href) => {
           <div class="bg-white rounded-[20px] border border-gray-300 p-4" id="favorite-section">
             <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">收藏清單</h3>
           </div>
-          <div class="bg-white rounded-[20px] border border-gray-300 p-4" id="admin-section">
+          <div class="bg-white w-full rounded-[20px] border border-gray-300 p-4" id="admin-section">
+            <button
+              type="button"
+              class="mb-5 float-right text-gray-500 font-medium"
+              @click="toggleEdit"
+            >
+              {{ isEditing ? '取消' : '編輯' }}
+            </button>
             <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">個資管理</h3>
+
+            <form class="max-w-md space-y-4 justify-between pt-5 px-5 flex flex-col gap-2">
+              <!-- 使用者名稱 -->
+
+              <div>
+                <label for="fullName" class="block mb-1 font-medium">使用者名稱</label>
+                <input
+                  id="fullName"
+                  name="fullName"
+                  :disabled="!isEditing"
+                  type="text"
+                  required
+                  placeholder="請輸入姓名"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3"
+                />
+              </div>
+
+              <!-- 生日 -->
+              <div>
+                <label for="birthday" class="block mb-1 font-medium">生日</label>
+                <input
+                  id="birthday"
+                  name="birthday"
+                  :disabled="!isEditing"
+                  type="date"
+                  required
+                  class="w-full rounded-full border border-gray-300 px-5 py-3"
+                />
+              </div>
+
+              <!-- 性別 -->
+              <div>
+                <span class="block mb-1 font-medium">性別</span>
+                <div class="flex items-center gap-4">
+                  <label class="flex items-center gap-1">
+                    <input
+                      type="radio"
+                      :disabled="!isEditing"
+                      name="gender"
+                      value="male"
+                      class="accent-primary"
+                      required
+                    />
+                    男
+                  </label>
+                  <label class="flex items-center gap-1">
+                    <input type="radio" name="gender" value="female" class="accent-primary" />
+                    女
+                  </label>
+                </div>
+              </div>
+
+              <!-- 電話 -->
+              <div>
+                <label for="phone" class="block mb-1 font-medium">電話</label>
+                <input
+                  id="phone"
+                  name="phone"
+                  :disabled="!isEditing"
+                  type="tel"
+                  required
+                  placeholder="請輸入電話號碼"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3"
+                />
+              </div>
+
+              <button
+                type="submit"
+                v-if="isEditing"
+                class="self-end rounded-full bg-primary hover:bg-secondary px-4 py-2 text-white"
+              >
+                修改資料
+              </button>
+            </form>
           </div>
         </div>
       </div>
