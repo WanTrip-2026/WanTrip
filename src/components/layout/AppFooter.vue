@@ -1,9 +1,9 @@
 <template>
   <footer class="bg-primary hidden md:block">
-    <div class="max-w-[1240px] mx-auto px-5 pt-10 text-white flex flex-col gap-5 items-center">
-      <div class="w-full flex flex-row justify-between">
+    <div class="max-w-[1200px] mx-auto pt-10 text-white flex flex-col gap-5 items-center">
+      <div class="w-full mx-5 flex flex-row justify-between">
         <div class="grid grid-cols-7 gap-10">
-          <div class="w-[82px]" v-for="footerMenu in footerLinks" :key="footerMenu.title">
+          <div class="w-20" v-for="footerMenu in footerLinks" :key="footerMenu.title">
             <h4 class="font-bold text-lg text-nowrap mb-2">{{ footerMenu.title }}</h4>
             <ul class="opacity-80">
               <li v-for="link in footerMenu.links" :key="link.to">
