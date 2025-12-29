@@ -22,7 +22,7 @@ const toggleEdit = () => {
 </script>
 <template>
   <main class="mx-auto w-full bg-page pt-24 min-h-screen">
-    <section class="max-w-[1200px] mx-auto">
+    <section class="max-w-[1240px] mx-auto">
       <div class="h-full px-5 py-2.5 mx-auto flex flex-row gap-5">
         <aside
           class="h-full w-[285px] px-4 py-8 border bg-white border-gray-300 rounded-[20px] flex flex-col items-center gap-2"
@@ -39,7 +39,7 @@ const toggleEdit = () => {
             >{{ menu.label }}
           </a>
         </aside>
-        <div class="w-[895px] flex flex-col gap-10">
+        <div class="w-[895px] flex flex-col gap-10 pb-10">
           <!-- 帳號管理區 -->
           <div
             class="bg-white w-full rounded-[20px] border border-gray-300 p-4"
@@ -107,14 +107,143 @@ const toggleEdit = () => {
           </div>
           <div class="bg-white rounded-[20px] border border-gray-300 p-4" id="order-section">
             <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">我的訂單</h3>
+            <div class="flex flex-col gap-2.5 p-5">
+              <div
+                class="flex justify-between rounded-[20px] border border-gray-300 overflow-hidden"
+              >
+                <div class="flex h-[120px]">
+                  <img
+                    class="aspect-[4/3] object-cover"
+                    src="../assets/hoteldetail_img/Wanhao.jpg"
+                    alt="產品照片"
+                  />
+                  <div class="flex flex-col justify-center gap-1 px-2">
+                    <h3 class="text-xl font-bold">飯店名稱：高雄洲際飯店</h3>
+                    <p class="text-sm">訂單編號：202512240001</p>
+                    <p class="text-sm">訂單日期：2025年12月24日</p>
+                  </div>
+                </div>
+                <div class="flex flex-col justify-center gap-2 px-2">
+                  <button>訂單詳情</button>
+                  <button>取消訂單</button>
+                  <button>再次訂購</button>
+                </div>
+              </div>
+              <!-- 複製 -->
+              <div
+                class="flex justify-between rounded-[20px] border border-gray-300 overflow-hidden"
+              >
+                <div class="flex h-[120px]">
+                  <img
+                    class="aspect-[4/3] object-cover"
+                    src="../assets/hoteldetail_img/Wanhao.jpg"
+                    alt="產品照片"
+                  />
+                  <div class="flex flex-col justify-center gap-1 px-2">
+                    <h3 class="text-xl font-bold">飯店名稱：高雄洲際飯店</h3>
+                    <p class="text-sm">訂單編號：202512240001</p>
+                    <p class="text-sm">訂單日期：2025年12月24日</p>
+                  </div>
+                </div>
+                <div class="flex flex-col justify-center gap-2 px-2">
+                  <button>訂單詳情</button>
+                  <button>取消訂單</button>
+                  <button>再次訂購</button>
+                </div>
+              </div>
+              <div
+                class="flex justify-between rounded-[20px] border border-gray-300 overflow-hidden"
+              >
+                <div class="flex h-[120px]">
+                  <img
+                    class="aspect-[4/3] object-cover"
+                    src="../assets/hoteldetail_img/Wanhao.jpg"
+                    alt="產品照片"
+                  />
+                  <div class="flex flex-col justify-center gap-1 px-2">
+                    <h3 class="text-xl font-bold">飯店名稱：高雄洲際飯店</h3>
+                    <p class="text-sm">訂單編號：202512240001</p>
+                    <p class="text-sm">訂單日期：2025年12月24日</p>
+                  </div>
+                </div>
+                <div class="flex flex-col justify-center gap-2 px-2">
+                  <button>訂單詳情</button>
+                  <button>取消訂單</button>
+                  <button>再次訂購</button>
+                </div>
+              </div>
+            </div>
           </div>
+          <!-- 收藏清單 -->
           <div class="bg-white rounded-[20px] border border-gray-300 p-4" id="favorite-section">
             <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">收藏清單</h3>
+            <div class="flex gap-2.5 p-5 overflow-x-auto flex-nowrap">
+              <div class="w-[240px] shrink-0 rounded-[20px] border border-gray-300 overflow-hidden">
+                <img
+                  class="aspect-[4/3] object-cover"
+                  src="../assets/hoteldetail_img/Wanhao.jpg"
+                  alt="產品照片"
+                />
+                <div class="flex flex-col p-2.5">
+                  <h3 class="text-xl font-bold text-nowrap py-2">飯店名稱：高雄洲際飯店</h3>
+                  <p class="text-sm">高雄市前鎮區</p>
+                  <div class="flex gap-2 h-10 justify-center items-center my-4">
+                    <button class="rounded-[20px] bg-primary text-white px-6 py-2">取消收藏</button>
+                    <button class="rounded-[20px] bg-primary text-white px-6 py-2">訂購</button>
+                  </div>
+                </div>
+              </div>
+              <div class="w-[240px] shrink-0 rounded-[20px] border border-gray-300 overflow-hidden">
+                <img
+                  class="aspect-[4/3] object-cover"
+                  src="../assets/hoteldetail_img/Wanhao.jpg"
+                  alt="產品照片"
+                />
+                <div class="flex flex-col p-2.5">
+                  <h3 class="text-xl font-bold text-nowrap py-2">飯店名稱：高雄洲際飯店</h3>
+                  <p class="text-sm">高雄市前鎮區</p>
+                  <div class="flex gap-2 h-10 justify-center items-center my-4">
+                    <button class="rounded-[20px] bg-primary text-white px-6 py-2">取消收藏</button>
+                    <button class="rounded-[20px] bg-primary text-white px-6 py-2">訂購</button>
+                  </div>
+                </div>
+              </div>
+              <div class="w-[240px] shrink-0 rounded-[20px] border border-gray-300 overflow-hidden">
+                <img
+                  class="aspect-[4/3] object-cover"
+                  src="../assets/hoteldetail_img/Wanhao.jpg"
+                  alt="產品照片"
+                />
+                <div class="flex flex-col p-2.5">
+                  <h3 class="text-xl font-bold text-nowrap py-2">飯店名稱：高雄洲際飯店</h3>
+                  <p class="text-sm">高雄市前鎮區</p>
+                  <div class="flex gap-2 h-10 justify-center items-center my-4">
+                    <button class="rounded-[20px] bg-primary text-white px-6 py-2">取消收藏</button>
+                    <button class="rounded-[20px] bg-primary text-white px-6 py-2">訂購</button>
+                  </div>
+                </div>
+              </div>
+              <div class="w-[240px] shrink-0 rounded-[20px] border border-gray-300 overflow-hidden">
+                <img
+                  class="aspect-[4/3] object-cover"
+                  src="../assets/hoteldetail_img/Wanhao.jpg"
+                  alt="產品照片"
+                />
+                <div class="flex flex-col p-2.5">
+                  <h3 class="text-xl font-bold text-nowrap py-2">飯店名稱：高雄洲際飯店</h3>
+                  <p class="text-sm">高雄市前鎮區</p>
+                  <div class="flex gap-2 h-10 justify-center items-center my-4">
+                    <button class="rounded-[20px] bg-primary text-white px-6 py-2">取消收藏</button>
+                    <button class="rounded-[20px] bg-primary text-white px-6 py-2">訂購</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="bg-white w-full rounded-[20px] border border-gray-300 p-4" id="admin-section">
             <button
               type="button"
-              class="mb-5 float-right text-gray-500 font-medium"
+              class="pt-5 float-right text-gray-500 font-medium"
               @click="toggleEdit"
             >
               {{ isEditing ? '取消' : '編輯' }}
@@ -136,10 +265,11 @@ const toggleEdit = () => {
                   class="w-full rounded-full border border-gray-300 px-5 py-3"
                 />
               </div>
-
               <!-- 生日 -->
               <div>
-                <label for="birthday" class="block mb-1 font-medium">生日</label>
+                <label for="birthday" class="block mb-1 font-medium">
+                  生日（YYYY / MM / DD）
+                </label>
                 <input
                   id="birthday"
                   name="birthday"
