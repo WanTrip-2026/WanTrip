@@ -1,6 +1,6 @@
 <template>
   <header class="max-w-[1240px] mx-auto fixed top-5 inset-x-0 z-50">
-    <nav class="h-14 rounded-full bg-white/45 backdrop-blur-md mx-5 p-2.5 border border-white/50">
+    <nav class="h-14 rounded-[40px] bg-white/45 backdrop-blur-md mx-5 p-2.5 border border-white/50">
       <div class="flex flex-row justify-between h-full">
         <div class="flex flex-row items-center gap-[16px]">
           <h1 class="text-black">
@@ -26,6 +26,10 @@
               <li>
                 <RouterLink to="/compare" class="text-black font-medium px-4 py-2 hover:text-primary">比較</RouterLink>
               </li>
+              <li>
+                <RouterLink to="/traveldna" class="text-black font-medium px-4 py-2 hover:text-primary">旅行DNA
+                </RouterLink>
+              </li>
             </ul>
           </div>
         </div>
@@ -36,76 +40,64 @@
           </li>
           <li>
             <RouterLink to="/login"
-              class="text-white rounded-full bg-primary px-4 py-2 border border-white/15 hover:bg-[#455A71]">登入/註冊
+              class="text-white rounded-[40px] bg-primary px-4 py-2 border border-white/15 hover:bg-[#455A71]">登入/註冊
             </RouterLink>
           </li>
         </ul>
       </div>
     </nav>
   </header>
-  <nav class="block md:hidden fixed w-full z-50 bottom-5 h-16 mx-auto">
-    <ul class="flex flex-row justify-evenly mx-5 rounded-full bg-white/45 backdrop-blur-md border border-white/50">
-      <li class="flex flex-col gap-1 justify-center text-center items-center text-gray-500 px-4 py-2">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="22" height="22" fill="currentColor">
-          <path
-            d="M277.8 8.6c-12.3-11.4-31.3-11.4-43.5 0l-224 208c-9.6 9-12.8 22.9-8 35.1S18.8 272 32 272l16 0 0 176c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-176 16 0c13.2 0 25-8.1 29.8-20.3s1.6-26.2-8-35.1l-224-208zM240 320l32 0c26.5 0 48 21.5 48 48l0 96-128 0 0-96c0-26.5 21.5-48 48-48z" />
-        </svg>
-        <RouterLink to="/" class="font-medium text-xs">首頁</RouterLink>
-      </li>
-      <li class=" flex flex-col gap-1 justify-center text-center items-center text-gray-500 px-4 py-2">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="22" height="22" fill="currentColor">
-          <path
-            d="M16 24C16 10.7 26.7 0 40 0L472 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-8 0 0 416 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L40 512c-13.3 0-24-10.7-24-24s10.7-24 24-24l8 0 0-416-8 0C26.7 48 16 37.3 16 24zm208 88l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zM128 96c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zm96 112l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zM352 96c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM112 208l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm240-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM288 384l43.8 0c9.9 0 17.5-9 14-18.2-13.8-36.1-48.8-61.8-89.7-61.8s-75.9 25.7-89.7 61.8c-3.5 9.2 4.1 18.2 14 18.2l43.8 0 0 80 64 0 0-80z" />
-        </svg>
-        <RouterLink to="/hotel" class="font-medium text-xs">住宿</RouterLink>
-      </li>
-      <li class=" flex flex-col gap-1 justify-center text-center items-center text-gray-500 px-4 py-2">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="20" viewBox="0 0 22 20" fill="currentColor">
-          <path
-            d="M13 3C13 4.10457 13.8954 5 15 5C16.1046 5 17 4.10457 17 3H19C20.6569 3 22 4.34315 22 6V14C22 15.6569 20.6569 17 19 17H17C17 15.8954 16.1046 15 15 15C13.8954 15 13 15.8954 13 17H3C1.34315 17 0 15.6569 0 14V6C1.28853e-07 4.34315 1.34315 3 3 3H13ZM4 12C3.44772 12 3 12.4477 3 13C3 13.5523 3.44772 14 4 14H8C8.55228 14 9 13.5523 9 13C9 12.4477 8.55228 12 8 12H4ZM15 7C13.8954 7 13 7.89543 13 9V11C13 12.1046 13.8954 13 15 13C16.1046 13 17 12.1046 17 11V9C17 7.89543 16.1046 7 15 7ZM4 9C3.44772 9 3 9.44772 3 10C3 10.5523 3.44772 11 4 11H8C8.55228 11 9 10.5523 9 10C9 9.44772 8.55228 9 8 9H4ZM4 6C3.44772 6 3 6.44772 3 7C3 7.55228 3.44772 8 4 8H10C10.5523 8 11 7.55228 11 7C11 6.44772 10.5523 6 10 6H4Z" />
-        </svg>
-        <RouterLink to="/ticket" class="font-medium text-xs">體驗</RouterLink>
-      </li>
-      <li class=" flex flex-col gap-1 justify-center text-center items-center text-gray-500 px-4 py-2">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-          <path
-            d="M18 10.5861C19.1046 10.5861 20 11.4815 20 12.5861C19.9999 13.6906 19.1045 14.5861 18 14.5861H8.82812L10 15.7579C10.7809 16.5389 10.781 17.8051 10 18.5861C9.21905 19.367 7.95289 19.3669 7.17188 18.5861L2.6709 14.0861C1.37949 12.7946 2.29471 10.5861 4.12109 10.5861H18ZM10 0.586058C10.7809 -0.194814 12.0471 -0.195566 12.8281 0.585081L17.3291 5.08606C18.6202 6.37749 17.7052 8.58606 15.8789 8.58606H2C0.895557 8.58606 0.000204757 7.69045 0 6.58606C0 5.48149 0.895431 4.58606 2 4.58606H11.1719L10 3.41418C9.21909 2.63327 9.21925 1.36708 10 0.586058Z" />
-        </svg>
-        <RouterLink to="/compare" class="font-medium text-xs">比較</RouterLink>
-      </li>
-      <li @click="isOpen = true"
-        class=" flex flex-col gap-1 justify-center text-center items-center text-gray-500 px-4 py-2">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="22" height="22" fill="currentColor">
-          <path
-            d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z" />
-        </svg>
-        <span class="font-medium text-xs">更多</span>
-      </li>
+  <nav class="block md:hidden fixed w-full z-50 bottom-5 h-16 mx-auto pointer-events-none">
+    <ul
+      class="flex flex-row justify-between items-center mx-5 p-1 rounded-[40px] bg-white/80 backdrop-blur-md border border-white/45 shadow-lg pointer-events-auto">
+
+      <template v-for="item in navItems" :key="item.name">
+
+        <RouterLink v-if="item.path" :to="item.path" custom v-slot="{ navigate, isActive }">
+          <li @click="navigate" :class="[
+            'flex-1 flex flex-col gap-1 items-center justify-center py-2 rounded-[30px] transition-all duration-200 cursor-pointer',
+            isActive ? 'text-primary bg-primary/10 font-bold' : 'text-gray-500 hover:bg-gray-100 active:bg-gray-200'
+          ]">
+            <svg xmlns="http://www.w3.org/2000/svg" :viewBox="item.viewBox" width="22" height="22" fill="currentColor">
+              <path :d="item.icon" />
+            </svg>
+            <span class="text-xs">{{ item.name }}</span>
+          </li>
+        </RouterLink>
+
+        <li v-else @click="isOpen = true"
+          class="flex-1 flex flex-col gap-1 items-center justify-center py-2 rounded-[30px] transition-all duration-200 cursor-pointer text-gray-500 active:bg-gray-200 active:text-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" :viewBox="item.viewBox" width="22" height="22" fill="currentColor">
+            <path :d="item.icon" />
+          </svg>
+          <span class="text-xs">{{ item.name }}</span>
+        </li>
+
+      </template>
     </ul>
   </nav>
   <div class="relative z-[100]">
     <Transition enter-active-class="transition-opacity ease-linear duration-300" enter-from-class="opacity-0"
       enter-to-class="opacity-100" leave-active-class="transition-opacity ease-linear duration-300"
       leave-from-class="opacity-100" leave-to-class="opacity-0">
-      <div v-if="isOpen" @click="isOpen = false" class="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
+      <div v-if="isOpen" @click="isOpen = false" class="fixed inset-0 bg-black/25 backdrop-blur-sm"></div>
     </Transition>
-
     <Transition enter-active-class="transition-transform ease-in-out duration-300" enter-from-class="translate-x-full"
       enter-to-class="translate-x-0" leave-active-class="transition-transform ease-in-out duration-300"
       leave-from-class="translate-x-0" leave-to-class="translate-x-full">
       <div v-if="isOpen"
-        class="fixed inset-y-0 right-0 w-64 bg-white/45 backdrop-blur-md border border-white/50 m-5 rounded-[20px] p-6 flex flex-col gap-6">
+        class="fixed inset-y-0 right-0 w-64 bg-white/45 backdrop-blur-md border border-white/50 m-5 rounded-[40px] p-6 flex flex-col gap-6">
         <div class="flex justify-between items-center">
           <h2 class="text-xl font-bold text-primary">更多</h2>
           <button @click="isOpen = false" class="text-gray-500 text-2xl">&times;</button>
         </div>
-
         <nav class="flex flex-col gap-4" @click="isOpen = false">
           <RouterLink to="/faq" class="text-black font-medium border-b border-primary/25 pb-2">常見問題</RouterLink>
           <RouterLink to="/about" class="text-black font-medium border-b border-primary/25 pb-2">關於Wantrip</RouterLink>
-          <RouterLink to="/" class="text-black font-medium border-b border-primary/25 pb-2">服務條款</RouterLink>
-          <RouterLink to="/" class="text-black font-medium border-b border-primary/25 pb-2">隱私權聲明</RouterLink>
-          <RouterLink to="/" class="text-black font-medium border-b border-primary/25 pb-2">會員中心</RouterLink>
+          <RouterLink to="/tos" class="text-black font-medium border-b border-primary/25 pb-2">服務條款</RouterLink>
+          <RouterLink to="/privacy" class="text-black font-medium border-b border-primary/25 pb-2">隱私權聲明</RouterLink>
+          <RouterLink to="/profile" class="text-black font-medium border-b border-primary/25 pb-2">會員中心</RouterLink>
+          <RouterLink to="/traveldna" class="text-black font-medium border-b border-primary/25 pb-2">旅行DNA</RouterLink>
         </nav>
       </div>
     </Transition>
@@ -116,4 +108,37 @@
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 const isOpen = ref(false)
+
+const navItems = [
+  {
+    name: '首頁',
+    path: '/',
+    viewBox: '0 0 512 512',
+    icon: 'M277.8 8.6c-12.3-11.4-31.3-11.4-43.5 0l-224 208c-9.6 9-12.8 22.9-8 35.1S18.8 272 32 272l16 0 0 176c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-176 16 0c13.2 0 25-8.1 29.8-20.3s1.6-26.2-8-35.1l-224-208zM240 320l32 0c26.5 0 48 21.5 48 48l0 96-128 0 0-96c0-26.5 21.5-48 48-48z'
+  },
+  {
+    name: '住宿',
+    path: '/hotelsearch',
+    viewBox: '0 0 512 512',
+    icon: 'M16 24C16 10.7 26.7 0 40 0L472 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-8 0 0 416 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L40 512c-13.3 0-24-10.7-24-24s10.7-24 24-24l8 0 0-416-8 0C26.7 48 16 37.3 16 24zm208 88l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zM128 96c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zm96 112l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zM352 96c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM112 208l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm240-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM288 384l43.8 0c9.9 0 17.5-9 14-18.2-13.8-36.1-48.8-61.8-89.7-61.8s-75.9 25.7-89.7 61.8c-3.5 9.2 4.1 18.2 14 18.2l43.8 0 0 80 64 0 0-80z'
+  },
+  {
+    name: '體驗',
+    path: '/ticket',
+    viewBox: '0 0 22 20',
+    icon: 'M13 3C13 4.10457 13.8954 5 15 5C16.1046 5 17 4.10457 17 3H19C20.6569 3 22 4.34315 22 6V14C22 15.6569 20.6569 17 19 17H17C17 15.8954 16.1046 15 15 15C13.8954 15 13 15.8954 13 17H3C1.34315 17 0 15.6569 0 14V6C1.28853e-07 4.34315 1.34315 3 3 3H13ZM4 12C3.44772 12 3 12.4477 3 13C3 13.5523 3.44772 14 4 14H8C8.55228 14 9 13.5523 9 13C9 12.4477 8.55228 12 8 12H4ZM15 7C13.8954 7 13 7.89543 13 9V11C13 12.1046 13.8954 13 15 13C16.1046 13 17 12.1046 17 11V9C17 7.89543 16.1046 7 15 7ZM4 9C3.44772 9 3 9.44772 3 10C3 10.5523 3.44772 11 4 11H8C8.55228 11 9 10.5523 9 10C9 9.44772 8.55228 9 8 9H4ZM4 6C3.44772 6 3 6.44772 3 7C3 7.55228 3.44772 8 4 8H10C10.5523 8 11 7.55228 11 7C11 6.44772 10.5523 6 10 6H4Z'
+  },
+  {
+    name: '比較',
+    path: '/compare',
+    viewBox: '0 0 20 20',
+    icon: 'M18 10.5861C19.1046 10.5861 20 11.4815 20 12.5861C19.9999 13.6906 19.1045 14.5861 18 14.5861H8.82812L10 15.7579C10.7809 16.5389 10.781 17.8051 10 18.5861C9.21905 19.367 7.95289 19.3669 7.17188 18.5861L2.6709 14.0861C1.37949 12.7946 2.29471 10.5861 4.12109 10.5861H18ZM10 0.586058C10.7809 -0.194814 12.0471 -0.195566 12.8281 0.585081L17.3291 5.08606C18.6202 6.37749 17.7052 8.58606 15.8789 8.58606H2C0.895557 8.58606 0.000204757 7.69045 0 6.58606C0 5.48149 0.895431 4.58606 2 4.58606H11.1719L10 3.41418C9.21909 2.63327 9.21925 1.36708 10 0.586058Z'
+  },
+  {
+    name: '更多',
+    path: null,
+    viewBox: '0 0 448 512',
+    icon: 'M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z'
+  }
+];
 </script>
