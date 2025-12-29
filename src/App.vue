@@ -1,5 +1,5 @@
 <template>
-  <Navbar />
+  <AppNavbar />
   <router-view />
   <AppFooter />
 </template>
@@ -15,7 +15,7 @@
  router/index.ts
  -->
 
-<script setup>
-import Navbar from './components/layout/Navbar.vue'
+<script setup lang="ts">
+import AppNavbar from './components/layout/AppNavbar.vue'
 import AppFooter from './components/layout/AppFooter.vue'
 </script>

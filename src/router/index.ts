@@ -6,9 +6,11 @@ import HotelSearch from '@/views/HotelSearch.vue'
 import HotelDetail from '@/views/HotelDetail.vue'
 import HotelCompare from '@/views/HotelCompare.vue'
 import HotelHomeView from '@/views/HotelHomeView.vue'
+import TicketSearch from '@/views/TicketSearch.vue'
 import TravelDNA from '@/views/TravelDNA.vue'
 import TravelDNAIntro from '@/views/TravelDNAIntro.vue'
 import TravelDNAResult from '@/views/TravelDNAResult.vue'
+import OrderCompleted from '@/views/OrderCompleted.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +39,13 @@ const router = createRouter({
       path: '/hotelhomeview',
       name: 'hotel-home-view',
       component: HotelHomeView,
+    },
+    {
+      path: '/ticketsearch',
+      name: 'ticket-search',
+      component: TicketSearch,
+    },
+    {
       path: '/travelDNA',
       name: 'travel-DNA',
       component: TravelDNA,
@@ -50,6 +59,11 @@ const router = createRouter({
       path: '/travelDNAresult',
       name: 'travel-DNA-result',
       component: TravelDNAResult,
+    },
+    {
+      path: '/ordercompleted',
+      name: 'order-completed',
+      component: OrderCompleted,
     },
     // 404 頁（選擇性，但很推薦）
     {
