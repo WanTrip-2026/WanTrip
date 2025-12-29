@@ -5,6 +5,7 @@ import HomePage from '@/views/HomePage.vue'
 import HotelSearch from '@/views/HotelSearch.vue'
 import HotelDetail from '@/views/HotelDetail.vue'
 import HotelCompare from '@/views/HotelCompare.vue'
+import HotelHomeView from '@/views/HotelHomeView.vue'
 import TicketSearch from '@/views/TicketSearch.vue'
 import TravelDNA from '@/views/TravelDNA.vue'
 import TravelDNAIntro from '@/views/TravelDNAIntro.vue'
@@ -34,6 +35,11 @@ const router = createRouter({
       path: '/compare',
       name: 'hotel-compare',
       component: HotelCompare,
+    },
+    {
+      path: '/hotelhomeview',
+      name: 'hotel-home-view',
+      component: HotelHomeView,
     },
     {
       path: '/ticketsearch',
