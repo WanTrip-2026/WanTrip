@@ -154,8 +154,10 @@ function mockItems(count: number): Experience[] {
                     </h3>
 
                     <div class="mt-3 flex items-center gap-3">
-                      <span class="bg-[#6D8FA3] text-white font-bold text-sm px-2 py-1">
-                        {{ item.rating }}/5
+                      <span
+                        class="bg-[#6D8FA3] text-white font-bold text-sm
+                               px-3 py-1 rounded-full">
+                        {{ item.rating }} / 5
                       </span>
                       <span class="text-gray-500 text-sm">
                         {{ item.reviews.toLocaleString() }}則評價
