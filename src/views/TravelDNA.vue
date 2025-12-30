@@ -7,7 +7,7 @@
     />
     <div class="absolute inset-0 w-full h-full bg-primary/50 backdrop-blur-sm"></div>
     <div class="relative z-10 max-w-[1200px] mx-auto pt-24">
-      <div class="relative w-[800px] h-4 mt-5 mb-12 mx-auto">
+      <div class="relative max-w-[800px] h-4 mt-5 mb-12 mx-auto">
         <div class="w-full h-4 bg-[#EEF2F7] rounded-full"></div>
         <div
           class="absolute top-0 left-0 h-full bg-primary rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-primary via-white/30 to-primary bg-[length:200%_100%] animate-progress-flow"
