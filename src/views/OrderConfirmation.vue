@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen text-primary max-w-[1240px] mx-auto pt-24">
+  <main class="min-h-screen text-primary max-w-[1240px] mx-auto pt-24 pb-10">
     <div class="mx-5">
 
       <section class="bg-white rounded-[20px] shadow-sm border border-gray-300 p-5 lg:p-10 mb-10">
