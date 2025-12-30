@@ -1,10 +1,10 @@
 <template>
-  <main class="min-h-screen bg-white text-primary max-w-[1240px] mx-auto pb-[40px] mt-24">
-    <div class="pt-[20px] mx-5">
+  <main class="min-h-screen text-primary max-w-[1240px] mx-auto pt-24">
+    <div class="mx-5">
 
-      <section class="bg-white rounded-[40px] shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/5 p-6 md:p-10 lg:p-14 mb-[40px]">
+      <section class="bg-white rounded-[20px] shadow-sm border border-gray-300 p-5 lg:p-10 mb-10">
         <div class="flex flex-col md:flex-row justify-between items-start gap-8">
-          <div class="flex flex-col sm:flex-row gap-6 items-center sm:items-start text-center sm:text-left">
+          <div class="flex flex-col sm:flex-row gap-6 items-center text-center sm:text-left">
             <div class="h-24 md:h-32 rounded-[20px] bg-gray-100 checker shrink-0"></div>
             <div>
               <h1 class="text-2xl md:text-3xl font-bold mb-2">飯店名稱</h1>
@@ -38,12 +38,12 @@
         </div>
       </section>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-[40px]">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 p-5 lg:p-10 bg-white border border-gray-300 rounded-[20px] shadow-sm">
 
-        <div class="lg:col-span-2 space-y-[40px] md:space-y-[60px]">
+        <div class="lg:col-span-2 space-y-10 md:space-y-14">
           <section>
-            <h2 class="text-lg md:text-xl font-black mb-[20px] md:mb-[30px]">訂購人資訊</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4 text-sm">
+            <h2 class="text-lg md:text-xl font-black mb-10">訂購人資訊</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
               <div class="space-y-1">
                 <p class="text-primary/40 font-bold text-xs uppercase">姓名</p>
                 <p class="font-bold text-base">NAME</p>
@@ -68,29 +68,30 @@
           </section>
 
           <section>
-            <div class="w-full aspect-video rounded-[40px] bg-page flex items-center justify-center border border-primary/5 overflow-hidden">
+            <div class="w-full aspect-video rounded-[20px] bg-page flex items-center justify-center border border-gray-300 overflow-hidden">
               <span class="text-accent font-bold text-sm md:text-xl uppercase tracking-widest">google map</span>
+              <!-- 之後google map -->
             </div>
           </section>
         </div>
 
-        <div class="space-y-[20px] md:space-y-[40px]">
-          <section class="rounded-[20px] border border-primary/10 p-[20px]">
+        <div class="space-y-5">
+          <section class="rounded-[20px] border border-gray-300 p-5">
             <h3 class="font-bold mb-4 text-primary">房間設施</h3>
             <p class="text-sm leading-relaxed text-primary/60">
               牙刷、牙膏、洗手乳、沐浴乳、洗髮乳、冷氣、暖氣、浴缸、乾濕分離浴室、香皂、浴帽、梳子、毛巾、浴巾、拋棄式拖鞋、吹風機、冰箱、水、茶包、濾掛式咖啡、杯子、無線網路、有線網路插槽、110V插座、USB插座、Netflix、Desiney+
             </p>
           </section>
 
-          <section class="rounded-[20px] bg-primary/5 p-[20px]">
+          <section class="rounded-[20px] bg-primary/5 p-5">
             <h3 class="font-bold mb-4 text-primary">住宿付費提供</h3>
             <p class="text-sm text-primary/60">
               洗衣機、冰箱內飲料(瓶裝水免費)
             </p>
           </section>
 
-          <section class="rounded-[20px] border border-primary/10 p-[24px] bg-white shadow-sm">
-            <div class="flex items-center gap-4 mb-8">
+          <section class="rounded-[20px] border border-gray-300 p-5 bg-white shadow-sm">
+            <div class="flex items-center gap-5 mb-8">
                   <img src="../assets/logoIcon.svg" alt="WanTrip Logo" class="w-20 h-20" />
             <div>
                   <h3 class="font-bold text-xl text-primary tracking-wide">交通訂票</h3>
