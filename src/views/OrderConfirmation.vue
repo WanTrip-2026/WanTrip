@@ -22,7 +22,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[5px] md:gap-[40px] mt-[40px]">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-[40px] mt-[40px]">
           <div class="rounded-[20px] border border-primary/10 p-5 md:p-6">
             <p class="text-xs font-bold text-secondary mb-2">入住</p>
             <p class="text-lg md:text-xl font-bold">2025年12月28日</p>
@@ -79,7 +79,7 @@
           <section class="rounded-[20px] border border-gray-300 p-5">
             <h3 class="font-bold mb-4 text-primary">房間設施</h3>
             <p class="text-sm leading-relaxed text-primary/60">
-              牙刷、牙膏、洗手乳、沐浴乳、洗髮乳、冷氣、暖氣、浴缸、乾濕分離浴室、香皂、浴帽、梳子、毛巾、浴巾、拋棄式拖鞋、吹風機、冰箱、水、茶包、濾掛式咖啡、杯子、無線網路、有線網路插槽、110V插座、USB插座、Netflix、Desiney+
+              牙刷、牙膏、洗手乳、沐浴乳、洗髮乳、冷氣、暖氣、浴缸、乾濕分離浴室、香皂、浴帽、梳子、毛巾、浴巾、拋棄式拖鞋、吹風機、冰箱、水、茶包、濾掛式咖啡、杯子、無線網路、有線網路插槽、110V插座、USB插座、Netflix、Disney+
             </p>
           </section>
 
