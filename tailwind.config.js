@@ -4,9 +4,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#2F3D4D', // 主色
-        primary_hover: '#3C5572', // Button hover color
-        secondary: '#6D8FA3', // 輔色
+        primary: '#6D8FA3', // 主色
+        primary_hover: '#365475', // Button hover color
+        secondary: '#E4E4E4', // 輔色
+        secondary_hover: '#C7C7C7',
         accent: '#93ACAA', // 點綴色
         page: '#F8FDFF', // Global background
       },
