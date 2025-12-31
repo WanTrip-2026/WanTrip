@@ -50,39 +50,90 @@ function submitOrder() {
   console.log('[checkout submit]', payload)
   alert('已送出（示範）')
 }
+
+const paymentOptions: Array<{
+  key: PaymentKey
+  label: string
+  icons: Array<{ src: string; alt: string; large?: boolean }>
+}> = [
+  { key: 'atm', label: 'ATM轉帳', icons: [] },
+  {
+    key: 'credit',
+    label: '信用卡',
+    icons: [
+      { src: iconVisa, alt: 'VISA', large: true },
+      { src: iconMastercard, alt: 'Mastercard', large: true },
+      { src: iconJcb, alt: 'JCB', large: true },
+      { src: iconAmex, alt: 'AMEX', large: true },
+    ],
+  },
+  {
+    key: 'applepay',
+    label: 'Apple Pay',
+    icons: [{ src: iconApplePay, alt: 'Apple Pay', large: true }],
+  },
+  {
+    key: 'googlepay',
+    label: 'Google Pay',
+    icons: [{ src: iconGooglePay, alt: 'Google Pay', large: true }],
+  },
+  {
+    key: 'linepay',
+    label: 'Line Pay',
+    icons: [{ src: iconLinePay, alt: 'LINE Pay' }],
+  },
+  {
+    key: 'jkopay',
+    label: '街口支付',
+    icons: [{ src: iconJkoPay, alt: '街口支付' }],
+  },
+]
 </script>
 
 <template>
+  <div
+    class="fixed top-[70px] left-0 right-0 z-50 border-b border-black/10 bg-white px-4 py-3 lg:hidden"
+  >
+    <div class="mx-auto flex max-w-[1200px] items-center justify-between text-sm">
+      <span class="truncate font-medium">{{ product.title }}</span>
+
+      <div class="flex items-center gap-4">
+        <span class="text-black/60">- NT$ {{ price.discount }}</span>
+        <span class="font-semibold text-black">NT$ {{ total }}</span>
+      </div>
+    </div>
+  </div>
+
   <div class="w-full min-h-screen bg-[#f7fbfb]">
-    <div class="max-w-[1200px] mx-auto px-4 pt-[100px] pb-[40px]">
-      <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-10">
+    <div class="mx-auto max-w-[1200px] px-4 pt-[160px] pb-[40px] lg:pt-[100px]">
+      <div class="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
         <!-- Left -->
-        <div class="flex flex-col gap-10">
+        <div class="flex flex-col gap-5">
           <!-- 商品資訊 -->
-          <section class="bg-white rounded-[20px] border border-black/10 p-5">
+          <section class="rounded-[20px] border border-black/10 bg-white p-5">
             <h2 class="text-[24px] font-semibold">商品資訊</h2>
 
-            <div class="mt-[20px] flex gap-5">
+            <div class="mt-5 flex gap-5">
               <div
-                class="w-[140px] h-[88px] rounded-[20px] border border-black/10 bg-black/5 flex items-center justify-center text-black/40 text-sm"
+                class="flex h-[88px] w-[140px] items-center justify-center rounded-[20px] border border-black/10 bg-black/5 text-sm text-black/40"
               >
                 image
               </div>
 
               <div class="min-w-0">
-                <div class="font-semibold text-[16px] leading-snug">
+                <div class="text-[16px] font-semibold leading-snug">
                   {{ product.title }}
                 </div>
 
-                <div class="text-[13px] text-black/60 mt-1 line-clamp-2">
+                <div class="mt-1 line-clamp-2 text-sm text-black/60">
                   {{ product.subtitle }}
                 </div>
 
-                <div class="text-[12px] text-black/50 mt-2">
+                <div class="mt-1 text-sm text-black/50">
                   {{ product.date }}
                 </div>
 
-                <div class="text-[12px] text-black/50">
+                <div class="text-sm text-black/50">
                   {{ product.note }}
                 </div>
               </div>
@@ -90,188 +141,103 @@ function submitOrder() {
           </section>
 
           <!-- 訂購人資料 -->
-          <section class="bg-white rounded-[20px] border border-black/10 p-5">
+          <section class="rounded-[20px] border border-black/10 bg-white p-5">
             <h2 class="text-[24px] font-semibold">訂購人資料</h2>
 
-            <div class="mt-[20px] grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="mt-5 grid grid-cols-1 gap-y-5 gap-x-10 md:grid-cols-2">
               <div class="flex flex-col gap-3">
-                <label class="text-[12px] text-black/60">姓名</label>
+                <label class="text-sm text-black/60">姓名</label>
                 <input
                   v-model="form.name"
                   type="text"
                   placeholder="請輸入姓名"
-                  class="h-[44px] rounded-[20px] border border-black/15 px-4 outline-none focus:border-black/40"
+                  class="h-[44px] rounded-[20px] border border-black/15 px-4 text-sm outline-none focus:border-black/40"
                 />
               </div>
 
               <div class="flex flex-col gap-3">
-                <label class="text-[12px] text-black/60">Email</label>
+                <label class="text-sm text-black/60">Email</label>
                 <input
                   v-model="form.email"
                   type="email"
                   placeholder="example@email.com"
-                  class="h-[44px] rounded-[20px] border border-black/15 px-4 outline-none focus:border-black/40"
+                  class="h-[44px] rounded-[20px] border border-black/15 px-4 text-sm outline-none focus:border-black/40"
                 />
               </div>
 
               <div class="flex flex-col gap-3 md:col-span-2">
-                <label class="text-[12px] text-black/60">電話</label>
+                <label class="text-sm text-black/60">電話</label>
                 <input
                   v-model="form.phone"
                   type="tel"
                   placeholder="09xx-xxx-xxx"
-                  class="h-[44px] rounded-[20px] border border-black/15 px-4 outline-none focus:border-black/40 md:max-w-[420px]"
+                  class="h-[44px] rounded-[20px] border border-black/15 px-4 text-sm outline-none focus:border-black/40 md:max-w-[420px]"
                 />
               </div>
             </div>
           </section>
 
           <!-- 優惠 -->
-          <section class="bg-white rounded-[20px] border border-black/10 p-5">
+          <section class="rounded-[20px] border border-black/10 bg-white p-5">
             <h2 class="text-[24px] font-semibold">優惠</h2>
 
-            <div class="mt-[20px] flex flex-col md:flex-row gap-4 md:items-end">
-              <div class="flex-1 flex flex-col gap-3">
-                <label class="text-[12px] text-black/60">優惠代碼</label>
+            <div class="mt-5 flex flex-col gap-5 md:flex-row md:items-end">
+              <div class="flex flex-1 flex-col gap-3">
+                <label class="text-sm text-black/60">優惠代碼</label>
                 <input
                   v-model="form.coupon"
                   type="text"
                   placeholder="輸入優惠碼"
-                  class="h-[44px] rounded-[20px] border border-black/15 px-4 outline-none focus:border-black/40"
+                  class="h-[44px] rounded-[20px] border border-black/15 px-4 text-sm outline-none focus:border-black/40"
                 />
               </div>
 
               <button
                 type="button"
                 @click="applyCoupon"
-                class="h-[44px] px-6 rounded-[20px] border border-black/20 bg-white hover:bg-black/5 active:scale-[0.99] transition"
+                class="h-[44px] rounded-[20px] border border-black/20 bg-white px-6 text-sm transition hover:bg-black/5 active:scale-[0.99]"
               >
                 套用
               </button>
             </div>
 
-            <div class="mt-4 text-[12px] text-black/50">
+            <div class="mt-4 text-sm text-black/50">
               範例：輸入 <span class="font-semibold">WANTRIP200</span> 折 200
             </div>
           </section>
 
-          <section class="bg-white rounded-[20px] border border-black/10 p-5">
+          <!-- 付款方式 -->
+          <section class="rounded-[20px] border border-black/10 bg-white p-5">
             <h2 class="text-[24px] font-semibold">選擇付款方式</h2>
 
-            <div class="mt-[20px] flex flex-col gap-4">
-              <!-- ATM -->
-              <label class="pay-row">
+            <div class="mt-5 flex flex-col gap-5">
+              <label
+                v-for="option in paymentOptions"
+                :key="option.key"
+                class="flex h-[60px] cursor-pointer items-center justify-between
+                       overflow-hidden rounded-full border border-black/10 px-4
+                       transition hover:bg-black/5"
+              >
                 <div class="flex items-center gap-3">
                   <input
                     type="radio"
                     name="pay"
-                    value="atm"
+                    :value="option.key"
                     v-model="selectedPayment"
-                    class="accent-black"
+                    class="h-5 w-5 rounded-full accent-black"
                   />
-                  <span class="text-[14px] font-medium">ATM轉帳</span>
-                </div>
-                <div class="pay-right"></div>
-              </label>
-
-              <!-- 信用卡 -->
-              <label class="pay-row">
-                <div class="flex items-center gap-3">
-                  <input
-                    type="radio"
-                    name="pay"
-                    value="credit"
-                    v-model="selectedPayment"
-                    class="accent-black"
-                  />
-                  <span class="text-[14px] font-medium">信用卡</span>
+                  <span class="text-sm font-medium">{{ option.label }}</span>
                 </div>
 
-                <div class="pay-right">
-                  <img :src="iconVisa" alt="VISA" class="pay-icon pay-icon--lg" />
+                <div class="flex h-full items-center gap-3">
                   <img
-                    :src="iconMastercard"
-                    alt="Mastercard"
-                    class="pay-icon pay-icon--lg"
+                    v-for="icon in option.icons"
+                    :key="icon.src"
+                    :src="icon.src"
+                    :alt="icon.alt"
+                    class="block w-auto shrink-0 object-contain"
+                    :class="icon.large ? 'h-9' : 'h-4'"
                   />
-                  <img :src="iconJcb" alt="JCB" class="pay-icon pay-icon--lg" />
-                  <img :src="iconAmex" alt="AMEX" class="pay-icon pay-icon--lg" />
-                </div>
-              </label>
-
-              <!-- Apple Pay -->
-              <label class="pay-row">
-                <div class="flex items-center gap-3">
-                  <input
-                    type="radio"
-                    name="pay"
-                    value="applepay"
-                    v-model="selectedPayment"
-                    class="accent-black"
-                  />
-                  <span class="text-[14px] font-medium">Apple Pay</span>
-                </div>
-
-                <div class="pay-right">
-                  <img :src="iconApplePay" alt="Apple Pay" class="pay-icon pay-icon--lg" />
-                </div>
-              </label>
-
-              <!-- Google Pay -->
-              <label class="pay-row">
-                <div class="flex items-center gap-3">
-                  <input
-                    type="radio"
-                    name="pay"
-                    value="googlepay"
-                    v-model="selectedPayment"
-                    class="accent-black"
-                  />
-                  <span class="text-[14px] font-medium">Google Pay</span>
-                </div>
-
-                <div class="pay-right">
-                  <img
-                    :src="iconGooglePay"
-                    alt="Google Pay"
-                    class="pay-icon pay-icon--lg"
-                  />
-                </div>
-              </label>
-
-              <!-- Line Pay -->
-              <label class="pay-row">
-                <div class="flex items-center gap-3">
-                  <input
-                    type="radio"
-                    name="pay"
-                    value="linepay"
-                    v-model="selectedPayment"
-                    class="accent-black"
-                  />
-                  <span class="text-[14px] font-medium">Line Pay</span>
-                </div>
-
-                <div class="pay-right">
-                  <img :src="iconLinePay" alt="LINE Pay" class="pay-icon" />
-                </div>
-              </label>
-
-              <!-- 街口支付 -->
-              <label class="pay-row">
-                <div class="flex items-center gap-3">
-                  <input
-                    type="radio"
-                    name="pay"
-                    value="jkopay"
-                    v-model="selectedPayment"
-                    class="accent-black"
-                  />
-                  <span class="text-[14px] font-medium">街口支付</span>
-                </div>
-
-                <div class="pay-right">
-                  <img :src="iconJkoPay" alt="街口支付" class="pay-icon" />
                 </div>
               </label>
             </div>
@@ -282,7 +248,7 @@ function submitOrder() {
             <button
               type="button"
               @click="submitOrder"
-              class="h-[48px] px-8 rounded-full bg-primary text-white hover:opacity-90 active:scale-[0.99] transition"
+              class="h-[48px] rounded-full bg-primary px-8 text-sm text-white transition hover:opacity-90 active:scale-[0.99]"
             >
               確認付款
             </button>
@@ -290,11 +256,11 @@ function submitOrder() {
         </div>
 
         <!-- 費用明細 -->
-        <aside class="lg:sticky lg:top-[100px] h-fit">
-          <section class="bg-white rounded-[20px] border border-black/10 p-5">
+        <aside class="hidden h-fit lg:block lg:sticky lg:top-[100px]">
+          <section class="rounded-[20px] border border-black/10 bg-white p-5">
             <h2 class="text-[24px] font-semibold">費用明細</h2>
 
-            <div class="mt-[20px] flex flex-col gap-4 text-[14px]">
+            <div class="mt-5 flex flex-col gap-5 text-sm">
               <div class="flex items-center justify-between">
                 <span class="text-black/70">商品費用</span>
                 <span class="font-medium">NT$ {{ price.subtotal }}</span>
@@ -305,14 +271,14 @@ function submitOrder() {
                 <span class="font-medium text-black/70">- NT$ {{ price.discount }}</span>
               </div>
 
-              <div class="h-px bg-black/10 my-2" />
+              <div class="my-2 h-px bg-black/10" />
 
               <div class="flex items-center justify-between text-[24px]">
                 <span class="font-semibold">總計</span>
                 <span class="font-semibold">NT$ {{ total }}</span>
               </div>
 
-              <div class="text-[12px] text-black/50 mt-2">
+              <div class="text-sm text-black/50">
                 訂單總額包含（如適用）稅金 / 服務費 / 平台費等。
               </div>
             </div>
@@ -322,52 +288,3 @@ function submitOrder() {
     </div>
   </div>
 </template>
-
-<style scoped>
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.pay-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  height: 60px;
-  padding: 0 16px;
-  border-radius: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.pay-row:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.pay-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 100%;
-}
-
-
-.pay-icon {
-  height: 16px;
-  width: auto;
-  display: block;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-.pay-icon--lg {
-  height: 36px;
-}
-</style>
-
