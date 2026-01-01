@@ -1,366 +1,387 @@
 <template>
-  <div>
-    <div class="w-full bg-[#E9F7FF] pt-24 min-h-screen">
-      <div class="max-w-[1200px] mx-auto pb-[208px]">
-        <section
-          class="max-w-[1200px] h-14 p-2 mb-5 bg-white rounded-full border border-gray-300 flex flex-row items-center gap-2.5"
-        >
-          <div class="h-full w-full">
-            <label class="rounded-full"></label>
-            <input
-              type="text"
-              placeholder="台北萬豪酒店"
-              class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
-            />
+  <div class="max-w-[1200px] mx-auto min-h-screen px-5">
+    <div class="pt-24">
+      <section
+        class="max-w-[1200px] h-14 p-2 mb-5 bg-white rounded-full border border-gray-300 flex flex-row items-center gap-2.5"
+      >
+        <div class="h-full w-full">
+          <label class="rounded-full"></label>
+          <input
+            type="text"
+            placeholder="台北萬豪酒店"
+            class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
+          />
+        </div>
+        <div class="h-full w-full">
+          <label class="text-gray-500 rounded-full"></label>
+          <input
+            type="text"
+            placeholder="入住及退房日期"
+            class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
+          />
+        </div>
+        <div class="h-full w-full">
+          <label class="text-gray-500 rounded-full"></label>
+          <input
+            type="text"
+            placeholder="房間及房客"
+            class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
+          />
+        </div>
+        <div class="text-gray-500 rounded-full h-full">
+          <button
+            class="h-full bg-primary hover:bg-#6D8FA3 text-white font-bold py-1 px-7 rounded-full transition-colors whitespace-nowrap"
+          >
+            搜尋
+          </button>
+        </div>
+      </section>
+      <div class="md:hidden relative mb-10">
+        <div class="overflow-hidden rounded-[20px]">
+          <div
+            class="flex transition-transform duration-500"
+            :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
+            @touchstart="onTouchStart"
+            @touchmove="onTouchMove"
+            @touchend="onTouchEnd"
+          >
+            <div class="min-w-full h-72" v-for="(img, index) in images" :key="index">
+              <img :src="img" class="w-full h-full object-cover" alt="飯店圖片" />
+            </div>
           </div>
-          <div class="h-full w-full">
-            <label class="text-gray-500 rounded-full"></label>
-            <input
-              type="text"
-              placeholder="入住及退房日期"
-              class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
-            />
-          </div>
-          <div class="h-full w-full">
-            <label class="text-gray-500 rounded-full"></label>
-            <input
-              type="text"
-              placeholder="房間及房客"
-              class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
-            />
-          </div>
-          <div class="text-gray-500 rounded-full h-full">
-            <button
-              class="h-full bg-primary hover:bg-#6D8FA3 text-white font-bold py-1 px-7 rounded-full transition-colors whitespace-nowrap"
-            >
-              搜尋
-            </button>
-          </div>
-        </section>
-        <div class="grid grid-cols-[2fr_1fr_1fr_1fr] gap-[10px] mb-[40px]">
-          <div class="relative h-[400px] rounded-[20px] overflow-hidden border border-black/30">
+        </div>
+        <div class="flex justify-center gap-2 mt-3">
+          <button
+            v-for="(img, index) in images"
+            :key="index"
+            @click="goTo(index)"
+            class="w-2.5 h-2.5 rounded-full"
+            :class="index === currentIndex ? 'bg-primary' : 'bg-gray-300'"
+          ></button>
+        </div>
+      </div>
+
+      <div class="hidden md:grid md:grid-cols-[2fr_1fr_1fr_1fr] gap-[10px] mb-[40px]">
+        <div class="relative h-[400px] rounded-[20px] overflow-hidden border border-black/30">
+          <img
+            src="/src/assets/hoteldetail_img/Wanhao.jpg"
+            class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
+          />
+        </div>
+
+        <div class="grid grid-rows-2 gap-[10px] h-[400px]">
+          <div class="relative rounded-[20px] overflow-hidden border border-black/30">
             <img
-              src="/src/assets/hoteldetail_img/Wanhao.jpg"
+              src="/src/assets/hoteldetail_img/Wanhao2.jpg"
               class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
             />
           </div>
 
-          <div class="grid grid-rows-2 gap-[10px] h-[400px]">
-            <div class="relative rounded-[20px] overflow-hidden border border-black/30">
-              <img
-                src="/src/assets/hoteldetail_img/Wanhao2.jpg"
-                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-              />
-            </div>
-
-            <div class="relative rounded-[20px] overflow-hidden border border-black/30">
-              <img
-                src="/src/assets/hoteldetail_img/Wanhao3.jpg"
-                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-              />
-            </div>
-          </div>
-
-          <div class="grid grid-rows-2 gap-[10px] h-[400px]">
-            <div class="relative rounded-[20px] overflow-hidden border border-black/30">
-              <img
-                src="/src/assets/hoteldetail_img/Wanhao4.jpg"
-                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-              />
-            </div>
-
-            <div class="relative rounded-[20px] overflow-hidden border border-black/30">
-              <img
-                src="/src/assets/hoteldetail_img/Wanhao5.jpg"
-                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-              />
-            </div>
-          </div>
-
-          <div class="grid grid-rows-2 gap-[10px] h-[400px]">
-            <div class="relative rounded-[20px] overflow-hidden border border-black/30">
-              <img
-                src="/src/assets/hoteldetail_img/Wanhao6.jpg"
-                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-              />
-            </div>
-
-            <div class="relative rounded-[20px] overflow-hidden border border-black/30">
-              <img
-                src="/src/assets/hoteldetail_img/Wanhao7.jpg"
-                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-              />
-            </div>
+          <div class="relative rounded-[20px] overflow-hidden border border-black/30">
+            <img
+              src="/src/assets/hoteldetail_img/Wanhao3.jpg"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
+            />
           </div>
         </div>
 
-        <div
-          class="bg-white p-[20px] rounded-[40px] border-gray-200 mb-[40px] border border-black/30"
-        >
-          <div class="flex justify-between items-center pb-[20px]">
-            <div>
-              <h2 class="text-[28px] font-bold text-black flex items-center gap-2">
-                台北萬豪酒店 (Taipei Marriott Hotel)
-                <span class="text-yellow-500 text-xl">★★★★★</span>
-              </h2>
-              <p class="text-black text-base mt-[8px]">台灣台北市中山區樂群二路199號</p>
+        <div class="grid grid-rows-2 gap-[10px] h-[400px]">
+          <div class="relative rounded-[20px] overflow-hidden border border-black/30">
+            <img
+              src="/src/assets/hoteldetail_img/Wanhao4.jpg"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
+            />
+          </div>
+
+          <div class="relative rounded-[20px] overflow-hidden border border-black/30">
+            <img
+              src="/src/assets/hoteldetail_img/Wanhao5.jpg"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-rows-2 gap-[10px] h-[400px]">
+          <div class="relative rounded-[20px] overflow-hidden border border-black/30">
+            <img
+              src="/src/assets/hoteldetail_img/Wanhao6.jpg"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
+            />
+          </div>
+
+          <div class="relative rounded-[20px] overflow-hidden border border-black/30">
+            <img
+              src="/src/assets/hoteldetail_img/Wanhao7.jpg"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="bg-white p-[20px] rounded-[40px] border-gray-200 mb-[40px] border border-black/30"
+      >
+        <div class="flex justify-between items-center pb-[20px]">
+          <div>
+            <h2 class="text-[28px] font-bold text-black flex items-center gap-2">
+              台北萬豪酒店 (Taipei Marriott Hotel)
+              <span class="text-yellow-500 text-xl">★★★★★</span>
+            </h2>
+            <p class="text-black text-base mt-[8px]">台灣台北市中山區樂群二路199號</p>
+          </div>
+          <div class="text-right">
+            <span class="text-gray-400 text-sm">每晚最低自</span>
+            <div class="text-[#D14D4D] text-3xl font-bold">NT$ 6,166</div>
+            <button
+              class="bg-primary text-white text-[16px] px-[40px] py-[10px] rounded-[20px] hover:bg-[#4a6b78] transition mt-2"
+            >
+              查看房間詳情
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-[20px]">
+          <div class="col-span-8 space-y-[20px]">
+            <div class="bg-[#EEF2F7] rounded-[20px] p-[20px] h-[272px] flex flex-col">
+              <h3 class="font-bold text-lg mb-4">設施與服務</h3>
+              <ul class="grid grid-cols-3 gap-[20px] flex-1">
+                <li class="flex flex-col items-center justify-center bg-white rounded-[20px]">
+                  <img
+                    src="/src/assets/hoteldetail_img/icon/freeParking.png"
+                    class="w-16 h-16 mb-[10px]"
+                    alt="免費停車"
+                  />
+                  免費停車
+                </li>
+                <li class="flex flex-col items-center justify-center bg-white rounded-[20px]">
+                  <img
+                    src="/src/assets/hoteldetail_img/icon/convenient.png"
+                    class="w-16 h-16 mb-[10px]"
+                    alt="位置便利"
+                  />
+                  位置便利
+                </li>
+                <li class="flex flex-col items-center justify-center bg-white rounded-[20px]">
+                  <img
+                    src="/src/assets/hoteldetail_img/icon/breakfast.png"
+                    class="w-16 h-16 mb-[10px]"
+                    alt="美味早餐"
+                  />
+                  美味早餐
+                </li>
+              </ul>
             </div>
-            <div class="text-right">
-              <span class="text-gray-400 text-sm">每晚最低自</span>
-              <div class="text-[#D14D4D] text-3xl font-bold">NT$ 6,166</div>
-              <button
-                class="bg-primary text-white text-[16px] px-[40px] py-[10px] rounded-[20px] hover:bg-[#4a6b78] transition mt-2"
+
+            <div class="bg-[#EEF2F7] rounded-[20px] p-[20px] h-[204px]">
+              <h3 class="font-bold text-lg mb-2">住宿簡介</h3>
+              <ul class="text-gray-600 text-sm leading-relaxed">
+                <li><span class="font-medium text-black">電話：</span>+886-2-8502-9999</li>
+                <li>
+                  <span class="font-medium text-black">信箱：</span
+                  >reservation@taipeimarriott.com.tw
+                </li>
+                <li class="pt-[10px] text-black">
+                  台北萬豪酒店是一家位於台北市中山區大直地區的五星級豪華酒店，坐落於基隆河畔的都市綠洲，
+                  結合住宿、餐飲、會議與休閒設施於一身，廣受商務與休閒旅客青睞。酒店於 2015 年 9 月
+                  28 日正式開幕，是萬豪國際在台北的重要旗艦酒店之一。
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-span-4 space-y-[20px]">
+            <div class="bg-[#EEF2F7] rounded-[20px] p-[20px]">
+              <div class="flex items-center gap-[12px] pb-[10px]">
+                <div class="text-3xl font-bold text-secondary">9.2</div>
+                <div>
+                  <p class="text-sm font-bold text-gray-600">超棒</p>
+                  <p class="text-xs text-gray-400">1,245 則評論</p>
+                </div>
+              </div>
+              <p class="text-sm text-black">
+                除了飯店地理位置方便，還提供行李寄放以及退房後的洗澡需求，真的很感謝！
+              </p>
+            </div>
+            <div class="bg-[#EEF2F7] rounded-2xl p-[20px]">
+              <h3 class="font-bold text-lg mb-[10px]">地圖 & 周邊景點</h3>
+              <div class="bg-white w-full h-[272px] rounded-xl"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="mb-[40px]">
+        <div class="flex gap-[12px]">
+          <button
+            v-for="tag in ['房型', '房客評論', '服務及設施', '政策']"
+            :key="tag"
+            class="px-6 py-2 bg-primary text-white rounded-[12px] text-lg"
+          >
+            {{ tag }}
+          </button>
+        </div>
+
+        <div class="space-y-[20px] pt-4 rounded-[20px]">
+          <div
+            v-for="room in rooms"
+            :key="room.id"
+            class="flex bg-white rounded-[20px] overflow-hidden border border-black/30"
+          >
+            <div class="w-[30%] bg-[#EEF2F7] flex flex-col">
+              <div
+                class="bg-[#EEF2F7] flex items-center p-5 justify-center aspect-[4/3] overflow-hidden"
               >
-                查看房間詳情
+                <img
+                  :src="room.image"
+                  :alt="room.name"
+                  class="w-full h-full rounded-[20px] object-cover"
+                />
+              </div>
+
+              <div class="px-5 pb-5 text-left">
+                <div class="font-bold text-lg mb-2">{{ room.name }}</div>
+                <ul class="text-gray-600 text-sm space-y-1">
+                  <li v-for="(item, index) in room.details" :key="index">{{ item }}</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="w-[35%] p-[20px] flex flex-col border-l border-gray-200">
+              <span
+                v-for="(feature, index) in room.features"
+                :key="index"
+                class="text-gray-600 text-sm px-3 py-1"
+              >
+                {{ feature }}
+              </span>
+            </div>
+
+            <div class="w-[10%] p-[20px] flex border-l border-gray-200 justify-start items-start">
+              <p class="text-gray-600">可入住 {{ room.capacity }} 人</p>
+            </div>
+
+            <div
+              class="w-[25%] p-[20px] bg-white flex flex-col justify-start border-l border-gray-200"
+            >
+              <span class="text-[#D14D4D] font-bold text-2xl self-end">NT$ {{ room.price }}</span>
+              <button
+                class="bg-primary text-white px-[40px] py-[10px] rounded-[10px] mt-4 font-bold"
+              >
+                立即預定
+              </button>
+              <button
+                class="bg-white text-primary border border-primary px-[40px] py-[10px] rounded-[10px] mt-4 font-bold"
+              >
+                加入收藏
               </button>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div class="grid grid-cols-12 gap-[20px]">
-            <div class="col-span-8 space-y-[20px]">
-              <div class="bg-[#EEF2F7] rounded-[20px] p-[20px] h-[272px] flex flex-col">
-                <h3 class="font-bold text-lg mb-4">設施與服務</h3>
-                <ul class="grid grid-cols-3 gap-[20px] flex-1">
-                  <li class="flex flex-col items-center justify-center bg-white rounded-[20px]">
-                    <img
-                      src="/src/assets/hoteldetail_img/icon/freeParking.png"
-                      class="w-16 h-16 mb-[10px]"
-                      alt="免費停車"
-                    />
-                    免費停車
-                  </li>
-                  <li class="flex flex-col items-center justify-center bg-white rounded-[20px]">
-                    <img
-                      src="/src/assets/hoteldetail_img/icon/convenient.png"
-                      class="w-16 h-16 mb-[10px]"
-                      alt="位置便利"
-                    />
-                    位置便利
-                  </li>
-                  <li class="flex flex-col items-center justify-center bg-white rounded-[20px]">
-                    <img
-                      src="/src/assets/hoteldetail_img/icon/breakfast.png"
-                      class="w-16 h-16 mb-[10px]"
-                      alt="美味早餐"
-                    />
-                    美味早餐
-                  </li>
-                </ul>
-              </div>
+      <section class="p-[20px] rounded-[20px] border border-black/30 bg-[white]">
+        <h3 class="text-2xl font-bold mb-6">房客評論</h3>
 
-              <div class="bg-[#EEF2F7] rounded-[20px] p-[20px] h-[204px]">
-                <h3 class="font-bold text-lg mb-2">住宿簡介</h3>
-                <ul class="text-gray-600 text-sm leading-relaxed">
-                  <li><span class="font-medium text-black">電話：</span>+886-2-8502-9999</li>
-                  <li>
-                    <span class="font-medium text-black">信箱：</span
-                    >reservation@taipeimarriott.com.tw
-                  </li>
-                  <li class="pt-[10px] text-black">
-                    台北萬豪酒店是一家位於台北市中山區大直地區的五星級豪華酒店，坐落於基隆河畔的都市綠洲，
-                    結合住宿、餐飲、會議與休閒設施於一身，廣受商務與休閒旅客青睞。酒店於 2015 年 9
-                    月 28 日正式開幕，是萬豪國際在台北的重要旗艦酒店之一。
-                  </li>
-                </ul>
-              </div>
+        <div class="grid grid-cols-2 gap-8 mb-[20px]">
+          <div class="rounded-[20px] p-[20px] bg-[#EEF2F7]">
+            <div class="font-bold text-lg mb-2">綜合評論</div>
+            <div class="flex items-end gap-2 mb-2">
+              <div class="text-3xl font-bold text-secondary">{{ filteredAverageRating }}</div>
+              <span class="text-gray-600">(共 {{ filteredReviews.length }} 則評論)</span>
             </div>
+            <p class="text-gray-600 text-sm">
+              客房乾淨舒適，服務人員親切，交通方便，整體評價良好。
+            </p>
+          </div>
 
-            <div class="col-span-4 space-y-[20px]">
-              <div class="bg-[#EEF2F7] rounded-[20px] p-[20px]">
-                <div class="flex items-center gap-[12px] pb-[10px]">
-                  <div class="text-3xl font-bold text-secondary">9.2</div>
-                  <div>
-                    <p class="text-sm font-bold text-gray-600">超棒</p>
-                    <p class="text-xs text-gray-400">1,245 則評論</p>
-                  </div>
-                </div>
-                <p class="text-sm text-black">
-                  除了飯店地理位置方便，還提供行李寄放以及退房後的洗澡需求，真的很感謝！
-                </p>
-              </div>
-              <div class="bg-[#EEF2F7] rounded-2xl p-[20px]">
-                <h3 class="font-bold text-lg mb-[10px]">地圖 & 周邊景點</h3>
-                <div class="bg-white w-full h-[272px] rounded-xl"></div>
-              </div>
-            </div>
+          <div class="bg-[#EEF2F7] rounded-[20px] p-[20px]">
+            <div class="font-bold text-lg mb-2">AI 摘要</div>
+            <p class="text-gray-600 text-sm">
+              多數房客稱讚房間整潔與飯店地點便利，少數建議增加早餐選擇。
+            </p>
           </div>
         </div>
 
-        <section class="mb-[40px]">
-          <div class="flex gap-[12px]">
-            <button
-              v-for="tag in ['房型', '房客評論', '服務及設施', '政策']"
-              :key="tag"
-              class="px-6 py-2 bg-primary text-white rounded-[12px] text-lg"
-            >
-              {{ tag }}
-            </button>
-          </div>
+        <div class="pb-[20px] flex gap-[20px]">
+          <select
+            v-model="filterMemberType"
+            class="rounded-[12px] px-[20px] py-[10px] border border-black/30"
+          >
+            <option value="">所有住客類型</option>
+            <option v-for="type in memberTypes" :key="type" :value="type">{{ type }}</option>
+          </select>
 
-          <div class="space-y-[20px] pt-4 rounded-[20px]">
-            <div
-              v-for="room in rooms"
-              :key="room.id"
-              class="flex bg-white rounded-[20px] overflow-hidden border border-black/30"
-            >
-              <div class="w-[30%] bg-[#EEF2F7] flex flex-col">
+          <select
+            v-model="filterRoomType"
+            class="rounded-[12px] px-[20px] py-[10px] border border-black/30"
+          >
+            <option value="">所有房型</option>
+            <option v-for="room in roomTypes" :key="room" :value="room">{{ room }}</option>
+          </select>
+
+          <select
+            v-model="sortOption"
+            class="rounded-[12px] px-[20px] py-[10px] border border-black/30"
+          >
+            <option value="ratingDesc">評分高到低</option>
+            <option value="ratingAsc">評分低到高</option>
+            <option value="recent">最新評論</option>
+          </select>
+        </div>
+
+        <div class="space-y-[20px]">
+          <div
+            v-for="review in paginatedReviews"
+            :key="review.id"
+            class="bg-[#EEF2F7] rounded-2xl p-[20px] flex gap-6"
+          >
+            <div class="w-[30%] flex flex-col items-start space-y-2">
+              <div class="text-3xl font-bold text-secondary">{{ review.rating }}.0</div>
+              <div class="text-sm font-semibold text-primary">超棒</div>
+              <div class="text-gray-600">
+                {{ review.memberName }}（來自{{ review.memberLocation }}）
+              </div>
+              <div class="text-gray-600">{{ review.memberType }}</div>
+              <div class="text-gray-600">{{ review.roomType }}</div>
+              <div class="text-gray-600">入住 {{ review.nights }} 晚（{{ review.stayDate }}）</div>
+            </div>
+
+            <div class="w-[70%] flex flex-col justify-between">
+              <div>
+                <div class="font-bold text-lg text-primary">{{ review.title }}</div>
+                <p class="text-gray-600 mt-1">{{ review.comment }}</p>
                 <div
-                  class="bg-[#EEF2F7] flex items-center p-5 justify-center aspect-[4/3] overflow-hidden"
+                  v-if="review.photos && review.photos.length"
+                  class="flex gap-2 overflow-x-auto mt-2"
                 >
                   <img
-                    :src="room.image"
-                    :alt="room.name"
-                    class="w-full h-full rounded-[20px] object-cover"
+                    v-for="(photo, idx) in review.photos"
+                    :key="idx"
+                    :src="photo"
+                    class="w-24 h-24 object-cover rounded-lg"
+                    alt="評論照片"
                   />
                 </div>
-
-                <div class="px-5 pb-5 text-left">
-                  <div class="font-bold text-lg mb-2">{{ room.name }}</div>
-                  <ul class="text-gray-600 text-sm space-y-1">
-                    <li v-for="(item, index) in room.details" :key="index">{{ item }}</li>
-                  </ul>
-                </div>
               </div>
-
-              <div class="w-[35%] p-[20px] flex flex-col border-l border-gray-200">
-                <span
-                  v-for="(feature, index) in room.features"
-                  :key="index"
-                  class="text-gray-600 text-sm px-3 py-1"
-                >
-                  {{ feature }}
-                </span>
-              </div>
-
-              <div class="w-[10%] p-[20px] flex border-l border-gray-200 justify-start items-start">
-                <p class="text-gray-600">可入住 {{ room.capacity }} 人</p>
-              </div>
-
-              <div
-                class="w-[25%] p-[20px] bg-white flex flex-col justify-start border-l border-gray-200"
-              >
-                <span class="text-[#D14D4D] font-bold text-2xl self-end">NT$ {{ room.price }}</span>
-                <button
-                  class="bg-primary text-white px-[40px] py-[10px] rounded-[10px] mt-4 font-bold"
-                >
-                  立即預定
-                </button>
-                <button
-                  class="bg-white text-primary border border-primary px-[40px] py-[10px] rounded-[10px] mt-4 font-bold"
-                >
-                  加入收藏
-                </button>
-              </div>
+              <div class="text-gray-400 text-sm">評論時間：{{ review.date }}</div>
             </div>
           </div>
-        </section>
-
-        <section class="p-[20px] rounded-[20px] border border-black/30 bg-[white]">
-          <h3 class="text-2xl font-bold mb-6">房客評論</h3>
-
-          <div class="grid grid-cols-2 gap-8 mb-[20px]">
-            <div class="rounded-[20px] p-[20px] bg-[#EEF2F7]">
-              <div class="font-bold text-lg mb-2">綜合評論</div>
-              <div class="flex items-end gap-2 mb-2">
-                <div class="text-3xl font-bold text-secondary">{{ filteredAverageRating }}</div>
-                <span class="text-gray-600">(共 {{ filteredReviews.length }} 則評論)</span>
-              </div>
-              <p class="text-gray-600 text-sm">
-                客房乾淨舒適，服務人員親切，交通方便，整體評價良好。
-              </p>
-            </div>
-
-            <div class="bg-[#EEF2F7] rounded-[20px] p-[20px]">
-              <div class="font-bold text-lg mb-2">AI 摘要</div>
-              <p class="text-gray-600 text-sm">
-                多數房客稱讚房間整潔與飯店地點便利，少數建議增加早餐選擇。
-              </p>
-            </div>
-          </div>
-
-          <div class="pb-[20px] flex gap-[20px]">
-            <select
-              v-model="filterMemberType"
-              class="rounded-[12px] px-[20px] py-[10px] border border-black/30"
-            >
-              <option value="">所有住客類型</option>
-              <option v-for="type in memberTypes" :key="type" :value="type">{{ type }}</option>
-            </select>
-
-            <select
-              v-model="filterRoomType"
-              class="rounded-[12px] px-[20px] py-[10px] border border-black/30"
-            >
-              <option value="">所有房型</option>
-              <option v-for="room in roomTypes" :key="room" :value="room">{{ room }}</option>
-            </select>
-
-            <select
-              v-model="sortOption"
-              class="rounded-[12px] px-[20px] py-[10px] border border-black/30"
-            >
-              <option value="ratingDesc">評分高到低</option>
-              <option value="ratingAsc">評分低到高</option>
-              <option value="recent">最新評論</option>
-            </select>
-          </div>
-
-          <div class="space-y-[20px]">
-            <div
-              v-for="review in paginatedReviews"
-              :key="review.id"
-              class="bg-[#EEF2F7] rounded-2xl p-[20px] flex gap-6"
-            >
-              <div class="w-[30%] flex flex-col items-start space-y-2">
-                <div class="text-3xl font-bold text-secondary">{{ review.rating }}.0</div>
-                <div class="text-sm font-semibold text-primary">超棒</div>
-                <div class="text-gray-600">
-                  {{ review.memberName }}（來自{{ review.memberLocation }}）
-                </div>
-                <div class="text-gray-600">{{ review.memberType }}</div>
-                <div class="text-gray-600">{{ review.roomType }}</div>
-                <div class="text-gray-600">
-                  入住 {{ review.nights }} 晚（{{ review.stayDate }}）
-                </div>
-              </div>
-
-              <div class="w-[70%] flex flex-col justify-between">
-                <div>
-                  <div class="font-bold text-lg text-primary">{{ review.title }}</div>
-                  <p class="text-gray-600 mt-1">{{ review.comment }}</p>
-                  <div
-                    v-if="review.photos && review.photos.length"
-                    class="flex gap-2 overflow-x-auto mt-2"
-                  >
-                    <img
-                      v-for="(photo, idx) in review.photos"
-                      :key="idx"
-                      :src="photo"
-                      class="w-24 h-24 object-cover rounded-lg"
-                      alt="評論照片"
-                    />
-                  </div>
-                </div>
-                <div class="text-gray-400 text-sm">評論時間：{{ review.date }}</div>
-              </div>
-            </div>
-          </div>
-          <div class="flex justify-center gap-2 mt-4">
-            <button
-              v-for="page in totalPages"
-              :key="page"
-              @click="currentPage = page"
-              :class="
-                page === currentPage
-                  ? 'bg-primary text-white px-3 py-1 rounded-[20px]'
-                  : 'bg-gray-200 text-primary px-3 py-1 rounded-[20px]'
-              "
-            >
-              {{ page }}
-            </button>
-          </div>
-        </section>
-      </div>
+        </div>
+        <div class="flex justify-center gap-2 mt-4">
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            @click="currentPage = page"
+            :class="
+              page === currentPage
+                ? 'bg-primary text-white px-3 py-1 rounded-[20px]'
+                : 'bg-gray-200 text-primary px-3 py-1 rounded-[20px]'
+            "
+          >
+            {{ page }}
+          </button>
+        </div>
+      </section>
     </div>
   </div>
 </template>
@@ -391,6 +412,50 @@ interface Review {
   comment: string
   photos?: string[]
   date: string
+}
+
+const totalPages = computed(() => Math.ceil(filteredReviews.value.length / reviewsPerPage.value))
+const currentIndex = ref(0)
+const startX = ref(0)
+const endX = ref(0)
+
+const images = [
+  '/src/assets/hoteldetail_img/Wanhao.jpg',
+  '/src/assets/hoteldetail_img/Wanhao2.jpg',
+  '/src/assets/hoteldetail_img/Wanhao3.jpg',
+  '/src/assets/hoteldetail_img/Wanhao4.jpg',
+  '/src/assets/hoteldetail_img/Wanhao5.jpg',
+  '/src/assets/hoteldetail_img/Wanhao6.jpg',
+  '/src/assets/hoteldetail_img/Wanhao7.jpg',
+]
+
+const goTo = (index: number) => {
+  currentIndex.value = index
+}
+
+const onTouchStart = (e: TouchEvent) => {
+  const touch = e.touches?.[0]
+  if (!touch) return // 保護空陣列
+  startX.value = touch.clientX
+}
+
+const onTouchMove = (e: TouchEvent) => {
+  const touch = e.touches?.[0]
+  if (!touch) return
+  endX.value = touch.clientX
+}
+
+const onTouchEnd = () => {
+  const diff = endX.value - startX.value
+  if (Math.abs(diff) > 50) {
+    if (diff < 0) {
+      currentIndex.value = (currentIndex.value + 1) % images.length
+    } else {
+      currentIndex.value = (currentIndex.value - 1 + images.length) % images.length
+    }
+  }
+  startX.value = 0
+  endX.value = 0
 }
 
 const rooms = ref<Room[]>([
@@ -571,6 +636,4 @@ const paginatedReviews = computed(() => {
   const end = start + reviewsPerPage.value
   return filteredReviews.value.slice(start, end)
 })
-
-const totalPages = computed(() => Math.ceil(filteredReviews.value.length / reviewsPerPage.value))
 </script>
