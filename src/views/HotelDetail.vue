@@ -2,6 +2,41 @@
   <div>
     <div class="w-full bg-[#E9F7FF] pt-24 min-h-screen">
       <div class="max-w-[1200px] mx-auto pb-[208px]">
+        <section
+          class="max-w-[1200px] h-14 p-2 mb-5 bg-white rounded-full border border-gray-300 flex flex-row items-center gap-2.5"
+        >
+          <div class="h-full w-full">
+            <label class="rounded-full"></label>
+            <input
+              type="text"
+              placeholder="台北萬豪酒店"
+              class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
+            />
+          </div>
+          <div class="h-full w-full">
+            <label class="text-gray-500 rounded-full"></label>
+            <input
+              type="text"
+              placeholder="入住及退房日期"
+              class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
+            />
+          </div>
+          <div class="h-full w-full">
+            <label class="text-gray-500 rounded-full"></label>
+            <input
+              type="text"
+              placeholder="房間及房客"
+              class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
+            />
+          </div>
+          <div class="text-gray-500 rounded-full h-full">
+            <button
+              class="h-full bg-primary hover:bg-#6D8FA3 text-white font-bold py-1 px-7 rounded-full transition-colors whitespace-nowrap"
+            >
+              搜尋
+            </button>
+          </div>
+        </section>
         <div class="grid grid-cols-[2fr_1fr_1fr_1fr] gap-[10px] mb-[40px]">
           <div class="relative h-[400px] rounded-[20px] overflow-hidden border border-black/30">
             <img
