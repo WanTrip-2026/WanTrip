@@ -1,29 +1,13 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import { computed } from 'vue'
+defineProps({
+  hotel: {
+    type: Object,
+    required: true,
+  },
+})
 
-const HotelResult = [
-  {
-    id: 1,
-    name: '高雄洲際酒店',
-    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-    address: '台灣高雄市前鎮區新光路33號',
-    stars: '5',
-    comments: '120 則評論',
-    rating: '9.1',
-    price: '5000',
-  },
-  {
-    id: 2,
-    name: '台北晶華酒店',
-    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-    address: '台灣台北市中山區中山北路二段39巷3號',
-    stars: '4',
-    comments: '230 則評論',
-    rating: '9.5',
-    price: '4000',
-  },
-]
 function starCount(starsText) {
   const stars = parseInt(starsText.match(/\d+/)?.[0]) || 0
   return stars // 返回星數
@@ -31,10 +15,8 @@ function starCount(starsText) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5 w-[894px]">
+  <div class="flex flex-col w-[894px]">
     <div
-      v-for="hotel in HotelResult"
-      :key="hotel.id"
       class="bg-white h-[180px] rounded-[20px] border border-gray-200 overflow-hidden flex flex-row"
     >
       <!-- 圖片 -->
@@ -53,7 +35,7 @@ function starCount(starsText) {
           {{ hotel.rating }}
         </p>
         <div class="flex flex-col gap-2">
-          <h3 class="text-3xl font-bold text-black">
+          <h3 class="text-2xl font-bold text-black">
             {{ hotel.name }}
           </h3>
 
@@ -85,7 +67,7 @@ function starCount(starsText) {
 
         <!-- 底部 -->
         <div class="flex flex-col justify-end items-end gap-2">
-          <div class="text-red-500 text-3xl font-bold">NT${{ hotel.price }}</div>
+          <div class="text-red-500 text-2xl font-bold">NT${{ hotel.price }}</div>
           <div class="flex gap-4">
             <button
               class="bg-primary text-white p-[9px] rounded-[20px] hover:bg-secondary transition flex items-center justify-center"

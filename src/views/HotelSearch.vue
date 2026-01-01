@@ -80,24 +80,125 @@ function toggleMenu(title) {
   }
 }
 
-// const currentPage = ref(1)
-// const itemsPerPage = 8
+const HotelResult = ref([
+  {
+    id: 1,
+    name: '高雄洲際酒店',
+    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
+    address: '台灣高雄市前鎮區新光路33號',
+    stars: '5',
+    comments: '120 則評論',
+    rating: '9.1',
+    price: '5000',
+  },
+  {
+    id: 2,
+    name: '台北晶華酒店',
+    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
+    address: '台灣台北市中山區中山北路二段39巷3號',
+    stars: '4',
+    comments: '230 則評論',
+    rating: '9.5',
+    price: '4000',
+  },
+  {
+    id: 3,
+    name: '台北晶華酒店',
+    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
+    address: '台灣台北市中山區中山北路二段39巷3號',
+    stars: '4',
+    comments: '230 則評論',
+    rating: '9.5',
+    price: '4000',
+  },
+  {
+    id: 4,
+    name: '台北晶華酒店',
+    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
+    address: '台灣台北市中山區中山北路二段39巷3號',
+    stars: '4',
+    comments: '230 則評論',
+    rating: '9.5',
+    price: '4000',
+  },
+  {
+    id: 5,
+    name: '台北晶華酒店',
+    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
+    address: '台灣台北市中山區中山北路二段39巷3號',
+    stars: '4',
+    comments: '230 則評論',
+    rating: '9.5',
+    price: '4000',
+  },
+  {
+    id: 6,
+    name: '台北晶華酒店',
+    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
+    address: '台灣台北市中山區中山北路二段39巷3號',
+    stars: '4',
+    comments: '230 則評論',
+    rating: '9.5',
+    price: '4000',
+  },
+  {
+    id: 7,
+    name: '台北晶華酒店',
+    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
+    address: '台灣台北市中山區中山北路二段39巷3號',
+    stars: '4',
+    comments: '230 則評論',
+    rating: '9.5',
+    price: '4000',
+  },
+  {
+    id: 8,
+    name: '台北晶華酒店',
+    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
+    address: '台灣台北市中山區中山北路二段39巷3號',
+    stars: '4',
+    comments: '230 則評論',
+    rating: '9.5',
+    price: '4000',
+  },
+  {
+    id: 9,
+    name: '台北晶華酒店',
+    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
+    address: '台灣台北市中山區中山北路二段39巷3號',
+    stars: '4',
+    comments: '230 則評論',
+    rating: '9.5',
+    price: '4000',
+  },
+  {
+    id: 10,
+    name: '台北晶華酒店',
+    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
+    address: '台灣台北市中山區中山北路二段39巷3號',
+    stars: '4',
+    comments: '230 則評論',
+    rating: '9.5',
+    price: '4000',
+  },
+])
 
-// // 計算總頁數，根據 hotelCards 的數量
-// const totalPages = computed(() => Math.ceil(hotelCards.length / itemsPerPage))
+//切換頁數
 
-// // 根據當前頁數來顯示對應的項目
-// const pagedHotelCards = computed(() => {
-//   const start = (currentPage.value - 1) * itemsPerPage
-//   return hotelCards.slice(start, start + itemsPerPage)
-// })
+const currentPage = ref(1)
+const itemsPerPage = 8
 
-// // 切換頁數
-// function goToPage(page) {
-//   if (page >= 1 && page <= totalPages.value) {
-//     currentPage.value = page
-//   }
-// }
+const totalPages = computed(() => Math.ceil(HotelResult.value.length / itemsPerPage))
+const pagedHotels = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return HotelResult.value.slice(start, start + itemsPerPage)
+})
+
+function goToPage(page) {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
+  }
+}
 </script>
 
 <template>
@@ -105,8 +206,15 @@ function toggleMenu(title) {
   <main class="max-w-[1200px] mx-auto pt-24 bg-page px-5 lg:px-0">
     <!-- search-bar -->
     <section
-      class="max-w-[800px] h-20 p-2.5 mb-10 mx-auto bg-secondary rounded-full flex flex-row items-center gap-5 sticky"
+      class="max-w-[800px] h-14 p-2.5 mb-10 mx-auto bg-secondary rounded-full flex flex-row items-center gap-5 sticky"
     >
+      <div class="text-gray-500 rounded-full h-full">
+        <button
+          class="h-full bg-primary hover:bg-#6D8FA3 text-white font-bold py-1 px-7 rounded-full transition-colors whitespace-nowrap"
+        >
+          找住宿
+        </button>
+      </div>
       <div class="h-full w-full">
         <label class="rounded-full"></label>
         <input
@@ -131,19 +239,17 @@ function toggleMenu(title) {
           class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
         />
       </div>
-      <div class="text-gray-500 rounded-full h-full">
-        <button
-          class="h-full bg-primary hover:bg-#6D8FA3 text-white font-bold py-4 px-7 rounded-full transition-colors whitespace-nowrap"
-        >
-          搜尋
-        </button>
-      </div>
     </section>
     <!-- result-list -->
     <section class="gap-[20px] m-[40px] mx-auto flex">
       <aside class="flex flex-col gap-5 w-[285px]">
-        <div class="rounded-[20px] bg-white min-h-[200px] flex justify-center items-center">
-          地圖找房功能
+        <div class="rounded-[20px] bg-white h-[200px] overflow-hidden aspect-video">
+          <iframe
+            class="w-full h-full border-0"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7188.632859084555!2d121.51760264946732!3d25.05771890815704!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a968f68729e7%3A0x6e3f6d2374968eaa!2z5Y-w5YyX5pm26I-v6YWS5bqX!5e0!3m2!1szh-TW!2stw!4v1767279114226!5m2!1szh-TW!2stw"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
         </div>
         <div class="rounded-[20px] p-10 bg-white">
           <h3 class="font-bold text-xl mb-[20px]">篩選條件</h3>
@@ -180,7 +286,6 @@ function toggleMenu(title) {
                   :step="step"
                   v-model.number="priceRange.max"
                   class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
-                  style="pointer-events: all"
                 />
               </div>
               <!-- 顯示數值 -->
@@ -237,7 +342,7 @@ function toggleMenu(title) {
                   {{ option }}
                 </label>
                 <button
-                  v-if="HotelMenu.options.length > 5 && !expandedMenus.includes(HotelMenu.title)"
+                  v-if="HotelMenu.options.length > 4 && !expandedMenus.includes(HotelMenu.title)"
                   class="text-black text-sm mt-1"
                   @click="toggleMenu(HotelMenu.title)"
                 >
@@ -255,21 +360,24 @@ function toggleMenu(title) {
           <button class="rounded-full bg-secondary h-full w-full font-bold">熱門高到低</button>
           <button class="rounded-full bg-secondary h-full w-full font-bold">評價高到低</button>
         </div>
-        <div class="hotel-card rounded-[20px] w-full">
-          <HotelCard />
+        <div class="flex flex-col gap-5 hotel-card rounded-[20px] w-full">
+          <HotelCard v-for="hotel in pagedHotels" :key="hotel.id" :hotel="hotel" />
+        </div>
+        <div class="flex justify-center gap-2 mt-5 mb-10">
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            @click="goToPage(page)"
+            class="px-3 py-1 border rounded-full text-gray-500 hover:text-black"
+            :class="{
+              'bg-primary text-white': currentPage === page,
+              'text-gray-500 hover:text-black': currentPage !== page,
+            }"
+          >
+            {{ page }}
+          </button>
         </div>
       </div>
-      <!-- <div class="flex justify-center gap-2 mt-5 mb-10">
-        <button
-          v-for="page in totalPages"
-          :key="page"
-          class="px-3 py-1 border rounded-full text-gray-500 hover:text-black"
-          :class="{ 'bg-primary text-white': currentPage === page }"
-          @click="goToPage(page)"
-        >
-          {{ page }}
-        </button>
-      </div> -->
     </section>
   </main>
 </template>
