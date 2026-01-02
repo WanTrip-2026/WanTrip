@@ -45,19 +45,16 @@ function mockItems(count: number): Experience[] {
 
 <template>
   <main class="bg-[#f7fbfb] pb-10">
-    <div class="mt-5 pt-[80px]">
+    <div class="mt-5 pt-24">
       <div class="max-w-[1200px] mx-auto px-4 md:px-6">
         <section
-          class="max-w-[800px] h-[80px] p-2.5 mx-auto
-                 bg-secondary rounded-full flex items-center gap-5
-                 mt-5 mb-10"
+          class="max-w-[800px] h-[80px] p-2.5 mx-auto bg-secondary rounded-full flex items-center gap-5 mt-5 mb-10"
         >
           <div class="h-full w-full">
             <input
               type="text"
               placeholder="城市"
-              class="h-full w-full border text-center border-gray-300 rounded-full
-                     focus:ring-primary focus:border-primary outline-none"
+              class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
             />
           </div>
 
@@ -65,15 +62,13 @@ function mockItems(count: number): Experience[] {
             <input
               type="text"
               placeholder="景點與體驗"
-              class="h-full w-full border text-center border-gray-300 rounded-full
-                     focus:ring-primary focus:border-primary outline-none"
+              class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
             />
           </div>
 
           <div class="h-full">
             <button
-              class="h-full bg-primary text-white font-bold px-[30px]
-                     rounded-full hover:brightness-95 whitespace-nowrap"
+              class="h-full bg-primary text-white font-bold px-[30px] rounded-full hover:brightness-95 whitespace-nowrap"
             >
               搜尋
             </button>
@@ -100,12 +95,13 @@ function mockItems(count: number): Experience[] {
 
         <template v-else>
           <section v-for="section in sections" :key="section.title" class="mb-10">
-            <h2 class="text-[24px] font-extrabold mb-[40px]">
+            <h2 class="text-2xl font-extrabold mb-[40px]">
               {{ section.title }}
             </h2>
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
-              <article
+              <a
+                href="#"
                 v-for="item in section.items"
                 :key="item.id"
                 class="rounded-[20px] overflow-hidden border border-gray-200 bg-white hover:border-black transition"
@@ -124,11 +120,11 @@ function mockItems(count: number): Experience[] {
                     <img :src="item.image" class="w-full h-full object-cover" />
 
                     <div class="absolute left-4 bottom-4 text-white">
-                      <p class="text-[26px] font-extrabold leading-none drop-shadow">
+                      <p class="text-2xl font-extrabold leading-none drop-shadow">
                         {{ item.title }}
                       </p>
-                      <p class="mt-2 text-[18px] font-semibold drop-shadow flex items-center gap-2">
-                        探索 <span class="text-[22px] leading-none">›</span>
+                      <p class="mt-2 text-base font-semibold drop-shadow flex items-center gap-2">
+                        探索 <span class="text-xl leading-none">›</span>
                       </p>
                     </div>
                   </div>
@@ -155,8 +151,8 @@ function mockItems(count: number): Experience[] {
 
                     <div class="mt-3 flex items-center gap-3">
                       <span
-                        class="bg-[#6D8FA3] text-white font-bold text-sm
-                               px-3 py-1 rounded-full">
+                        class="bg-[#6D8FA3] text-white font-bold text-sm px-3 py-1 rounded-full"
+                      >
                         {{ item.rating }} / 5
                       </span>
                       <span class="text-gray-500 text-sm">
@@ -165,14 +161,13 @@ function mockItems(count: number): Experience[] {
                     </div>
                   </div>
                 </template>
-              </article>
+              </a>
             </div>
 
             <div class="mt-5 flex justify-center">
               <button
                 type="button"
-                class="h-[44px] bg-primary text-white font-bold px-[30px]
-                       rounded-full hover:brightness-95 transition shadow-sm"
+                class="h-[44px] bg-primary text-white font-bold px-[30px] rounded-full hover:brightness-95 transition shadow-sm"
               >
                 顯示更多
               </button>
@@ -183,4 +178,3 @@ function mockItems(count: number): Experience[] {
     </div>
   </main>
 </template>
-
