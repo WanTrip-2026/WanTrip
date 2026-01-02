@@ -193,9 +193,9 @@
           <div class="w-full md:col-span-4 space-y-5">
             <div class="bg-[#EEF2F7] rounded-[20px] p-5">
               <div class="flex items-center gap-3 pb-[10px]">
-                <div class="text-3xl font-bold text-secondary">9.2</div>
+                <div class="text-3xl font-bold text-primary">9.2</div>
                 <div>
-                  <p class="text-sm font-bold text-gray-600">超棒</p>
+                  <p class="text-sm font-bold text-primary">Excellent</p>
                   <p class="text-xs text-gray-400">1,245 則評論</p>
                 </div>
               </div>
@@ -212,7 +212,7 @@
       </div>
 
       <section class="mb-[40px]">
-        <div class="flex gap-[12px]">
+        <div class="hidden md:flex md:gap-[12px]">
           <button
             v-for="tag in ['房型', '房客評論', '服務及設施', '政策']"
             :key="tag"
@@ -287,11 +287,11 @@
       <section class="p-[20px] rounded-[20px] border border-black/30 bg-[white]">
         <h3 class="text-2xl font-bold mb-6">房客評論</h3>
 
-        <div class="grid grid-cols-2 gap-8 mb-[20px]">
+        <div class="flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-8 mb-[20px]">
           <div class="rounded-[20px] p-[20px] bg-[#EEF2F7]">
             <div class="font-bold text-lg mb-2">綜合評論</div>
             <div class="flex items-end gap-2 mb-2">
-              <div class="text-3xl font-bold text-secondary">{{ filteredAverageRating }}</div>
+              <div class="text-3xl font-bold text-primary">{{ filteredAverageRating }}</div>
               <span class="text-gray-600">(共 {{ filteredReviews.length }} 則評論)</span>
             </div>
             <p class="text-gray-600 text-sm">
@@ -307,31 +307,33 @@
           </div>
         </div>
 
-        <div class="pb-[20px] flex gap-[20px]">
-          <select
-            v-model="filterMemberType"
-            class="rounded-[12px] px-[20px] py-[10px] border border-black/30"
-          >
-            <option value="">所有住客類型</option>
-            <option v-for="type in memberTypes" :key="type" :value="type">{{ type }}</option>
-          </select>
+        <div class="pb-[20px] flex flex-col md:flex-row gap-3 md:gap-[20px]">
+          <div class="grid grid-cols-2 md:flex md:flex-row gap-3 w-full">
+            <select
+              v-model="filterMemberType"
+              class="w-full md:w-auto rounded-[12px] px-4 md:px-5 py-[10px] border border-black/30 text-sm md:text-base"
+            >
+              <option value="">所有住客類型</option>
+              <option v-for="type in memberTypes" :key="type" :value="type">{{ type }}</option>
+            </select>
 
-          <select
-            v-model="filterRoomType"
-            class="rounded-[12px] px-[20px] py-[10px] border border-black/30"
-          >
-            <option value="">所有房型</option>
-            <option v-for="room in roomTypes" :key="room" :value="room">{{ room }}</option>
-          </select>
+            <select
+              v-model="filterRoomType"
+              class="w-full md:w-auto rounded-[12px] px-4 md:px-5 py-[10px] border border-black/30 text-sm md:text-base"
+            >
+              <option value="">所有房型</option>
+              <option v-for="room in roomTypes" :key="room" :value="room">{{ room }}</option>
+            </select>
 
-          <select
-            v-model="sortOption"
-            class="rounded-[12px] px-[20px] py-[10px] border border-black/30"
-          >
-            <option value="ratingDesc">評分高到低</option>
-            <option value="ratingAsc">評分低到高</option>
-            <option value="recent">最新評論</option>
-          </select>
+            <select
+              v-model="sortOption"
+              class="w-full md:w-auto rounded-[12px] px-4 md:px-5 py-[10px] border border-black/30 text-sm md:text-base"
+            >
+              <option value="ratingDesc">評分高到低</option>
+              <option value="ratingAsc">評分低到高</option>
+              <option value="recent">最新評論</option>
+            </select>
+          </div>
         </div>
 
         <div class="space-y-5">
