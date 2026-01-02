@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-[1200px] mx-auto min-h-screen px-5">
-    <div class="pt-24">
+    <div class="py-24">
       <section
         class="max-w-[1200px] h-14 p-2 mb-5 bg-white rounded-full border border-gray-300 flex flex-row items-center gap-2.5"
       >
@@ -225,9 +225,9 @@
           <div
             v-for="room in rooms"
             :key="room.id"
-            class="flex bg-white rounded-[20px] overflow-hidden border border-black/30"
+            class="flex flex-col md:flex-row bg-white rounded-[20px] overflow-hidden border border-black/30"
           >
-            <div class="w-[30%] bg-[#EEF2F7] flex flex-col">
+            <div class="w-full md:w-[30%] bg-[#EEF2F7] flex flex-col">
               <div
                 class="bg-[#EEF2F7] flex items-center p-5 justify-center aspect-[4/3] overflow-hidden"
               >
@@ -246,22 +246,26 @@
               </div>
             </div>
 
-            <div class="w-[35%] p-[20px] flex flex-col border-l border-gray-200">
+            <div
+              class="w-full md:w-[35%] p-[20px] flex flex-col border-t md:border-t-0 md:border-l border-gray-200"
+            >
               <span
                 v-for="(feature, index) in room.features"
                 :key="index"
-                class="text-gray-600 text-sm px-3 py-1"
+                class="text-gray-600 text-sm md:px-3 md:py-1"
               >
                 {{ feature }}
               </span>
             </div>
 
-            <div class="w-[10%] p-[20px] flex border-l border-gray-200 justify-start items-start">
+            <div
+              class="w-full md:w-[10%] p-[20px] flex border-t md:border-t-0 md:border-l border-gray-200 justify-start items-start"
+            >
               <p class="text-gray-600">可入住 {{ room.capacity }} 人</p>
             </div>
 
             <div
-              class="w-[25%] p-[20px] bg-white flex flex-col justify-start border-l border-gray-200"
+              class="w-full md:w-[25%] p-[20px] bg-white flex flex-col justify-start border-t md:border-t-0 md:border-l border-gray-200"
             >
               <span class="text-[#D14D4D] font-bold text-2xl self-end">NT$ {{ room.price }}</span>
               <button
@@ -329,41 +333,78 @@
           </select>
         </div>
 
-        <div class="space-y-[20px]">
+        <div class="space-y-5">
           <div
             v-for="review in paginatedReviews"
             :key="review.id"
-            class="bg-[#EEF2F7] rounded-2xl p-[20px] flex gap-6"
+            class="bg-[#EEF2F7] rounded-[20px] p-5 flex flex-col gap-5"
           >
-            <div class="w-[30%] flex flex-col items-start space-y-2">
-              <div class="text-3xl font-bold text-secondary">{{ review.rating }}.0</div>
-              <div class="text-sm font-semibold text-primary">超棒</div>
-              <div class="text-gray-600">
-                {{ review.memberName }}（來自{{ review.memberLocation }}）
-              </div>
-              <div class="text-gray-600">{{ review.memberType }}</div>
-              <div class="text-gray-600">{{ review.roomType }}</div>
-              <div class="text-gray-600">入住 {{ review.nights }} 晚（{{ review.stayDate }}）</div>
-            </div>
-
-            <div class="w-[70%] flex flex-col justify-between">
-              <div>
-                <div class="font-bold text-lg text-primary">{{ review.title }}</div>
-                <p class="text-gray-600 mt-1">{{ review.comment }}</p>
+            <div class="flex justify-between items-start">
+              <div class="flex items-center gap-3">
                 <div
-                  v-if="review.photos && review.photos.length"
-                  class="flex gap-2 overflow-x-auto mt-2"
+                  class="w-12 h-12 bg-primary/20 text-primary rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0"
                 >
-                  <img
-                    v-for="(photo, idx) in review.photos"
-                    :key="idx"
-                    :src="photo"
-                    class="w-24 h-24 object-cover rounded-lg"
-                    alt="評論照片"
-                  />
+                  {{ review.memberName.charAt(0) }}
+                </div>
+                <div>
+                  <div class="font-bold text-gray-900 flex items-center gap-2">
+                    {{ review.memberName }}
+                    <span
+                      class="text-[12px] font-normal bg-white/90 text-gray-500 px-2 py-0.5 rounded-full"
+                    >
+                      {{ review.memberType }}
+                    </span>
+                  </div>
+                  <div class="text-xs text-gray-500 mt-0.5">
+                    {{ review.memberLocation }} · {{ review.date }}
+                  </div>
                 </div>
               </div>
-              <div class="text-gray-400 text-sm">評論時間：{{ review.date }}</div>
+
+              <div class="flex flex-col items-end">
+                <div class="text-2xl font-black text-primary leading-none">
+                  {{ review.rating }}.0
+                </div>
+                <div class="text-[10px] font-bold text-primary uppercase tracking-wider mt-1">
+                  Excellent
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <h4 class="font-bold text-gray-900 text-lg leading-snug">
+                {{ review.title }}
+              </h4>
+              <p class="text-gray-600 text-sm leading-relaxed">
+                {{ review.comment }}
+              </p>
+
+              <div
+                v-if="review.photos && review.photos.length"
+                class="flex gap-3 overflow-x-auto py-2 scrollbar-hide"
+              >
+                <img
+                  v-for="(photo, idx) in review.photos"
+                  :key="idx"
+                  :src="photo"
+                  class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-[20px] flex-shrink-0"
+                  alt="評論照片"
+                />
+              </div>
+            </div>
+
+            <div
+              class="bg-white/90 rounded-[10px] md:rounded-[20px] p-5 flex flex-wrap gap-y-2 gap-x-6 items-center"
+            >
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
+                <span class="text-sm font-medium text-gray-700">房型：</span>{{ review.roomType }}
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
+                <span class="text-sm font-medium text-gray-700">入住：</span>{{ review.nights }} 晚
+                ({{ review.stayDate }})
+              </div>
             </div>
           </div>
         </div>
