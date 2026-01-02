@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 
-import iconVisa from '@/assets/pay_img/visa-classic-svgrepo-com.svg'
+import iconVisa from '../assets/pay_img/visa-classic-svgrepo-com.svg'
 import iconMastercard from '@/assets/pay_img/mastercard-svgrepo-com.svg'
 import iconJcb from '@/assets/pay_img/jcb-svgrepo-com.svg'
 import iconAmex from '@/assets/pay_img/amex-svgrepo-com.svg'
@@ -92,36 +92,39 @@ const paymentOptions: Array<{
 
 <template>
   <div
-    class="fixed top-[70px] left-0 right-0 z-50 border-b border-black/10 bg-white px-4 py-3 lg:hidden"
+    class="fixed top-20 left-0 right-0 z-50 mx-5 rounded-[20px] border border-gray-300 bg-white px-4 py-3 lg:hidden"
   >
-    <div class="mx-auto flex max-w-[1200px] items-center justify-between text-sm">
-      <span class="truncate font-medium">{{ product.title }}</span>
-
-      <div class="flex items-center gap-4">
-        <span class="text-black/60">- NT$ {{ price.discount }}</span>
-        <span class="font-semibold text-black">NT$ {{ total }}</span>
+    <div class="mx-auto flex max-w-[1200px] justify-between items-start text-sm">
+      <div class="flex flex-col gap-1">
+        <span class="font-bold text-xl">{{ product.title }}</span>
+        <span class="text-gray-600 text-sm">優惠</span>
+        <span class="font-bold text-black text-xl">總價</span>
+      </div>
+      <div class="flex flex-col items-end self-end gap-1">
+        <span class="text-gray-600 text-sm">- NT$ {{ price.discount }}</span>
+        <span class="font-bold text-black text-xl">總價 NT$ {{ total }}</span>
       </div>
     </div>
   </div>
 
   <div class="w-full min-h-screen bg-[#f7fbfb]">
-    <div class="mx-auto max-w-[1200px] px-4 pt-[160px] pb-[40px] lg:pt-[100px]">
+    <div class="mx-auto max-w-[1200px] px-4 pt-[200px] pb-10 lg:pt-24">
       <div class="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
         <!-- Left -->
         <div class="flex flex-col gap-5">
           <!-- 商品資訊 -->
           <section class="rounded-[20px] border border-black/10 bg-white p-5">
-            <h2 class="text-[24px] font-semibold">商品資訊</h2>
+            <h2 class="text-2xl font-semibold">商品資訊</h2>
 
             <div class="mt-5 flex gap-5">
               <div
-                class="flex h-[88px] w-[140px] items-center justify-center rounded-[20px] border border-black/10 bg-black/5 text-sm text-black/40"
+                class="flex h-22 w-[140px] items-center justify-center rounded-[20px] border border-black/10 bg-black/5 text-sm text-black/40"
               >
                 image
               </div>
 
               <div class="min-w-0">
-                <div class="text-[16px] font-semibold leading-snug">
+                <div class="text-base font-semibold leading-snug">
                   {{ product.title }}
                 </div>
 
@@ -142,7 +145,7 @@ const paymentOptions: Array<{
 
           <!-- 訂購人資料 -->
           <section class="rounded-[20px] border border-black/10 bg-white p-5">
-            <h2 class="text-[24px] font-semibold">訂購人資料</h2>
+            <h2 class="text-2xl font-semibold">訂購人資料</h2>
 
             <div class="mt-5 grid grid-cols-1 gap-y-5 gap-x-10 md:grid-cols-2">
               <div class="flex flex-col gap-3">
@@ -179,7 +182,7 @@ const paymentOptions: Array<{
 
           <!-- 優惠 -->
           <section class="rounded-[20px] border border-black/10 bg-white p-5">
-            <h2 class="text-[24px] font-semibold">優惠</h2>
+            <h2 class="text-2xl font-semibold">優惠</h2>
 
             <div class="mt-5 flex flex-col gap-5 md:flex-row md:items-end">
               <div class="flex flex-1 flex-col gap-3">
@@ -208,15 +211,13 @@ const paymentOptions: Array<{
 
           <!-- 付款方式 -->
           <section class="rounded-[20px] border border-black/10 bg-white p-5">
-            <h2 class="text-[24px] font-semibold">選擇付款方式</h2>
+            <h2 class="text-2xl font-semibold">選擇付款方式</h2>
 
             <div class="mt-5 flex flex-col gap-5">
               <label
                 v-for="option in paymentOptions"
                 :key="option.key"
-                class="flex h-[60px] cursor-pointer items-center justify-between
-                       overflow-hidden rounded-full border border-black/10 px-4
-                       transition hover:bg-black/5"
+                class="flex h-[60px] cursor-pointer items-center justify-between overflow-hidden rounded-full border border-black/10 px-4 transition hover:bg-black/5"
               >
                 <div class="flex items-center gap-3">
                   <input
@@ -258,7 +259,7 @@ const paymentOptions: Array<{
         <!-- 費用明細 -->
         <aside class="hidden h-fit lg:block lg:sticky lg:top-[100px]">
           <section class="rounded-[20px] border border-black/10 bg-white p-5">
-            <h2 class="text-[24px] font-semibold">費用明細</h2>
+            <h2 class="text-2xl font-semibold">費用明細</h2>
 
             <div class="mt-5 flex flex-col gap-5 text-sm">
               <div class="flex items-center justify-between">
@@ -273,7 +274,7 @@ const paymentOptions: Array<{
 
               <div class="my-2 h-px bg-black/10" />
 
-              <div class="flex items-center justify-between text-[24px]">
+              <div class="flex items-center justify-between text-2xl">
                 <span class="font-semibold">總計</span>
                 <span class="font-semibold">NT$ {{ total }}</span>
               </div>
