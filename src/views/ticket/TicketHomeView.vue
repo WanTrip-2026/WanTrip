@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 interface Experience {
   id: number
@@ -41,6 +44,11 @@ function mockItems(count: number): Experience[] {
     reviews: 33715,
   }))
 }
+
+function onSearch() {
+  // 跳轉頁面
+  router.push('/tickets/search')
+}
 </script>
 
 <template>
@@ -68,6 +76,8 @@ function mockItems(count: number): Experience[] {
 
           <div class="h-full">
             <button
+              @click="onSearch"
+              type="submit"
               class="h-full bg-primary text-white font-bold px-[30px] rounded-full hover:brightness-95 whitespace-nowrap"
             >
               搜尋
@@ -83,7 +93,7 @@ function mockItems(count: number): Experience[] {
               <div
                 v-for="i in 4"
                 :key="i"
-                class="bg-gray-200 rounded-[40px] aspect-[4/3] animate-pulse"
+                class="bg-gray-200 rounded-[20px] aspect-[4/3] animate-pulse"
               />
             </div>
 

@@ -1,5 +1,5 @@
 <script setup>
-import HotelCard from '../components/layout/HotelCard.vue'
+import HotelCard from '@/components/layout/HotelCard.vue'
 import { ref, reactive, watch, computed } from 'vue'
 
 const minPrice = 0
@@ -206,38 +206,37 @@ function goToPage(page) {
   <main class="max-w-[1200px] mx-auto pt-24 bg-page px-5 lg:px-0">
     <!-- search-bar -->
     <section
-      class="max-w-[800px] h-14 p-2.5 mb-10 mx-auto bg-secondary rounded-full flex flex-row items-center gap-5 sticky"
+      class="max-w-[800px] mx-auto w-full p-2.5 mb-10 bg-white rounded-[20px] md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-5 sticky"
     >
-      <div class="text-gray-500 rounded-full h-full">
-        <button
-          class="h-full bg-primary hover:bg-#6D8FA3 text-white font-bold py-1 px-7 rounded-full transition-colors whitespace-nowrap"
-        >
-          找住宿
-        </button>
-      </div>
-      <div class="h-full w-full">
-        <label class="rounded-full"></label>
+      <div class="relative w-full h-12 md:h-full flex-1">
         <input
           type="text"
           placeholder="目的地"
-          class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
+          class="h-10 w-full pl-4 md:pl-10 pr-4 text-sm md:text-base border-none bg-gray-50 md:bg-transparent rounded-xl md:rounded-full focus:ring-2 focus:ring-primary/20 outline-none transition-all"
         />
       </div>
-      <div class="h-full w-full">
-        <label class="text-gray-500 rounded-full"></label>
+      <div class="hidden md:block w-[1px] h-8 bg-gray-200"></div>
+      <div class="relative w-full h-12 md:h-full flex-1">
         <input
           type="text"
           placeholder="入住及退房日期"
-          class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
+          class="h-10 w-full pl-4 md:pl-10 pr-4 text-sm md:text-base border-none bg-gray-50 md:bg-transparent rounded-xl md:rounded-full focus:ring-2 focus:ring-primary/20 outline-none transition-all"
         />
       </div>
-      <div class="h-full w-full">
-        <label class="text-gray-500 rounded-full"></label>
+      <div class="hidden md:block w-[1px] h-8 bg-gray-200"></div>
+      <div class="relative w-full h-12 md:h-full flex-1">
         <input
           type="text"
-          placeholder="房間及房客"
-          class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
+          placeholder="2 位成人 · 1 間房"
+          class="h-10 w-full pl-4 md:pl-10 pr-4 text-sm md:text-base border-none bg-gray-50 md:bg-transparent rounded-xl md:rounded-full focus:ring-2 focus:ring-primary/20 outline-none transition-all"
         />
+      </div>
+      <div class="w-full md:w-auto h-12 md:h-full">
+        <button
+          class="h-10 w-full md:w-auto bg-primary hover:bg-[#6D8FA3] text-white py-1 px-7 rounded-xl md:rounded-full transition-colors whitespace-nowrap"
+        >
+          搜尋
+        </button>
       </div>
     </section>
     <!-- result-list -->

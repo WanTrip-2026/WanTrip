@@ -3,8 +3,8 @@
     <header class="bg-primary text-white p-10 text-2xl font-bold mb-10">
       <h1 class="max-w-[1200px] mx-auto">歡迎來到幫助中心，我們可以如何幫助您？</h1>
     </header>
-    <main class="max-w-[1200px] mx-auto flex flex-col gap-10 px-5 lg:px-0 mb-8">
-      <div class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
+    <main class="max-w-[1200px] mx-auto flex flex-col gap-10 mb-8">
+      <div class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300 lg:mx-0 mx-5">
         <h3 class="text-xl font-bold text-gray-900 mb-5">常見問題</h3>
         <div class="flex flex-col gap-5 space-y-2.5">
           <div v-for="(faq, index) in faqs" :key="index" class="border rounded-lg overflow-hidden">

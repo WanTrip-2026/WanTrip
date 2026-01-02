@@ -27,7 +27,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const goToTravelDNA = () => {
-  router.push('/travelDNA')
+  router.push('/travel-dna')
 }
 </script>
 

@@ -3,7 +3,7 @@
     <div
       v-for="hotel in HotelResult"
       :key="hotel.id"
-      class="group relative flex items-stretch rounded-[40px] border border-gray-200 overflow-hidden transition-all duration-300"
+      class="group relative flex items-stretch rounded-[20px] border border-gray-200 overflow-hidden transition-all duration-300"
       :class="{ 'w-[183px]': !hovered[hotel.id], 'w-[643px]': hovered[hotel.id] }"
       @mouseenter="hovered[hotel.id] = true"
       @mouseleave="hovered[hotel.id] = false"

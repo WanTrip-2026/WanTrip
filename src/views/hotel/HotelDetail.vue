@@ -1,8 +1,8 @@
 <template>
-  <div class="max-w-[1200px] mx-auto min-h-screen px-5">
-    <div class="py-24">
+  <main class="max-w-[1200px] mx-auto min-h-screen lg:px-0 px-5">
+    <div class="pt-24 pb-[60px]">
       <section
-        class="max-w-[1200px] w-full p-2 mb-5 bg-white rounded-2xl md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-3"
+        class="max-w-[1200px] w-full p-2 mb-10 bg-white rounded-2xl md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-3"
       >
         <div class="relative w-full h-12 md:h-full flex-1">
           <input
@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <div class="hidden md:grid md:grid-cols-[2fr_1fr_1fr_1fr] gap-[10px] mb-[40px]">
+      <div class="hidden md:grid md:grid-cols-[2fr_1fr_1fr_1fr] gap-2.5 mb-10">
         <div class="relative h-[400px] rounded-[20px] overflow-hidden border border-black/30">
           <img
             src="/src/assets/hoteldetail_img/Wanhao.jpg"
@@ -120,9 +120,7 @@
       <div class="bg-white p-5 md:p-[20px] rounded-[20px] mb-[40px] border border-black/30">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-5">
           <div>
-            <h2
-              class="text-2xl md:text-[28px] font-bold text-black flex flex-wrap items-center gap-2"
-            >
+            <h2 class="text-2xl md:text-xl font-bold text-black flex flex-wrap items-center gap-2">
               台北萬豪酒店 (Taipei Marriott Hotel)
               <span class="text-yellow-500 text-base md:text-xl">★★★★★</span>
             </h2>
@@ -132,7 +130,7 @@
             class="w-full md:w-auto text-left md:text-right border-t md:border-none pt-4 md:pt-0"
           >
             <span class="text-gray-400 text-xs md:text-sm">每晚最低自</span>
-            <div class="text-[#D14D4D] text-2xl md:text-3xl font-bold">NT$ 6,166</div>
+            <div class="text-red-600 text-2xl md:text-3xl font-bold">NT$ 6,166</div>
             <button
               class="w-full md:w-auto bg-primary text-white text-base px-10 py-3 md:py-[10px] rounded-xl md:rounded-[20px] hover:bg-[#4a6b78] transition mt-3"
             >
@@ -211,18 +209,20 @@
         </div>
       </div>
 
-      <section class="mb-[40px]">
-        <div class="hidden md:flex md:gap-[12px]">
+      <section class="mb-10">
+        <div
+          class="bg-white border border-black/30 rounded-full p-2 hidden md:flex md:gap-[12px] z-60"
+        >
           <button
             v-for="tag in ['房型', '房客評論', '服務及設施', '政策']"
             :key="tag"
-            class="px-6 py-2 bg-primary text-white rounded-[12px] text-lg"
+            class="px-6 py-2 bg-primary text-white rounded-full text-lg"
           >
             {{ tag }}
           </button>
         </div>
 
-        <div class="space-y-[20px] pt-4 rounded-[20px]">
+        <div class="space-y-[20px] pt-5 rounded-[20px]">
           <div
             v-for="room in rooms"
             :key="room.id"
@@ -269,11 +269,14 @@
               class="w-full md:w-[25%] p-[20px] bg-white flex flex-col justify-start border-t md:border-t-0 md:border-l border-gray-200"
             >
               <span class="text-[#D14D4D] font-bold text-2xl self-end">NT$ {{ room.price }}</span>
-              <button
-                class="bg-primary text-white px-[40px] py-[10px] rounded-[10px] mt-4 font-bold"
-              >
-                立即預定
-              </button>
+              <RouterLink to="/orders/checkout">
+                <button
+                  class="bg-primary w-full text-white px-[40px] py-[10px] rounded-[20px] mt-4 font-bold"
+                >
+                  立即預定
+                </button>
+              </RouterLink>
+
               <button
                 class="bg-white text-primary border border-primary px-[40px] py-[10px] rounded-[10px] mt-4 font-bold"
               >
@@ -284,7 +287,7 @@
         </div>
       </section>
 
-      <section class="p-[20px] rounded-[20px] border border-black/30 bg-[white]">
+      <section class="p-5 rounded-[20px] border border-black/30 bg-[white]">
         <h3 class="text-2xl font-bold mb-6">房客評論</h3>
 
         <div class="flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-8 mb-[20px]">
@@ -311,15 +314,15 @@
           <div class="grid grid-cols-2 md:flex md:flex-row gap-3 w-full">
             <select
               v-model="filterMemberType"
-              class="w-full md:w-auto rounded-[12px] px-4 md:px-5 py-[10px] border border-black/30 text-sm md:text-base"
+              class="w-full md:w-auto rounded-[20px] px-4 md:px-5 py-[10px] border border-black/30 text-sm md:text-base"
             >
-              <option value="">所有住客類型</option>
+              <option value="" class="px-5">所有住客類型</option>
               <option v-for="type in memberTypes" :key="type" :value="type">{{ type }}</option>
             </select>
 
             <select
               v-model="filterRoomType"
-              class="w-full md:w-auto rounded-[12px] px-4 md:px-5 py-[10px] border border-black/30 text-sm md:text-base"
+              class="w-full md:w-auto rounded-[20px] px-4 md:px-5 py-[10px] border border-black/30 text-sm md:text-base"
             >
               <option value="">所有房型</option>
               <option v-for="room in roomTypes" :key="room" :value="room">{{ room }}</option>
@@ -327,7 +330,7 @@
 
             <select
               v-model="sortOption"
-              class="w-full md:w-auto rounded-[12px] px-4 md:px-5 py-[10px] border border-black/30 text-sm md:text-base"
+              class="w-full md:w-auto rounded-[20px] px-4 md:px-5 py-[10px] border border-black/30 text-sm md:text-base"
             >
               <option value="ratingDesc">評分高到低</option>
               <option value="ratingAsc">評分低到高</option>
@@ -353,7 +356,7 @@
                   <div class="font-bold text-gray-900 flex items-center gap-2">
                     {{ review.memberName }}
                     <span
-                      class="text-[12px] font-normal bg-white/90 text-gray-500 px-2 py-0.5 rounded-full"
+                      class="text-xs font-normal bg-white/90 text-gray-500 px-2 py-0.5 rounded-full"
                     >
                       {{ review.memberType }}
                     </span>
@@ -368,7 +371,7 @@
                 <div class="text-2xl font-black text-primary leading-none">
                   {{ review.rating }}.0
                 </div>
-                <div class="text-[10px] font-bold text-primary uppercase tracking-wider mt-1">
+                <div class="text-xs font-bold text-primary uppercase tracking-wider mt-1">
                   Excellent
                 </div>
               </div>
@@ -397,7 +400,7 @@
             </div>
 
             <div
-              class="bg-white/90 rounded-[10px] md:rounded-[20px] p-5 flex flex-wrap gap-y-2 gap-x-6 items-center"
+              class="bg-white/90 rounded-[20px] md:rounded-[20px] p-5 flex flex-wrap gap-y-2 gap-x-6 items-center"
             >
               <div class="flex items-center gap-2 text-xs text-gray-500">
                 <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
@@ -416,18 +419,18 @@
             v-for="page in totalPages"
             :key="page"
             @click="currentPage = page"
-            :class="
-              page === currentPage
-                ? 'bg-primary text-white px-3 py-1 rounded-[20px]'
-                : 'bg-gray-200 text-primary px-3 py-1 rounded-[20px]'
-            "
+            class="border"
+            :class="{
+              'bg-primary text-white px-3 py-1 rounded-[20px]': currentPage === page,
+              'text-primary hover:text-black px-3 py-1 rounded-[20px]': currentPage !== page,
+            }"
           >
             {{ page }}
           </button>
         </div>
       </section>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">

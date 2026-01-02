@@ -1,5 +1,5 @@
 <script setup>
-import TicketCard from '../components/layout/TicketCard.vue'
+import TicketCard from '@/components/layout/TicketCard.vue'
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -338,7 +338,7 @@ const searchCity = route.query.city || ''
 </script>
 
 <template class="bg-page">
-  <main class="mx-auto w-full bg-page pt-24 min-h-screen">
+  <main class="mx-auto w-full bg-page pt-24 min-h-screen lg:px-0 px-5">
     <div class="max-w-[1200px] mx-auto">
       <section
         class="max-w-[800px] h-[60px] border border-gray-300 px-5 py-2.5 mx-auto bg-white rounded-full flex flex-row justify-between gap-2.5"
@@ -397,21 +397,21 @@ const searchCity = route.query.city || ''
           </button>
         </div>
       </section>
-      <section class="gap-[20px] mt-[40px] mx-auto flex">
-        <aside class="flex flex-col gap-5 w-[285px]">
+      <section class="gap-5 mt-10 mx-auto flex">
+        <aside class="hidden lg:flex flex-col gap-5 w-[285px]">
           <div class="rounded-[20px] p-10 bg-white border">
-            <h3 class="font-bold text-xl mb-[20px]">篩選條件</h3>
+            <h3 class="font-bold text-xl mb-5">篩選條件</h3>
             <div class="flex flex-col gap-5">
               <!-- Option Filter -->
               <div
-                class="border-b-[1px] pb-[20px] border-secondary border-solid last:border-b-0"
+                class="border-b-[1px] pb-5 border-secondary border-solid last:border-b-0"
                 v-for="TicketMenu in ticketFiltered"
                 :key="TicketMenu.title"
               >
                 <h4 class="font-medium mb-2 text-base">{{ TicketMenu.title }}</h4>
                 <div class="space-y-2">
                   <label
-                    class="flex cursor-pointer text-[14px] items-center"
+                    class="flex cursor-pointer text-sm items-center"
                     v-for="option in TicketMenu.options.slice(
                       0,
                       expandedMenus.includes(TicketMenu.title) ? TicketMenu.options.length : 4,
@@ -444,7 +444,7 @@ const searchCity = route.query.city || ''
             <button class="rounded-full bg-secondary h-full px-4 py-2 font-bold">好評優惠</button>
             <button class="rounded-full bg-secondary h-full px-4 py-2 font-bold">最低價</button>
           </div>
-          <div class="grid grid-cols-3 gap-5">
+          <div class="grid grid-cols-2 lg:grid-cols-3 gap-5">
             <TicketCard v-for="ticket in pagedTickets" :key="ticket.id" :ticket="ticket" />
           </div>
           <div class="flex justify-center gap-2 mt-5 mb-10">

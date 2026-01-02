@@ -15,7 +15,7 @@ const props = defineProps({
     <div
       class="w-[280px] rounded-[20px] border bg-white border-gray-200 hover:border-black overflow-hidden"
     >
-      <a href="#" class="w-full h-full flex-col gap-2.5">
+      <a href="/tickets/:id" class="w-full h-full flex-col gap-2.5">
         <!-- 圖片 -->
         <div class="w-full">
           <img

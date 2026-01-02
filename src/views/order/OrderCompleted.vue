@@ -18,7 +18,7 @@ const formattedAmount = computed(() => `NT$ ${order.amount.toLocaleString()}`)
       <div
         class="mx-auto w-[600px] lg:w-[800px] p-5 lg:p-10 bg-white rounded-[20px] flex flex-col items-center gap-5 lg:gap-10 border border-grey-300"
       >
-        <h3 class="text-[40px] font-bold text-black">訂購完成✅</h3>
+        <h3 class="text-4xl font-bold text-black">訂購完成✅</h3>
         <div class="flex flex-col gap-2 items-center lg:flex-row lg:gap-6 lg:justify-start w-full">
           <div class="w-[200px] aspect-[1/1] overflow-hidden">
             <img
