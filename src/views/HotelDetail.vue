@@ -2,35 +2,34 @@
   <div class="max-w-[1200px] mx-auto min-h-screen px-5">
     <div class="py-24">
       <section
-        class="max-w-[1200px] h-14 p-2 mb-5 bg-white rounded-full border border-gray-300 flex flex-row items-center gap-2.5"
+        class="max-w-[1200px] w-full p-2 mb-5 bg-white rounded-2xl md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-3"
       >
-        <div class="h-full w-full">
-          <label class="rounded-full"></label>
+        <div class="relative w-full h-12 md:h-full flex-1">
           <input
             type="text"
             placeholder="台北萬豪酒店"
-            class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
+            class="h-10 w-full pl-4 md:pl-10 pr-4 text-sm md:text-base border-none bg-gray-50 md:bg-transparent rounded-xl md:rounded-full focus:ring-2 focus:ring-primary/20 outline-none transition-all"
           />
         </div>
-        <div class="h-full w-full">
-          <label class="text-gray-500 rounded-full"></label>
+        <div class="hidden md:block w-[1px] h-8 bg-gray-200"></div>
+        <div class="relative w-full h-12 md:h-full flex-1">
           <input
             type="text"
             placeholder="入住及退房日期"
-            class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
+            class="h-10 w-full pl-4 md:pl-10 pr-4 text-sm md:text-base border-none bg-gray-50 md:bg-transparent rounded-xl md:rounded-full focus:ring-2 focus:ring-primary/20 outline-none transition-all"
           />
         </div>
-        <div class="h-full w-full">
-          <label class="text-gray-500 rounded-full"></label>
+        <div class="hidden md:block w-[1px] h-8 bg-gray-200"></div>
+        <div class="relative w-full h-12 md:h-full flex-1">
           <input
             type="text"
-            placeholder="房間及房客"
-            class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
+            placeholder="2 位成人 · 1 間房"
+            class="h-10 w-full pl-4 md:pl-10 pr-4 text-sm md:text-base border-none bg-gray-50 md:bg-transparent rounded-xl md:rounded-full focus:ring-2 focus:ring-primary/20 outline-none transition-all"
           />
         </div>
-        <div class="text-gray-500 rounded-full h-full">
+        <div class="w-full md:w-auto h-12 md:h-full">
           <button
-            class="h-full bg-primary hover:bg-#6D8FA3 text-white font-bold py-1 px-7 rounded-full transition-colors whitespace-nowrap"
+            class="h-10 w-full md:w-auto bg-primary hover:bg-[#6D8FA3] text-white py-1 px-7 rounded-xl md:rounded-full transition-colors whitespace-nowrap"
           >
             搜尋
           </button>
@@ -118,53 +117,55 @@
         </div>
       </div>
 
-      <div
-        class="bg-white p-[20px] rounded-[40px] border-gray-200 mb-[40px] border border-black/30"
-      >
-        <div class="flex justify-between items-center pb-[20px]">
+      <div class="bg-white p-5 md:p-[20px] rounded-[20px] mb-[40px] border border-black/30">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-5">
           <div>
-            <h2 class="text-[28px] font-bold text-black flex items-center gap-2">
+            <h2
+              class="text-2xl md:text-[28px] font-bold text-black flex flex-wrap items-center gap-2"
+            >
               台北萬豪酒店 (Taipei Marriott Hotel)
-              <span class="text-yellow-500 text-xl">★★★★★</span>
+              <span class="text-yellow-500 text-base md:text-xl">★★★★★</span>
             </h2>
-            <p class="text-black text-base mt-[8px]">台灣台北市中山區樂群二路199號</p>
+            <p class="text-black text-sm md:text-base mt-2 mb-4">台灣台北市中山區樂群二路199號</p>
           </div>
-          <div class="text-right">
-            <span class="text-gray-400 text-sm">每晚最低自</span>
-            <div class="text-[#D14D4D] text-3xl font-bold">NT$ 6,166</div>
+          <div
+            class="w-full md:w-auto text-left md:text-right border-t md:border-none pt-4 md:pt-0"
+          >
+            <span class="text-gray-400 text-xs md:text-sm">每晚最低自</span>
+            <div class="text-[#D14D4D] text-2xl md:text-3xl font-bold">NT$ 6,166</div>
             <button
-              class="bg-primary text-white text-[16px] px-[40px] py-[10px] rounded-[20px] hover:bg-[#4a6b78] transition mt-2"
+              class="w-full md:w-auto bg-primary text-white text-base px-10 py-3 md:py-[10px] rounded-xl md:rounded-[20px] hover:bg-[#4a6b78] transition mt-3"
             >
               查看房間詳情
             </button>
           </div>
         </div>
 
-        <div class="grid grid-cols-12 gap-[20px]">
-          <div class="col-span-8 space-y-[20px]">
-            <div class="bg-[#EEF2F7] rounded-[20px] p-[20px] h-[272px] flex flex-col">
+        <div class="flex flex-col md:grid md:grid-cols-12 gap-5">
+          <div class="w-full md:col-span-8 space-y-5">
+            <div class="bg-[#EEF2F7] rounded-[20px] p-5 flex flex-col">
               <h3 class="font-bold text-lg mb-4">設施與服務</h3>
-              <ul class="grid grid-cols-3 gap-[20px] flex-1">
-                <li class="flex flex-col items-center justify-center bg-white rounded-[20px]">
+              <ul class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <li class="flex flex-col items-center justify-center bg-white rounded-[20px] py-4">
                   <img
                     src="/src/assets/hoteldetail_img/icon/freeParking.png"
-                    class="w-16 h-16 mb-[10px]"
+                    class="w-12 h-12 md:w-16 md:h-16 mb-2"
                     alt="免費停車"
                   />
-                  免費停車
+                  <span class="text-sm">免費停車</span>
                 </li>
-                <li class="flex flex-col items-center justify-center bg-white rounded-[20px]">
+                <li class="flex flex-col items-center justify-center bg-white rounded-[20px] py-4">
                   <img
                     src="/src/assets/hoteldetail_img/icon/convenient.png"
-                    class="w-16 h-16 mb-[10px]"
+                    class="w-12 h-12 md:w-16 md:h-16 mb-2"
                     alt="位置便利"
                   />
                   位置便利
                 </li>
-                <li class="flex flex-col items-center justify-center bg-white rounded-[20px]">
+                <li class="flex flex-col items-center justify-center bg-white rounded-[20px] py-4">
                   <img
                     src="/src/assets/hoteldetail_img/icon/breakfast.png"
-                    class="w-16 h-16 mb-[10px]"
+                    class="w-12 h-12 md:w-16 md:h-16 mb-2"
                     alt="美味早餐"
                   />
                   美味早餐
@@ -172,15 +173,15 @@
               </ul>
             </div>
 
-            <div class="bg-[#EEF2F7] rounded-[20px] p-[20px] h-[204px]">
+            <div class="bg-[#EEF2F7] rounded-[20px] p-5">
               <h3 class="font-bold text-lg mb-2">住宿簡介</h3>
-              <ul class="text-gray-600 text-sm leading-relaxed">
+              <ul class="text-gray-600 text-sm leading-relaxed space-y-2">
                 <li><span class="font-medium text-black">電話：</span>+886-2-8502-9999</li>
                 <li>
                   <span class="font-medium text-black">信箱：</span
                   >reservation@taipeimarriott.com.tw
                 </li>
-                <li class="pt-[10px] text-black">
+                <li class="pt-2 text-black border-t border-gray-300/50 mt-2">
                   台北萬豪酒店是一家位於台北市中山區大直地區的五星級豪華酒店，坐落於基隆河畔的都市綠洲，
                   結合住宿、餐飲、會議與休閒設施於一身，廣受商務與休閒旅客青睞。酒店於 2015 年 9 月
                   28 日正式開幕，是萬豪國際在台北的重要旗艦酒店之一。
@@ -189,9 +190,9 @@
             </div>
           </div>
 
-          <div class="col-span-4 space-y-[20px]">
-            <div class="bg-[#EEF2F7] rounded-[20px] p-[20px]">
-              <div class="flex items-center gap-[12px] pb-[10px]">
+          <div class="w-full md:col-span-4 space-y-5">
+            <div class="bg-[#EEF2F7] rounded-[20px] p-5">
+              <div class="flex items-center gap-3 pb-[10px]">
                 <div class="text-3xl font-bold text-secondary">9.2</div>
                 <div>
                   <p class="text-sm font-bold text-gray-600">超棒</p>
@@ -202,9 +203,9 @@
                 除了飯店地理位置方便，還提供行李寄放以及退房後的洗澡需求，真的很感謝！
               </p>
             </div>
-            <div class="bg-[#EEF2F7] rounded-2xl p-[20px]">
+            <div class="bg-[#EEF2F7] rounded-2xl p-5">
               <h3 class="font-bold text-lg mb-[10px]">地圖 & 周邊景點</h3>
-              <div class="bg-white w-full h-[272px] rounded-xl"></div>
+              <div class="bg-white w-full h-[200px] md:h-[272px] rounded-xl"></div>
             </div>
           </div>
         </div>
@@ -396,13 +397,13 @@
             <div
               class="bg-white/90 rounded-[10px] md:rounded-[20px] p-5 flex flex-wrap gap-y-2 gap-x-6 items-center"
             >
-              <div class="flex items-center gap-2 text-sm text-gray-500">
+              <div class="flex items-center gap-2 text-xs text-gray-500">
                 <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
-                <span class="text-sm font-medium text-gray-700">房型：</span>{{ review.roomType }}
+                <span class="text-xs font-medium text-gray-700">房型：</span>{{ review.roomType }}
               </div>
-              <div class="flex items-center gap-2 text-sm text-gray-500">
+              <div class="flex items-center gap-2 text-xs text-gray-500">
                 <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
-                <span class="text-sm font-medium text-gray-700">入住：</span>{{ review.nights }} 晚
+                <span class="text-xs font-medium text-gray-700">入住：</span>{{ review.nights }} 晚
                 ({{ review.stayDate }})
               </div>
             </div>
@@ -561,7 +562,7 @@ const reviews = ref<Review[]>([
     memberLocation: '台灣',
     memberType: '商務旅客',
     rating: 10,
-    roomType: '經典特大號床間- 帶1張特大號床',
+    roomType: '經典特大床間',
     nights: 1,
     stayDate: '2024年12月',
     title: '非常棒的住宿體驗！',
