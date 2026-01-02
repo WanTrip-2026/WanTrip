@@ -139,7 +139,7 @@
             @mouseleave="onHoverLeave"
           >
             <div
-              class="relative overflow-hidden rounded-[20px] bg-white/70 border border-gray-300 transition-shadow duration-200"
+              class="relative overflow-hidden rounded-[30px] bg-white/70 border border-gray-300 transition-shadow duration-200"
               :class="teleportOpen && hoverIndex === index ? 'shadow-lg' : 'shadow-sm'"
               :ref="(el) => setCardEl(index, el as HTMLElement | null)"
             >
