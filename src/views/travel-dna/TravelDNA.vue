@@ -77,7 +77,7 @@ interface Option {
 const router = useRouter()
 const goToResult = () => {
   router.push({
-    path: '/travelDNAresult',
+    path: '/travel-dna/result',
     query: { role: finalRole.value },
   })
 }

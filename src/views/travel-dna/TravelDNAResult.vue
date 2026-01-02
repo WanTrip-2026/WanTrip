@@ -126,6 +126,6 @@ const saveRoleImage = () => {
 }
 
 const goToIntro = () => {
-  router.push('/travelDNAintro')
+  router.push('/travel-dna/intro')
 }
 </script>

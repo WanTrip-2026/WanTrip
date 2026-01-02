@@ -82,11 +82,13 @@ function starCount(starsText) {
                 />
               </svg>
             </button>
-            <button
-              class="bg-primary text-white px-6 py-2 rounded-[20px] hover:bg-secondary transition"
-            >
-              查看空房情況
-            </button>
+            <RouterLink :to="`/hotels/${hotel.id}`">
+              <button
+                class="bg-primary text-white px-6 py-2 rounded-[20px] hover:bg-secondary transition"
+              >
+                查看空房情況
+              </button>
+            </RouterLink>
           </div>
         </div>
       </div>

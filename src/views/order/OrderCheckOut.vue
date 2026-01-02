@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 
-import iconVisa from '../assets/pay_img/visa-classic-svgrepo-com.svg'
+import iconVisa from '@/assets/pay_img/visa-classic-svgrepo-com.svg'
 import iconMastercard from '@/assets/pay_img/mastercard-svgrepo-com.svg'
 import iconJcb from '@/assets/pay_img/jcb-svgrepo-com.svg'
 import iconAmex from '@/assets/pay_img/amex-svgrepo-com.svg'
