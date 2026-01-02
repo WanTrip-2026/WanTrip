@@ -13,6 +13,7 @@ import TravelDNAResult from '@/views/TravelDNAResult.vue'
 import OrderCompleted from '@/views/OrderCompleted.vue'
 import Support from '@/views/Support.vue'
 import Profile from '@/views/Profile.vue'
+import OrderCheckOut from '@/views/OrderCheckOut.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -76,6 +77,11 @@ const router = createRouter({
       path: '/support',
       name: 'support',
       component: Support,
+    },
+    {
+      path: '/ordercheckout',
+      name: 'order-check-out',
+      component: OrderCheckOut,
     },
     // 404 頁（選擇性，但很推薦）
     {
