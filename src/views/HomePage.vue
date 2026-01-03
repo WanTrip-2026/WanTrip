@@ -5,8 +5,7 @@
       <!-- Banner -->
       <section class="relative pb-32 md:pb-20">
         <div class="relative">
-          <div
-            class="relative w-full overflow-hidden rounded-[20px] bg-gray-200 shadow-[0_10px_30px_rgba(47,61,77,0.12)]">
+          <div class="relative w-full overflow-hidden rounded-[20px] bg-gray-200 shadow-sm">
             <div class="flex h-[340px] items-center justify-center md:h-[420px]">
               <span class="select-none text-sm text-primary/60">banner</span>
             </div>
@@ -73,11 +72,11 @@
 
       <!-- 想去哪裡玩？ -->
       <section class="mt-10">
-        <h2 class="mb-5 text-lg font-black">想去哪裡玩？</h2>
+        <h2 class="mb-5 text-xl font-bold text-dark">想去哪裡玩？</h2>
 
-        <div class="grid grid-cols-2 gap-5 md:grid-cols-5">
+        <div class="grid grid-cols-5 gap-5">
           <button v-for="r in regions" :key="r.key" type="button"
-            class="group relative overflow-hidden rounded-[20px] bg-white/70 shadow-sm ring-1 ring-primary/10 transition hover:-translate-y-0.5 hover:shadow-sm"
+            class="relative group overflow-hidden rounded-[20px] bg-white/70 border border-gray-300 transition shadow-sm hover:shadow-lg"
             @click="onClickRegion(r)">
             <div class="h-[110px] w-full" style="
                 background-image: linear-gradient(
@@ -93,7 +92,7 @@
                 background-size: 18px 18px;
               " />
             <div class="absolute inset-0 flex items-center justify-center">
-              <span class="text-xl font-black text-primary drop-shadow-sm">{{ r.label }}</span>
+              <span class="text-xl font-black text-white drop-shadow-sm">{{ r.label }}</span>
             </div>
           </button>
         </div>
@@ -101,13 +100,13 @@
 
       <!-- 熱門飯店（第一排） -->
       <section class="mt-20">
-        <h2 class="mb-5 text-lg font-black">熱門飯店</h2>
+        <h2 class="mb-5 text-xl font-bold text-dark">熱門飯店</h2>
 
         <div class="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
           <article v-for="(h, index) in hotHotelsA" :key="h.id" class="relative" @mouseenter="onHoverEnter(h, index)"
             @mouseleave="onHoverLeave">
             <div
-              class="relative overflow-hidden rounded-[30px] bg-white/70 border border-gray-300 transition-shadow duration-200"
+              class="relative overflow-hidden rounded-[20px] bg-white/70 border border-gray-300 transition-all duration-200"
               :class="teleportOpen && hoverIndex === index ? 'shadow-lg' : 'shadow-sm'"
               :ref="(el) => setCardEl(index, el)">
               <div class="h-[240px] bg-cover bg-center" :style="{ backgroundImage: `url(${h.imageUrl})` }" />
@@ -118,8 +117,7 @@
 
       <!-- 熱門飯店（第二排） -->
       <section class="mt-20">
-        <h2 class="mb-5 text-lg font-black">推薦飯店</h2>
-
+        <h2 class="mb-5 text-xl font-bold text-dark">推薦飯店</h2>
         <div class="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
           <article v-for="h in hotHotelsB" :key="h.id"
             class="overflow-hidden rounded-[20px] bg-white/70 shadow-sm border border-gray-300">
@@ -128,16 +126,35 @@
         </div>
       </section>
 
+      <section class="mt-20">
+        <h2 class="font-bold text-xl mb-5 text-dark">熱門體驗</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+          <RouterLink v-for="recommend in recommendations" :key="recommend.id" :to="`/ticket/${recommend.id}`"
+            class="group bg-white rounded-[20px] shadow-sm overflow-hidden border hover:shadow-md transition-all duration-300 cursor-pointer">
+            <div class="h-32 bg-dark_100 overflow-hidden">
+              <img :src="recommend.img" :alt="recommend.title"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+            </div>
+            <div class="p-5">
+              <div class="text-sm font-bold truncate mb-1 text-dark_900 group-hover:text-main_800 transition-colors">
+                {{ recommend.title }}
+              </div>
+              <div class="text-xs text-dark_700 font-medium">TWD {{ recommend.price }} 起</div>
+            </div>
+          </RouterLink>
+        </div>
+      </section>
+
       <!-- 關鍵字（全台住宿｜可點選 Toggle） -->
-      <section class="my-10">
+      <section class="my-20">
         <div class="rounded-[20px] bg-white/75 p-5 text-center shadow-sm border border-gray-300">
-          <p class="text-2xl font-bold">大家都在找...</p>
+          <p class="text-2xl font-bold text-dark">大家都在找...</p>
 
           <div class="mt-5 flex flex-wrap justify-center gap-2">
             <button v-for="k in stayKeywords" :key="k" type="button"
-              class="rounded-full px-3 py-1 text-sm font-semibold border transition" :class="selectedKeywords.has(k)
+              class="rounded-full px-4 py-1 text-sm font-semibold border transition" :class="selectedKeywords.has(k)
                 ? 'bg-primary text-white border-primary shadow-sm'
-                : 'bg-gray-100 text-primary/80 border-primary/10 hover:bg-primary/5'
+                : 'bg-gray-100 text-primary/80 border-primary/10 hover:bg-main_100'
                 " @click="toggleKeyword(k)">
               {{ k }}
             </button>
@@ -150,56 +167,54 @@
 
     <!-- ✅ Teleport：hover 展開卡渲染到 body -->
     <Teleport to="body">
-      <div v-if="teleportOpen && hoverHotel"
-        class="fixed z-[9999] opacity-0 transition-opacity duration-200 ease-in-out"
-        :class="teleportOpen ? 'opacity-100' : ''" :style="teleportStyle" @mouseenter="onTeleportEnter"
+      <div v-if="teleportOpen && hoverHotel" class="fixed z-45 transition-all duration-300"
+        :class="[teleportOpen ? 'opacity-100' : 'opacity-0']" :style="teleportStyle" @mouseenter="onTeleportEnter"
         @mouseleave="onTeleportLeave">
-        <div class="h-[240px] rounded-[24px] bg-white shadow-2xl border border-gray-200 overflow-hidden flex"
-          :class="teleportGrowLeft ? 'flex-row-reverse' : ''" :style="{ width: teleportWidthPx }">
-          <!-- ✅ 左側只留一張圖 -->
-          <div class="relative w-[60%] h-full">
-            <div class="absolute inset-0 bg-cover bg-center"
-              :style="{ backgroundImage: `url(${hoverHotel.imageUrl})` }" />
+        <div class="flex h-[260px] overflow-hidden rounded-[20px] border border-gray-300 bg-white shadow-2xl"
+          :class="{ 'flex-row-reverse': teleportGrowLeft }" :style="{ width: teleportWidthPx }">
+          <div class="relative w-[40%] h-full overflow-hidden">
+            <img :src="hoverHotel.imageUrl" :alt="hoverHotel.name"
+              class="h-full w-full object-cover transition-transform duration-500 hover:scale-110" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           </div>
 
-          <!-- ✅ 右側資訊 -->
-          <div class="w-[40%] h-full p-6 flex flex-col">
+          <div class="flex w-[40%] flex-col p-6">
             <div class="flex-1">
-              <h3 class="text-xl font-black text-gray-900">{{ hoverHotel.name }}</h3>
+              <h3 class="text-xl font-bold leading-tight text-dark_900 line-clamp-1">
+                {{ hoverHotel.name }}
+              </h3>
 
-              <div class="mt-2 flex items-center gap-1 text-yellow-400">
+              <div class="mt-2 flex items-center gap-0.5 text-yellow-400 text-sm">
                 <span v-for="i in 5" :key="i">★</span>
+                <span class="ml-2 text-dark_500 text-sm font-normal">(120+ 評論)</span>
               </div>
 
-              <p class="mt-3 text-sm text-gray-500">
-                {{ hoverHotel.city }}・{{ hoverHotel.addressBrief }}
+              <p class="mt-3 text-sm text-dark_500">
+                <i class="icon-location mr-1"></i>
+                {{ hoverHotel.city }} · {{ hoverHotel.addressBrief }}
               </p>
-              <p class="mt-2 text-sm text-gray-500">（可放：評論數等資訊）</p>
             </div>
 
-            <div class="flex items-end justify-between">
-              <button type="button"
-                class="h-10 w-10 rounded-full border border-gray-200 bg-white grid place-items-center shadow-sm hover:bg-gray-50 transition"
-                aria-label="favorite" @click.stop>
-                ♡
-              </button>
+            <div class="mt-auto border-t border-gray-50 pt-4">
+              <div class="flex items-baseline justify-end gap-1 text-red-500">
+                <span class="text-xs font-bold">NT$</span>
+                <span class="text-2xl font-black">{{ hoverHotel.price?.toLocaleString() ?? '6,166' }}</span>
+              </div>
 
-              <div class="text-right">
-                <div class="text-xl font-black text-red-500">
-                  NT$ {{ hoverHotel.price ?? 6166 }}
+              <div class="mt-3 flex items-center justify-between gap-2">
+                <button
+                  class="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-dark_500 hover:bg-main_100 hover:text-red-500 hover:border-red-100 transition-colors"
+                  @click.stop>
+                  ♥
+                </button>
+
+                <div class="flex gap-2">
+                  <button
+                    class="rounded-full bg-slate-800 px-4 py-2 text-xs font-bold text-white hover:bg-slate-700 transition-all shadow-sm"
+                    @click.stop>
+                    了解更多
+                  </button>
                 </div>
-
-                <button type="button"
-                  class="mt-2 rounded-full bg-slate-700 px-5 py-2 text-white text-sm font-bold hover:bg-slate-800 transition"
-                  @click.stop>
-                  了解更多
-                </button>
-
-                <button type="button"
-                  class="mt-2 ml-2 rounded-full bg-white px-4 py-2 text-sm font-bold border border-gray-200 hover:bg-gray-50 transition"
-                  @click.stop>
-                  ＋ 加入比較
-                </button>
               </div>
             </div>
           </div>
@@ -347,10 +362,20 @@ const stayKeywords = [
   '馬祖住宿',
   '綠島住宿',
   '蘭嶼住宿',
+  '小琉球住宿',
   '溫泉飯店',
   '親子飯店',
   '海景民宿',
   '包棟民宿',
+  '度假村',
+  '遊樂園',
+  '水族館',
+  '博物館',
+  '美術館',
+  '觀光工廠',
+  '觀光套票',
+  '農場',
+  '牧場',
 ] as const
 
 const selectedKeywords = reactive(new Set<string>())
@@ -464,4 +489,43 @@ function onTeleportEnter() {
 function onTeleportLeave() {
   teleportOpen.value = false
 }
+
+const recommendations = ref([
+  {
+    id: 1,
+    title: '台北 101 觀景台門票',
+    price: '400',
+    img: 'https://placehold.co/300x200/e2e8f0/94a3b8?text=Taipei+101',
+  },
+  {
+    id: 2,
+    title: '故宮博物院電子門票',
+    price: '350',
+    img: 'https://placehold.co/300x200/e2e8f0/94a3b8?text=Museum',
+  },
+  {
+    id: 3,
+    title: '北投溫泉大眾池體驗',
+    price: '520',
+    img: 'https://placehold.co/300x200/e2e8f0/94a3b8?text=Hot+Spring',
+  },
+  {
+    id: 4,
+    title: '九份接駁專車',
+    price: '600',
+    img: 'https://placehold.co/300x200/e2e8f0/94a3b8?text=Jiufen',
+  },
+  {
+    id: 5,
+    title: '九份接駁專車',
+    price: '600',
+    img: 'https://placehold.co/300x200/e2e8f0/94a3b8?text=Jiufen',
+  },
+  {
+    id: 6,
+    title: '九份接駁專車',
+    price: '600',
+    img: 'https://placehold.co/300x200/e2e8f0/94a3b8?text=Jiufen',
+  },
+])
 </script>
