@@ -1,19 +1,19 @@
 <template>
-  <div class="min-h-screen pt-24 pb-10">
-    <div class="max-w-[1200px] mx-auto p-5 text-sm text-dark_500 space-x-1">
+  <div class="min-h-screen max-w-[1240px] mx-auto pt-24 pb-20">
+    <div class="mx-5 text-sm text-dark_500 space-x-1 py-2">
       <RouterLink to="/" class="hover:underline underline-offset-2">首頁</RouterLink> >
       <RouterLink to="/" class="hover:underline underline-offset-2">體驗</RouterLink> >
       <RouterLink to="/" class="hover:underline underline-offset-2">景點門票</RouterLink> >
       <RouterLink to="/" class="hover:underline underline-offset-2">詳細資訊</RouterLink>
     </div>
 
-    <div class="max-w-[1200px] mx-auto px-5 lg:px-0 mb-8">
-      <div class="grid grid-cols-[2fr_1fr] lg:grid-cols-[2fr_1fr_1fr_1fr] gap-[10px] mb-[40px]">
+    <div class="mx-5 mb-8">
+      <div class="grid grid-cols-[2fr_1fr] lg:grid-cols-[2fr_1fr_1fr_1fr] gap-2.5 mb-10">
         <div class="relative h-[400px] rounded-[20px] overflow-hidden">
           <img src="/src/assets/hoteldetail_img/Wanhao.jpg" class="absolute inset-0 w-full h-full object-cover" />
         </div>
 
-        <div class="grid grid-rows-2 gap-[10px] h-[400px]">
+        <div class="grid grid-rows-2 gap-2.5 h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
             <img src="/src/assets/hoteldetail_img/Wanhao2.jpg" class="absolute inset-0 w-full h-full object-cover" />
           </div>
@@ -23,7 +23,7 @@
           </div>
         </div>
 
-        <div class="grid grid-rows-2 gap-[10px] h-[400px]">
+        <div class="grid grid-rows-2 gap-2.5 h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
             <img src="/src/assets/hoteldetail_img/Wanhao4.jpg" class="absolute inset-0 w-full h-full object-cover" />
           </div>
@@ -33,7 +33,7 @@
           </div>
         </div>
 
-        <div class="grid grid-rows-2 gap-[10px] h-[400px]">
+        <div class="grid grid-rows-2 gap-2.5 h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
             <img src="/src/assets/hoteldetail_img/Wanhao6.jpg" class="absolute inset-0 w-full h-full object-cover" />
           </div>
@@ -41,7 +41,7 @@
           <div class="relative rounded-[20px] overflow-hidden">
             <img src="/src/assets/hoteldetail_img/Wanhao7.jpg" class="absolute inset-0 w-full h-full object-cover" />
             <div
-              class="absolute inset-0 bg-black/30 flex items-center justify-center text-white font-bold cursor-pointer hover:bg-black/40">
+              class="absolute inset-0 bg-black/30 flex items-center justify-center text-white font-bold cursor-pointer transition-all hover:bg-black/40">
               查看全部照片
             </div>
           </div>
@@ -131,12 +131,12 @@
           <div class="space-y-2.5">
             <div v-for="(faq, index) in faqs" :key="index" class="border rounded-lg overflow-hidden">
               <button @click="toggleFaq(index)"
-                class="w-full flex justify-between items-center p-5 bg-main_100 hover:bg-main_200 transition text-left">
+                class="w-full flex justify-between items-center px-5 py-4 bg-main_100 hover:bg-main_200 transition text-left">
                 <span class="font-medium text-dark_900">{{ faq.question }}</span>
                 <span class="text-dark_700 transform transition-transform duration-200"
                   :class="{ 'rotate-180': activeIndex === index }">▼</span>
               </button>
-              <div v-show="activeIndex === index" class="p-5 bg-white text-sm text-dark_700">
+              <div v-show="activeIndex === index" class="px-5 py-4 bg-white text-md text-dark_700">
                 {{ faq.answer }}
               </div>
             </div>
@@ -147,7 +147,7 @@
           <h3 class="font-bold text-2xl mb-5 text-dark">熱門體驗</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
             <RouterLink v-for="recommend in recommendations" :key="recommend.id" :to="`/ticket/${recommend.id}`"
-              class="group bg-white rounded-[20px] shadow-sm overflow-hidden border hover:shadow-md transition-all duration-300 cursor-pointer">
+              class="group bg-white rounded-[20px] shadow-sm overflow-hidden border border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer">
               <div class="h-32 bg-dark_100 overflow-hidden">
                 <img :src="recommend.img" :alt="recommend.title"
                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -318,9 +318,3 @@ const recommendations = ref([
   },
 ])
 </script>
-
-<style>
-body {
-  background-color: #f8fdff;
-}
-</style>
