@@ -20,25 +20,27 @@ const props = defineProps({
         </div>
 
         <!-- 內容 -->
-        <div class="flex-1 flex flex-col justify-between p-2 w-full">
-          <div class="flex flex-col gap-2">
-            <h3 class="text-xl font-bold text-dark">
-              {{ props.ticket.name }}
-            </h3>
+        <div class="flex-1 flex flex-col justify-between px-4 py-2 w-full">
+          <div class="flex flex-col gap-1">
+            <div class="flex flex-row gap-1 items-baseline">
+              <h3 class="text-xl font-bold text-dark">
+                {{ props.ticket.name }}
+              </h3>
+              <p class="text-sm text-dark_500">
+                {{ props.ticket.comments }}
+              </p>
+            </div>
 
             <p class="text-dark_700 text-sm flex gap-2">
-              <span class="bg-gray-200 rounded-[20px] px-2 py-1" v-for="(opt, index) in props.ticket.option"
-                :key="index">
+              <span class="bg-main_300 border border-primary/60 rounded-[20px] px-2 py-1"
+                v-for="(opt, index) in props.ticket.option" :key="index">
                 {{ opt }}
               </span>
             </p>
 
-            <p class="text-base text-dark_500">
-              {{ props.ticket.comments }}
-            </p>
-            <p class="text-dark_500 text-sm font-bold">
-              起價
-              <span class="text-dark text-base">NT${{ props.ticket.price }}</span>
+            <p class="text-dark_500 text-sm">
+              <span class="text-dark text-xl font-bold">NT${{ props.ticket.price }}</span>
+              起
             </p>
           </div>
         </div>
