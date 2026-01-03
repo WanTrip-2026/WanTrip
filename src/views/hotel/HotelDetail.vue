@@ -173,8 +173,8 @@
         <div class="space-y-[20px] pt-5 rounded-[20px]">
           <div v-for="room in rooms" :key="room.id"
             class="flex flex-col md:flex-row bg-white rounded-[20px] overflow-hidden border border-gray-300 shadow-sm">
-            <div class="w-full md:w-[30%] bg-[#EEF2F7] flex flex-col">
-              <div class="bg-[#EEF2F7] flex items-center p-5 justify-center aspect-[4/3] overflow-hidden">
+            <div class="w-full md:w-[30%] bg-main_100 flex flex-col">
+              <div class="bg-main_100 flex items-center p-5 justify-center aspect-[4/3] overflow-hidden">
                 <img :src="room.image" :alt="room.name" class="w-full h-full rounded-[20px] object-cover" />
               </div>
 
