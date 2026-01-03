@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        main: '#65475',
+        main: '#365475',
         main_900: '#4A6583',
         main_800: '#5E7691', // Button hover color
         main_700: '#72879E',
