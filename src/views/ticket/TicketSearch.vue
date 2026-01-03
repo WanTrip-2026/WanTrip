@@ -386,14 +386,14 @@ const searchCity = route.query.city || ''
       <section class="gap-5 mt-10 mx-auto flex">
         <aside class="hidden shadow-sm lg:flex flex-col gap-5 w-[285px]">
           <div class="rounded-[20px] p-10 bg-white border">
-            <h3 class="font-bold text-xl mb-5">篩選條件</h3>
+            <h3 class="font-bold text-xl text-dark mb-5">篩選條件</h3>
             <div class="flex flex-col gap-5">
               <!-- Option Filter -->
               <div class="border-b-[1px] pb-5 border-secondary border-solid last:border-b-0"
                 v-for="TicketMenu in ticketFiltered" :key="TicketMenu.title">
-                <h4 class="font-medium mb-2 text-base">{{ TicketMenu.title }}</h4>
+                <h4 class="font-medium mb-2 text-base text-dark">{{ TicketMenu.title }}</h4>
                 <div class="space-y-2">
-                  <label class="flex cursor-pointer text-sm items-center" v-for="option in TicketMenu.options.slice(
+                  <label class="flex cursor-pointer text-dark text-sm items-center" v-for="option in TicketMenu.options.slice(
                     0,
                     expandedMenus.includes(TicketMenu.title) ? TicketMenu.options.length : 4,
                   )" :key="option">
