@@ -15,22 +15,33 @@
           <div class="absolute inset-x-0 bottom-0 z-20 flex justify-center translate-y-1/2">
             <form
               class="w-full lg:max-w-[1024px] rounded-[28px] md:rounded-full border border-gray-300 bg-white shadow-sm p-2"
-              @submit.prevent="onSearch">
+              @submit.prevent="onSearch"
+            >
               <div class="flex flex-col gap-2 md:flex-row md:items-center">
                 <!-- Tabs -->
                 <div class="flex items-center rounded-full border border-gray-300 bg-dark_100 p-1">
-                  <button type="button"
-                    class="rounded-full text-nowrap w-full text-sm font-semibold transition px-4 py-1.5" :class="activeTab === 'package'
-                      ? 'bg-primary text-white shadow-sm'
-                      : 'text-dark hover:bg-main_100'
-                      " @click="activeTab = 'package'">
+                  <button
+                    type="button"
+                    class="rounded-full text-nowrap w-full text-sm font-semibold transition px-4 py-1.5"
+                    :class="
+                      activeTab === 'package'
+                        ? 'bg-primary text-white shadow-sm'
+                        : 'text-dark hover:bg-main_100'
+                    "
+                    @click="activeTab = 'package'"
+                  >
                     找套票
                   </button>
-                  <button type="button"
-                    class="rounded-full text-nowrap w-full text-sm font-semibold transition px-4 py-1.5" :class="activeTab === 'stay'
-                      ? 'bg-primary text-white shadow-sm'
-                      : 'text-dark hover:bg-main_100'
-                      " @click="activeTab = 'stay'">
+                  <button
+                    type="button"
+                    class="rounded-full text-nowrap w-full text-sm font-semibold transition px-4 py-1.5"
+                    :class="
+                      activeTab === 'stay'
+                        ? 'bg-primary text-white shadow-sm'
+                        : 'text-dark hover:bg-main_100'
+                    "
+                    @click="activeTab = 'stay'"
+                  >
                     找住宿
                   </button>
                 </div>
@@ -38,30 +49,44 @@
                 <!-- Fields -->
                 <div class="grid flex-1 grid-cols-1 gap-2 md:grid-cols-3">
                   <label class="flex items-center rounded-full border border-gray-300 bg-white p-1">
-                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80">想去哪裡</span>
-                    <input v-model="form.destination"
+                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80"
+                      >想去哪裡</span
+                    >
+                    <input
+                      v-model="form.destination"
                       class="w-full h-full px-4 py-2 bg-transparent text-sm text-nowrap outline-none rounded-full transition focus:bg-dark_100 placeholder:text-dark_500"
-                      placeholder="輸入城市、景點" />
+                      placeholder="輸入城市、景點"
+                    />
                   </label>
 
                   <label class="flex items-center rounded-full border border-gray-300 bg-white p-1">
-                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80">入住/退房日期</span>
-                    <input v-model="form.dateRange"
+                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80"
+                      >入住/退房日期</span
+                    >
+                    <input
+                      v-model="form.dateRange"
                       class="w-full h-full px-4 py-2 bg-transparent text-sm text-nowrap outline-none rounded-full transition focus:bg-dark_100 placeholder:text-dark_500"
-                      placeholder="選擇日期" />
+                      placeholder="選擇日期"
+                    />
                   </label>
 
                   <label class="flex items-center rounded-full border border-gray-300 bg-white p-1">
-                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80">人數/需求</span>
-                    <input v-model="form.people"
+                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80"
+                      >人數/需求</span
+                    >
+                    <input
+                      v-model="form.people"
                       class="w-full h-full px-4 py-2 bg-transparent text-sm text-nowrap outline-none rounded-full transition focus:bg-dark_100 placeholder:text-dark_500"
-                      placeholder="2 人｜1 間｜可帶寵物" />
+                      placeholder="2 人｜1 間｜可帶寵物"
+                    />
                   </label>
                 </div>
 
                 <!-- Submit -->
-                <button type="submit"
-                  class="rounded-full bg-primary px-6 py-2 text-md font-semibold text-white transition hover:bg-main">
+                <button
+                  type="submit"
+                  class="rounded-full bg-primary px-6 py-2 text-md font-semibold text-white transition hover:bg-main"
+                >
                   搜尋
                 </button>
               </div>
@@ -75,22 +100,32 @@
         <h2 class="mb-5 text-xl font-bold text-dark">想去哪裡玩？</h2>
 
         <div class="grid grid-cols-5 gap-5">
-          <button v-for="r in regions" :key="r.key" type="button"
-            class="relative group overflow-hidden rounded-[20px] bg-white/70 border border-gray-300 transition shadow-sm hover:shadow-lg"
-            @click="onClickRegion(r)">
-            <div class="h-[110px] w-full" style="
-                background-image: linear-gradient(
-                  45deg,
-                  rgba(47, 61, 77, 0.08) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(47, 61, 77, 0.08) 50%,
-                  rgba(47, 61, 77, 0.08) 75%,
-                  transparent 75%,
-                  transparent
-                );
-                background-size: 18px 18px;
-              " />
+          <button
+            v-for="r in regions"
+            :key="r.key"
+            type="button"
+            class="relative group overflow-hidden rounded-[20px] bg-white/70 border border-gray-300 transition shadow-sm hover:shadow-xl"
+            @click="onClickRegion(r)"
+          >
+            <div
+              class="h-[110px] w-full aspect-[3/4]"
+              :style="{
+                backgroundImage: `
+      linear-gradient(
+        45deg,
+        rgba(47, 61, 77, 0.08) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(47, 61, 77, 0.08) 50%,
+        rgba(47, 61, 77, 0.08) 75%,
+        transparent 75%,
+        transparent
+      ),
+      url(${r.img})`,
+                backgroundSize: '18px 18px, cover',
+              }"
+            />
+
             <div class="absolute inset-0 flex items-center justify-center">
               <span class="text-xl font-black text-white drop-shadow-sm">{{ r.label }}</span>
             </div>
@@ -103,13 +138,22 @@
         <h2 class="mb-5 text-xl font-bold text-dark">熱門飯店</h2>
 
         <div class="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
-          <article v-for="(h, index) in hotHotelsA" :key="h.id" class="relative" @mouseenter="onHoverEnter(h, index)"
-            @mouseleave="onHoverLeave">
+          <article
+            v-for="(h, index) in hotHotelsA"
+            :key="h.id"
+            class="relative"
+            @mouseenter="onHoverEnter(h, index)"
+            @mouseleave="onHoverLeave"
+          >
             <div
               class="relative overflow-hidden rounded-[20px] bg-white/70 border border-gray-300 transition-all duration-200"
               :class="teleportOpen && hoverIndex === index ? 'shadow-lg' : 'shadow-sm'"
-              :ref="(el) => setCardEl(index, el)">
-              <div class="h-[240px] bg-cover bg-center" :style="{ backgroundImage: `url(${h.imageUrl})` }" />
+              :ref="(el) => setCardEl(index, el)"
+            >
+              <div
+                class="h-[240px] bg-cover bg-center"
+                :style="{ backgroundImage: `url(${h.imageUrl})` }"
+              />
             </div>
           </article>
         </div>
@@ -119,9 +163,15 @@
       <section class="mt-20">
         <h2 class="mb-5 text-xl font-bold text-dark">推薦飯店</h2>
         <div class="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
-          <article v-for="h in hotHotelsB" :key="h.id"
-            class="overflow-hidden rounded-[20px] bg-white/70 shadow-sm border border-gray-300">
-            <div class="h-[240px] bg-cover bg-center" :style="{ backgroundImage: `url(${h.imageUrl})` }" />
+          <article
+            v-for="h in hotHotelsB"
+            :key="h.id"
+            class="overflow-hidden rounded-[20px] bg-white/70 shadow-sm border border-gray-300"
+          >
+            <div
+              class="h-[240px] bg-cover bg-center"
+              :style="{ backgroundImage: `url(${h.imageUrl})` }"
+            />
           </article>
         </div>
       </section>
@@ -129,14 +179,23 @@
       <section class="mt-20">
         <h2 class="font-bold text-xl mb-5 text-dark">熱門體驗</h2>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
-          <RouterLink v-for="recommend in recommendations" :key="recommend.id" :to="`/ticket/${recommend.id}`"
-            class="group bg-white rounded-[20px] shadow-sm overflow-hidden border hover:shadow-md transition-all duration-300 cursor-pointer">
+          <RouterLink
+            v-for="recommend in recommendations"
+            :key="recommend.id"
+            :to="`/ticket/${recommend.id}`"
+            class="group bg-white rounded-[20px] shadow-sm overflow-hidden border hover:shadow-md transition-all duration-300 cursor-pointer"
+          >
             <div class="h-32 bg-dark_100 overflow-hidden">
-              <img :src="recommend.img" :alt="recommend.title"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img
+                :src="recommend.img"
+                :alt="recommend.title"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
             </div>
             <div class="p-5">
-              <div class="text-sm font-bold truncate mb-1 text-dark_900 group-hover:text-main_800 transition-colors">
+              <div
+                class="text-sm font-bold truncate mb-1 text-dark_900 group-hover:text-main_800 transition-colors"
+              >
                 {{ recommend.title }}
               </div>
               <div class="text-xs text-dark_700 font-medium">TWD {{ recommend.price }} 起</div>
@@ -151,11 +210,18 @@
           <p class="text-2xl font-bold text-dark">大家都在找...</p>
 
           <div class="mt-5 flex flex-wrap justify-center gap-2">
-            <button v-for="k in stayKeywords" :key="k" type="button"
-              class="rounded-full px-4 py-1 text-sm font-semibold border transition" :class="selectedKeywords.has(k)
-                ? 'bg-primary text-white border-primary shadow-sm'
-                : 'bg-gray-100 text-primary/80 border-primary/10 hover:bg-main_100'
-                " @click="toggleKeyword(k)">
+            <button
+              v-for="k in stayKeywords"
+              :key="k"
+              type="button"
+              class="rounded-full px-4 py-1 text-sm font-semibold border transition"
+              :class="
+                selectedKeywords.has(k)
+                  ? 'bg-primary text-white border-primary shadow-sm'
+                  : 'bg-gray-100 text-primary/80 border-primary/10 hover:bg-main_100'
+              "
+              @click="toggleKeyword(k)"
+            >
               {{ k }}
             </button>
           </div>
@@ -167,14 +233,25 @@
 
     <!-- ✅ Teleport：hover 展開卡渲染到 body -->
     <Teleport to="body">
-      <div v-if="teleportOpen && hoverHotel" class="fixed z-45 transition-all duration-300"
-        :class="[teleportOpen ? 'opacity-100' : 'opacity-0']" :style="teleportStyle" @mouseenter="onTeleportEnter"
-        @mouseleave="onTeleportLeave">
-        <div class="flex h-[260px] overflow-hidden rounded-[20px] border border-gray-300 bg-white shadow-2xl"
-          :class="{ 'flex-row-reverse': teleportGrowLeft }" :style="{ width: teleportWidthPx }">
+      <div
+        v-if="teleportOpen && hoverHotel"
+        class="fixed z-45 transition-all duration-300"
+        :class="[teleportOpen ? 'opacity-100' : 'opacity-0']"
+        :style="teleportStyle"
+        @mouseenter="onTeleportEnter"
+        @mouseleave="onTeleportLeave"
+      >
+        <div
+          class="flex h-[260px] overflow-hidden rounded-[20px] border border-gray-300 bg-white shadow-2xl"
+          :class="{ 'flex-row-reverse': teleportGrowLeft }"
+          :style="{ width: teleportWidthPx }"
+        >
           <div class="relative w-[40%] h-full overflow-hidden">
-            <img :src="hoverHotel.imageUrl" :alt="hoverHotel.name"
-              class="h-full w-full object-cover transition-transform duration-500 hover:scale-110" />
+            <img
+              :src="hoverHotel.imageUrl"
+              :alt="hoverHotel.name"
+              class="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
+            />
             <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           </div>
 
@@ -198,20 +275,24 @@
             <div class="mt-auto border-t border-gray-50 pt-4">
               <div class="flex items-baseline justify-end gap-1 text-red-500">
                 <span class="text-xs font-bold">NT$</span>
-                <span class="text-2xl font-black">{{ hoverHotel.price?.toLocaleString() ?? '6,166' }}</span>
+                <span class="text-2xl font-black">{{
+                  hoverHotel.price?.toLocaleString() ?? '6,166'
+                }}</span>
               </div>
 
               <div class="mt-3 flex items-center justify-between gap-2">
                 <button
                   class="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-dark_500 hover:bg-main_100 hover:text-red-500 hover:border-red-100 transition-colors"
-                  @click.stop>
+                  @click.stop
+                >
                   ♥
                 </button>
 
                 <div class="flex gap-2">
                   <button
                     class="rounded-full bg-slate-800 px-4 py-2 text-xs font-bold text-white hover:bg-slate-700 transition-all shadow-sm"
-                    @click.stop>
+                    @click.stop
+                  >
                     了解更多
                   </button>
                 </div>
@@ -246,11 +327,32 @@ const form = reactive({
 })
 
 const regions = [
-  { key: 'north', label: '北部' },
-  { key: 'central', label: '中部' },
-  { key: 'south', label: '南部' },
-  { key: 'east', label: '東部' },
-  { key: 'islands', label: '離島' },
+  {
+    key: 'north',
+    label: '北部',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-tp_zyi27w.jpg',
+  },
+  {
+    key: 'south',
+    label: '中部',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445157/640x480_image636446327579990356_qeu0ii.jpg',
+  },
+  {
+    key: 'central',
+    label: '南部',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445160/%E7%86%B1%E9%96%80%E5%9F%8E%E5%B8%821_ybmlyx.jpg',
+  },
+
+  {
+    key: 'east',
+    label: '東部',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445159/%E5%9F%8E%E5%B8%821_bl2w6i.jpg',
+  },
+  {
+    key: 'islands',
+    label: '離島',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-%E5%B3%B6_qnxq42.jpg',
+  },
 ]
 
 const hotHotelsA: Hotel[] = [
