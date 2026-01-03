@@ -66,10 +66,10 @@
           <div class="flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
-              class="h-10 rounded-full border border-primary/25 px-8 text-sm font-semibold transition"
+              class="h-10 rounded-full border bg-dark_300 border-primary/25 px-8 text-sm font-semibold transition"
               :class="
                 activeTab === 'stay'
-                  ? 'bg-secondary text-white'
+                  ? 'bg-main_800 text-white'
                   : 'bg-white text-primary/80 hover:bg-primary/5'
               "
               @click="activeTab = 'stay'"
@@ -94,7 +94,7 @@
                   <div class="relative mt-2">
                     <select
                       v-model="form.destination"
-                      class="w-full bg-transparent text-sm outline-none appearance-none cursor-pointer pr-8 font-medium text-primary group-hover:text-secondary transition-colors"
+                      class="w-full bg-transparent text-sm outline-none appearance-none cursor-pointer pr-8 font-medium text-primary group-hover:text-main_800 transition-colors"
                     >
                       <option value="" disabled selected>選擇城市、景點</option>
                       <option v-for="city in taiwanCities" :key="city" :value="city">

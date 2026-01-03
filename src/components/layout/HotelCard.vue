@@ -70,7 +70,7 @@ function starCount(starsText) {
           <div class="text-red-500 text-2xl font-bold">NT${{ hotel.price }}</div>
           <div class="flex gap-4">
             <button
-              class="bg-primary text-white p-[9px] rounded-[20px] hover:bg-secondary transition flex items-center justify-center"
+              class="bg-primary text-white p-[9px] rounded-[20px] hover:bg-main_800 transition flex items-center justify-center"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +84,7 @@ function starCount(starsText) {
             </button>
             <RouterLink :to="`/hotels/${hotel.id}`">
               <button
-                class="bg-primary text-white px-6 py-2 rounded-[20px] hover:bg-secondary transition"
+                class="bg-primary text-white px-6 py-2 rounded-[20px] hover:bg-main_800 transition"
               >
                 查看空房情況
               </button>
