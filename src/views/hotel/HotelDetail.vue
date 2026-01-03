@@ -104,9 +104,9 @@
 
         <div class="flex flex-col md:grid md:grid-cols-12 gap-5">
           <div class="w-full md:col-span-8 space-y-5">
-            <div class="bg-[#EEF2F7] rounded-[20px] p-5 flex flex-col">
-              <h3 class="font-bold text-lg mb-4">設施與服務</h3>
-              <ul class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="bg-main_100 rounded-[20px] p-5 flex flex-col">
+              <h3 class="font-bold text-lg mb-4 text-dark">設施與服務</h3>
+              <ul class="grid grid-cols-2 md:grid-cols-3 gap-4 text-dark_700">
                 <li class="flex flex-col items-center justify-center bg-white rounded-[20px] py-4">
                   <img src="/src/assets/hoteldetail_img/icon/freeParking.png" class="w-12 h-12 md:w-16 md:h-16 mb-2"
                     alt="免費停車" />
@@ -125,8 +125,8 @@
               </ul>
             </div>
 
-            <div class="bg-[#EEF2F7] rounded-[20px] p-5">
-              <h3 class="font-bold text-lg mb-2">住宿簡介</h3>
+            <div class="bg-main_100 rounded-[20px] p-5">
+              <h3 class="font-bold text-lg mb-2 text-dark">住宿簡介</h3>
               <ul class="text-gray-600 text-sm leading-relaxed space-y-2">
                 <li><span class="font-medium text-dark">電話：</span>+886-2-8502-9999</li>
                 <li>
@@ -155,7 +155,7 @@
               </p>
             </div>
             <div class="bg-main_100 rounded-2xl p-5">
-              <h3 class="font-bold text-lg mb-[10px]">地圖 & 周邊景點</h3>
+              <h3 class="font-bold text-lg mb-[10px] text-dark">地圖 & 周邊景點</h3>
               <div class="bg-white w-full h-[200px] md:h-[272px] rounded-xl"></div>
             </div>
           </div>
@@ -217,7 +217,7 @@
       </section>
 
       <section class="p-5 rounded-[20px] border border-gray-300 bg-white">
-        <h3 class="text-2xl font-bold mb-6">房客評論</h3>
+        <h3 class="text-2xl font-bold mb-6 text-dark">房客評論</h3>
 
         <div class="flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-8 mb-5">
           <div class="rounded-[20px] p-5 bg-main_100">
@@ -240,7 +240,7 @@
         </div>
 
         <div class="pb-[20px] flex flex-col md:flex-row gap-3 md:gap-[20px]">
-          <div class="grid grid-cols-2 md:flex md:flex-row gap-3 w-full">
+          <div class="grid grid-cols-2 md:flex md:flex-row gap-3 w-full text-dark_900">
             <select v-model="filterMemberType"
               class="w-full md:w-auto rounded-[20px] px-4 md:px-5 py-[10px] border border-gray-300 text-sm md:text-base">
               <option value="" class="px-5">所有住客類型</option>
