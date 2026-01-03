@@ -21,36 +21,37 @@
               class="w-full h-full object-cover" alt="Hotel Photo" />
           </div>
 
-          <div class="bg-main_100 p-5 rounded-[20px] text-center w-full font-bold text-xl shadow-sm">
+          <div class="bg-main_100 p-5 rounded-[20px] text-center w-full font-bold text-xl text-dark_900 shadow-sm">
             {{ hotel.name }}
           </div>
 
-          <div class="bg-main_100 p-5 rounded-[20px] text-center w-full shadow-sm">
+          <div class="bg-main_100 p-5 rounded-[20px] text-center text-dark_700 w-full shadow-sm">
             {{ hotel.type }}
           </div>
 
           <div class="bg-main_100 p-5 rounded-[20px] min-h-[220px] shadow-sm">
-            <p class="font-bold mb-2 text-center text-gray-700">設施 & 服務</p>
+            <p class="font-bold mb-2 text-center text-dark_700">設施 & 服務</p>
             <ul class="space-y-1">
-              <li v-for="feature in hotel.features" :key="feature">· {{ feature }}</li>
+              <li v-for="feature in hotel.features" :key="feature" class="text-dark_500"> - {{ feature }}</li>
             </ul>
           </div>
 
           <div class="bg-main_100 p-5 rounded-[20px] text-center min-h-[100px] flex flex-col justify-center shadow-sm">
-            <p class="font-bold text-gray-700">交通資訊</p>
+            <p class="font-bold text-dark_700">交通資訊</p>
             <p class="text-sm">距離市中心 {{ hotel.distance }} km</p>
           </div>
 
           <div class="bg-main_100 p-5 rounded-[20px] min-h-[80px] shadow-sm">
             <div v-for="rule in hotel.rules" :key="rule"
-              class="bg-main_100 rounded-[20px] text-center text-sm text-gray-500">
+              class="bg-main_100 rounded-[20px] text-center text-sm text-dark_500">
               {{ rule }}
             </div>
           </div>
 
           <div class="bg-main_100 p-5 rounded-[20px] text-center shadow-sm">
-            <p class="font-bold">價格</p>
-            <p class="text-2xl font-bold text-red-500">NT$ {{ formatPrice(hotel.price) }} 起</p>
+            <p class="font-bold text-dark_700">價格</p>
+            <p class="text-2xl font-bold text-red-500">NT$ {{ formatPrice(hotel.price) }} <span
+                class="text-dark_500 text-sm">起</span></p>
           </div>
 
           <RouterLink to=""
@@ -67,7 +68,7 @@
 import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 
-// 定義資料介面
+
 interface Hotel {
   id: number
   name: string
@@ -79,7 +80,7 @@ interface Hotel {
   image: string
 }
 
-// 宣告時指定型別
+
 const hotels = ref<Hotel[]>([])
 const isLoading = ref(true)
 
@@ -90,7 +91,7 @@ onMounted(async () => {
 
     hotels.value = [
       {
-        id: 1, // 記得 ID 要唯一
+        id: 1,
         name: '飯店名稱 A',
         type: '住宿類型(2人房2床)',
         distance: 1.2,
@@ -101,7 +102,7 @@ onMounted(async () => {
           'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800',
       },
       {
-        id: 2, // 修改為 2
+        id: 2,
         name: '飯店名稱 B',
         type: '商務單人房',
         distance: 0.5,
