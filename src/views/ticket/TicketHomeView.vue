@@ -53,23 +53,23 @@ function onSearch() {
 
 <template>
   <main class="pb-10">
-    <div class="mt-5 pt-24">
+    <div class="pt-24">
       <div class="max-w-[1240px] mx-auto px-5">
         <section
-          class="max-w-[800px] h-20 p-2 mx-auto bg-white border border-gray-300 shadow-sm rounded-full flex items-center gap-2 mt-5 mb-10">
-          <div class="h-full w-full">
+          class="max-w-[800px] p-2 mx-auto bg-white border border-gray-300 shadow-sm rounded-full flex items-center gap-2 mb-20">
+          <div class="w-full">
             <input type="text" placeholder="城市"
-              class="h-full w-full border text-center border-gray-300 rounded-full focus:border-2 focus:border-primary outline-none" />
+              class="w-full border text-left border-gray-300 px-6 py-3 rounded-full focus:border-2 focus:border-primary outline-none" />
           </div>
 
-          <div class="h-full w-full">
+          <div class="w-full">
             <input type="text" placeholder="景點與體驗"
-              class="h-full w-full border text-center border-gray-300 rounded-full focus:border-2 focus:border-primary outline-none" />
+              class="w-full border text-left border-gray-300 px-6 py-3 rounded-full focus:border-2 focus:border-primary outline-none" />
           </div>
 
           <div class="h-full">
             <button @click="onSearch" type="submit"
-              class="h-full bg-primary text-white font-bold px-10 rounded-full hover:brightness-95 whitespace-nowrap">
+              class="bg-primary text-white font-bold px-6 py-3 rounded-full hover:bg-main text-nowrap">
               搜尋
             </button>
           </div>
@@ -91,7 +91,7 @@ function onSearch() {
 
         <template v-else>
           <section v-for="section in sections" :key="section.title" class="mb-10">
-            <h2 class="text-2xl font-extrabold text-dark mb-10">
+            <h2 class="text-2xl font-bold text-dark mb-10">
               {{ section.title }}
             </h2>
 
