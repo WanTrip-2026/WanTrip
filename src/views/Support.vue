@@ -8,28 +8,49 @@
         <h3 class="text-xl font-bold text-dark_900 mb-5">常見問題</h3>
         <div class="flex flex-col gap-5">
           <div v-for="(faq, index) in faqs" :key="index" class="border rounded-lg overflow-hidden">
-            <button @click="toggleFaq(index)"
-              class="w-full flex justify-between items-center p-5 bg-main_100 hover:bg-main_300 transition text-left">
+            <button
+              @click="toggleFaq(index)"
+              class="w-full flex justify-between items-center p-5 bg-main_100 hover:bg-main_300 transition text-left"
+            >
               <span class="font-medium text-dark_900">{{ faq.question }}</span>
-              <span class="text-gray-400 transform transition-transform duration-200"
-                :class="{ 'rotate-180': activeIndex === index }">▼</span>
+              <span
+                class="text-gray-400 transform transition-transform duration-200"
+                :class="{ 'rotate-180': activeIndex === index }"
+                >▼</span
+              >
             </button>
-            <div v-show="activeIndex === index" class="p-5 bg-white text-sm text-dark_700" v-html="faq.answer"></div>
+            <div
+              v-show="activeIndex === index"
+              class="p-5 bg-white text-sm text-dark_700"
+              v-html="faq.answer"
+            ></div>
           </div>
         </div>
       </div>
       <div class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
         <h3 class="text-xl font-bold text-dark_900 mb-5">付款問題</h3>
         <div class="flex flex-col gap-5">
-          <div v-for="(paymentfaq, index) in paymentfaqs" :key="index" class="border rounded-lg overflow-hidden">
-            <button @click="togglePaymentFaq(index)"
-              class="w-full flex justify-between items-center p-5 bg-main_100 hover:bg-main_300 transition text-left">
+          <div
+            v-for="(paymentfaq, index) in paymentfaqs"
+            :key="index"
+            class="border rounded-lg overflow-hidden"
+          >
+            <button
+              @click="togglePaymentFaq(index)"
+              class="w-full flex justify-between items-center p-5 bg-main_100 hover:bg-main_300 transition text-left"
+            >
               <span class="font-medium text-dark_900">{{ paymentfaq.question }}</span>
-              <span class="text-gray-400 transform transition-transform duration-200"
-                :class="{ 'rotate-180': activePaymentFaqIndex === index }">▼</span>
+              <span
+                class="text-gray-400 transform transition-transform duration-200"
+                :class="{ 'rotate-180': activePaymentFaqIndex === index }"
+                >▼</span
+              >
             </button>
-            <div v-show="activePaymentFaqIndex === index" class="p-5 bg-white text-sm text-dark_700"
-              v-html="paymentfaq.answer"></div>
+            <div
+              v-show="activePaymentFaqIndex === index"
+              class="p-5 bg-white text-sm text-dark_700"
+              v-html="paymentfaq.answer"
+            ></div>
           </div>
         </div>
       </div>
@@ -45,7 +66,7 @@ const faqs = ref([
     question: '無法登入 WanTrip ，怎麼辦？',
     answer: `別擔心，我們整理了常見登入問題與對應解法：<br/>
     1. 請確認您輸入的帳號是否正確（手機號碼、Email 或第三方帳號）。<br/>
-    2. 若忘記密碼，可點選<a href="/profile" class="text-primary underline font-bold hover:text-secondary">這裡重設密碼</a>。<br/>
+    2. 若忘記密碼，可點選<a href="/profile" class="text-primary underline font-bold hover:text-main_800">這裡重設密碼</a>。<br/>
     3. 如果仍無法登入，請清除瀏覽器快取或嘗試不同瀏覽器。<br/>
     <br/>
     若以上方法都無效，歡迎聯絡我們的客服團隊，我們會盡快協助您！<br/>`,
@@ -53,7 +74,7 @@ const faqs = ref([
   {
     question: '找不到訂單怎麼辦？',
     answer: `別擔心，您可以在登入後：<br/>
-    1. 前往<a href="/profile" class="text-primary underline font-bold hover:text-secondary">我的訂單</a>頁面查詢已付款的訂單。<br/>
+    1. 前往<a href="/profile" class="text-primary underline font-bold hover:text-main_800">我的訂單</a>頁面查詢已付款的訂單。<br/>
     2. 確認訂單是否使用其他帳號或電子郵件下單。<br/>
     3. 若訂單仍未找到，請準備訂單號或付款憑證聯絡客服。<br/>
     <br/>

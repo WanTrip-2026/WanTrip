@@ -206,22 +206,33 @@ function goToPage(page) {
   <main class="max-w-[1200px] mx-auto pt-24 bg-page px-5 lg:px-0">
     <!-- search-bar -->
     <section
-      class="max-w-[800px] mx-auto p-2 mb-10 bg-white rounded-[20px] md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-2 sticky shadow-sm">
+      class="max-w-[800px] mx-auto p-2 mb-10 bg-white rounded-[20px] md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-2 sticky shadow-sm"
+    >
       <div class="relative w-full border border-gray-300 rounded-full md:h-full flex-1">
-        <input type="text" placeholder="目的地"
-          class="w-full pl-4 px-6 py-3 text-base md:text-base border-none bg-gray-50 md:bg-transparent rounded-full focus:ring-2 focus:border-primary outline-none transition-all" />
+        <input
+          type="text"
+          placeholder="目的地"
+          class="w-full pl-4 px-6 py-3 text-base md:text-base border-none bg-gray-50 md:bg-transparent rounded-full focus:ring-2 focus:border-primary outline-none transition-all"
+        />
       </div>
       <div class="relative w-full border border-gray-300 rounded-full md:h-full flex-1">
-        <input type="text" placeholder="入住及退房日期"
-          class="w-full pl-4 px-6 py-3 text-base md:text-base border-none bg-gray-50 md:bg-transparent rounded-full focus:ring-2 focus:border-primary outline-none transition-all" />
+        <input
+          type="text"
+          placeholder="入住及退房日期"
+          class="w-full pl-4 px-6 py-3 text-base md:text-base border-none bg-gray-50 md:bg-transparent rounded-full focus:ring-2 focus:border-primary outline-none transition-all"
+        />
       </div>
       <div class="relative w-full border border-gray-300 rounded-full md:h-full flex-1">
-        <input type="text" placeholder="2 位成人 · 1 間房"
-          class="w-full pl-4 px-6 py-3 text-base md:text-base border-none bg-gray-50 md:bg-transparent rounded-full focus:ring-2 focus:border-primary outline-none transition-all" />
+        <input
+          type="text"
+          placeholder="2 位成人 · 1 間房"
+          class="w-full pl-4 px-6 py-3 text-base md:text-base border-none bg-gray-50 md:bg-transparent rounded-full focus:ring-2 focus:border-primary outline-none transition-all"
+        />
       </div>
       <div class="border border-gray-300 rounded-full md:h-full">
         <button
-          class="bg-primary hover:bg-[#6D8FA3] text-white px-6 py-3 rounded-full transition-colors whitespace-nowrap">
+          class="bg-primary hover:bg-[#6D8FA3] text-white px-6 py-3 rounded-full transition-colors whitespace-nowrap"
+        >
           搜尋
         </button>
       </div>
@@ -230,9 +241,12 @@ function goToPage(page) {
     <section class="gap-5 m-10 mx-auto flex">
       <aside class="flex flex-col gap-5 w-[285px]">
         <div class="rounded-[20px] bg-white h-[200px] overflow-hidden aspect-video">
-          <iframe class="w-full h-full border-0"
+          <iframe
+            class="w-full h-full border-0"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7188.632859084555!2d121.51760264946732!3d25.05771890815704!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a968f68729e7%3A0x6e3f6d2374968eaa!2z5Y-w5YyX5pm26I-v6YWS5bqX!5e0!3m2!1szh-TW!2stw!4v1767279114226!5m2!1szh-TW!2stw"
-            loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
         </div>
         <div class="rounded-[20px] p-10 bg-white border border-gray-300 shadow-sm">
           <h3 class="font-bold text-xl text-dark mb-[20px]">篩選條件</h3>
@@ -243,48 +257,92 @@ function goToPage(page) {
               <!-- 滑桿 -->
               <div class="relative h-2 w-full bg-main_100 rounded-full">
                 <!-- 已選範圍 -->
-                <div class="absolute h-2 bg-main_300 rounded-full" :style="{
-                  left: `${(priceRange.min / maxPrice) * 100}%`,
-                  right: `${100 - (priceRange.max / maxPrice) * 100}%`,
-                }"></div>
+                <div
+                  class="absolute h-2 bg-main_300 rounded-full"
+                  :style="{
+                    left: `${(priceRange.min / maxPrice) * 100}%`,
+                    right: `${100 - (priceRange.max / maxPrice) * 100}%`,
+                  }"
+                ></div>
 
                 <!-- 左滑塊 -->
-                <input type="range" :min="minPrice" :max="maxPrice" :step="step" v-model.number="priceRange.min"
-                  class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none" />
+                <input
+                  type="range"
+                  :min="minPrice"
+                  :max="maxPrice"
+                  :step="step"
+                  v-model.number="priceRange.min"
+                  class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
+                />
 
                 <!-- 右滑塊 -->
-                <input type="range" :min="minPrice" :max="maxPrice" :step="step" v-model.number="priceRange.max"
-                  class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none" />
+                <input
+                  type="range"
+                  :min="minPrice"
+                  :max="maxPrice"
+                  :step="step"
+                  v-model.number="priceRange.max"
+                  class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
+                />
               </div>
               <!-- 顯示數值 -->
               <div class="flex justify-between mt-2">
-                <input type="number" v-model.number="priceRange.min" :min="minPrice" :max="maxPrice" :step="step"
-                  class="border border-gray-300 rounded-full p-1 w-24 text-dark_900 text-center" />
-                <input type="number" v-model.number="priceRange.max" :min="minPrice" :max="maxPrice" :step="step"
-                  class="border border-gray-300 rounded-full p-1 w-24 text-dark_900 text-center" />
+                <input
+                  type="number"
+                  v-model.number="priceRange.min"
+                  :min="minPrice"
+                  :max="maxPrice"
+                  :step="step"
+                  class="border border-gray-300 rounded-full p-1 w-24 text-dark_900 text-center"
+                />
+                <input
+                  type="number"
+                  v-model.number="priceRange.max"
+                  :min="minPrice"
+                  :max="maxPrice"
+                  :step="step"
+                  class="border border-gray-300 rounded-full p-1 w-24 text-dark_900 text-center"
+                />
               </div>
             </div>
 
             <!-- Option Filter -->
-            <div class="border-b-[1px] pb-[20px] border-secondary border-solid last:border-b-0"
-              v-for="HotelMenu in HotelFiltered" :key="HotelMenu.title">
+            <div
+              class="border-b-[1px] pb-[20px] border-main_800 border-solid last:border-b-0"
+              v-for="HotelMenu in HotelFiltered"
+              :key="HotelMenu.title"
+            >
               <div class="flex justify-between items-center mb-2">
                 <h4 class="font-medium text-base text-dark_900">{{ HotelMenu.title }}</h4>
-                <button class="text-xs text-dark_500 hover:text-primary" @click="clearOptions(HotelMenu.title)">
+                <button
+                  class="text-xs text-dark_500 hover:text-primary"
+                  @click="clearOptions(HotelMenu.title)"
+                >
                   清除
                 </button>
               </div>
               <div class="space-y-2">
-                <label class="flex cursor-pointer text-sm text-dark_900 items-center" v-for="option in HotelMenu.options.slice(
-                  0,
-                  expandedMenus.includes(HotelMenu.title) ? HotelMenu.options.length : 4,
-                )" :key="option">
-                  <input type="checkbox" class="mr-2 text-dark_900 focus:ring-primary" :value="option"
-                    v-model="HotelMenu.selected" />
+                <label
+                  class="flex cursor-pointer text-sm text-dark_900 items-center"
+                  v-for="option in HotelMenu.options.slice(
+                    0,
+                    expandedMenus.includes(HotelMenu.title) ? HotelMenu.options.length : 4,
+                  )"
+                  :key="option"
+                >
+                  <input
+                    type="checkbox"
+                    class="mr-2 text-dark_900 focus:ring-primary"
+                    :value="option"
+                    v-model="HotelMenu.selected"
+                  />
                   {{ option }}
                 </label>
-                <button v-if="HotelMenu.options.length > 4 && !expandedMenus.includes(HotelMenu.title)"
-                  class="text-dark_500 hover:text-primary text-sm mt-1" @click="toggleMenu(HotelMenu.title)">
+                <button
+                  v-if="HotelMenu.options.length > 4 && !expandedMenus.includes(HotelMenu.title)"
+                  class="text-dark_500 hover:text-primary text-sm mt-1"
+                  @click="toggleMenu(HotelMenu.title)"
+                >
                   展開更多選項
                 </button>
               </div>
@@ -294,20 +352,33 @@ function goToPage(page) {
       </aside>
       <div class="flex flex-1 flex-col gap-5">
         <div class="flex flex-row items-center gap-2">
-          <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm">價格高到低</button>
-          <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm">價格低到高</button>
-          <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm">熱門高到低</button>
-          <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm">評價高到低</button>
+          <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm">
+            價格高到低
+          </button>
+          <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm">
+            價格低到高
+          </button>
+          <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm">
+            熱門高到低
+          </button>
+          <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm">
+            評價高到低
+          </button>
         </div>
         <div class="flex flex-col gap-5 hotel-card rounded-[20px] w-full">
           <HotelCard v-for="hotel in pagedHotels" :key="hotel.id" :hotel="hotel" />
         </div>
         <div class="flex justify-center gap-2 mt-5 mb-10">
-          <button v-for="page in totalPages" :key="page" @click="goToPage(page)" class="w-10 h-10 border rounded-full"
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            @click="goToPage(page)"
+            class="w-10 h-10 border rounded-full"
             :class="{
               'bg-primary text-white': currentPage === page,
               'text-dark_700 hover:bg-main_100': currentPage !== page,
-            }">
+            }"
+          >
             {{ page }}
           </button>
         </div>
