@@ -338,41 +338,31 @@ const searchCity = route.query.city || ''
 </script>
 
 <template class="bg-page">
-  <main class="mx-auto w-full bg-page pt-24 min-h-screen lg:px-0 px-5">
-    <div class="max-w-[1200px] mx-auto">
+  <main class="max-w-[1240px] mx-auto w-full bg-page pt-24 min-h-screen">
+    <div class="mx-5">
       <section
-        class="max-w-[800px] h-[60px] border border-gray-300 px-5 py-2.5 mx-auto bg-white rounded-full flex flex-row justify-between gap-2.5"
-      >
-        <div
-          class="relative flex-auto h-full focus:ring-primary focus:border-primary"
-          @mouseenter="isOpen = true"
-          @mouseleave="isOpen = false"
-        >
+        class="max-w-[800px] h-16 border border-gray-300 p-2 mx-auto bg-white rounded-full flex flex-row justify-between gap-2">
+        <div class="relative flex-auto h-full focus:border focus:border-primary" @mouseenter="isOpen = true"
+          @mouseleave="isOpen = false">
           <div
-            class="w-full h-full rounded-full border border-gray-300 flex items-center justify-center text-gray-500 bg-white cursor-pointer"
-            @click="isOpen = !isOpen"
-          >
+            class="w-full h-full rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:text-primary bg-white cursor-pointer"
+            @click="isOpen = !isOpen">
             {{ selectedCity || '選擇城市' }}
           </div>
 
-          <div
-            v-if="isOpen"
-            class="absolute top-full left-0 w-full overflow-hidden bg-white z-10 rounded-[10px]"
-          >
+          <div v-if="isOpen"
+            class="absolute top-full left-0 w-full overflow-hidden bg-white/50 backdrop-blur-md border border-white/50 z-10 rounded-[20px] shadow-lg">
             <template v-for="group in cities" :key="group.label">
               <!-- group 標題 -->
-              <div class="px-4 py-2 text-sm text-white bg-secondary">
+              <div class="px-4 py-2 text-sm text-white bg-primary font-bold text-center">
                 {{ group.label }}
               </div>
 
               <!-- 城市 grid，每排 3 個 -->
-              <div class="grid grid-cols-3 gap-5">
-                <div
-                  v-for="city in group.cities"
-                  :key="city"
-                  class="px-4 py-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap text-center rounded"
-                  @click="selectCity(city)"
-                >
+              <div class="grid grid-cols-3 gap-2 p-5">
+                <div v-for="city in group.cities" :key="city"
+                  class="px-4 py-2 hover:bg-main_100/50 hover:font-bold cursor-pointer whitespace-nowrap text-center rounded-full"
+                  @click="selectCity(city)">
                   {{ city }}
                 </div>
               </div>
@@ -382,17 +372,13 @@ const searchCity = route.query.city || ''
 
         <div class="flex-auto h-full">
           <label class="text-gray-500 rounded-full"></label>
-          <input
-            type="text"
-            placeholder="搜尋目的地/當地體驗"
-            class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
-          />
+          <input type="text" placeholder="搜尋目的地/當地體驗"
+            class="h-full w-full border text-center border-gray-300 rounded-full focus:border focus:border-primary outline-none" />
         </div>
 
         <div class="text-gray-500 rounded-full h-full flex-none">
           <button
-            class="w-full h-full text-center bg-primary hover:bg-secondary text-white font-bold px-[30px] rounded-full transition-colors text-nowrap"
-          >
+            class="w-full h-full text-center bg-primary hover:bg-main text-white font-bold px-6 py-3 rounded-full transition-colors text-nowrap">
             搜尋
           </button>
         </div>
@@ -403,31 +389,20 @@ const searchCity = route.query.city || ''
             <h3 class="font-bold text-xl mb-5">篩選條件</h3>
             <div class="flex flex-col gap-5">
               <!-- Option Filter -->
-              <div
-                class="border-b-[1px] pb-5 border-secondary border-solid last:border-b-0"
-                v-for="TicketMenu in ticketFiltered"
-                :key="TicketMenu.title"
-              >
+              <div class="border-b-[1px] pb-5 border-secondary border-solid last:border-b-0"
+                v-for="TicketMenu in ticketFiltered" :key="TicketMenu.title">
                 <h4 class="font-medium mb-2 text-base">{{ TicketMenu.title }}</h4>
                 <div class="space-y-2">
-                  <label
-                    class="flex cursor-pointer text-sm items-center"
-                    v-for="option in TicketMenu.options.slice(
-                      0,
-                      expandedMenus.includes(TicketMenu.title) ? TicketMenu.options.length : 4,
-                    )"
-                    :key="option"
-                  >
+                  <label class="flex cursor-pointer text-sm items-center" v-for="option in TicketMenu.options.slice(
+                    0,
+                    expandedMenus.includes(TicketMenu.title) ? TicketMenu.options.length : 4,
+                  )" :key="option">
                     <input type="checkbox" class="mr-2 focus:ring-primary" />
                     {{ option }}
                   </label>
-                  <button
-                    v-if="
-                      TicketMenu.options.length > 5 && !expandedMenus.includes(TicketMenu.title)
-                    "
-                    class="text-grey-300 text-sm mt-1"
-                    @click="expandedMenus.push(TicketMenu.title)"
-                  >
+                  <button v-if="
+                    TicketMenu.options.length > 5 && !expandedMenus.includes(TicketMenu.title)
+                  " class="text-grey-300 text-sm mt-1" @click="expandedMenus.push(TicketMenu.title)">
                     查看更多選項
                   </button>
                 </div>
@@ -439,22 +414,18 @@ const searchCity = route.query.city || ''
           <h3 class="text-black text-2xl">
             找到 <span class="text-red-500 font-bold">{{ tickets.length }}</span> 項當地體驗
           </h3>
-          <div class="flex flex-row flex-nowrap items-center gap-2.5 h-[40px]">
-            <button class="rounded-full bg-secondary h-full px-4 py-2 font-bold">最多人推薦</button>
-            <button class="rounded-full bg-secondary h-full px-4 py-2 font-bold">好評優惠</button>
-            <button class="rounded-full bg-secondary h-full px-4 py-2 font-bold">最低價</button>
+          <div class="flex flex-row flex-nowrap items-center gap-2">
+            <button class="rounded-[20px] bg-primary hover:bg-main text-white h-full px-4 py-2 font-bold">最多人推薦</button>
+            <button class="rounded-[20px] bg-primary hover:bg-main text-white h-full px-4 py-2 font-bold">好評優惠</button>
+            <button class="rounded-[20px] bg-primary hover:bg-main text-white h-full px-4 py-2 font-bold">最低價</button>
           </div>
           <div class="grid grid-cols-2 lg:grid-cols-3 gap-5">
             <TicketCard v-for="ticket in pagedTickets" :key="ticket.id" :ticket="ticket" />
           </div>
           <div class="flex justify-center gap-2 mt-5 mb-10">
-            <button
-              v-for="page in totalPages"
-              :key="page"
-              class="px-3 py-1 border rounded-full text-gray-500 hover:text-black"
-              :class="{ 'bg-primary text-white': currentPage === page }"
-              @click="goToPage(page)"
-            >
+            <button v-for="page in totalPages" :key="page"
+              class="px-3 py-1 border rounded-full text-gray-500 hover:text-primary"
+              :class="{ 'bg-primary text-white': currentPage === page }" @click="goToPage(page)">
               {{ page }}
             </button>
           </div>
