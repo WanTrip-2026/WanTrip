@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-page pt-[96px] pb-10">
-    <div class="max-w-[1200px] mx-auto p-5 text-sm text-gray-500 space-x-1">
+  <div class="min-h-screen pt-24 pb-10">
+    <div class="max-w-[1200px] mx-auto p-5 text-sm text-dark_500 space-x-1">
       <RouterLink to="/" class="hover:underline underline-offset-2">首頁</RouterLink> >
       <RouterLink to="/" class="hover:underline underline-offset-2">體驗</RouterLink> >
       <RouterLink to="/" class="hover:underline underline-offset-2">景點門票</RouterLink> >
@@ -10,60 +10,38 @@
     <div class="max-w-[1200px] mx-auto px-5 lg:px-0 mb-8">
       <div class="grid grid-cols-[2fr_1fr] lg:grid-cols-[2fr_1fr_1fr_1fr] gap-[10px] mb-[40px]">
         <div class="relative h-[400px] rounded-[20px] overflow-hidden">
-          <img
-            src="/src/assets/hoteldetail_img/Wanhao.jpg"
-            class="absolute inset-0 w-full h-full object-cover"
-          />
+          <img src="/src/assets/hoteldetail_img/Wanhao.jpg" class="absolute inset-0 w-full h-full object-cover" />
         </div>
 
         <div class="grid grid-rows-2 gap-[10px] h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
-            <img
-              src="/src/assets/hoteldetail_img/Wanhao2.jpg"
-              class="absolute inset-0 w-full h-full object-cover"
-            />
+            <img src="/src/assets/hoteldetail_img/Wanhao2.jpg" class="absolute inset-0 w-full h-full object-cover" />
           </div>
 
           <div class="relative rounded-[20px] overflow-hidden">
-            <img
-              src="/src/assets/hoteldetail_img/Wanhao3.jpg"
-              class="absolute inset-0 w-full h-full object-cover"
-            />
+            <img src="/src/assets/hoteldetail_img/Wanhao3.jpg" class="absolute inset-0 w-full h-full object-cover" />
           </div>
         </div>
 
         <div class="grid grid-rows-2 gap-[10px] h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
-            <img
-              src="/src/assets/hoteldetail_img/Wanhao4.jpg"
-              class="absolute inset-0 w-full h-full object-cover"
-            />
+            <img src="/src/assets/hoteldetail_img/Wanhao4.jpg" class="absolute inset-0 w-full h-full object-cover" />
           </div>
 
           <div class="relative rounded-[20px] overflow-hidden">
-            <img
-              src="/src/assets/hoteldetail_img/Wanhao5.jpg"
-              class="absolute inset-0 w-full h-full object-cover"
-            />
+            <img src="/src/assets/hoteldetail_img/Wanhao5.jpg" class="absolute inset-0 w-full h-full object-cover" />
           </div>
         </div>
 
         <div class="grid grid-rows-2 gap-[10px] h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
-            <img
-              src="/src/assets/hoteldetail_img/Wanhao6.jpg"
-              class="absolute inset-0 w-full h-full object-cover"
-            />
+            <img src="/src/assets/hoteldetail_img/Wanhao6.jpg" class="absolute inset-0 w-full h-full object-cover" />
           </div>
 
           <div class="relative rounded-[20px] overflow-hidden">
-            <img
-              src="/src/assets/hoteldetail_img/Wanhao7.jpg"
-              class="absolute inset-0 w-full h-full object-cover"
-            />
+            <img src="/src/assets/hoteldetail_img/Wanhao7.jpg" class="absolute inset-0 w-full h-full object-cover" />
             <div
-              class="absolute inset-0 bg-black/30 flex items-center justify-center text-white font-bold cursor-pointer hover:bg-black/40"
-            >
+              class="absolute inset-0 bg-black/30 flex items-center justify-center text-white font-bold cursor-pointer hover:bg-black/40">
               查看全部照片
             </div>
           </div>
@@ -71,15 +49,13 @@
       </div>
     </div>
 
-    <div
-      class="max-w-[1200px] mx-auto px-5 lg:px-0 grid grid-cols-1 lg:grid-cols-12 gap-5 relative"
-    >
+    <div class="max-w-[1200px] mx-auto px-5 lg:px-0 grid grid-cols-1 lg:grid-cols-12 gap-5 relative">
       <div class="col-span-12 lg:col-span-8 space-y-5">
         <section class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
-          <h2 class="text-2xl line-clamp-2 md:text-3xl font-bold text-gray-900 mb-4">
+          <h2 class="text-xl line-clamp-2 md:text-2xl font-bold text-dark_900 mb-4">
             {{ ticketIntro.title }}
           </h2>
-          <div class="flex flex-wrap items-center text-sm text-gray-500 mb-4 gap-2">
+          <div class="flex flex-wrap items-center text-sm text-dark_500 mb-4 gap-2">
             <span class="flex items-center">
               <span class="text-yellow-400 mr-1">★</span>
               {{ ticketIntro.rating }} ({{ ticketIntro.reviewCount }} 評價)
@@ -91,25 +67,13 @@
           </div>
           <hr class="border-gray-300 my-4" />
           <div>
-            <h4 class="font-bold text-gray-900 mb-3">行程特色</h4>
+            <h4 class="font-bold text-dark_900 mb-3">行程特色</h4>
             <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-              <li
-                v-for="(feature, index) in ticketIntro.highlights"
-                :key="index"
-                class="flex items-start text-gray-600"
-              >
-                <svg
-                  class="w-5 h-5 text-green-500 mr-2 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M5 13l4 4L19 7"
-                  ></path>
+              <li v-for="(feature, index) in ticketIntro.highlights" :key="index"
+                class="flex items-start text-dark_600">
+                <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 <span>{{ feature }}</span>
               </li>
@@ -118,15 +82,12 @@
         </section>
 
         <section class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
-          <h3 class="text-xl font-bold text-gray-900">詳細說明</h3>
+          <h3 class="text-xl font-bold text-dark_900">詳細說明</h3>
           <hr class="border-gray-300 my-2" />
 
           <div class="space-y-6 mt-4">
             <div v-for="detail in ticketDetail" :key="detail.id">
-              <div
-                v-if="detail.type === 'text'"
-                class="prose max-w-none text-gray-600 text-sm leading-relaxed"
-              >
+              <div v-if="detail.type === 'text'" class="prose max-w-none text-dark_700 text-sm leading-relaxed">
                 <p class="whitespace-pre-line">{{ detail.content }}</p>
               </div>
               <div v-else-if="detail.type === 'image'" class="overflow-hidden rounded-[10px]">
@@ -136,7 +97,7 @@
                 <div class="overflow-hidden rounded-[10px]">
                   <img :src="detail.url" class="w-full h-auto object-cover" loading="lazy" />
                 </div>
-                <p class="text-xs md:text-sm text-gray-500">
+                <p class="text-xs md:text-sm text-dark_700">
                   {{ detail.caption }}
                 </p>
               </div>
@@ -145,21 +106,18 @@
         </section>
 
         <section class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
-          <h3 class="text-xl font-bold text-gray-900">使用說明與注意事項</h3>
+          <h3 class="text-xl font-bold text-dark_900">使用說明與注意事項</h3>
           <hr class="border-gray-300 my-2" />
-          <div class="space-y-6 mt-4 text-sm text-gray-600">
+          <div class="space-y-6 mt-4 text-sm text-dark_700">
             <div v-for="(policy, index) in policies" :key="index">
-              <h4 class="font-bold text-gray-800 mb-2">{{ policy.title }}</h4>
+              <h4 class="font-bold text-dark_700 mb-2">{{ policy.title }}</h4>
               <p v-if="policy.type === 'text'">
                 {{ policy.content }}
               </p>
-              <ul
-                v-else-if="policy.type === 'list'"
-                :class="[
-                  'list-disc list-inside space-y-1',
-                  policy.highlight ? 'bg-[#EEF2F7] p-5 rounded-[10px] border border-white-300' : '',
-                ]"
-              >
+              <ul v-else-if="policy.type === 'list'" :class="[
+                'list-disc list-inside space-y-1',
+                policy.highlight ? 'bg-main_100 p-5 rounded-[10px] border border-white-300' : '',
+              ]">
                 <li v-for="(item, i) in policy.items" :key="i">
                   {{ item }}
                 </li>
@@ -169,54 +127,36 @@
         </section>
 
         <section class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
-          <h3 class="text-xl font-bold text-gray-900 mb-2">常見問題</h3>
+          <h3 class="text-xl font-bold text-dark_900 mb-2">常見問題</h3>
           <div class="space-y-2.5">
-            <div
-              v-for="(faq, index) in faqs"
-              :key="index"
-              class="border rounded-lg overflow-hidden"
-            >
-              <button
-                @click="toggleFaq(index)"
-                class="w-full flex justify-between items-center p-5 bg-[#EEF2F7] hover:bg-[#98BAE3] transition text-left"
-              >
-                <span class="font-medium text-gray-800">{{ faq.question }}</span>
-                <span
-                  class="text-gray-400 transform transition-transform duration-200"
-                  :class="{ 'rotate-180': activeIndex === index }"
-                  >▼</span
-                >
+            <div v-for="(faq, index) in faqs" :key="index" class="border rounded-lg overflow-hidden">
+              <button @click="toggleFaq(index)"
+                class="w-full flex justify-between items-center p-5 bg-main_100 hover:bg-main_200 transition text-left">
+                <span class="font-medium text-dark_900">{{ faq.question }}</span>
+                <span class="text-dark_700 transform transition-transform duration-200"
+                  :class="{ 'rotate-180': activeIndex === index }">▼</span>
               </button>
-              <div v-show="activeIndex === index" class="p-5 bg-white text-sm text-gray-700">
+              <div v-show="activeIndex === index" class="p-5 bg-white text-sm text-dark_700">
                 {{ faq.answer }}
               </div>
             </div>
           </div>
         </section>
 
-        <section>
-          <h3 class="font-bold text-2xl mb-2 text-primary">熱門體驗</h3>
+        <section class="mt-10">
+          <h3 class="font-bold text-2xl mb-5 text-dark">熱門體驗</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
-            <RouterLink
-              v-for="recommend in recommendations"
-              :key="recommend.id"
-              :to="`/ticket/${recommend.id}`"
-              class="group bg-white rounded-[20px] shadow-sm overflow-hidden border hover:shadow-md transition-all duration-300 cursor-pointer"
-            >
-              <div class="h-32 bg-gray-100 overflow-hidden">
-                <img
-                  :src="recommend.img"
-                  :alt="recommend.title"
-                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
+            <RouterLink v-for="recommend in recommendations" :key="recommend.id" :to="`/ticket/${recommend.id}`"
+              class="group bg-white rounded-[20px] shadow-sm overflow-hidden border hover:shadow-md transition-all duration-300 cursor-pointer">
+              <div class="h-32 bg-dark_100 overflow-hidden">
+                <img :src="recommend.img" :alt="recommend.title"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               </div>
               <div class="p-5">
-                <div
-                  class="text-sm font-bold truncate mb-1 text-gray-800 group-hover:text-[#365475] transition-colors"
-                >
+                <div class="text-sm font-bold truncate mb-1 text-dark_900 group-hover:text-main_800 transition-colors">
                   {{ recommend.title }}
                 </div>
-                <div class="text-xs text-gray-500 font-medium">TWD {{ recommend.price }} 起</div>
+                <div class="text-xs text-dark_700 font-medium">TWD {{ recommend.price }} 起</div>
               </div>
             </RouterLink>
           </div>
@@ -224,46 +164,33 @@
       </div>
 
       <div
-        class="fixed bottom-[84px] left-0 right-0 bg-white rounded-[20px] z-50 p-5 mx-5 border border-white-300 lg:relative lg:bottom-auto lg:left-auto lg:w-full lg:right-auto lg:z-0 lg:p-0 lg:mr-5 lg:ml-0 lg:col-span-4 lg:border-0 lg:bg-transparent"
-      >
+        class="fixed bottom-[84px] left-0 right-0 bg-white rounded-[20px] z-50 p-5 mx-5 border border-white-300 lg:relative lg:bottom-auto lg:left-auto lg:w-full lg:right-auto lg:z-0 lg:p-0 lg:mr-5 lg:ml-0 lg:col-span-4 lg:border-0 lg:bg-transparent">
         <div
-          class="lg:sticky lg:top-[96px] bg-white lg:rounded-[20px] lg:shadow-sm lg:border lg:border-gray-300 lg:p-5"
-        >
+          class="lg:sticky lg:top-[96px] bg-white lg:rounded-[20px] lg:shadow-sm lg:border lg:border-gray-300 lg:p-5">
           <div class="mb-4 flex flex-row gap-2 lg:gap-5 lg:flex-col">
-            <h2
-              class="w-full text-lg lg:text-2xl line-clamp-1 lg:line-clamp-2 md:text-xl font-bold text-black"
-            >
+            <h2 class="w-full text-lg line-clamp-1 lg:line-clamp-2 md:text-xl font-bold text-dark">
               {{ ticketIntro.title }}
             </h2>
             <div>
-              <span class="text-xs lg:text-sm text-gray-500 line-through text-nowrap"
-                >TWD 1,200</span
-              >
+              <span class="text-xs lg:text-sm text-dark_500 line-through text-nowrap">TWD 1,200</span>
               <div class="flex items-end gap-1 lg:gap-2">
                 <span class="text-lg lg:text-2xl font-bold text-red-500 text-nowrap">TWD 880</span>
-                <span class="text-sm text-gray-500 mb-0.5 lg:mb-1 text-nowrap">/ 每人</span>
+                <span class="text-sm text-dark_500 mb-0.5 lg:mb-1 text-nowrap">/ 每人</span>
               </div>
             </div>
           </div>
           <div class="flex flex-row items-stretch gap-5 text-nowrap lg:gap-2.5 lg:flex-col">
-            <div
-              class="p-3 w-full border rounded-[10px] hover:border-[#365475] cursor-pointer transition"
-            >
-              <div class="text-xs text-gray-700 mb-1">選擇日期</div>
-              <div class="font-medium text-black">2023-12-25 (週一)</div>
+            <div class="p-3 w-full border rounded-[10px] hover:border-[#365475] cursor-pointer transition">
+              <div class="text-xs text-dark_700 mb-1">選擇日期</div>
+              <div class="font-medium text-dark">2023-12-25 (週一)</div>
             </div>
-            <div
-              class="p-3 w-full border rounded-[10px] hover:border-[#365475] cursor-pointer transition"
-            >
-              <div class="text-xs text-gray-700 mb-1">選擇方案</div>
-              <div class="font-medium text-black">成人票 x 2</div>
+            <div class="p-3 w-full border rounded-[10px] hover:border-[#365475] cursor-pointer transition">
+              <div class="text-xs text-dark_700 mb-1">選擇方案</div>
+              <div class="font-medium text-dark">成人票 x 2</div>
             </div>
             <div class="flex-shrink-0">
-              <button
-                type="submit"
-                @click="onSearch"
-                class="h-full flex items-center justify-center lg:w-full bg-primary hover:bg-[#365475] text-white font-bold py-3 px-6 rounded-[10px] transition duration-200 shadow-md"
-              >
+              <button type="submit" @click="onSearch"
+                class="h-full flex items-center justify-center lg:w-full bg-primary hover:bg-main text-white font-bold py-3 px-6 rounded-[10px] transition duration-200 shadow-md">
                 立即預訂
               </button>
             </div>

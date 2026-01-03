@@ -52,34 +52,24 @@ function onSearch() {
 </script>
 
 <template>
-  <main class="bg-[#f7fbfb] pb-10">
+  <main class="pb-10">
     <div class="mt-5 pt-24">
-      <div class="max-w-[1200px] mx-auto px-4 md:px-6">
+      <div class="max-w-[1240px] mx-auto px-5">
         <section
-          class="max-w-[800px] h-[80px] p-2.5 mx-auto bg-secondary rounded-full flex items-center gap-5 mt-5 mb-10"
-        >
+          class="max-w-[800px] h-20 p-2 mx-auto bg-white border border-gray-300 shadow-sm rounded-full flex items-center gap-2 mt-5 mb-10">
           <div class="h-full w-full">
-            <input
-              type="text"
-              placeholder="城市"
-              class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
-            />
+            <input type="text" placeholder="城市"
+              class="h-full w-full border text-center border-gray-300 rounded-full focus:border-2 focus:border-primary outline-none" />
           </div>
 
           <div class="h-full w-full">
-            <input
-              type="text"
-              placeholder="景點與體驗"
-              class="h-full w-full border text-center border-gray-300 rounded-full focus:ring-primary focus:border-primary outline-none"
-            />
+            <input type="text" placeholder="景點與體驗"
+              class="h-full w-full border text-center border-gray-300 rounded-full focus:border-2 focus:border-primary outline-none" />
           </div>
 
           <div class="h-full">
-            <button
-              @click="onSearch"
-              type="submit"
-              class="h-full bg-primary text-white font-bold px-[30px] rounded-full hover:brightness-95 whitespace-nowrap"
-            >
+            <button @click="onSearch" type="submit"
+              class="h-full bg-primary text-white font-bold px-10 rounded-full hover:brightness-95 whitespace-nowrap">
               搜尋
             </button>
           </div>
@@ -87,14 +77,10 @@ function onSearch() {
 
         <template v-if="isLoading">
           <section v-for="n in 2" :key="n" class="mb-10">
-            <div class="h-6 w-32 bg-gray-200 rounded mb-[40px] animate-pulse"></div>
+            <div class="h-6 w-32 bg-gray-200 rounded mb-10 animate-pulse"></div>
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
-              <div
-                v-for="i in 4"
-                :key="i"
-                class="bg-gray-200 rounded-[20px] aspect-[4/3] animate-pulse"
-              />
+              <div v-for="i in 4" :key="i" class="bg-gray-200 rounded-[20px] aspect-[4/3] animate-pulse" />
             </div>
 
             <div class="mt-5 flex justify-center">
@@ -105,28 +91,20 @@ function onSearch() {
 
         <template v-else>
           <section v-for="section in sections" :key="section.title" class="mb-10">
-            <h2 class="text-2xl font-extrabold mb-[40px]">
+            <h2 class="text-2xl font-extrabold text-dark mb-10">
               {{ section.title }}
             </h2>
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
-              <a
-                href="#"
-                v-for="item in section.items"
-                :key="item.id"
-                class="rounded-[20px] overflow-hidden border border-gray-200 bg-white hover:border-black transition"
-              >
+              <a href="#" v-for="item in section.items" :key="item.id"
+                class="rounded-[20px] overflow-hidden border border-gray-300 bg-white hover:shadow-lg transition">
                 <template v-if="isRegionSection(section.title)">
-                  <div
-                    class="relative w-full bg-gray-100"
-                    :class="
-                      section.variant === 'portrait'
-                        ? 'aspect-[3/4]'
-                        : section.variant === 'region'
-                          ? 'aspect-[5/4]'
-                          : 'aspect-[4/3]'
-                    "
-                  >
+                  <div class="relative w-full bg-gray-100" :class="section.variant === 'portrait'
+                    ? 'aspect-[3/4]'
+                    : section.variant === 'region'
+                      ? 'aspect-[5/4]'
+                      : 'aspect-[4/3]'
+                    ">
                     <img :src="item.image" class="w-full h-full object-cover" />
 
                     <div class="absolute left-4 bottom-4 text-white">
@@ -141,28 +119,22 @@ function onSearch() {
                 </template>
 
                 <template v-else>
-                  <div
-                    class="w-full bg-gray-100"
-                    :class="
-                      section.variant === 'portrait'
-                        ? 'aspect-[3/4]'
-                        : section.variant === 'region'
-                          ? 'aspect-[5/4]'
-                          : 'aspect-[4/3]'
-                    "
-                  >
+                  <div class="w-full bg-gray-100" :class="section.variant === 'portrait'
+                    ? 'aspect-[3/4]'
+                    : section.variant === 'region'
+                      ? 'aspect-[5/4]'
+                      : 'aspect-[4/3]'
+                    ">
                     <img :src="item.image" class="w-full h-full object-cover" />
                   </div>
 
                   <div class="p-5">
-                    <h3 class="text-[18px] font-bold text-black">
+                    <h3 class="text-md font-bold text-black">
                       {{ item.title }}
                     </h3>
 
                     <div class="mt-3 flex items-center gap-3">
-                      <span
-                        class="bg-[#6D8FA3] text-white font-bold text-sm px-3 py-1 rounded-full"
-                      >
+                      <span class="bg-main text-white font-bold text-sm px-3 py-1 rounded-full">
                         {{ item.rating }} / 5
                       </span>
                       <span class="text-gray-500 text-sm">
@@ -175,10 +147,8 @@ function onSearch() {
             </div>
 
             <div class="mt-5 flex justify-center">
-              <button
-                type="button"
-                class="h-[44px] bg-primary text-white font-bold px-[30px] rounded-full hover:brightness-95 transition shadow-sm"
-              >
+              <button type="button"
+                class="bg-main hover:bg-main_800 text-white font-bold px-10 py-3 rounded-full transition shadow-sm">
                 顯示更多
               </button>
             </div>

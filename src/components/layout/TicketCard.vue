@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 // 帶入假資料
 const props = defineProps({
   ticket: {
@@ -13,40 +13,32 @@ const props = defineProps({
 <template>
   <div>
     <div
-      class="w-[280px] rounded-[20px] border bg-white border-gray-200 hover:border-black overflow-hidden"
-    >
-      <RouterLink :to="`/tickets/${props.ticket.id}`" class="w-full h-full flex flex-col gap-2.5">
+      class="w-[280px] rounded-[20px] border bg-white border-gray-300 transition-all shadow-sm hover:shadow-lg overflow-hidden">
+      <RouterLink :to="`/tickets/${props.ticket.id}`" class="w-full h-full flex flex-col gap-2">
         <div class="w-full">
-          <img
-            :src="props.ticket.image_url"
-            :alt="props.ticket.name"
-            class="w-full h-full object-cover"
-          />
+          <img :src="props.ticket.image_url" :alt="props.ticket.name" class="w-full h-full object-cover" />
         </div>
 
         <!-- 內容 -->
-        <div class="flex-1 flex flex-col justify-between p-2.5 w-full">
-          <div class="flex flex-col gap-2.5">
-            <h3 class="text-xl font-bold text-black">
+        <div class="flex-1 flex flex-col justify-between p-2 w-full">
+          <div class="flex flex-col gap-2">
+            <h3 class="text-xl font-bold text-dark">
               {{ props.ticket.name }}
             </h3>
 
-            <p class="text-gray-700 text-sm flex gap-2">
-              <span
-                class="bg-gray-200 rounded-[20px] px-2 py-1"
-                v-for="(opt, index) in props.ticket.option"
-                :key="index"
-              >
+            <p class="text-dark_700 text-sm flex gap-2">
+              <span class="bg-gray-200 rounded-[20px] px-2 py-1" v-for="(opt, index) in props.ticket.option"
+                :key="index">
                 {{ opt }}
               </span>
             </p>
 
-            <p class="text-base text-gray-400">
+            <p class="text-base text-dark_500">
               {{ props.ticket.comments }}
             </p>
-            <p class="text-gray-400 text-sm font-bold">
+            <p class="text-dark_500 text-sm font-bold">
               起價
-              <span class="text-black text-base">NT${{ props.ticket.price }}</span>
+              <span class="text-dark text-base">NT${{ props.ticket.price }}</span>
             </p>
           </div>
         </div>
