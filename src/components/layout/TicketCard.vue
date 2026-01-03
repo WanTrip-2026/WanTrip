@@ -15,8 +15,7 @@ const props = defineProps({
     <div
       class="w-[280px] rounded-[20px] border bg-white border-gray-200 hover:border-black overflow-hidden"
     >
-      <a href="/tickets/:id" class="w-full h-full flex-col gap-2.5">
-        <!-- 圖片 -->
+      <RouterLink :to="`/tickets/${props.ticket.id}`" class="w-full h-full flex flex-col gap-2.5">
         <div class="w-full">
           <img
             :src="props.ticket.image_url"
@@ -51,7 +50,7 @@ const props = defineProps({
             </p>
           </div>
         </div>
-      </a>
+      </RouterLink>
     </div>
   </div>
 </template>
