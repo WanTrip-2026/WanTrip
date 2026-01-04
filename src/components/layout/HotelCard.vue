@@ -35,7 +35,7 @@ function starCount(stars: number) {
       <!-- 內容 -->
       <div class="relative flex-1 flex justify-between p-5 w-full">
         <p class="absolute top-5 right-5 p-2 rounded-[20px] bg-primary text-white">
-          {{ hotel.star_rating }}
+          {{ hotel.star_rating }}.0
         </p>
         <div class="flex flex-col gap-2">
           <h3 class="text-2xl font-bold text-black">
