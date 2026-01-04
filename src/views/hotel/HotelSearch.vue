@@ -2,7 +2,24 @@
 import HotelCard from '@/components/layout/HotelCard.vue'
 import { ref, reactive, watch, computed, onMounted } from 'vue'
 
-const hotels = ref([])
+interface PriceRange {
+  min: number
+  max: number
+}
+
+interface FilterMenu {
+  title: string
+  options: string[]
+  selected: string[]
+}
+
+interface Hotel {
+  id: string
+  name: string
+  min_price: number
+}
+
+const hotels = ref<Hotel[]>([])
 
 onMounted(async () => {
   const res = await fetch('http://localhost:3000/api/hotels', { cache: 'no-store' })
@@ -16,14 +33,14 @@ const maxPrice = 15000
 const step = 500
 
 // import { RouterLink } from 'vue-router'
-const priceRange = ref({
+const priceRange = ref<PriceRange>({
   min: minPrice,
   max: maxPrice,
 })
 
 // 確認價錢範圍的最小.最大值
 watch(
-  () => [priceRange.value.min, priceRange.value.max],
+  () => [priceRange.value.min, priceRange.value.max] as [number, number],
   ([min, max]) => {
     if (min < minPrice) priceRange.value.min = minPrice
     if (max > maxPrice) priceRange.value.max = maxPrice
@@ -34,7 +51,7 @@ watch(
   },
 )
 
-const HotelFiltered = reactive([
+const HotelFiltered = reactive<FilterMenu[]>([
   { title: '星級', options: ['五星級', '四星級', '三星級'], selected: [] },
   {
     title: '評價',
@@ -72,16 +89,16 @@ const HotelFiltered = reactive([
   },
 ])
 
-const expandedMenus = ref([]) // 儲存哪些 option 已展開
+const expandedMenus = ref<string[]>([]) // 儲存哪些 option 已展開
 
-function clearOptions(title) {
+function clearOptions(title: string) {
   const menu = HotelFiltered.find((m) => m.title === title)
   if (menu) {
     menu.selected = [] // 清空勾選
   }
 }
 
-function toggleMenu(title) {
+function toggleMenu(title: string) {
   if (expandedMenus.value.includes(title)) {
     expandedMenus.value = expandedMenus.value.filter((t) => t !== title)
   } else {
