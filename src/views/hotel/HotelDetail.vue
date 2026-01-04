@@ -358,13 +358,13 @@
 
               <div
                 v-if="review.photos && review.photos.length"
-                class="flex gap-3 overflow-x-auto py-2 scrollbar-hide"
+                class="flex gap-3 overflow-x-auto py-2 snap-x snap-mandatory"
               >
                 <img
                   v-for="(photo, idx) in review.photos"
                   :key="idx"
                   :src="photo"
-                  class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-[20px] flex-shrink-0"
+                  class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-[20px] flex-shrink-0 snap-start"
                   alt="評論照片"
                 />
               </div>
