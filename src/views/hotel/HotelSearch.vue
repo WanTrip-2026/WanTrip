@@ -22,10 +22,18 @@ interface Hotel {
 const hotels = ref<Hotel[]>([])
 
 onMounted(async () => {
-  const res = await fetch('http://localhost:3000/api/hotels', { cache: 'no-store' })
-  const data = await res.json()
-  console.log(data)
-  hotels.value = data
+  try {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL
+    const res = await fetch(`${apiUrl}/hotels`)
+    if (!res.ok) throw new Error('取得飯店資料失敗')
+    const data = await res.json()
+    if (import.meta.env.DEV) {
+      console.log('hotel API 回傳', data)
+    }
+    hotels.value = data
+  } catch (err) {
+    console.error(err)
+  }
 })
 
 const minPrice = 0

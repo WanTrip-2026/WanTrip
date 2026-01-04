@@ -603,7 +603,8 @@ const sortOption = ref('ratingDesc')
 
 onMounted(async () => {
   try {
-    const res = await fetch(`http://localhost:3000/api/hotels/${hotelId}`)
+    const apiUrl = import.meta.env.VITE_API_BASE_URL
+    const res = await fetch(`${apiUrl}/hotels/${hotelId}`)
     if (!res.ok) throw new Error('取得飯店資料失敗')
     const data = await res.json()
     if (import.meta.env.DEV) {
