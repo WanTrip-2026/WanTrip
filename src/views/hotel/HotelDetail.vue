@@ -210,7 +210,7 @@
               <div class="flex items-center gap-3 pb-[10px]">
                 <div class="text-3xl font-bold text-primary">9.2</div>
                 <div>
-                  <p class="text-sm font-bold text-primary">Excellent</p>
+                  <p class="text-sm font-bold text-primary">好極了</p>
                   <p class="text-xs text-gray-400">1,245 則評論</p>
                 </div>
               </div>
@@ -389,7 +389,7 @@
                   {{ review.rating }}.0
                 </div>
                 <div class="text-xs font-bold text-primary uppercase tracking-wider mt-1">
-                  Excellent
+                  好極了
                 </div>
               </div>
             </div>
