@@ -125,16 +125,32 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-5">
           <div>
             <h2 class="text-2xl md:text-xl font-bold text-dark flex flex-wrap items-center gap-2">
-              台北萬豪酒店 (Taipei Marriott Hotel)
-              <span class="text-yellow-500 text-base md:text-xl">★★★★★</span>
+              {{ hotel?.name }}
+              <span
+                ><svg
+                  v-for="n in starCount(hotel?.star_rating)"
+                  :key="n"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 640 640"
+                  class="w-5 h-5 inline-block fill-current text-yellow-400"
+                >
+                  <path
+                    d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z"
+                  />
+                </svg>
+              </span>
             </h2>
-            <p class="text-dark text-sm md:text-base mt-2 mb-4">台灣台北市中山區樂群二路199號</p>
+            <p class="text-dark text-sm md:text-base mt-2 mb-4">
+              {{ hotel?.city }}{{ hotel?.district }}{{ hotel?.address }}
+            </p>
           </div>
           <div
             class="w-full md:w-auto text-left md:text-right border-t md:border-none pt-4 md:pt-0"
           >
             <span class="text-dark_500 text-xs md:text-sm">每晚最低自</span>
-            <div class="text-red-600 text-2xl md:text-3xl font-bold">NT$ 6,166</div>
+            <div class="text-red-600 text-2xl md:text-3xl font-bold">
+              NT$ {{ hotel?.min_price }}
+            </div>
             <button
               class="w-full md:w-auto bg-primary text-white text-base px-10 py-3 md:py-[10px] rounded-xl md:rounded-[20px] hover:bg-main transition mt-3"
             >
@@ -178,14 +194,12 @@
             <div class="bg-main_100 rounded-[20px] p-5">
               <h3 class="font-bold text-lg mb-2 text-dark">住宿簡介</h3>
               <ul class="text-gray-600 text-sm leading-relaxed space-y-2">
-                <li><span class="font-medium text-dark">電話：</span>+886-2-8502-9999</li>
+                <li><span class="font-medium text-dark">電話：</span>{{ hotel?.phone }}</li>
                 <li>
                   <span class="font-medium text-dark">信箱：</span>reservation@taipeimarriott.com.tw
                 </li>
                 <li class="pt-2 text-dark border-t border-gray-300/50 mt-2">
-                  台北萬豪酒店是一家位於台北市中山區大直地區的五星級豪華酒店，坐落於基隆河畔的都市綠洲，
-                  結合住宿、餐飲、會議與休閒設施於一身，廣受商務與休閒旅客青睞。酒店於 2015 年 9 月
-                  28 日正式開幕，是萬豪國際在台北的重要旗艦酒店之一。
+                  {{ hotel?.description }}
                 </li>
               </ul>
             </div>
@@ -437,7 +451,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+
+interface Hotel {
+  id: string
+  name: string
+  star_rating: number
+  city: string
+  district: string
+  address: string
+  min_price: number
+  facilities?: string[]
+  description?: string
+  phone?: string
+  email?: string
+  rating_score?: number
+  rating_text?: string
+  rating_count?: number
+}
 
 interface Room {
   id: number
@@ -464,50 +496,10 @@ interface Review {
   date: string
 }
 
-const totalPages = computed(() => Math.ceil(filteredReviews.value.length / reviewsPerPage.value))
-const currentIndex = ref(0)
-const startX = ref(0)
-const endX = ref(0)
+const route = useRoute()
+const hotelId = route.params.id
 
-const images = [
-  '/src/assets/hoteldetail_img/Wanhao.jpg',
-  '/src/assets/hoteldetail_img/Wanhao2.jpg',
-  '/src/assets/hoteldetail_img/Wanhao3.jpg',
-  '/src/assets/hoteldetail_img/Wanhao4.jpg',
-  '/src/assets/hoteldetail_img/Wanhao5.jpg',
-  '/src/assets/hoteldetail_img/Wanhao6.jpg',
-  '/src/assets/hoteldetail_img/Wanhao7.jpg',
-]
-
-const goTo = (index: number) => {
-  currentIndex.value = index
-}
-
-const onTouchStart = (e: TouchEvent) => {
-  const touch = e.touches?.[0]
-  if (!touch) return // 保護空陣列
-  startX.value = touch.clientX
-}
-
-const onTouchMove = (e: TouchEvent) => {
-  const touch = e.touches?.[0]
-  if (!touch) return
-  endX.value = touch.clientX
-}
-
-const onTouchEnd = () => {
-  const diff = endX.value - startX.value
-  if (Math.abs(diff) > 50) {
-    if (diff < 0) {
-      currentIndex.value = (currentIndex.value + 1) % images.length
-    } else {
-      currentIndex.value = (currentIndex.value - 1 + images.length) % images.length
-    }
-  }
-  startX.value = 0
-  endX.value = 0
-}
-
+const hotel = ref<Hotel | null>(null)
 const rooms = ref<Room[]>([
   {
     id: 1,
@@ -635,11 +627,72 @@ const reviews = ref<Review[]>([
     date: '2024/08/30',
   },
 ])
-
+const currentIndex = ref(0)
+const startX = ref(0)
+const endX = ref(0)
+const currentPage = ref(1) // 當前頁
+const reviewsPerPage = ref(2) // 每頁顯示評論數
 // 篩選條件
 const filterMemberType = ref('')
 const filterRoomType = ref('')
 const sortOption = ref('ratingDesc')
+
+onMounted(async () => {
+  try {
+    const res = await fetch(`http://localhost:3000/api/hotels/${hotelId}`)
+    if (!res.ok) throw new Error('取得飯店資料失敗')
+    const data = await res.json()
+    if (import.meta.env.DEV) {
+      console.log('hotel API 回傳', data)
+    }
+    hotel.value = data
+  } catch (err) {
+    console.error(err)
+  }
+})
+
+function starCount(stars: number = 0) {
+  return stars
+}
+
+const images = [
+  '/src/assets/hoteldetail_img/Wanhao.jpg',
+  '/src/assets/hoteldetail_img/Wanhao2.jpg',
+  '/src/assets/hoteldetail_img/Wanhao3.jpg',
+  '/src/assets/hoteldetail_img/Wanhao4.jpg',
+  '/src/assets/hoteldetail_img/Wanhao5.jpg',
+  '/src/assets/hoteldetail_img/Wanhao6.jpg',
+  '/src/assets/hoteldetail_img/Wanhao7.jpg',
+]
+
+const goTo = (index: number) => {
+  currentIndex.value = index
+}
+
+const onTouchStart = (e: TouchEvent) => {
+  const touch = e.touches?.[0]
+  if (!touch) return // 保護空陣列
+  startX.value = touch.clientX
+}
+
+const onTouchMove = (e: TouchEvent) => {
+  const touch = e.touches?.[0]
+  if (!touch) return
+  endX.value = touch.clientX
+}
+
+const onTouchEnd = () => {
+  const diff = endX.value - startX.value
+  if (Math.abs(diff) > 50) {
+    if (diff < 0) {
+      currentIndex.value = (currentIndex.value + 1) % images.length
+    } else {
+      currentIndex.value = (currentIndex.value - 1 + images.length) % images.length
+    }
+  }
+  startX.value = 0
+  endX.value = 0
+}
 
 // 動態生成選項
 const memberTypes = computed(() => Array.from(new Set(reviews.value.map((r) => r.memberType))))
@@ -678,12 +731,10 @@ const filteredAverageRating = computed(() => {
   return (total / filteredReviews.value.length).toFixed(1)
 })
 
-const currentPage = ref(1) // 當前頁
-const reviewsPerPage = ref(2) // 每頁顯示評論數
-
 const paginatedReviews = computed(() => {
   const start = (currentPage.value - 1) * reviewsPerPage.value
   const end = start + reviewsPerPage.value
   return filteredReviews.value.slice(start, end)
 })
+const totalPages = computed(() => Math.ceil(filteredReviews.value.length / reviewsPerPage.value))
 </script>

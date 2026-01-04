@@ -21,7 +21,7 @@ function starCount(stars: number) {
       <!-- 圖片 -->
       <div class="h-full w-[246px] relative">
         <img
-          src="/src/assets/hoteldetail_img/Wanhao.jpg"
+          src="https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg"
           :alt="hotel.name"
           class="w-full h-full object-cover"
         />
@@ -58,9 +58,7 @@ function starCount(stars: number) {
               </svg>
             </div>
 
-            <p class="text-gray-500 text-base">
-              {{ hotel.address }}
-            </p>
+            <p class="text-gray-500 text-base">{{ hotel.city }}{{ hotel.district }}</p>
 
             <p class="text-base text-gray-400">6616 則評論</p>
           </div>
