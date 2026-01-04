@@ -1,6 +1,6 @@
-<script setup>
+<script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { computed } from 'vue'
+
 defineProps({
   hotel: {
     type: Object,
@@ -8,9 +8,8 @@ defineProps({
   },
 })
 
-function starCount(starsText) {
-  const stars = parseInt(starsText.match(/\d+/)?.[0]) || 0
-  return stars // 返回星數
+function starCount(stars: number) {
+  return stars
 }
 </script>
 
@@ -21,7 +20,11 @@ function starCount(starsText) {
     >
       <!-- 圖片 -->
       <div class="h-full w-[246px] relative">
-        <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
+        <img
+          src="/src/assets/hoteldetail_img/Wanhao.jpg"
+          :alt="hotel.name"
+          class="w-full h-full object-cover"
+        />
         <button
           class="absolute bottom-5 right-5 rounded-[20px] h-[40px] w-[90px] text-xs p-[2px] bg-primary opacity-80 hover:opacity-100 text-white"
         >
@@ -32,7 +35,7 @@ function starCount(starsText) {
       <!-- 內容 -->
       <div class="relative flex-1 flex justify-between p-5 w-full">
         <p class="absolute top-5 right-5 p-2 rounded-[20px] bg-primary text-white">
-          {{ hotel.rating }}
+          {{ hotel.star_rating }}
         </p>
         <div class="flex flex-col gap-2">
           <h3 class="text-2xl font-bold text-black">
@@ -42,7 +45,7 @@ function starCount(starsText) {
           <div class="flex flex-col gap-1">
             <div class="flex gap-1">
               <svg
-                v-for="(n, index) in starCount(hotel.stars)"
+                v-for="(n, index) in starCount(hotel.star_rating)"
                 :key="index"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 640 640"
@@ -59,15 +62,13 @@ function starCount(starsText) {
               {{ hotel.address }}
             </p>
 
-            <p class="text-base text-gray-400">
-              {{ hotel.comments }}
-            </p>
+            <p class="text-base text-gray-400">6616 則評論</p>
           </div>
         </div>
 
         <!-- 底部 -->
         <div class="flex flex-col justify-end items-end gap-2">
-          <div class="text-red-500 text-2xl font-bold">NT${{ hotel.price }}</div>
+          <div class="text-red-500 text-2xl font-bold">NT${{ hotel.min_price }}</div>
           <div class="flex gap-4">
             <button
               class="bg-primary text-white p-[9px] rounded-[20px] hover:bg-main_800 transition flex items-center justify-center"
