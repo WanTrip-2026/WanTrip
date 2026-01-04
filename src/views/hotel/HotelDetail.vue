@@ -62,60 +62,14 @@
 
       <div class="hidden md:grid md:grid-cols-[2fr_1fr_1fr_1fr] gap-2.5 mb-10">
         <div
+          v-for="(img, index) in images"
+          :key="index"
           class="relative h-[400px] rounded-[20px] overflow-hidden border border-gray-300 shadow-sm"
         >
           <img
-            src="/src/assets/hoteldetail_img/Wanhao.jpg"
+            :src="img"
             class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
           />
-        </div>
-
-        <div class="grid grid-rows-2 gap-[10px] h-[400px]">
-          <div class="relative rounded-[20px] overflow-hidden border border-gray-300 shadow-sm">
-            <img
-              src="/src/assets/hoteldetail_img/Wanhao2.jpg"
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-            />
-          </div>
-
-          <div class="relative rounded-[20px] overflow-hidden border border-gray-300 shadow-sm">
-            <img
-              src="/src/assets/hoteldetail_img/Wanhao3.jpg"
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-            />
-          </div>
-        </div>
-
-        <div class="grid grid-rows-2 gap-[10px] h-[400px]">
-          <div class="relative rounded-[20px] overflow-hidden border border-gray-300 shadow-sm">
-            <img
-              src="/src/assets/hoteldetail_img/Wanhao4.jpg"
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-            />
-          </div>
-
-          <div class="relative rounded-[20px] overflow-hidden border border-gray-300 shadow-sm">
-            <img
-              src="/src/assets/hoteldetail_img/Wanhao5.jpg"
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-            />
-          </div>
-        </div>
-
-        <div class="grid grid-rows-2 gap-[10px] h-[400px]">
-          <div class="relative rounded-[20px] overflow-hidden border border-gray-300 shadow-sm">
-            <img
-              src="/src/assets/hoteldetail_img/Wanhao6.jpg"
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-            />
-          </div>
-
-          <div class="relative rounded-[20px] overflow-hidden border border-gray-300 shadow-sm">
-            <img
-              src="/src/assets/hoteldetail_img/Wanhao7.jpg"
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-            />
-          </div>
         </div>
       </div>
 
