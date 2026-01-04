@@ -62,14 +62,24 @@
 
       <div class="hidden md:grid md:grid-cols-[2fr_1fr_1fr_1fr] gap-2.5 mb-10">
         <div
-          v-for="(img, index) in images"
-          :key="index"
-          class="relative h-[400px] rounded-[20px] overflow-hidden border border-gray-300 shadow-sm"
+          v-for="(column, colIndex) in desktopGallery"
+          :key="colIndex"
+          :class="
+            column.type === 'large'
+              ? 'relative h-[400px] rounded-[20px] overflow-hidden border border-gray-300 shadow-sm'
+              : 'grid grid-rows-2 gap-[10px] h-[400px]'
+          "
         >
-          <img
-            :src="img"
-            class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-          />
+          <div
+            v-for="(img, imgIndex) in column.images"
+            :key="imgIndex"
+            class="relative h-full rounded-[20px] overflow-hidden border border-gray-300 shadow-sm"
+          >
+            <img
+              :src="img"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
+            />
+          </div>
         </div>
       </div>
 
@@ -617,6 +627,25 @@ const images = [
   '/src/assets/hoteldetail_img/Wanhao5.jpg',
   '/src/assets/hoteldetail_img/Wanhao6.jpg',
   '/src/assets/hoteldetail_img/Wanhao7.jpg',
+]
+
+const desktopGallery = [
+  {
+    type: 'large',
+    images: [images[0]],
+  },
+  {
+    type: 'stack',
+    images: [images[1], images[2]],
+  },
+  {
+    type: 'stack',
+    images: [images[3], images[4]],
+  },
+  {
+    type: 'stack',
+    images: [images[5], images[6]],
+  },
 ]
 
 const goTo = (index: number) => {
