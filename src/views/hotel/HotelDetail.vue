@@ -627,6 +627,7 @@ const onTouchStart = (e: TouchEvent) => {
   const touch = e.touches?.[0]
   if (!touch) return // 保護空陣列
   startX.value = touch.clientX
+  endX.value = touch.clientX
 }
 
 const onTouchMove = (e: TouchEvent) => {
