@@ -611,9 +611,6 @@ onMounted(async () => {
     const res = await fetch(`${apiUrl}/hotels/${hotelId}`)
     if (!res.ok) throw new Error('取得飯店資料失敗')
     const data = await res.json()
-    if (import.meta.env.DEV) {
-      console.log('hotel API 回傳', data)
-    }
     hotel.value = data
     error.value = null
   } catch (err: unknown) {
