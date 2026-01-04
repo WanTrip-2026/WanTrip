@@ -116,7 +116,7 @@
           >
             <span class="text-dark_500 text-xs md:text-sm">每晚最低自</span>
             <div class="text-red-600 text-2xl md:text-3xl font-bold">
-              NT$ {{ hotel?.min_price }}
+              NT$ {{ hotel?.min_price.toLocaleString() }}
             </div>
             <button
               class="w-full md:w-auto bg-primary text-white text-base px-10 py-3 md:py-[10px] rounded-xl md:rounded-[20px] hover:bg-main transition mt-3"

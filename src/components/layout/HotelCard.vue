@@ -66,7 +66,9 @@ function starCount(stars: number) {
 
         <!-- 底部 -->
         <div class="flex flex-col justify-end items-end gap-2">
-          <div class="text-red-500 text-2xl font-bold">NT${{ hotel.min_price }}</div>
+          <div class="text-red-500 text-2xl font-bold">
+            NT${{ hotel.min_price.toLocaleString() }}
+          </div>
           <div class="flex gap-4">
             <button
               class="bg-primary text-white p-[9px] rounded-[20px] hover:bg-main_800 transition flex items-center justify-center"
