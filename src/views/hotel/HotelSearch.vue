@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import HotelCard from '@/components/layout/HotelCard.vue'
+import HotelCard from '../../components/layout/HotelCard.vue'
 import { ref, reactive, watch, computed, onMounted } from 'vue'
 
 interface PriceRange {
@@ -17,7 +17,15 @@ interface Hotel {
   id: string
   name: string
   min_price: number
+  facilities?: Facility[]
 }
+
+interface Facility {
+  id: string
+  name: string
+}
+
+const facilities = ref<Facility[]>([])
 
 const hotels = ref<Hotel[]>([])
 const error = ref<string | null>(null)
@@ -25,16 +33,61 @@ const error = ref<string | null>(null)
 onMounted(async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
-    const res = await fetch(`${apiUrl}/hotels`)
-    if (!res.ok) throw new Error('取得飯店資料失敗')
-    const data = await res.json()
-    hotels.value = data
+
+    // 同時請求飯店 & 設施
+    const [hotelsRes, facilitiesRes] = await Promise.all([
+      fetch(`${apiUrl}/hotels`),
+      fetch(`${apiUrl}/facilities`),
+    ])
+
+    if (!hotelsRes.ok) throw new Error('取得飯店資料失敗')
+    if (!facilitiesRes.ok) throw new Error('取得設施資料失敗')
+
+    const hotelsData = await hotelsRes.json()
+    const facilitiesData = await facilitiesRes.json()
+
+    // 飯店資料
+    hotels.value = hotelsData
+
+    // 「設施＆服務」篩選
+    const facilityMenu = HotelFiltered.find((menu) => menu.title === '設施＆服務')
+
+    if (facilityMenu) {
+      facilityMenu.options = facilitiesData.map(
+        (facility: { id: string; name: string }) => facility.name,
+      )
+    }
+
     error.value = null
-  } catch (err: unknown) {
+  } catch (err) {
     console.error(err)
-    error.value = '取得飯店資料時發生錯誤'
+    error.value = '初始化資料時發生錯誤'
   }
 })
+
+watch(
+  () => HotelFiltered.find((m) => m.title === '設施＆服務')?.selected,
+  async (selectedNames) => {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL
+    const params = new URLSearchParams()
+
+    if (selectedNames && selectedNames.length > 0) {
+      // 把名稱對應到 id
+      const selectedIds = selectedNames
+        .map((name) => facilities.value.find((f) => f.name === name)?.id)
+        .filter(Boolean) // 過濾 undefined
+
+      if (selectedIds.length > 0) {
+        params.append('facility_ids', selectedIds.join(','))
+      }
+    }
+
+    const res = await fetch(`${apiUrl}/hotels?${params}`)
+    hotels.value = await res.json()
+    currentPage.value = 1
+  },
+  { deep: true },
+)
 
 const minPrice = 0
 const maxPrice = 15000
@@ -69,18 +122,9 @@ const HotelFiltered = reactive<FilterMenu[]>([
   { title: '住宿類型', options: ['飯店', '旅館', '民宿', '度假村'], selected: [] },
   { title: '付款政策', options: ['免費取消', '立即付款', '延後付款', '到店付款'], selected: [] },
   {
+    //從資料庫代入
     title: '設施＆服務',
-    options: [
-      '健身房',
-      '游泳池',
-      'SPA服務',
-      '停車場',
-      '24小時櫃檯服務',
-      '可帶寵物',
-      '浴缸',
-      '山景',
-      '夜景',
-    ],
+    options: [],
     selected: [],
   },
   { title: '地區', options: ['中正區', '中山區', '萬華區', '大同區', '松山區'], selected: [] },
