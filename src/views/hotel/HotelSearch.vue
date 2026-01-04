@@ -20,6 +20,7 @@ interface Hotel {
 }
 
 const hotels = ref<Hotel[]>([])
+const error = ref<string | null>(null)
 
 onMounted(async () => {
   try {
@@ -31,8 +32,10 @@ onMounted(async () => {
       console.log('hotel API 回傳', data)
     }
     hotels.value = data
-  } catch (err) {
+    error.value = null
+  } catch (err: unknown) {
     console.error(err)
+    error.value = '取得飯店資料時發生錯誤'
   }
 })
 

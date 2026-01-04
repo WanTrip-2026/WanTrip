@@ -35,6 +35,9 @@
           </button>
         </div>
       </section>
+      <div v-if="error" class="text-red-600 p-4 bg-red-100 rounded mb-4">
+        {{ error }}
+      </div>
       <div class="md:hidden relative mb-10">
         <div class="overflow-hidden rounded-[20px]">
           <div
@@ -464,6 +467,7 @@ const route = useRoute()
 const hotelId = route.params.id
 
 const hotel = ref<Hotel | null>(null)
+const error = ref<string | null>(null)
 const rooms = ref<Room[]>([
   {
     id: 1,
@@ -611,8 +615,10 @@ onMounted(async () => {
       console.log('hotel API 回傳', data)
     }
     hotel.value = data
-  } catch (err) {
+    error.value = null
+  } catch (err: unknown) {
     console.error(err)
+    error.value = '取得飯店資料時發生錯誤'
   }
 })
 
