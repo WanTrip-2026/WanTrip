@@ -1,6 +1,15 @@
-<script setup>
+<script setup lang="ts">
 import HotelCard from '@/components/layout/HotelCard.vue'
-import { ref, reactive, watch, computed } from 'vue'
+import { ref, reactive, watch, computed, onMounted } from 'vue'
+
+const hotels = ref([])
+
+onMounted(async () => {
+  const res = await fetch('http://localhost:3000/api/hotels', { cache: 'no-store' })
+  const data = await res.json()
+  console.log(data)
+  hotels.value = data
+})
 
 const minPrice = 0
 const maxPrice = 15000
@@ -80,121 +89,18 @@ function toggleMenu(title) {
   }
 }
 
-const HotelResult = ref([
-  {
-    id: 1,
-    name: '高雄洲際酒店',
-    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-    address: '台灣高雄市前鎮區新光路33號',
-    stars: '5',
-    comments: '120 則評論',
-    rating: '9.1',
-    price: '5000',
-  },
-  {
-    id: 2,
-    name: '台北晶華酒店',
-    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-    address: '台灣台北市中山區中山北路二段39巷3號',
-    stars: '4',
-    comments: '230 則評論',
-    rating: '9.5',
-    price: '4000',
-  },
-  {
-    id: 3,
-    name: '台北晶華酒店',
-    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-    address: '台灣台北市中山區中山北路二段39巷3號',
-    stars: '4',
-    comments: '230 則評論',
-    rating: '9.5',
-    price: '4000',
-  },
-  {
-    id: 4,
-    name: '台北晶華酒店',
-    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-    address: '台灣台北市中山區中山北路二段39巷3號',
-    stars: '4',
-    comments: '230 則評論',
-    rating: '9.5',
-    price: '4000',
-  },
-  {
-    id: 5,
-    name: '台北晶華酒店',
-    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-    address: '台灣台北市中山區中山北路二段39巷3號',
-    stars: '4',
-    comments: '230 則評論',
-    rating: '9.5',
-    price: '4000',
-  },
-  {
-    id: 6,
-    name: '台北晶華酒店',
-    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-    address: '台灣台北市中山區中山北路二段39巷3號',
-    stars: '4',
-    comments: '230 則評論',
-    rating: '9.5',
-    price: '4000',
-  },
-  {
-    id: 7,
-    name: '台北晶華酒店',
-    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-    address: '台灣台北市中山區中山北路二段39巷3號',
-    stars: '4',
-    comments: '230 則評論',
-    rating: '9.5',
-    price: '4000',
-  },
-  {
-    id: 8,
-    name: '台北晶華酒店',
-    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-    address: '台灣台北市中山區中山北路二段39巷3號',
-    stars: '4',
-    comments: '230 則評論',
-    rating: '9.5',
-    price: '4000',
-  },
-  {
-    id: 9,
-    name: '台北晶華酒店',
-    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-    address: '台灣台北市中山區中山北路二段39巷3號',
-    stars: '4',
-    comments: '230 則評論',
-    rating: '9.5',
-    price: '4000',
-  },
-  {
-    id: 10,
-    name: '台北晶華酒店',
-    image_url: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-    address: '台灣台北市中山區中山北路二段39巷3號',
-    stars: '4',
-    comments: '230 則評論',
-    rating: '9.5',
-    price: '4000',
-  },
-])
-
 //切換頁數
 
 const currentPage = ref(1)
 const itemsPerPage = 8
 
-const totalPages = computed(() => Math.ceil(HotelResult.value.length / itemsPerPage))
+const totalPages = computed(() => Math.ceil(hotels.value.length / itemsPerPage))
 const pagedHotels = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
-  return HotelResult.value.slice(start, start + itemsPerPage)
+  return hotels.value.slice(start, start + itemsPerPage)
 })
 
-function goToPage(page) {
+function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page
   }
