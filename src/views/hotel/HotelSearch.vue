@@ -30,6 +30,35 @@ const facilities = ref<Facility[]>([])
 const hotels = ref<Hotel[]>([])
 const error = ref<string | null>(null)
 
+const HotelFiltered = reactive<FilterMenu[]>([
+  { title: '星級', options: ['五星級', '四星級', '三星級'], selected: [] },
+  {
+    title: '評價',
+    options: ['好極了: 9分以上', '非常好: 8分以上', '好: 7分以上', '令人愉悅: 6分以上'],
+    selected: [],
+  },
+  { title: '住宿類型', options: ['飯店', '旅館', '民宿', '度假村'], selected: [] },
+  { title: '付款政策', options: ['免費取消', '立即付款', '延後付款', '到店付款'], selected: [] },
+  {
+    //從資料庫代入
+    title: '設施＆服務',
+    options: [],
+    selected: [],
+  },
+  { title: '地區', options: ['中正區', '中山區', '萬華區', '大同區', '松山區'], selected: [] },
+  {
+    title: '距離市中心',
+    options: [
+      '位於市中心',
+      '距市中心1.5公里內',
+      '距市中心1.5-3公里內',
+      '距市中心3-5公里內',
+      '距市中心5公里以上',
+    ],
+    selected: [],
+  },
+])
+
 onMounted(async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
@@ -111,35 +140,6 @@ watch(
     }
   },
 )
-
-const HotelFiltered = reactive<FilterMenu[]>([
-  { title: '星級', options: ['五星級', '四星級', '三星級'], selected: [] },
-  {
-    title: '評價',
-    options: ['好極了: 9分以上', '非常好: 8分以上', '好: 7分以上', '令人愉悅: 6分以上'],
-    selected: [],
-  },
-  { title: '住宿類型', options: ['飯店', '旅館', '民宿', '度假村'], selected: [] },
-  { title: '付款政策', options: ['免費取消', '立即付款', '延後付款', '到店付款'], selected: [] },
-  {
-    //從資料庫代入
-    title: '設施＆服務',
-    options: [],
-    selected: [],
-  },
-  { title: '地區', options: ['中正區', '中山區', '萬華區', '大同區', '松山區'], selected: [] },
-  {
-    title: '距離市中心',
-    options: [
-      '位於市中心',
-      '距市中心1.5公里內',
-      '距市中心1.5-3公里內',
-      '距市中心3-5公里內',
-      '距市中心5公里以上',
-    ],
-    selected: [],
-  },
-])
 
 const expandedMenus = ref<string[]>([]) // 儲存哪些 option 已展開
 
