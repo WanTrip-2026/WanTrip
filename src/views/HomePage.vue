@@ -110,19 +110,8 @@
             <div
               class="h-[110px] w-full aspect-[3/4]"
               :style="{
-                backgroundImage: `
-      linear-gradient(
-        45deg,
-        rgba(47, 61, 77, 0.08) 25%,
-        transparent 25%,
-        transparent 50%,
-        rgba(47, 61, 77, 0.08) 50%,
-        rgba(47, 61, 77, 0.08) 75%,
-        transparent 75%,
-        transparent
-      ),
-      url(${r.img})`,
-                backgroundSize: '18px 18px, cover',
+                backgroundImage: `url(${r.img})`,
+                backgroundSize: 'cover',
               }"
             />
 
