@@ -26,6 +26,7 @@ type FacilityName = string
 const facilities = ref<FacilityName[]>([])
 
 const hotels = ref<Hotel[]>([])
+const keyword = ref('')
 const error = ref<string | null>(null)
 
 const HotelFiltered = reactive<FilterMenu[]>([
@@ -70,29 +71,50 @@ const HotelFiltered = reactive<FilterMenu[]>([
   },
 ])
 
+const fetchHotels = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL
+    const params = new URLSearchParams()
+
+    if (keyword.value.trim()) {
+      params.append('keyword', keyword.value.trim())
+    }
+
+    const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
+    if (selectedFacilities.length > 0) {
+      params.append('facility_name', selectedFacilities.join(','))
+    }
+
+    const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
+    if (!res.ok) throw new Error('取得飯店失敗')
+
+    hotels.value = await res.json()
+    currentPage.value = 1
+    error.value = null
+  } catch (err) {
+    console.error(err)
+    error.value = '搜尋飯店時發生錯誤'
+  }
+}
+
 onMounted(async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
+    await fetchHotels()
 
-    const [hotelsRes, facilitiesRes] = await Promise.all([
-      fetch(`${apiUrl}/hotels`),
-      fetch(`${apiUrl}/facilities`),
-    ])
-
-    if (!hotelsRes.ok) throw new Error('取得飯店資料失敗')
-    if (!facilitiesRes.ok) throw new Error('取得設施資料失敗')
-
-    hotels.value = await hotelsRes.json()
+    const facilitiesRes = await fetch(`${apiUrl}/facilities`)
     facilities.value = await facilitiesRes.json()
 
     const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
     if (facilityMenu) {
       facilityMenu.options = facilities.value
     }
-
-    error.value = null
-  } catch (err) {
-    console.error(err)
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message)
+    } else {
+      console.error(err)
+    }
     error.value = '初始化資料時發生錯誤'
   }
 })
@@ -201,8 +223,9 @@ function goToPage(page: number) {
     >
       <div class="relative w-full border border-gray-300 rounded-full md:h-full flex-1">
         <input
+          v-model="keyword"
           type="text"
-          placeholder="目的地"
+          placeholder="想住哪～"
           class="w-full pl-4 px-6 py-3 text-base md:text-base border-none bg-gray-50 md:bg-transparent rounded-full focus:ring-2 focus:border-primary outline-none transition-all"
         />
       </div>
@@ -222,6 +245,7 @@ function goToPage(page: number) {
       </div>
       <div class="border border-gray-300 rounded-full md:h-full">
         <button
+          @click="fetchHotels"
           class="bg-primary hover:bg-[#6D8FA3] text-white px-6 py-3 rounded-full transition-colors whitespace-nowrap"
         >
           搜尋
