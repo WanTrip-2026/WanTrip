@@ -6,9 +6,13 @@
       <section class="relative pb-32 md:pb-20">
         <div class="relative">
           <div class="relative w-full overflow-hidden rounded-[20px] bg-gray-200 shadow-sm">
-            <div class="flex h-[340px] items-center justify-center md:h-[420px]">
-              <span class="select-none text-sm text-primary/60">banner</span>
-            </div>
+            <img
+              src="https://res.cloudinary.com/wantrip/image/upload/v1767445158/%E5%9F%8E%E5%B8%82_luoarw.jpg"
+              class="aspect-[3/4] absolute inset-0 w-full h-full object-fill"
+              alt="banner"
+            />
+
+            <div class="h-[340px] md:h-[420px]"></div>
           </div>
 
           <!-- Search Bar (floating on banner) -->
@@ -322,12 +326,12 @@ const regions = [
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-tp_zyi27w.jpg',
   },
   {
-    key: 'south',
+    key: 'central',
     label: '中部',
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445157/640x480_image636446327579990356_qeu0ii.jpg',
   },
   {
-    key: 'central',
+    key: 'south',
     label: '南部',
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445160/%E7%86%B1%E9%96%80%E5%9F%8E%E5%B8%821_ybmlyx.jpg',
   },
