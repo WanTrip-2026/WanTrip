@@ -8,6 +8,7 @@
     "moduleResolution": "node",
     "strict": true,
     "jsx": "preserve",
+    "types": ["vite/client"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,

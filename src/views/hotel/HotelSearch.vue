@@ -8,6 +8,7 @@ interface PriceRange {
 }
 
 interface FilterMenu {
+  key: string
   title: string
   options: string[]
   selected: string[]
@@ -17,36 +18,46 @@ interface Hotel {
   id: string
   name: string
   min_price: number
-  facilities?: Facility[]
+  facilities?: string[]
 }
 
-interface Facility {
-  id: string
-  name: string
-}
+type FacilityName = string
 
-const facilities = ref<Facility[]>([])
+const facilities = ref<FacilityName[]>([])
 
 const hotels = ref<Hotel[]>([])
 const error = ref<string | null>(null)
 
 const HotelFiltered = reactive<FilterMenu[]>([
-  { title: '星級', options: ['五星級', '四星級', '三星級'], selected: [] },
+  { key: 'star_rating', title: '星級', options: ['五星級', '四星級', '三星級'], selected: [] },
   {
+    key: 'reviews',
     title: '評價',
     options: ['好極了: 9分以上', '非常好: 8分以上', '好: 7分以上', '令人愉悅: 6分以上'],
     selected: [],
   },
-  { title: '住宿類型', options: ['飯店', '旅館', '民宿', '度假村'], selected: [] },
-  { title: '付款政策', options: ['免費取消', '立即付款', '延後付款', '到店付款'], selected: [] },
+  { key: 'type', title: '住宿類型', options: ['飯店', '旅館', '民宿', '度假村'], selected: [] },
+  {
+    key: 'policies',
+    title: '付款政策',
+    options: ['免費取消', '立即付款', '延後付款', '到店付款'],
+    selected: [],
+  },
   {
     //從資料庫代入
+    key: 'facilities',
     title: '設施＆服務',
     options: [],
     selected: [],
   },
-  { title: '地區', options: ['中正區', '中山區', '萬華區', '大同區', '松山區'], selected: [] },
   {
+    key: 'districts',
+    title: '地區',
+    options: ['中正區', '中山區', '萬華區', '大同區', '松山區'],
+    selected: [],
+  },
+  {
+    key: 'distance',
     title: '距離市中心',
     options: [
       '位於市中心',
@@ -63,7 +74,6 @@ onMounted(async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
 
-    // 同時請求飯店 & 設施
     const [hotelsRes, facilitiesRes] = await Promise.all([
       fetch(`${apiUrl}/hotels`),
       fetch(`${apiUrl}/facilities`),
@@ -72,19 +82,12 @@ onMounted(async () => {
     if (!hotelsRes.ok) throw new Error('取得飯店資料失敗')
     if (!facilitiesRes.ok) throw new Error('取得設施資料失敗')
 
-    const hotelsData = await hotelsRes.json()
-    const facilitiesData = await facilitiesRes.json()
+    hotels.value = await hotelsRes.json()
+    facilities.value = await facilitiesRes.json()
 
-    // 飯店資料
-    hotels.value = hotelsData
-
-    // 「設施＆服務」篩選
-    const facilityMenu = HotelFiltered.find((menu) => menu.title === '設施＆服務')
-
+    const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
     if (facilityMenu) {
-      facilityMenu.options = facilitiesData.map(
-        (facility: { id: string; name: string }) => facility.name,
-      )
+      facilityMenu.options = facilities.value
     }
 
     error.value = null
@@ -95,27 +98,26 @@ onMounted(async () => {
 })
 
 watch(
-  () => HotelFiltered.find((m) => m.title === '設施＆服務')?.selected,
+  () => HotelFiltered.find((m) => m.key === 'facilities')?.selected,
   async (selectedNames) => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
     const params = new URLSearchParams()
 
     if (selectedNames && selectedNames.length > 0) {
-      // 把名稱對應到 id
-      const selectedIds = selectedNames
-        .map((name) => facilities.value.find((f) => f.name === name)?.id)
-        .filter(Boolean) // 過濾 undefined
-
-      if (selectedIds.length > 0) {
-        params.append('facility_ids', selectedIds.join(','))
-      }
+      // 傳 facility_name 作為 query
+      params.append('facility_name', selectedNames.join(','))
     }
 
-    const res = await fetch(`${apiUrl}/hotels?${params}`)
-    hotels.value = await res.json()
-    currentPage.value = 1
+    try {
+      const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
+      if (!res.ok) throw new Error('篩選飯店失敗')
+      hotels.value = await res.json()
+      currentPage.value = 1
+    } catch (err) {
+      console.error(err)
+      error.value = '篩選飯店時發生錯誤'
+    }
   },
-  { deep: true },
 )
 
 const minPrice = 0
@@ -143,18 +145,18 @@ watch(
 
 const expandedMenus = ref<string[]>([]) // 儲存哪些 option 已展開
 
-function clearOptions(title: string) {
-  const menu = HotelFiltered.find((m) => m.title === title)
+function clearOptions(key: string) {
+  const menu = HotelFiltered.find((m) => m.key === key)
   if (menu) {
     menu.selected = [] // 清空勾選
   }
 }
 
-function toggleMenu(title: string) {
-  if (expandedMenus.value.includes(title)) {
-    expandedMenus.value = expandedMenus.value.filter((t) => t !== title)
+function toggleMenu(key: string) {
+  if (expandedMenus.value.includes(key)) {
+    expandedMenus.value = expandedMenus.value.filter((k) => k !== key)
   } else {
-    expandedMenus.value.push(title)
+    expandedMenus.value.push(key)
   }
 }
 
@@ -163,10 +165,24 @@ function toggleMenu(title: string) {
 const currentPage = ref(1)
 const itemsPerPage = 8
 
-const totalPages = computed(() => Math.ceil(hotels.value.length / itemsPerPage))
+const filteredHotels = computed(() => {
+  let filtered = hotels.value
+
+  // 篩選設施
+  const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
+  if (selectedFacilities.length > 0) {
+    filtered = filtered.filter((hotel) =>
+      selectedFacilities.every((f) => hotel.facilities?.includes(f)),
+    )
+  }
+
+  return filtered
+})
+const totalPages = computed(() => Math.ceil(filteredHotels.value.length / itemsPerPage))
+
 const pagedHotels = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
-  return hotels.value.slice(start, start + itemsPerPage)
+  return filteredHotels.value.slice(start, start + itemsPerPage)
 })
 
 function goToPage(page: number) {
@@ -285,13 +301,13 @@ function goToPage(page: number) {
             <div
               class="border-b-[1px] pb-[20px] border-main_800 border-solid last:border-b-0"
               v-for="HotelMenu in HotelFiltered"
-              :key="HotelMenu.title"
+              :key="HotelMenu.key"
             >
               <div class="flex justify-between items-center mb-2">
                 <h4 class="font-medium text-base text-dark_900">{{ HotelMenu.title }}</h4>
                 <button
                   class="text-xs text-dark_500 hover:text-primary"
-                  @click="clearOptions(HotelMenu.title)"
+                  @click="clearOptions(HotelMenu.key)"
                 >
                   清除
                 </button>
@@ -301,7 +317,7 @@ function goToPage(page: number) {
                   class="flex cursor-pointer text-sm text-dark_900 items-center"
                   v-for="option in HotelMenu.options.slice(
                     0,
-                    expandedMenus.includes(HotelMenu.title) ? HotelMenu.options.length : 4,
+                    expandedMenus.includes(HotelMenu.key) ? HotelMenu.options.length : 4,
                   )"
                   :key="option"
                 >
@@ -314,9 +330,9 @@ function goToPage(page: number) {
                   {{ option }}
                 </label>
                 <button
-                  v-if="HotelMenu.options.length > 4 && !expandedMenus.includes(HotelMenu.title)"
+                  v-if="HotelMenu.options.length > 4 && !expandedMenus.includes(HotelMenu.key)"
                   class="text-dark_500 hover:text-primary text-sm mt-1"
-                  @click="toggleMenu(HotelMenu.title)"
+                  @click="toggleMenu(HotelMenu.key)"
                 >
                   展開更多選項
                 </button>
