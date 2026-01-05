@@ -121,24 +121,8 @@ onMounted(async () => {
 
 watch(
   () => HotelFiltered.find((m) => m.key === 'facilities')?.selected,
-  async (selectedNames) => {
-    const apiUrl = import.meta.env.VITE_API_BASE_URL
-    const params = new URLSearchParams()
-
-    if (selectedNames && selectedNames.length > 0) {
-      // 傳 facility_name 作為 query
-      params.append('facility_name', selectedNames.join(','))
-    }
-
-    try {
-      const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
-      if (!res.ok) throw new Error('篩選飯店失敗')
-      hotels.value = await res.json()
-      currentPage.value = 1
-    } catch (err) {
-      console.error(err)
-      error.value = '篩選飯店時發生錯誤'
-    }
+  () => {
+    fetchHotels()
   },
 )
 
