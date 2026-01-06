@@ -100,9 +100,13 @@ const fetchHotels = async () => {
 onMounted(async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
-    await fetchHotels()
 
-    const facilitiesRes = await fetch(`${apiUrl}/facilities`)
+    const hotelsPromise = fetchHotels()
+    const facilitiesPromise = fetch(`${apiUrl}/facilities`)
+
+    const [facilitiesRes] = await Promise.all([facilitiesPromise, hotelsPromise])
+
+    if (!facilitiesRes.ok) throw new Error('取得設施資料失敗')
     facilities.value = await facilitiesRes.json()
 
     const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
