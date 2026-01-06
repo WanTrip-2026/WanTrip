@@ -245,6 +245,7 @@
 
 <script setup>
 import { computed, onMounted, onUnmounted, watch, ref } from 'vue'
+import { supabase } from "@/utils/supabaseClient";
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
@@ -263,9 +264,38 @@ const remember = ref(false)
 
 const close = () => emit('update:modelValue', false)
 
-const onSubmit = () => {
-  emit('login', { email: email.value, password: password.value, remember: remember.value })
-}
+const onSubmit = async () => {
+  try {
+    console.log("[env] VITE_SUPABASE_URL =", import.meta.env.VITE_SUPABASE_URL);
+    console.log("[env] VITE_SUPABASE_ANON_KEY exists =", !!import.meta.env.VITE_SUPABASE_ANON_KEY);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.value,
+      password: password.value,
+    });
+
+    console.log("[login] data:", data);
+    if (error) throw error;
+
+    alert("登入成功：" + (data.user?.email ?? ""));
+
+    // ✅ 用 profiles 測試是否能抓到資料
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", data.user.id)
+      .single();
+
+    console.log("[profile] profile:", profile);
+    console.log("[profile] error:", profileError);
+
+    emit("update:modelValue", false);
+  } catch (err) {
+    console.error("[login] error:", err);
+    alert(err?.message ?? String(err));
+  }
+};
+
 
 // lock body scroll when modal open
 const toggleBodyLock = (locked) => {
