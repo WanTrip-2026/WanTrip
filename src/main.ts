@@ -1,14 +1,23 @@
-import './assets/main.css'
+import "./assets/main.css";
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from "vue";
+import { createPinia } from "pinia";
 
-import App from './App.vue'
-import router from './router'
+import App from "./App.vue";
+import router from "./router";
 
-const app = createApp(App)
+import { supabase } from "@/utils/supabaseClient"; // ✅ 確保這行存在
 
-app.use(createPinia())
-app.use(router)
+const app = createApp(App);
 
-app.mount('#app')
+app.use(createPinia());
+app.use(router);
+
+// ✅ 測試用（先留著）
+supabase.auth.getSession().then(({ data, error }) => {
+  console.log("[Supabase test] session:", data.session);
+  console.log("[Supabase test] error:", error);
+});
+
+app.mount("#app");
+
