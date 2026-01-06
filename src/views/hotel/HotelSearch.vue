@@ -91,8 +91,12 @@ const fetchHotels = async () => {
     hotels.value = await res.json()
     currentPage.value = 1
     error.value = null
-  } catch (err) {
-    console.error(err)
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message)
+    } else {
+      console.error(err)
+    }
     error.value = '搜尋飯店時發生錯誤'
   }
 }
