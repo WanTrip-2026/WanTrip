@@ -173,12 +173,6 @@ function toggleMenu(key: string) {
     expandedMenus.value.push(key)
   }
 }
-
-//切換頁數
-
-const currentPage = ref(1)
-const itemsPerPage = 8
-
 const filteredHotels = computed(() => {
   let filtered = hotels.value
 
@@ -192,6 +186,11 @@ const filteredHotels = computed(() => {
 
   return filtered
 })
+//切換頁數
+
+const currentPage = ref(1)
+const itemsPerPage = 8
+
 const totalPages = computed(() => Math.ceil(filteredHotels.value.length / itemsPerPage))
 
 const pagedHotels = computed(() => {
@@ -203,6 +202,56 @@ function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page
   }
+}
+const visiblePagination = computed(() => {
+  const pages: (number | string)[] = []
+  const total = totalPages.value
+  const cur = currentPage.value
+
+  // 計算顯示的前三頁（前中後）
+  let start = cur - 1
+  let end = cur + 1
+
+  // 避免 start < 1
+  if (start < 1) {
+    start = 1
+    end = Math.min(3, total)
+  }
+
+  // 避免 end > total
+  if (end > total) {
+    end = total
+    start = Math.max(1, total - 2)
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+
+  const lastPage = pages[pages.length - 1]
+
+  if (typeof lastPage === 'number' && lastPage < total) {
+    pages.push('...')
+    pages.push(total)
+  }
+
+  return pages
+})
+// 箭頭功能
+function firstPage() {
+  goToPage(1)
+}
+
+function lastPage() {
+  goToPage(totalPages.value)
+}
+
+function prevPage() {
+  goToPage(currentPage.value - 1)
+}
+
+function nextPage() {
+  goToPage(currentPage.value + 1)
 }
 </script>
 
@@ -377,16 +426,50 @@ function goToPage(page: number) {
         </div>
         <div class="flex justify-center gap-2 mt-5 mb-10">
           <button
-            v-for="page in totalPages"
-            :key="page"
-            @click="goToPage(page)"
-            class="w-10 h-10 border rounded-full"
-            :class="{
-              'bg-primary text-white': currentPage === page,
-              'text-dark_700 hover:bg-main_100': currentPage !== page,
-            }"
+            class="w-10 h-10 border rounded-full hover:bg-main_100"
+            @click="firstPage"
+            :disabled="currentPage === 1"
           >
-            {{ page }}
+            &lt;&lt;
+          </button>
+
+          <!-- 上一頁 -->
+          <button
+            class="w-10 h-10 border rounded-full hover:bg-main_100"
+            @click="prevPage"
+            :disabled="currentPage === 1"
+          >
+            &lt;
+          </button>
+
+          <!-- 頁碼 -->
+          <button
+            class="w-10 h-10 border rounded-full hover:bg-main_100"
+            v-for="item in visiblePagination"
+            :key="item"
+            :disabled="item === '...'"
+            @click="item !== '...' && goToPage(Number(item))"
+            :class="item === currentPage ? 'bg-primary text-white hover:bg-main_800' : ''"
+          >
+            {{ item }}
+          </button>
+
+          <!-- 下一頁 -->
+          <button
+            class="w-10 h-10 border rounded-full hover:bg-main_100"
+            @click="nextPage"
+            :disabled="currentPage === totalPages"
+          >
+            &gt;
+          </button>
+
+          <!-- 最後頁 -->
+          <button
+            class="w-10 h-10 border rounded-full"
+            @click="lastPage"
+            :disabled="currentPage === totalPages"
+          >
+            &gt;&gt;
           </button>
         </div>
       </div>
