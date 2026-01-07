@@ -19,12 +19,8 @@ function starCount(stars: number) {
       class="bg-white h-[180px] rounded-[20px] border border-gray-200 overflow-hidden flex flex-row"
     >
       <!-- 圖片 -->
-      <div class="h-full w-[246px] relative">
-        <img
-          src="https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg"
-          :alt="hotel.name"
-          class="w-full h-full object-cover"
-        />
+      <div class="h-full w-[246px] aspect-[4/3] relative">
+        <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
         <button
           class="absolute bottom-5 right-5 rounded-[20px] h-[40px] w-[90px] text-xs p-[2px] bg-primary opacity-80 hover:opacity-100 text-white"
         >

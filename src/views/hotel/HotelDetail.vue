@@ -403,9 +403,10 @@
             v-for="page in totalPages"
             :key="page"
             @click="currentPage = page"
-            class="border"
+            class="border hover:bg-main_100"
             :class="{
-              'bg-primary text-white px-3 py-1 rounded-[20px]': currentPage === page,
+              'bg-primary text-white px-3 py-1 rounded-[20px] hover:bg-main_800':
+                currentPage === page,
               'text-primary hover:text-black px-3 py-1 rounded-[20px]': currentPage !== page,
             }"
           >
@@ -438,6 +439,12 @@ interface Hotel {
   rating_count?: number
 }
 
+interface HotelImage {
+  id: number
+  hotel_id: string
+  image_url: string
+}
+
 interface Room {
   id: number
   name: string
@@ -468,6 +475,31 @@ const hotelId = route.params.id
 
 const hotel = ref<Hotel | null>(null)
 const error = ref<string | null>(null)
+const images = ref<string[]>([])
+
+onMounted(async () => {
+  try {
+    // 取得飯店資料
+    const apiUrl = import.meta.env.VITE_API_BASE_URL
+
+    const hotelRes = await fetch(`${apiUrl}/hotels/${hotelId}`)
+    if (!hotelRes.ok) throw new Error('取得飯店資料失敗')
+    hotel.value = await hotelRes.json()
+
+    // 取得飯店圖片
+    const imagesRes = await fetch(`${apiUrl}/hotel_images/${hotelId}`)
+    if (!imagesRes.ok) throw new Error('取得飯店圖片失敗')
+    const data = await imagesRes.json()
+
+    // 假設 API 回傳的結構 [{ id, hotel_id, image_url, ... }]
+    images.value = (data as HotelImage[]).sort((a, b) => a.id - b.id).map((img) => img.image_url)
+    error.value = null
+  } catch (err: unknown) {
+    console.error(err)
+    error.value = '取得飯店資料或圖片時發生錯誤'
+  }
+})
+
 const rooms = ref<Room[]>([
   {
     id: 1,
@@ -605,52 +637,18 @@ const filterMemberType = ref('')
 const filterRoomType = ref('')
 const sortOption = ref('ratingDesc')
 
-onMounted(async () => {
-  try {
-    const apiUrl = import.meta.env.VITE_API_BASE_URL
-    const res = await fetch(`${apiUrl}/hotels/${hotelId}`)
-    if (!res.ok) throw new Error('取得飯店資料失敗')
-    const data = await res.json()
-    hotel.value = data
-    error.value = null
-  } catch (err: unknown) {
-    console.error(err)
-    error.value = '取得飯店資料時發生錯誤'
-  }
-})
-
 function starCount(stars: number = 0) {
   return stars
 }
 
-const images = [
-  '/src/assets/hoteldetail_img/Wanhao.jpg',
-  '/src/assets/hoteldetail_img/Wanhao2.jpg',
-  '/src/assets/hoteldetail_img/Wanhao3.jpg',
-  '/src/assets/hoteldetail_img/Wanhao4.jpg',
-  '/src/assets/hoteldetail_img/Wanhao5.jpg',
-  '/src/assets/hoteldetail_img/Wanhao6.jpg',
-  '/src/assets/hoteldetail_img/Wanhao7.jpg',
-]
-
-const desktopGallery = [
-  {
-    type: 'large',
-    images: [images[0]],
-  },
-  {
-    type: 'stack',
-    images: [images[1], images[2]],
-  },
-  {
-    type: 'stack',
-    images: [images[3], images[4]],
-  },
-  {
-    type: 'stack',
-    images: [images[5], images[6]],
-  },
-]
+const desktopGallery = computed(() => {
+  return [
+    { type: 'large', images: images.value.slice(0, 1) },
+    { type: 'stack', images: images.value.slice(1, 3) },
+    { type: 'stack', images: images.value.slice(3, 5) },
+    { type: 'stack', images: images.value.slice(5, 7) },
+  ]
+})
 
 const goTo = (index: number) => {
   currentIndex.value = index
