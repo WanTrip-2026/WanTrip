@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import HotelCard from '../../components/layout/HotelCard.vue'
 import { ref, reactive, watch, computed, onMounted } from 'vue'
 
@@ -19,6 +19,14 @@ interface Hotel {
   name: string
   min_price: number
   facilities?: string[]
+  image_url?: string
+}
+
+interface HotelImage {
+  id: string
+  hotel_id: string
+  image_url: string
+  sort_order: number | null
 }
 
 type FacilityName = string
@@ -105,24 +113,39 @@ onMounted(async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
 
-    const hotelsPromise = fetchHotels()
-    const facilitiesPromise = fetch(`${apiUrl}/facilities`)
+    // 1. 先取飯店
+    await fetchHotels()
 
-    const [facilitiesRes] = await Promise.all([facilitiesPromise, hotelsPromise])
+    // 2. 取圖片
+    const imagesRes = await fetch(`${apiUrl}/hotel_images`)
+    const imagesData: HotelImage[] = await imagesRes.json()
 
+    const firstImageMap = imagesData.reduce(
+      (acc, img) => {
+        if (img.sort_order === 1) {
+          acc[img.hotel_id] = img.image_url
+        }
+        return acc
+      },
+      {} as Record<string, string>,
+    )
+
+    // 3. 把圖片加入 hotels.value
+    hotels.value = hotels.value.map((h) => ({
+      ...h,
+      image_url: firstImageMap[h.id] || '', // 若沒有 order1 圖片就給空字串
+    }))
+    console.log('hotels', hotels.value)
+    console.log('firstImageMap', firstImageMap)
+
+    // 4. 取設施 menu
+    const facilitiesRes = await fetch(`${apiUrl}/facilities`)
     if (!facilitiesRes.ok) throw new Error('取得設施資料失敗')
     facilities.value = await facilitiesRes.json()
-
     const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
-    if (facilityMenu) {
-      facilityMenu.options = facilities.value
-    }
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.error(err.message)
-    } else {
-      console.error(err)
-    }
+    if (facilityMenu) facilityMenu.options = facilities.value
+  } catch (err) {
+    console.error(err)
     error.value = '初始化資料時發生錯誤'
   }
 })
@@ -252,6 +275,243 @@ function prevPage() {
 
 function nextPage() {
   goToPage(currentPage.value + 1)
+}
+</script> -->
+
+<script setup lang="ts">
+import HotelCard from '../../components/layout/HotelCard.vue'
+import { ref, reactive, watch, computed, onMounted } from 'vue'
+
+interface PriceRange {
+  min: number
+  max: number
+}
+interface FilterMenu {
+  key: string
+  title: string
+  options: string[]
+  selected: string[]
+}
+interface Hotel {
+  id: string
+  name: string
+  min_price: number
+  facilities?: string[]
+  image_url?: string
+}
+interface HotelImage {
+  id: string
+  hotel_id: string
+  image_url: string
+  sort_order: number | null
+}
+type FacilityName = string
+
+const facilities = ref<FacilityName[]>([])
+const hotels = ref<Hotel[]>([])
+const keyword = ref('')
+const error = ref<string | null>(null)
+
+const HotelFiltered = reactive<FilterMenu[]>([
+  { key: 'star_rating', title: '星級', options: ['五星級', '四星級', '三星級'], selected: [] },
+  {
+    key: 'reviews',
+    title: '評價',
+    options: ['好極了: 9分以上', '非常好: 8分以上', '好: 7分以上', '令人愉悅: 6分以上'],
+    selected: [],
+  },
+  { key: 'type', title: '住宿類型', options: ['飯店', '旅館', '民宿', '度假村'], selected: [] },
+  {
+    key: 'policies',
+    title: '付款政策',
+    options: ['免費取消', '立即付款', '延後付款', '到店付款'],
+    selected: [],
+  },
+  { key: 'facilities', title: '設施＆服務', options: [], selected: [] },
+  {
+    key: 'districts',
+    title: '地區',
+    options: ['中正區', '中山區', '萬華區', '大同區', '松山區'],
+    selected: [],
+  },
+  {
+    key: 'distance',
+    title: '距離市中心',
+    options: [
+      '位於市中心',
+      '距市中心1.5公里內',
+      '距市中心1.5-3公里內',
+      '距市中心3-5公里內',
+      '距市中心5公里以上',
+    ],
+    selected: [],
+  },
+])
+
+const minPrice = 0,
+  maxPrice = 15000,
+  step = 500
+const priceRange = ref<PriceRange>({ min: minPrice, max: maxPrice })
+const expandedMenus = ref<string[]>([])
+const currentPage = ref(1)
+const itemsPerPage = 8
+
+// -------------------
+// 取得飯店資料
+// -------------------
+const fetchHotels = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL
+    const params = new URLSearchParams()
+    if (keyword.value.trim()) params.append('keyword', keyword.value.trim())
+
+    const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
+    if (selectedFacilities.length > 0) params.append('facility_name', selectedFacilities.join(','))
+
+    const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
+    if (!res.ok) throw new Error('取得飯店失敗')
+
+    const data: Hotel[] = await res.json()
+    hotels.value = data
+    currentPage.value = 1
+    error.value = null
+  } catch (err) {
+    console.error(err)
+    error.value = '搜尋飯店時發生錯誤'
+  }
+}
+
+// -------------------
+// 初始化：飯店、圖片、設施
+// -------------------
+onMounted(async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL
+
+    // 1️⃣ 先取飯店
+    await fetchHotels()
+
+    // 2️⃣ 取飯店圖片
+    const imagesRes = await fetch(`${apiUrl}/hotel_images`)
+    if (!imagesRes.ok) throw new Error('取得飯店圖片失敗')
+    const imagesData: HotelImage[] = await imagesRes.json()
+
+    const firstImageMap = imagesData.reduce(
+      (acc, img) => {
+        if (img.sort_order === 1) acc[img.hotel_id] = img.image_url
+        return acc
+      },
+      {} as Record<string, string>,
+    )
+
+    // 3️⃣ 合併圖片到飯店資料
+    hotels.value = hotels.value.map((h) => ({
+      ...h,
+      image_url:
+        firstImageMap[h.id] ||
+        'https://cdn.hk01.com/di/media/images/3366554/org/1a17ee577918293a276a61cded582477.jpg/CwABjWRXi8m70sf513Oli2_Nrybz9IXncrQxZHK0MWQ?v=w1280r16_9', // 若沒有圖片就給空字串
+    }))
+
+    // 4️⃣ 取得設施清單
+    const facilitiesRes = await fetch(`${apiUrl}/facilities`)
+    if (!facilitiesRes.ok) throw new Error('取得設施資料失敗')
+    facilities.value = await facilitiesRes.json()
+
+    const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
+    if (facilityMenu) facilityMenu.options = facilities.value
+  } catch (err) {
+    console.error(err)
+    error.value = '初始化資料時發生錯誤'
+  }
+})
+
+// -------------------
+// 監聽設施變動自動搜尋
+// -------------------
+watch(
+  () => HotelFiltered.find((m) => m.key === 'facilities')?.selected,
+  () => {
+    fetchHotels()
+  },
+)
+
+// -------------------
+// 過濾飯店
+// -------------------
+const filteredHotels = computed(() => {
+  let filtered = hotels.value
+  const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
+  if (selectedFacilities.length > 0) {
+    filtered = filtered.filter((h) => selectedFacilities.every((f) => h.facilities?.includes(f)))
+  }
+  return filtered
+})
+
+// -------------------
+// 分頁計算
+// -------------------
+const totalPages = computed(() => Math.ceil(filteredHotels.value.length / itemsPerPage))
+const pagedHotels = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return filteredHotels.value.slice(start, start + itemsPerPage)
+})
+const visiblePagination = computed(() => {
+  const pages: (number | string)[] = []
+  const total = totalPages.value
+  let start = currentPage.value - 1
+  let end = currentPage.value + 1
+  if (start < 1) start = 1
+  if (end > total) end = total
+  for (let i = start; i <= end; i++) pages.push(i)
+  if (pages[pages.length - 1] < total) {
+    pages.push('...')
+    pages.push(total)
+  }
+  return pages
+})
+
+// -------------------
+// 分頁方法
+// -------------------
+function goToPage(page: number) {
+  if (page >= 1 && page <= totalPages.value) currentPage.value = page
+}
+function firstPage() {
+  goToPage(1)
+}
+function lastPage() {
+  goToPage(totalPages.value)
+}
+function prevPage() {
+  goToPage(currentPage.value - 1)
+}
+function nextPage() {
+  goToPage(currentPage.value + 1)
+}
+
+// -------------------
+// 價格範圍監控
+// -------------------
+watch(
+  () => [priceRange.value.min, priceRange.value.max],
+  ([min, max]) => {
+    if (min < minPrice) priceRange.value.min = minPrice
+    if (max > maxPrice) priceRange.value.max = maxPrice
+    if (max - min < step) priceRange.value.max = min + step
+  },
+)
+
+// -------------------
+// 篩選選單方法
+// -------------------
+function clearOptions(key: string) {
+  const menu = HotelFiltered.find((m) => m.key === key)
+  if (menu) menu.selected = []
+}
+function toggleMenu(key: string) {
+  if (expandedMenus.value.includes(key))
+    expandedMenus.value = expandedMenus.value.filter((k) => k !== key)
+  else expandedMenus.value.push(key)
 }
 </script>
 
