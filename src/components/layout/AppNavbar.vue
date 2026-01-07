@@ -109,9 +109,7 @@
           <h2 class="text-xl font-bold text-primary">更多</h2>
           <button @click="isOpen = false" class="text-gray-500 text-2xl">&times;</button>
         </div>
-
         <nav class="flex flex-col gap-4">
-          <!--手機側欄補登入入口-->
           <button
             type="button"
             class="text-left text-black font-medium border-b border-primary/25 pb-2"
@@ -119,7 +117,6 @@
           >
             登入/註冊
           </button>
-
           <RouterLink to="/support" class="text-black font-medium border-b border-primary/25 pb-2" @click="isOpen = false">
             常見問題
           </RouterLink>
@@ -155,7 +152,6 @@
     @social="handleSocial"
   />
 
-  <!-- ✅ 只加這段：註冊 Modal（不改你原本順序） -->
   <RegisterModal
     v-model="isRegisterModalOpen"
     @go-login="openLoginFromRegister"
@@ -167,37 +163,33 @@
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import LoginModal from '@/views/user/LoginModel.vue'
-import RegisterModal from '@/views/user/RegisterModal.vue' // ✅ 你檔名不同就改這行
+import RegisterModal from '@/views/user/RegisterModal.vue'
 
 const isOpen = ref(false)
 const isLoginModalOpen = ref(false)
-const isRegisterModalOpen = ref(false) // ✅ 新增
+const isRegisterModalOpen = ref(false)
 
 const openLogin = () => {
   isOpen.value = false
-  isRegisterModalOpen.value = false // ✅ 新增：確保註冊關掉
+  isRegisterModalOpen.value = false
   isLoginModalOpen.value = true
 }
 
-// ✅ 新增：Login -> Register
 const openRegister = () => {
   isLoginModalOpen.value = false
   isRegisterModalOpen.value = true
 }
 
-// ✅ 新增：Register -> Login
 const openLoginFromRegister = () => {
   isRegisterModalOpen.value = false
   isLoginModalOpen.value = true
 }
 
-// ✅ 新增：註冊成功 / 登入成功 都可以用
 const closeAllAuthModal = () => {
   isLoginModalOpen.value = false
   isRegisterModalOpen.value = false
 }
 
-// 這些 handler 你之後可以直接串接 store / API
 const handleLogin = async ({
   email,
   password,
@@ -207,13 +199,9 @@ const handleLogin = async ({
   password: string
   remember: boolean
 }) => {
-  // TODO: 串接登入 API / store
-  // await authStore.login({ email, password, remember })
-
   isLoginModalOpen.value = false
 }
 
-// ✅ 改這裡：不要 push route，改成切到註冊 modal
 const handleSignup = () => {
   isLoginModalOpen.value = false
   openRegister()
@@ -221,13 +209,9 @@ const handleSignup = () => {
 
 const handleForgotPassword = () => {
   isLoginModalOpen.value = false
-  // 你原本是 push route，這裡我不強迫改
-  // 你要保留路由也可以，或之後改成 ForgotPasswordModal
-  // router.push('/forgot-password')
 }
 
 const handleSocial = (provider: 'google' | 'apple' | 'line') => {
-  // TODO: 串接社群登入流程
   console.log('social login:', provider)
 }
 
