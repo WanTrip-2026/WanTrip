@@ -9,21 +9,16 @@
         @keydown.esc="close"
         tabindex="-1"
       >
-        <!-- overlay -->
+
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="close" />
 
-        <!-- modal card -->
         <div
           class="relative mx-5 p-4 w-full max-w-[920px] overflow-hidden rounded-[20px] bg-white shadow-2xl"
           @click.stop
         >
           <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <!-- Left: register form -->
             <div>
-              <!-- ✅ Logo removed -->
-
               <form class="space-y-4 pt-6 sm:pt-8" @submit.prevent="onSubmit">
-                <!-- 使用者名稱 -->
                 <div>
                   <label class="sr-only" for="username">username</label>
                   <input
@@ -75,7 +70,6 @@
                   </div>
                 </div>
 
-                <!-- email -->
                 <div>
                   <label class="sr-only" for="email">email</label>
                   <input
@@ -88,7 +82,6 @@
                   />
                 </div>
 
-                <!-- 密碼 -->
                 <div>
                   <label class="sr-only" for="password">password</label>
                   <input
@@ -101,7 +94,6 @@
                   />
                 </div>
 
-                <!-- 確認密碼 -->
                 <div>
                   <label class="sr-only" for="password2">confirm password</label>
                   <input
@@ -205,7 +197,6 @@ const birthDay = ref<string>('')
 
 const close = () => emit('update:modelValue', false)
 
-// years: current year - 100 ~ current year
 const years = computed(() => {
   const now = new Date()
   const current = now.getFullYear()
@@ -222,12 +213,10 @@ const days = computed(() => {
   const m = Number(birthMonth.value)
   if (!y || !m) return Array.from({ length: 31 }, (_, i) => i + 1)
 
-  // JS month: 0-11; day 0 gets last day of previous month => last day of target month
   const lastDay = new Date(y, m, 0).getDate()
   const arr: number[] = []
   for (let d = 1; d <= lastDay; d++) arr.push(d)
 
-  // 若切換月份導致原本日期超出範圍，清掉
   if (birthDay.value && Number(birthDay.value) > lastDay) birthDay.value = ''
   return arr
 })
@@ -236,7 +225,7 @@ const birthday = computed(() => {
   if (!birthYear.value || !birthMonth.value || !birthDay.value) return ''
   const mm = String(birthMonth.value).padStart(2, '0')
   const dd = String(birthDay.value).padStart(2, '0')
-  return `${birthYear.value}/${mm}/${dd}` // ✅ YYYY/MM/DD
+  return `${birthYear.value}/${mm}/${dd}`
 })
 
 const onSubmit = async () => {
@@ -246,18 +235,27 @@ const onSubmit = async () => {
     if (!email.value || !password.value) throw new Error('請輸入 email 與密碼')
     if (password.value !== password2.value) throw new Error('兩次輸入的密碼不一致')
 
+    console.log('[env] VITE_SUPABASE_URL =', import.meta.env.VITE_SUPABASE_URL)
+    console.log('[env] VITE_API_BASE_URL =', import.meta.env.VITE_API_BASE_URL)
+
     const { data, error } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
       options: {
         data: {
           username: username.value,
-          birthday: birthday.value, // ✅ user_metadata
+          birthday: birthday.value,
         },
       },
     })
 
+    console.log('[signup] data =', data)
+    console.log('[signup] error =', error)
+
     if (error) throw error
+
+    const userId = data?.user?.id
+    console.log('[signup] userId =', userId)
 
     alert('註冊成功！請到信箱完成驗證（若有開啟信箱驗證）。')
     emit('registered', data)
@@ -268,7 +266,6 @@ const onSubmit = async () => {
   }
 }
 
-// lock body scroll when modal open
 const toggleBodyLock = (locked: boolean) => {
   document.body.style.overflow = locked ? 'hidden' : ''
 }

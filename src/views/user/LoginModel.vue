@@ -1,4 +1,3 @@
-<!-- src/components/LoginModal.vue -->
 <template>
   <Teleport to="body">
     <Transition name="fade">
@@ -19,9 +18,7 @@
           @click.stop
         >
           <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <!-- Left: form -->
             <div class="">
-              <!-- logo -->
               <div class="mb-6 pt-6 sm:pt-8 flex justify-center">
                 <svg
                   viewBox="0 0 517 140"
@@ -205,7 +202,6 @@
               </form>
             </div>
 
-            <!-- Right: image card -->
             <div class="hidden md:block p-1 lg:p-2">
               <div
                 class="relative h-full min-h-[400px] lg:min-h-[500px] overflow-hidden rounded-[28px]"
@@ -216,10 +212,8 @@
                   class="absolute inset-0 h-full w-full object-cover"
                 />
 
-                <!-- 可選：讓文字更清楚的遮罩 -->
                 <div class="absolute inset-0 bg-black/10"></div>
 
-                <!-- 右上角文字 -->
                 <div class="absolute left-6 top-6 text-left text-white drop-shadow">
                   <div class="text-3xl font-semibold leading-none">台北101</div>
                   <div class="text-sm opacity-90">Taipei 101</div>
@@ -228,7 +222,6 @@
             </div>
           </div>
 
-          <!-- optional close button (top-right) -->
           <button
             type="button"
             class="absolute right-8 top-8 grid h-10 w-10 place-items-center rounded-full bg-white/80 text-wan-primary shadow hover:bg-black"
@@ -243,20 +236,26 @@
   </Teleport>
 </template>
 
-<script setup>
-import { computed, onMounted, onUnmounted, watch, ref } from 'vue'
-import { supabase } from "@/utils/supabaseClient";
+<script setup lang="ts">
+import { watch, ref, onUnmounted } from 'vue'
+import { supabase } from '@/utils/supabaseClient'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
   heroImage: {
     type: String,
     default:
-      'https://images.unsplash.com/photo-1549877452-9c387954fbc2?auto=format&fit=crop&w=1200&q=80', // 可換成你自己的圖
+      'https://images.unsplash.com/photo-1549877452-9c387954fbc2?auto=format&fit=crop&w=1200&q=80',
   },
 })
 
-const emit = defineEmits(['update:modelValue', 'login', 'signup', 'forgot-password', 'social'])
+const emit = defineEmits<{
+  (e: 'update:modelValue', v: boolean): void
+  (e: 'login', payload: { user: any }): void
+  (e: 'signup'): void
+  (e: 'forgot-password'): void
+  (e: 'social', provider: 'google' | 'apple' | 'line'): void
+}>()
 
 const email = ref('')
 const password = ref('')
@@ -266,39 +265,32 @@ const close = () => emit('update:modelValue', false)
 
 const onSubmit = async () => {
   try {
-    console.log("[env] VITE_SUPABASE_URL =", import.meta.env.VITE_SUPABASE_URL);
-    console.log("[env] VITE_SUPABASE_ANON_KEY exists =", !!import.meta.env.VITE_SUPABASE_ANON_KEY);
+    if (!email.value || !password.value) throw new Error('請輸入 email 與密碼')
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.value,
       password: password.value,
-    });
+    })
 
-    console.log("[login] data:", data);
-    if (error) throw error;
+    if (error) {
+      console.error('[login] error:', error)
+      alert(error.message)
+      return
+    }
 
-    alert("登入成功：" + (data.user?.email ?? ""));
+    const user = data?.user
+    if (!user) throw new Error('登入失敗：沒有取得 user 資料')
 
-    // ✅ 用 profiles 測試是否能抓到資料
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", data.user.id)
-      .single();
+    emit('login', { user })
 
-    console.log("[profile] profile:", profile);
-    console.log("[profile] error:", profileError);
-
-    emit("update:modelValue", false);
-  } catch (err) {
-    console.error("[login] error:", err);
-    alert(err?.message ?? String(err));
+    emit('update:modelValue', false)
+  } catch (err: any) {
+    console.error('[login] error:', err)
+    alert(err?.message ?? String(err))
   }
-};
+}
 
-
-// lock body scroll when modal open
-const toggleBodyLock = (locked) => {
+const toggleBodyLock = (locked: boolean) => {
   document.body.style.overflow = locked ? 'hidden' : ''
 }
 
@@ -310,15 +302,3 @@ watch(
 
 onUnmounted(() => toggleBodyLock(false))
 </script>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.18s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
