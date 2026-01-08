@@ -482,12 +482,14 @@ onMounted(async () => {
     // 取得飯店資料
     const apiUrl = import.meta.env.VITE_API_BASE_URL
 
-    const hotelRes = await fetch(`${apiUrl}/hotels/${hotelId}`)
+    const [hotelRes, imagesRes] = await Promise.all([
+      fetch(`${apiUrl}/hotels/${hotelId}`),
+      fetch(`${apiUrl}/hotel_images/${hotelId}`),
+    ])
+
     if (!hotelRes.ok) throw new Error('取得飯店資料失敗')
     hotel.value = await hotelRes.json()
 
-    // 取得飯店圖片
-    const imagesRes = await fetch(`${apiUrl}/hotel_images/${hotelId}`)
     if (!imagesRes.ok) throw new Error('取得飯店圖片失敗')
     const data = await imagesRes.json()
 

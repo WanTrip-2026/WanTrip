@@ -105,8 +105,7 @@ const fetchHotels = async () => {
     // }))
     try {
       // 1️⃣ 先拿所有飯店資料
-      const res = await fetch(`${apiUrl}/hotels`)
-      if (!res.ok) throw new Error('取得飯店資料失敗')
+      const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
       const data: Hotel[] = await res.json()
 
       // 2️⃣ 針對每個飯店拿圖片
@@ -187,7 +186,6 @@ onMounted(async () => {
 
     const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
     if (facilityMenu) facilityMenu.options = facilities.value
-    await fetchHotels()
   } catch (err) {
     console.error(err)
     error.value = '初始化資料時發生錯誤'
