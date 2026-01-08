@@ -7,9 +7,8 @@ type PaymentKey = 'atm' | 'credit' | 'applepay' | 'googlepay' | 'linepay' | 'jko
 import iconVisa from '@/assets/pay_img/visa-classic-svgrepo-com.svg'
 import iconMastercard from '@/assets/pay_img/mastercard-svgrepo-com.svg'
 import iconJcb from '@/assets/pay_img/jcb-svgrepo-com.svg'
-import iconAmex from '@/assets/pay_img/amex-svgrepo-com.svg'
+// import iconAmex from '@/assets/pay_img/amex-svgrepo-com.svg'
 import iconApplePay from '@/assets/pay_img/apple-pay-svgrepo-com.svg'
-import iconGooglePay from '@/assets/pay_img/google-pay-svgrepo-com.svg'
 import iconLinePay from '@/assets/pay_img/LINE_Pay_logo_(2019).svg.png'
 import iconJkoPay from '@/assets/pay_img/uBKC2XeyRaWsA2sgjVFxTohcqQi6mmypd0MMWxdI.png'
 
@@ -43,7 +42,7 @@ const handleCheckout = async () => {
   isProcessing.value = true;
 
   // 綠界 AIO 支援多種付款方式
-  const ecpayMethods = ['credit', 'atm', 'applepay', 'googlepay'];
+  const ecpayMethods = ['credit', 'atm', 'applepay', 'jkopay', '711', 'familymart', 'ipass money'];
 
   if (ecpayMethods.includes(selectedPayment.value)) {
     await startAioPayment();
@@ -57,11 +56,12 @@ const handleCheckout = async () => {
 
 const startAioPayment = async () => {
   try {
-    const response = await axios.post('http://localhost:3000/api/payment/get-aio-params', {
+    isProcessing.value = true;
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+    const response = await axios.post(`${apiBaseUrl}/payment/get-aio-params`, {
       amount: total.value,
-      customerName: form.name,
-      customerEmail: form.email,
-      paymentMethod: selectedPayment.value
+      paymentMethod: selectedPayment.value // 傳送關鍵字如 'credit', 'atm'
     });
 
     if (!response.data.success) {
@@ -104,12 +104,14 @@ const startAioPayment = async () => {
 
 const startLinePay = async () => {
   try {
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
     const paymentPayload = {
       amount: total.value,
       productName: product.title,
     };
 
-    const response = await axios.post('http://localhost:3000/api/payment/linepay/request', paymentPayload);
+    const response = await axios.post(`${apiBaseUrl}/payment/linepay/request`, paymentPayload);
 
     if (response.data.returnCode === '0000') {
       const paymentUrl = response.data.info.paymentUrl.web;
@@ -131,21 +133,19 @@ const paymentOptions: Array<{
   label: string
   icons: Array<{ src: string; alt: string; large?: boolean }>
 }> = [
-    { key: 'atm', label: 'ATM轉帳', icons: [] },
     {
       key: 'credit',
-      label: '信用卡',
+      label: '信用卡 | ATM轉帳 | Apple Pay | 街口支付',
       icons: [
         { src: iconVisa, alt: 'VISA', large: true },
         { src: iconMastercard, alt: 'Mastercard', large: true },
         { src: iconJcb, alt: 'JCB', large: true },
-        { src: iconAmex, alt: 'AMEX', large: true },
+        // { src: iconAmex, alt: 'AMEX', large: true },
+        { src: iconApplePay, alt: 'Apple Pay', large: true },
+        { src: iconJkoPay, alt: '街口支付' },
       ],
     },
-    { key: 'applepay', label: 'Apple Pay', icons: [{ src: iconApplePay, alt: 'Apple Pay', large: true }] },
-    { key: 'googlepay', label: 'Google Pay', icons: [{ src: iconGooglePay, alt: 'Google Pay', large: true }] },
     { key: 'linepay', label: 'Line Pay', icons: [{ src: iconLinePay, alt: 'LINE Pay' }] },
-    { key: 'jkopay', label: '街口支付', icons: [{ src: iconJkoPay, alt: '街口支付' }] },
   ]
 
 function applyCoupon() {
@@ -233,7 +233,13 @@ function applyCoupon() {
                 <div class="flex items-center gap-3">
                   <input type="radio" name="pay" :value="option.key" v-model="selectedPayment"
                     class="h-5 w-5 rounded-full accent-black" />
-                  <span class="text-sm font-medium text-dark_900">{{ option.label }}</span>
+                  <div class="flex flex-col gap-0">
+                    <span class="text-base font-medium text-dark_900">{{ option.label }}</span>
+                    <p v-if="['credit', 'atm', 'applepay', 'jkopay'].includes(option.key)"
+                      class="text-xs text-dark_500 mt-1">
+                      由綠界科技 ECPay 提供的安全支付服務
+                    </p>
+                  </div>
                 </div>
                 <div class="flex h-full items-center gap-3">
                   <img v-for="icon in option.icons" :key="icon.src" :src="icon.src" :alt="icon.alt"
