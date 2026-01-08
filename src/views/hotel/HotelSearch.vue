@@ -20,28 +20,31 @@ interface Hotel {
   facilities?: string[]
   image_url?: string
 }
-interface HotelImage {
-  id: string
-  hotel_id: string
-  image_url: string
-  sort_order: number | null
-}
+
 type FacilityName = string
 
 const facilities = ref<FacilityName[]>([])
 const hotels = ref<Hotel[]>([])
 const keyword = ref('')
 const error = ref<string | null>(null)
-const firstImageMap = ref<Record<string, string>>({})
 
-const starOptions = computed(() => {
-  const stars = Array.from(new Set(hotels.value.map((h) => h.star_rating))).sort((a, b) => b - a)
-  // 轉成文字，例如 5 → '五星級'
-  return stars.map((s) => `${s}星級`)
-})
+const expandedMenus = ref<string[]>([])
+
+const minPrice = 0
+const maxPrice = 15000
+const step = 500
+const priceRange = ref<PriceRange>({ min: minPrice, max: maxPrice })
+
+const currentPage = ref(1)
+const itemsPerPage = 8
+const totalPages = ref(1)
+
+/* 星級選項：由於後端分頁，一頁只有 8 筆，不能用「當頁資料」推星級
+ */
+const starOptions = computed(() => ['5星級', '4星級', '3星級', '2星級'])
 
 const HotelFiltered = reactive<FilterMenu[]>([
-  { key: 'star_rating', title: '星級', options: [], selected: [] },
+  { key: 'star_rating', title: '星級', options: starOptions.value, selected: [] },
   {
     key: 'reviews',
     title: '評價',
@@ -76,116 +79,76 @@ const HotelFiltered = reactive<FilterMenu[]>([
   },
 ])
 
-const minPrice = 0,
-  maxPrice = 15000,
-  step = 500
-const priceRange = ref<PriceRange>({ min: minPrice, max: maxPrice })
-const expandedMenus = ref<string[]>([])
-const currentPage = ref(1)
-const itemsPerPage = 8
-
 // -------------------
-// 取得飯店資料
+// 取得飯店資料（後端分頁）
 // -------------------
-const fetchHotels = async () => {
+const fetchHotels = async (page = 1, limit = itemsPerPage) => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
+
     const params = new URLSearchParams()
+
+    // keyword
     if (keyword.value.trim()) params.append('keyword', keyword.value.trim())
 
+    // facilities（後端支援 facility_names=xxx,yyy）
     const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
-    if (selectedFacilities.length > 0) params.append('facility_name', selectedFacilities.join(','))
+    if (selectedFacilities.length > 0) params.append('facility_names', selectedFacilities.join(','))
 
-    // const data: Hotel[] = await res.json()
-    // hotels.value = data.map((h) => ({
-    //   ...h,
-    //   image_url:
-    //     firstImageMap.value[h.id] ||
-    //     'https://cdn.hk01.com/di/media/images/3366554/org/1a17ee577918293a276a61cded582477.jpg/CwABjWRXi8m70sf513Oli2_Nrybz9IXncrQxZHK0MWQ?v=w1280r16_9',
-    // }))
-    try {
-      // 1️⃣ 先拿所有飯店資料
-      const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
-      const data: Hotel[] = await res.json()
-
-      // 2️⃣ 針對每個飯店拿圖片
-      const hotelsWithImages = await Promise.all(
-        data.map(async (h) => {
-          try {
-            const imagesRes = await fetch(`${apiUrl}/hotel_images/${h.id}`)
-            if (!imagesRes.ok) throw new Error('取得飯店圖片失敗')
-            const imagesData: HotelImage[] = await imagesRes.json()
-
-            // 取 sort_order 最小的圖片
-            const featureImage = imagesData.sort(
-              (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0),
-            )[0]?.image_url
-
-            return {
-              ...h,
-              image_url:
-                featureImage ||
-                'https://cdn.hk01.com/di/media/images/3366554/org/1a17ee577918293a276a61cded582477.jpg/CwABjWRXi8m70sf513Oli2_Nrybz9IXncrQxZHK0MWQ?v=w1280r16_9',
-            }
-          } catch (err) {
-            console.error(err)
-            // 若圖片 API 失敗，也給預設圖
-            return {
-              ...h,
-              image_url:
-                'https://cdn.hk01.com/di/media/images/3366554/org/1a17ee577918293a276a61cded582477.jpg/CwABjWRXi8m70sf513Oli2_Nrybz9IXncrQxZHK0MWQ?v=w1280r16_9',
-            }
-          }
-        }),
-      )
-
-      // 3️⃣ 最後存回 ref
-      hotels.value = hotelsWithImages
-    } catch (err: unknown) {
-      console.error(err)
-      error.value = '取得飯店資料時發生錯誤'
+    //星級：你後端目前沒支援，先不送（要支援我再幫你補後端）
+    const selectedStars = HotelFiltered.find((m) => m.key === 'star_rating')?.selected ?? []
+    if (selectedStars.length > 0) {
+      const starNums = selectedStars
+        .map((s) => parseInt(s, 10)) // '5星級' → 5（parseInt 會吃到前面的數字）
+        .filter((n) => Number.isFinite(n))
+      if (starNums.length > 0) params.append('star_ratings', starNums.join(','))
     }
+    params.append('page', String(page))
+    params.append('limit', String(limit))
 
-    currentPage.value = 1
+    const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
+    if (!res.ok) throw new Error('取得飯店資料失敗')
+
+    const data: { total: number; page: number; limit: number; hotels: Hotel[] } = await res.json()
+
+    // 後端已經幫你把 image_url 算好、facilities 也整理好了
+    hotels.value = (data.hotels ?? []).map((h) => ({
+      ...h,
+      image_url:
+        h.image_url ||
+        'https://cdn.hk01.com/di/media/images/3366554/org/1a17ee577918293a276a61cded582477.jpg/CwABjWRXi8m70sf513Oli2_Nrybz9IXncrQxZHK0MWQ?v=w1280r16_9',
+    }))
+
+    currentPage.value = data.page
+    totalPages.value = Math.max(1, Math.ceil((data.total ?? 0) / (data.limit || limit)))
+
     error.value = null
   } catch (err) {
     console.error(err)
-    error.value = '搜尋飯店時發生錯誤'
+    error.value = '取得飯店資料時發生錯誤'
+    hotels.value = []
+    currentPage.value = 1
+    totalPages.value = 1
   }
 }
 
 // -------------------
-// 初始化：飯店、圖片、設施
+// 初始化：設施 + 第一頁飯店
 // -------------------
 onMounted(async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
 
-    // 先取飯店
-    await fetchHotels()
-
-    // 取飯店圖片
-    const imagesRes = await fetch(`${apiUrl}/hotel_images`)
-    if (!imagesRes.ok) throw new Error('取得飯店圖片失敗')
-    const imagesData: HotelImage[] = await imagesRes.json()
-
-    firstImageMap.value = imagesData.reduce(
-      (acc, img) => {
-        if (img.sort_order === 1) {
-          acc[img.hotel_id] = img.image_url
-        }
-        return acc
-      },
-      {} as Record<string, string>,
-    )
-
-    // 取得設施清單
+    // 設施清單
     const facilitiesRes = await fetch(`${apiUrl}/facilities`)
     if (!facilitiesRes.ok) throw new Error('取得設施資料失敗')
     facilities.value = await facilitiesRes.json()
 
     const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
     if (facilityMenu) facilityMenu.options = facilities.value
+
+    // 第一頁飯店
+    await fetchHotels(1, itemsPerPage)
   } catch (err) {
     console.error(err)
     error.value = '初始化資料時發生錯誤'
@@ -193,68 +156,48 @@ onMounted(async () => {
 })
 
 // -------------------
-// 監聽設施變動自動搜尋
+// 監聽：設施勾選 → 回到第 1 頁重抓
 // -------------------
 watch(
   () => HotelFiltered.find((m) => m.key === 'facilities')?.selected,
   () => {
-    fetchHotels()
+    goToPage(1)
   },
+  { deep: true },
 )
 watch(
-  starOptions,
-  (opts) => {
-    const menu = HotelFiltered.find((m) => m.key === 'star_rating')
-    if (menu) {
-      menu.options = opts
-    }
+  () => HotelFiltered.find((m) => m.key === 'star_rating')?.selected,
+  () => {
+    goToPage(1)
   },
-  { immediate: true },
+  { deep: true },
 )
 
 // -------------------
-// 過濾飯店
+// 分頁顯示
 // -------------------
-const filteredHotels = computed(() => {
-  let filtered = hotels.value
-  const selectedStars = HotelFiltered.find((m) => m.key === 'star_rating')?.selected ?? []
-
-  if (selectedStars.length > 0) {
-    filtered = filtered.filter((hotel) => {
-      // '5星級' → 取出 5
-      return selectedStars.some((opt) => {
-        const starNumber = parseInt(opt)
-        return hotel.star_rating === starNumber
-      })
-    })
-  }
-  const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
-  if (selectedFacilities.length > 0) {
-    filtered = filtered.filter((h) => selectedFacilities.every((f) => h.facilities?.includes(f)))
-  }
-  return filtered
-})
-
-// -------------------
-// 分頁計算
-// -------------------
-const totalPages = computed(() => Math.ceil(filteredHotels.value.length / itemsPerPage))
-const pagedHotels = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  return filteredHotels.value.slice(start, start + itemsPerPage)
-})
 const visiblePagination = computed(() => {
   const pages: (number | string)[] = []
   const total = totalPages.value
-  let start = currentPage.value - 1
-  let end = currentPage.value + 1
-  if (start < 1) start = 1
-  if (end > total) end = total
-  for (let i = start; i <= end; i++) pages.push(i)
-  if (pages[pages.length - 1] < total) {
-    pages.push('...')
-    pages.push(total)
+  const curr = currentPage.value
+
+  if (total <= 7) {
+    for (let i = 1; i <= total; i++) pages.push(i)
+    return pages
   }
+
+  pages.push(1)
+
+  const start = Math.max(2, curr - 1)
+  const end = Math.min(total - 1, curr + 1)
+
+  if (start > 2) pages.push('...')
+
+  for (let i = start; i <= end; i++) pages.push(i)
+
+  if (end < total - 1) pages.push('...')
+
+  pages.push(total)
   return pages
 })
 
@@ -262,7 +205,9 @@ const visiblePagination = computed(() => {
 // 分頁方法
 // -------------------
 function goToPage(page: number) {
-  if (page >= 1 && page <= totalPages.value) currentPage.value = page
+  const p = Math.min(Math.max(page, 1), totalPages.value)
+  currentPage.value = p
+  fetchHotels(p, itemsPerPage)
 }
 function firstPage() {
   goToPage(1)
@@ -278,7 +223,7 @@ function nextPage() {
 }
 
 // -------------------
-// 價格範圍監控
+// 價格範圍監控（目前只做 UI 限制，尚未送後端）
 // -------------------
 watch(
   () => [priceRange.value.min, priceRange.value.max],
@@ -295,16 +240,27 @@ watch(
 function clearOptions(key: string) {
   const menu = HotelFiltered.find((m) => m.key === key)
   if (menu) menu.selected = []
+
+  if (key === 'facilities' || key === 'star_rating') goToPage(1)
 }
+
 function toggleMenu(key: string) {
-  if (expandedMenus.value.includes(key))
+  if (expandedMenus.value.includes(key)) {
     expandedMenus.value = expandedMenus.value.filter((k) => k !== key)
-  else expandedMenus.value.push(key)
+  } else {
+    expandedMenus.value.push(key)
+  }
+}
+
+/**
+ * 搜尋按鈕：回到第 1 頁重抓（避免人在第 5 頁搜尋，結果以為壞掉）
+ */
+function onSearch() {
+  goToPage(1)
 }
 </script>
 
 <template>
-  <!-- <Navbar class="relative top-0" /> -->
   <main class="max-w-[1200px] mx-auto pt-24 bg-page px-5 lg:px-0">
     <!-- search-bar -->
     <section
@@ -334,13 +290,14 @@ function toggleMenu(key: string) {
       </div>
       <div class="border border-gray-300 rounded-full md:h-full">
         <button
-          @click="fetchHotels"
+          @click="onSearch"
           class="bg-primary hover:bg-[#6D8FA3] text-white px-6 py-3 rounded-full transition-colors whitespace-nowrap"
         >
           搜尋
         </button>
       </div>
     </section>
+
     <!-- result-list -->
     <section class="gap-5 m-10 mx-auto flex">
       <aside class="flex flex-col gap-5 w-[285px]">
@@ -352,15 +309,15 @@ function toggleMenu(key: string) {
             referrerpolicy="no-referrer-when-downgrade"
           ></iframe>
         </div>
+
         <div class="rounded-[20px] p-10 bg-white border border-gray-300 shadow-sm">
           <h3 class="font-bold text-xl text-dark mb-[20px]">篩選條件</h3>
+
           <div class="flex flex-col gap-5">
             <!-- Price Filter -->
             <h4 class="font-medium text-dark">每晚預算<br /></h4>
             <div class="flex flex-col gap-2">
-              <!-- 滑桿 -->
               <div class="relative h-2 w-full bg-main_100 rounded-full">
-                <!-- 已選範圍 -->
                 <div
                   class="absolute h-2 bg-main_300 rounded-full"
                   :style="{
@@ -369,7 +326,6 @@ function toggleMenu(key: string) {
                   }"
                 ></div>
 
-                <!-- 左滑塊 -->
                 <input
                   type="range"
                   :min="minPrice"
@@ -378,8 +334,6 @@ function toggleMenu(key: string) {
                   v-model.number="priceRange.min"
                   class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
                 />
-
-                <!-- 右滑塊 -->
                 <input
                   type="range"
                   :min="minPrice"
@@ -389,7 +343,7 @@ function toggleMenu(key: string) {
                   class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
                 />
               </div>
-              <!-- 顯示數值 -->
+
               <div class="flex justify-between mt-2">
                 <input
                   type="number"
@@ -425,6 +379,7 @@ function toggleMenu(key: string) {
                   清除
                 </button>
               </div>
+
               <div class="space-y-2">
                 <label
                   class="flex cursor-pointer text-sm text-dark_900 items-center"
@@ -442,6 +397,7 @@ function toggleMenu(key: string) {
                   />
                   {{ option }}
                 </label>
+
                 <button
                   v-if="HotelMenu.options.length > 4 && !expandedMenus.includes(HotelMenu.key)"
                   class="text-dark_500 hover:text-primary text-sm mt-1"
@@ -454,7 +410,12 @@ function toggleMenu(key: string) {
           </div>
         </div>
       </aside>
+
       <div class="flex flex-1 flex-col gap-5">
+        <div v-if="error" class="p-4 rounded-xl border border-red-200 bg-red-50 text-red-700">
+          {{ error }}
+        </div>
+
         <div class="flex flex-row items-center gap-2">
           <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm">
             價格高到低
@@ -469,9 +430,14 @@ function toggleMenu(key: string) {
             評價高到低
           </button>
         </div>
+
         <div class="flex flex-col gap-5 hotel-card rounded-[20px] w-full">
-          <HotelCard v-for="hotel in pagedHotels" :key="hotel.id" :hotel="hotel" />
+          <HotelCard v-for="hotel in hotels" :key="hotel.id" :hotel="hotel" />
+          <div v-if="hotels.length === 0 && !error" class="text-center text-dark_500 py-10">
+            找不到符合條件的飯店
+          </div>
         </div>
+
         <div class="flex justify-center gap-2 mt-5 mb-10">
           <button
             class="w-10 h-10 border rounded-full hover:bg-main_100"
@@ -481,7 +447,6 @@ function toggleMenu(key: string) {
             &lt;&lt;
           </button>
 
-          <!-- 上一頁 -->
           <button
             class="w-10 h-10 border rounded-full hover:bg-main_100"
             @click="prevPage"
@@ -490,7 +455,6 @@ function toggleMenu(key: string) {
             &lt;
           </button>
 
-          <!-- 頁碼 -->
           <button
             class="w-10 h-10 border rounded-full hover:bg-main_100"
             v-for="item in visiblePagination"
@@ -502,7 +466,6 @@ function toggleMenu(key: string) {
             {{ item }}
           </button>
 
-          <!-- 下一頁 -->
           <button
             class="w-10 h-10 border rounded-full hover:bg-main_100"
             @click="nextPage"
@@ -511,7 +474,6 @@ function toggleMenu(key: string) {
             &gt;
           </button>
 
-          <!-- 最後頁 -->
           <button
             class="w-10 h-10 border rounded-full"
             @click="lastPage"
@@ -532,7 +494,6 @@ input[type='range']::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
   background-color: #6d8fa3;
-  /* primary色號 */
   border-radius: 9999px;
   cursor: pointer;
 }
