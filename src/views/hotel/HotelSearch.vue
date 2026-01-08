@@ -36,7 +36,6 @@ const firstImageMap = ref<Record<string, string>>({})
 
 const starOptions = computed(() => {
   const stars = Array.from(new Set(hotels.value.map((h) => h.star_rating))).sort((a, b) => b - a)
-
   // 轉成文字，例如 5 → '五星級'
   return stars.map((s) => `${s}星級`)
 })
@@ -97,19 +96,57 @@ const fetchHotels = async () => {
     const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
     if (selectedFacilities.length > 0) params.append('facility_name', selectedFacilities.join(','))
 
-    const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
-    if (!res.ok) throw new Error('取得飯店失敗')
+    // const data: Hotel[] = await res.json()
+    // hotels.value = data.map((h) => ({
+    //   ...h,
+    //   image_url:
+    //     firstImageMap.value[h.id] ||
+    //     'https://cdn.hk01.com/di/media/images/3366554/org/1a17ee577918293a276a61cded582477.jpg/CwABjWRXi8m70sf513Oli2_Nrybz9IXncrQxZHK0MWQ?v=w1280r16_9',
+    // }))
+    try {
+      // 1️⃣ 先拿所有飯店資料
+      const res = await fetch(`${apiUrl}/hotels`)
+      if (!res.ok) throw new Error('取得飯店資料失敗')
+      const data: Hotel[] = await res.json()
 
-    const data: Hotel[] = await res.json()
-    hotels.value = data.map((h) => ({
-      ...h,
-      image_url:
-        firstImageMap.value[h.id] ||
-        'https://cdn.hk01.com/di/media/images/3366554/org/1a17ee577918293a276a61cded582477.jpg/CwABjWRXi8m70sf513Oli2_Nrybz9IXncrQxZHK0MWQ?v=w1280r16_9',
-    }))
-    console.log(data.map((h) => h.id))
-    console.log(firstImageMap.value)
-    console.log(data.map((h) => firstImageMap.value[h.id] || '替代圖'))
+      // 2️⃣ 針對每個飯店拿圖片
+      const hotelsWithImages = await Promise.all(
+        data.map(async (h) => {
+          try {
+            const imagesRes = await fetch(`${apiUrl}/hotel_images/${h.id}`)
+            if (!imagesRes.ok) throw new Error('取得飯店圖片失敗')
+            const imagesData: HotelImage[] = await imagesRes.json()
+
+            // 取 sort_order 最小的圖片
+            const featureImage = imagesData.sort(
+              (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0),
+            )[0]?.image_url
+
+            return {
+              ...h,
+              image_url:
+                featureImage ||
+                'https://cdn.hk01.com/di/media/images/3366554/org/1a17ee577918293a276a61cded582477.jpg/CwABjWRXi8m70sf513Oli2_Nrybz9IXncrQxZHK0MWQ?v=w1280r16_9',
+            }
+          } catch (err) {
+            console.error(err)
+            // 若圖片 API 失敗，也給預設圖
+            return {
+              ...h,
+              image_url:
+                'https://cdn.hk01.com/di/media/images/3366554/org/1a17ee577918293a276a61cded582477.jpg/CwABjWRXi8m70sf513Oli2_Nrybz9IXncrQxZHK0MWQ?v=w1280r16_9',
+            }
+          }
+        }),
+      )
+
+      // 3️⃣ 最後存回 ref
+      hotels.value = hotelsWithImages
+    } catch (err: unknown) {
+      console.error(err)
+      error.value = '取得飯店資料時發生錯誤'
+    }
+
     currentPage.value = 1
     error.value = null
   } catch (err) {
