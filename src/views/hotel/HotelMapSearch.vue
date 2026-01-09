@@ -572,6 +572,7 @@ onMounted(async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+    const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID
 
     if (!apiKey) {
       console.error('Google Maps API Key 遺失！')
@@ -601,94 +602,64 @@ onMounted(async () => {
 
     // 2. 載入 Google Maps JS
     const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=marker`
     script.async = true
     script.defer = true
     // 注入到頁面
     document.head.appendChild(script)
 
     // 3. 建立全域 initMap，Google Maps callback 會呼叫
-    window.initMap = () => {
+    window.initMap = async () => {
+      // 初始化地圖，必須加上 mapId
       const map = new google.maps.Map(document.getElementById('map') as HTMLElement, {
         center: { lat: 25.033964, lng: 121.564468 },
         zoom: 12,
+        mapId: mapId,
       })
 
-      // 4. 加上飯店標記
-
-      // 自訂 OverlayView
-      class PriceMarker extends google.maps.OverlayView {
-        position: google.maps.LatLng
-        hotel: Hotel
-        div: HTMLDivElement | null = null
-
-        constructor(position: google.maps.LatLng, hotel: Hotel) {
-          super()
-          this.position = position
-          this.hotel = hotel
-        }
-
-        onAdd() {
-          this.div = document.createElement('div')
-          this.div.className = 'price-marker'
-          this.div.innerText = `NT$ ${this.hotel.min_price}`
-          this.div.style.cssText = `
-              position: absolute;
-              background: #2F3D4D;
-              color: white;
-              padding: 4px 8px;
-              border-radius: 8px;
-              font-weight: bold;
-              cursor: pointer;
-              text-align: center;
-              white-space: nowrap;
-              box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            `
-
-          this.div.addEventListener('click', () => {
-            // 建立 InfoWindow
-            const info = new google.maps.InfoWindow({
-              content: `
-                  <div style="width: 250px;">
-                    <strong>${this.hotel.name}</strong><br>
-                    ${this.hotel.address ?? ''}<br>
-                    最低房價: NT$ ${this.hotel.min_price}<br>
-                    <img src="${this.hotel.cover_image ?? ''}" style="width:100%; border-radius:4px; margin-top:4px;" />
-                  </div>
-                `,
-            })
-            info.setPosition(this.position)
-            info.open(this.getMap()!)
-          })
-
-          const panes = this.getPanes()
-          panes?.overlayMouseTarget.appendChild(this.div)
-        }
-
-        draw() {
-          if (!this.div) return
-          const projection = this.getProjection()
-          if (!projection) return
-
-          const pos = projection.fromLatLngToDivPixel(this.position)
-          if (!pos) return
-          this.div.style.left = pos.x + 'px'
-          this.div.style.top = pos.y + 'px'
-        }
-
-        onRemove() {
-          if (this.div?.parentNode) this.div.parentNode.removeChild(this.div)
-        }
-      }
-
+      // 2. 準備飯店標記
       hotels.value.forEach((hotel) => {
         if (!hotel.latitude || !hotel.longitude) return
 
-        const marker = new PriceMarker(
-          new google.maps.LatLng(hotel.latitude, hotel.longitude),
-          hotel,
-        )
-        marker.setMap(map)
+        const priceTag = document.createElement('div')
+        priceTag.style.cssText = `
+            background: #2F3D4D;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            white-space: nowrap;
+            font-size: 14px;
+        `
+        priceTag.innerText = `NT$ ${hotel.min_price.toLocaleString()}`
+
+        // 3. 建立進階標記
+        const marker = new google.maps.marker.AdvancedMarkerElement({
+          map,
+          position: { lat: hotel.latitude, lng: hotel.longitude },
+          content: priceTag,
+          title: hotel.name,
+        })
+
+        // 4. 點擊事件
+        marker.addListener('click', () => {
+          const info = new google.maps.InfoWindow({
+            content: `
+          <div style="width: 250px; color: black;">
+            <strong style="font-size: 16px;">${hotel.name}</strong><br>
+            <p style="margin: 4px 0;">${hotel.address ?? ''}</p>
+            <p style="margin: 4px 0; font-weight: bold; color: #D14D4D;">最低房價: NT$ ${hotel.min_price}</p>
+            <img src="${hotel.cover_image ?? ''}" style="width:100%; border-radius:8px; margin-top:8px;" />
+          </div>
+        `,
+          })
+          info.open({
+            anchor: marker,
+            map,
+          })
+        })
       })
     }
   } catch (err: unknown) {
