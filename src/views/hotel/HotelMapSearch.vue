@@ -610,6 +610,10 @@ onMounted(async () => {
 
     // 3. 建立全域 initMap，Google Maps callback 會呼叫
     window.initMap = async () => {
+      const { AdvancedMarkerElement, CollisionBehavior } = (await google.maps.importLibrary(
+        'marker',
+      )) as google.maps.MarkerLibrary
+      console.log('當前 Map ID:', mapId)
       // 初始化地圖，必須加上 mapId
       const map = new google.maps.Map(document.getElementById('map') as HTMLElement, {
         center: { lat: 25.033964, lng: 121.564468 },
@@ -622,6 +626,7 @@ onMounted(async () => {
         if (!hotel.latitude || !hotel.longitude) return
 
         const priceTag = document.createElement('div')
+        priceTag.className = 'custom-price-tag'
         priceTag.style.cssText = `
             background: #2F3D4D;
             color: white;
@@ -632,15 +637,18 @@ onMounted(async () => {
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             white-space: nowrap;
             font-size: 14px;
+            transition: transform 0.2s;
         `
         priceTag.innerText = `NT$ ${hotel.min_price.toLocaleString()}`
 
         // 3. 建立進階標記
-        const marker = new google.maps.marker.AdvancedMarkerElement({
+        const marker = new AdvancedMarkerElement({
           map,
-          position: { lat: hotel.latitude, lng: hotel.longitude },
+          position: { lat: Number(hotel.latitude), lng: Number(hotel.longitude) },
           content: priceTag,
           title: hotel.name,
+          collisionBehavior: CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
+          zIndex: 1000000 - Number(hotel.min_price),
         })
 
         // 4. 點擊事件
