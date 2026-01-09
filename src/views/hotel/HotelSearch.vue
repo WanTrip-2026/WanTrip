@@ -82,6 +82,7 @@ const HotelFiltered = reactive<FilterMenu[]>([
 // -------------------
 // 取得飯店資料（後端分頁）
 // -------------------
+
 const fetchHotels = async (page = 1, limit = itemsPerPage) => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
