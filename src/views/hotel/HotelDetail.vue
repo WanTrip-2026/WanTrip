@@ -472,7 +472,6 @@ interface Review {
 }
 
 const route = useRoute()
-const hotelId = route.params.id
 
 const hotel = ref<Hotel | null>(null)
 const error = ref<string | null>(null)
@@ -720,11 +719,13 @@ const onTouchMove = (e: TouchEvent) => {
 
 const onTouchEnd = () => {
   const diff = endX.value - startX.value
+  const len = images.value.length
   if (Math.abs(diff) > 50) {
     if (diff < 0) {
-      currentIndex.value = (currentIndex.value + 1) % images.length
+      if (len === 0) return
+      currentIndex.value = (currentIndex.value + 1) % len
     } else {
-      currentIndex.value = (currentIndex.value - 1 + images.length) % images.length
+      currentIndex.value = (currentIndex.value - 1 + len) % len
     }
   }
   startX.value = 0
