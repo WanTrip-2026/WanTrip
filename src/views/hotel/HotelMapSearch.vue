@@ -147,6 +147,7 @@
               </transition>
             </div>
             <button
+              @click="fetchHotels"
               class="w-32 items-center px-8 py-3 rounded-[20px] bg-primary hover:bg-main_800 shadow text-lg font-medium text-white transition"
             >
               搜尋
@@ -213,8 +214,12 @@
           :key="hotel.id"
           class="bg-white w-full h-[180px] rounded-[20px] border border-gray-200 overflow-hidden flex flex-row hover:shadow-lg transition-shadow duration-300"
         >
-          <div class="aspect-[2/1] w-[160px] relative flex-shrink-0">
-            <img :src="hotel.image" :alt="hotel.name" class="w-full h-full object-cover" />
+          <div class="h-full w-[160px] relative flex-shrink-0">
+            <img
+              src="https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg"
+              :alt="hotel.name"
+              class="w-full h-full object-cover"
+            />
             <button
               class="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-[20px] h-[32px] w-[80px] text-[10px] bg-primary opacity-80 hover:opacity-100 text-white transition whitespace-nowrap"
             >
@@ -237,8 +242,8 @@
               <div class="flex flex-col">
                 <div class="flex gap-0.5 mb-1">
                   <svg
-                    v-for="n in Math.floor(hotel.star_rating)"
-                    :key="n"
+                    v-for="(n, index) in starCount(hotel.star_rating)"
+                    :key="index"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 640 640"
                     class="w-4 h-4 text-yellow-400"
@@ -395,12 +400,23 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch, computed } from 'vue'
+import { reactive, ref, watch, computed, onMounted } from 'vue'
 import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+
+defineProps({
+  hotel: {
+    type: Object,
+    required: true,
+  },
+})
+
+function starCount(stars: number) {
+  return stars
+}
 
 function goBackToList() {
   router.push('/hotels/search')
@@ -417,6 +433,24 @@ interface FilterMenu {
   options: string[]
   selected: string[]
 }
+
+interface Hotel {
+  id: string
+  name: string
+  city: string
+  district: string
+  star_rating: number
+  min_price: number
+  facilities?: string[]
+}
+
+type FacilityName = string
+
+const facilities = ref<FacilityName[]>([])
+
+const hotels = ref<Hotel[]>([])
+const keyword = ref('')
+const error = ref<string | null>(null)
 
 const form = reactive({
   destination: '',
@@ -490,7 +524,7 @@ watch(
 const isListOpen = ref(true)
 const isFilterOpen = ref(false)
 
-const expandedMenus = ref<string[]>([])
+const expandedMenus = ref<string[]>([]) // 儲存哪些 option 已展開
 
 function toggleMenu(key: string) {
   if (expandedMenus.value.includes(key)) {
@@ -542,69 +576,74 @@ const HotelFiltered = reactive<FilterMenu[]>([
   },
 ])
 
+const fetchHotels = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL
+    const params = new URLSearchParams()
+
+    if (keyword.value.trim()) {
+      params.append('keyword', keyword.value.trim())
+    }
+
+    const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
+    if (selectedFacilities.length > 0) {
+      params.append('facility_name', selectedFacilities.join(','))
+    }
+
+    const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
+    if (!res.ok) throw new Error('取得飯店失敗')
+
+    hotels.value = await res.json()
+    error.value = null
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message)
+    } else {
+      console.error(err)
+    }
+    error.value = '搜尋飯店時發生錯誤'
+  }
+}
+
+onMounted(async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL
+
+    const hotelsPromise = fetchHotels()
+    const facilitiesPromise = fetch(`${apiUrl}/facilities`)
+
+    const [facilitiesRes] = await Promise.all([facilitiesPromise, hotelsPromise])
+
+    if (!facilitiesRes.ok) throw new Error('取得設施資料失敗')
+    facilities.value = await facilitiesRes.json()
+
+    const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
+    if (facilityMenu) {
+      facilityMenu.options = facilities.value
+    }
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message)
+    } else {
+      console.error(err)
+    }
+    error.value = '初始化資料時發生錯誤'
+  }
+})
+
+watch(
+  () => HotelFiltered.find((m) => m.key === 'facilities')?.selected,
+  () => {
+    fetchHotels()
+  },
+)
+
 function clearOptions(key: string) {
   const menu = HotelFiltered.find((m) => m.key === key)
   if (menu) {
     menu.selected = [] // 清空勾選
   }
 }
-
-const hotels = ref([
-  {
-    id: '1',
-    name: '台北凱撒大飯店 - Caesar Park Hotel',
-    city: '台北市',
-    district: '中正區',
-    star_rating: 5,
-    min_price: 1325,
-    image: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-  },
-  {
-    id: '2',
-    name: '藝舍精品旅館 - Art Inn',
-    city: '台北市',
-    district: '萬華區',
-    star_rating: 4,
-    min_price: 1094,
-    image: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-  },
-  {
-    id: '3',
-    name: '台北凱瑟大飯店 - 精緻雙人房',
-    city: '台北市',
-    district: '信義區',
-    star_rating: 4,
-    min_price: 2473,
-    image: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-  },
-  {
-    id: '4',
-    name: '北投老爺酒店',
-    city: '台北市',
-    district: '北投區',
-    star_rating: 5,
-    min_price: 5700,
-    image: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-  },
-  {
-    id: '5',
-    name: '北投老爺酒店',
-    city: '台北市',
-    district: '北投區',
-    star_rating: 5,
-    min_price: 5700,
-    image: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-  },
-  {
-    id: '6',
-    name: '北投老爺酒店',
-    city: '台北市',
-    district: '北投區',
-    star_rating: 5,
-    min_price: 5700,
-    image: 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
-  },
-])
 </script>
 
 <style scoped>
