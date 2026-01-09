@@ -2,7 +2,7 @@
 import { computed, reactive, ref, nextTick } from 'vue'
 import axios from 'axios'
 
-type PaymentKey = 'atm' | 'credit' | 'applepay' | 'googlepay' | 'linepay' | 'jkopay'
+type PaymentKey = 'credit' | 'linepay'
 
 import iconVisa from '@/assets/pay_img/visa-classic-svgrepo-com.svg'
 import iconMastercard from '@/assets/pay_img/mastercard-svgrepo-com.svg'
@@ -95,9 +95,16 @@ const startAioPayment = async () => {
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('綠界結帳失敗:', error);
-    alert(error.response?.data?.message || '系統連線異常，請檢查伺服器狀態');
+    if (axios.isAxiosError(error)) {
+      const serverMessage = error.response?.data?.message;
+      alert(serverMessage || '伺服器回傳錯誤');
+    } else if (error instanceof Error) {
+      alert(error.message);
+    } else {
+      alert('發生未知異常');
+    }
     isProcessing.value = false;
   }
 };
@@ -120,12 +127,18 @@ const startLinePay = async () => {
       alert(`LINE Pay 請求失敗：${response.data.returnMessage}`);
       isProcessing.value = false;
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Line Pay 請求失敗:', error);
-    const errorMsg = error.response?.data?.message || '系統連線異常，請檢查後端是否啟動';
+    let errorMsg = '系統連線異常，請檢查後端是否啟動';
+    if (axios.isAxiosError(error)) {
+      errorMsg = error.response?.data?.message || `連線失敗 (${error.status || '連線逾時'})`;
+    } else if (error instanceof Error) {
+      errorMsg = error.message;
+    }
+
     alert(errorMsg);
     isProcessing.value = false;
-  }
+  };
 };
 
 const paymentOptions: Array<{
