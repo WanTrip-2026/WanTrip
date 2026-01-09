@@ -285,6 +285,7 @@
         <div
           class="fixed top-0 left-0 h-full w-[285px] bg-white z-[1000] shadow-xl overflow-y-auto transform transition-transform duration-300"
           :class="{ '-translate-x-full': !isFilterOpen, 'translate-x-0': isFilterOpen }"
+          @click.stop
         >
           <div class="flex flex-col gap-5 p-5">
             <h3 class="font-bold text-xl text-dark mb-[20px]">篩選條件</h3>
