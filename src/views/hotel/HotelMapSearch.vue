@@ -158,24 +158,7 @@
     </header>
     <!-- 地圖 -->
     <div class="absolute inset-0 bg-[#e5e3df] z-0 overflow-hidden">
-      <iframe
-        class="w-full h-full border-0"
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7188.632859084555!2d121.51760264946732!3d25.05771890815704!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a968f68729e7%3A0x6e3f6d2374968eaa!2z5Y-w5YyX5pm26I-v6YWS5bqX!5e0!3m2!1szh-TW!2stw!4v1767279114226!5m2!1szh-TW!2stw"
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-      ></iframe>
-      <div
-        v-for="(pin, idx) in pins"
-        :key="idx"
-        class="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
-        :style="{ top: pin.y, left: pin.x }"
-      >
-        <div
-          class="bg-primary text-white text-xs font-bold px-2 py-1 rounded shadow-lg group-hover:bg-main_800 transition scale-100 group-hover:scale-110"
-        >
-          NT$ {{ pin.price }}
-        </div>
-      </div>
+      <div id="map" class="w-full h-full"></div>
     </div>
     <div class="flex gap-3 fixed top-[100px] ml-5">
       <button
@@ -400,10 +383,19 @@
 </template>
 
 <script setup lang="ts">
+/// <reference types="@types/google.maps" />
 import { reactive, ref, watch, computed, onMounted } from 'vue'
 import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+
+declare global {
+  interface Window {
+    initMap: () => void
+    google: typeof google.maps
+  }
+}
 
 const router = useRouter()
 
@@ -435,6 +427,10 @@ interface Hotel {
   star_rating: number
   min_price: number
   facilities?: string[]
+  address?: string
+  cover_image?: string
+  latitude: number
+  longitude: number
 }
 
 type FacilityName = string
@@ -455,16 +451,6 @@ const range = ref({
   start: new Date(),
   end: new Date(new Date().setDate(new Date().getDate() + 1)),
 })
-
-// 模擬地圖上的位置資料
-const pins = ref([
-  { x: '25%', y: '30%', price: '1,325' },
-  { x: '45%', y: '40%', price: '2,473' },
-  { x: '60%', y: '25%', price: '1,085' },
-  { x: '75%', y: '60%', price: '12,000' },
-  { x: '35%', y: '70%', price: '2,028' },
-  { x: '55%', y: '80%', price: '5,700' },
-])
 
 const minPrice = 0
 const maxPrice = 15000
@@ -585,25 +571,131 @@ const fetchHotels = async () => {
 onMounted(async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 
-    const hotelsPromise = fetchHotels()
-    const facilitiesPromise = fetch(`${apiUrl}/facilities`)
+    if (!apiKey) {
+      console.error('Google Maps API Key 遺失！')
+      return
+    }
 
-    const [facilitiesRes] = await Promise.all([facilitiesPromise, hotelsPromise])
+    // 1. 同步抓飯店與設施資料（統一用 axios）
+    const [facilitiesRes, hotelsRes] = await Promise.all([
+      axios.get(`${apiUrl}/facilities`),
+      axios.get(`${apiUrl}/hotels`),
+    ])
 
-    if (!facilitiesRes.ok) throw new Error('取得設施資料失敗')
-    facilities.value = await facilitiesRes.json()
+    if (!facilitiesRes.data) {
+      // 如果後端回來的資料是空的或 undefined，就丟錯
+      throw new Error('取得設施資料失敗')
+    }
+
+    facilities.value = facilitiesRes.data
+    hotels.value = hotelsRes.data
 
     const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
     if (facilityMenu) {
       facilityMenu.options = facilities.value
     }
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.error(err.message)
-    } else {
-      console.error(err)
+
+    hotels.value = hotelsRes.data // 後端回傳的飯店資料
+
+    // 2. 載入 Google Maps JS
+    const script = document.createElement('script')
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`
+    script.async = true
+    script.defer = true
+    // 注入到頁面
+    document.head.appendChild(script)
+
+    // 3. 建立全域 initMap，Google Maps callback 會呼叫
+    window.initMap = () => {
+      const map = new google.maps.Map(document.getElementById('map') as HTMLElement, {
+        center: { lat: 25.033964, lng: 121.564468 },
+        zoom: 12,
+      })
+
+      // 4. 加上飯店標記
+
+      // 自訂 OverlayView
+      class PriceMarker extends google.maps.OverlayView {
+        position: google.maps.LatLng
+        hotel: Hotel
+        div: HTMLDivElement | null = null
+
+        constructor(position: google.maps.LatLng, hotel: Hotel) {
+          super()
+          this.position = position
+          this.hotel = hotel
+        }
+
+        onAdd() {
+          this.div = document.createElement('div')
+          this.div.className = 'price-marker'
+          this.div.innerText = `NT$ ${this.hotel.min_price}`
+          this.div.style.cssText = `
+              position: absolute;
+              background: #2F3D4D;
+              color: white;
+              padding: 4px 8px;
+              border-radius: 8px;
+              font-weight: bold;
+              cursor: pointer;
+              text-align: center;
+              white-space: nowrap;
+              box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            `
+
+          this.div.addEventListener('click', () => {
+            // 建立 InfoWindow
+            const info = new google.maps.InfoWindow({
+              content: `
+                  <div style="width: 250px;">
+                    <strong>${this.hotel.name}</strong><br>
+                    ${this.hotel.address ?? ''}<br>
+                    最低房價: NT$ ${this.hotel.min_price}<br>
+                    <img src="${this.hotel.cover_image ?? ''}" style="width:100%; border-radius:4px; margin-top:4px;" />
+                  </div>
+                `,
+            })
+            info.setPosition(this.position)
+            info.open(this.getMap()!)
+          })
+
+          const panes = this.getPanes()
+          panes?.overlayMouseTarget.appendChild(this.div)
+        }
+
+        draw() {
+          if (!this.div) return
+          const projection = this.getProjection()
+          if (!projection) return
+
+          const pos = projection.fromLatLngToDivPixel(this.position)
+          if (!pos) return
+          this.div.style.left = pos.x + 'px'
+          this.div.style.top = pos.y + 'px'
+        }
+
+        onRemove() {
+          if (this.div?.parentNode) this.div.parentNode.removeChild(this.div)
+        }
+      }
+
+      hotels.value.forEach((hotel) => {
+        if (!hotel.latitude || !hotel.longitude) return
+
+        const marker = new PriceMarker(
+          new google.maps.LatLng(hotel.latitude, hotel.longitude),
+          hotel,
+        )
+        marker.setMap(map)
+      })
     }
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) console.error(err.response?.data || err.message)
+    else if (err instanceof Error) console.error(err.message)
+    else console.error(err)
+
     error.value = '初始化資料時發生錯誤'
   }
 })
@@ -657,5 +749,10 @@ function clearOptions(key: string) {
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;
+}
+
+.price-marker:hover {
+  transform: scale(1.2);
+  transition: transform 0.2s ease;
 }
 </style>
