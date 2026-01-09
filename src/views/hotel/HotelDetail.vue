@@ -440,9 +440,10 @@ interface Hotel {
 }
 
 interface HotelImage {
-  id: number
+  id: string
   hotel_id: string
   image_url: string
+  sort_order?: number | null
 }
 
 interface Room {
@@ -477,28 +478,76 @@ const hotel = ref<Hotel | null>(null)
 const error = ref<string | null>(null)
 const images = ref<string[]>([])
 
+// onMounted(async () => {
+//   try {
+//     // 取得飯店資料
+//     const apiUrl = import.meta.env.VITE_API_BASE_URL
+
+//     const [hotelRes, imagesRes] = await Promise.all([
+//       fetch(`${apiUrl}/hotels/${hotelId}`),
+//       fetch(`${apiUrl}/hotel_images/${hotelId}`),
+//     ])
+
+//     if (!hotelRes.ok) throw new Error('取得飯店資料失敗')
+//     hotel.value = await hotelRes.json()
+
+//     if (!imagesRes.ok) throw new Error('取得飯店圖片失敗')
+//     const data = await imagesRes.json()
+
+//     // 假設 API 回傳的結構 [{ id, hotel_id, image_url, ... }]
+//     images.value = (data as HotelImage[]).sort((a, b) => a.id - b.id).map((img) => img.image_url)
+//     error.value = null
+//   } catch (err: unknown) {
+//     console.error(err)
+//     error.value = '取得飯店資料或圖片時發生錯誤'
+//   }
+// })
 onMounted(async () => {
+  const apiUrl = import.meta.env.VITE_API_BASE_URL
   try {
-    // 取得飯店資料
-    const apiUrl = import.meta.env.VITE_API_BASE_URL
+    if (!apiUrl) throw new Error('VITE_API_BASE_URL 未設定')
 
-    const [hotelRes, imagesRes] = await Promise.all([
-      fetch(`${apiUrl}/hotels/${hotelId}`),
-      fetch(`${apiUrl}/hotel_images/${hotelId}`),
-    ])
+    // 確保 hotelId 一定是 string
+    const id =
+      typeof route.params.id === 'string'
+        ? route.params.id
+        : Array.isArray(route.params.id)
+          ? route.params.id[0]
+          : ''
 
-    if (!hotelRes.ok) throw new Error('取得飯店資料失敗')
-    hotel.value = await hotelRes.json()
+    if (!id) throw new Error('route.params.id 取不到值')
 
-    if (!imagesRes.ok) throw new Error('取得飯店圖片失敗')
-    const data = await imagesRes.json()
+    const hotelUrl = `${apiUrl}/hotels/${id}`
+    const imagesUrl = `${apiUrl}/hotel_images/${id}`
 
-    // 假設 API 回傳的結構 [{ id, hotel_id, image_url, ... }]
-    images.value = (data as HotelImage[]).sort((a, b) => a.id - b.id).map((img) => img.image_url)
+    console.log('[hotelUrl]', hotelUrl)
+    console.log('[imagesUrl]', imagesUrl)
+
+    const [hotelRes, imagesRes] = await Promise.all([fetch(hotelUrl), fetch(imagesUrl)])
+
+    // 先把文字取出來，才能在錯的時候印出 body
+    const hotelText = await hotelRes.text()
+    const imagesText = await imagesRes.text()
+
+    console.log('[hotelRes]', hotelRes.status, hotelText)
+    console.log('[imagesRes]', imagesRes.status, imagesText)
+
+    if (!hotelRes.ok) throw new Error(`取得飯店資料失敗：${hotelRes.status}`)
+    if (!imagesRes.ok) throw new Error(`取得飯店圖片失敗：${imagesRes.status}`)
+
+    hotel.value = JSON.parse(hotelText)
+
+    const data = JSON.parse(imagesText) as HotelImage[]
+
+    // 改用 sort_order
+    images.value = data
+      .sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999))
+      .map((img) => img.image_url)
+
     error.value = null
   } catch (err: unknown) {
-    console.error(err)
-    error.value = '取得飯店資料或圖片時發生錯誤'
+    console.error('[HotelDetail error]', err)
+    error.value = err instanceof Error ? err.message : '取得飯店資料或圖片時發生錯誤'
   }
 })
 
