@@ -51,7 +51,7 @@ const HotelFiltered = reactive<FilterMenu[]>([
     options: ['好極了: 9分以上', '非常好: 8分以上', '好: 7分以上', '令人愉悅: 6分以上'],
     selected: [],
   },
-  { key: 'type', title: '住宿類型', options: ['飯店', '旅館', '民宿', '度假村'], selected: [] },
+  { key: 'types', title: '住宿類型', options: [], selected: [] },
   {
     key: 'policies',
     title: '付款政策',
@@ -95,7 +95,9 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
     // facilities（後端支援 facility_names=xxx,yyy）
     const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
     if (selectedFacilities.length > 0) params.append('facility_names', selectedFacilities.join(','))
-
+    // types（住宿類型）
+    const selectedTypes = HotelFiltered.find((m) => m.key === 'types')?.selected ?? []
+    if (selectedTypes.length > 0) params.append('types', selectedTypes.join(','))
     //星級：你後端目前沒支援，先不送（要支援我再幫你補後端）
     const selectedStars = HotelFiltered.find((m) => m.key === 'star_rating')?.selected ?? []
     if (selectedStars.length > 0) {
@@ -106,6 +108,9 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
     }
     params.append('page', String(page))
     params.append('limit', String(limit))
+
+    const url = `${apiUrl}/hotels?${params.toString()}`
+    console.log('[fetchHotels]', url)
 
     const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
     if (!res.ok) throw new Error('取得飯店資料失敗')
@@ -147,6 +152,16 @@ onMounted(async () => {
 
     const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
     if (facilityMenu) facilityMenu.options = facilities.value
+    //類型清單
+    const typesRes = await fetch(`${apiUrl}/hotel_types`)
+    if (!typesRes.ok) throw new Error('取得住宿類型失敗')
+
+    const types: string[] = await typesRes.json()
+
+    const typeMenu = HotelFiltered.find((m) => m.key === 'types')
+    if (typeMenu) {
+      typeMenu.options = types
+    }
 
     // 第一頁飯店
     await fetchHotels(1, itemsPerPage)
@@ -168,6 +183,13 @@ watch(
 )
 watch(
   () => HotelFiltered.find((m) => m.key === 'star_rating')?.selected,
+  () => {
+    goToPage(1)
+  },
+  { deep: true },
+)
+watch(
+  () => HotelFiltered.find((m) => m.key === 'types')?.selected,
   () => {
     goToPage(1)
   },
@@ -242,7 +264,7 @@ function clearOptions(key: string) {
   const menu = HotelFiltered.find((m) => m.key === key)
   if (menu) menu.selected = []
 
-  if (key === 'facilities' || key === 'star_rating') goToPage(1)
+  if (key === 'facilities' || key === 'star_rating' || key === 'types') goToPage(1)
 }
 
 function toggleMenu(key: string) {

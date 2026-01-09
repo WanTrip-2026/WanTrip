@@ -521,7 +521,6 @@ onMounted(async () => {
 
     console.log('[hotelUrl]', hotelUrl)
     console.log('[imagesUrl]', imagesUrl)
-
     const [hotelRes, imagesRes] = await Promise.all([fetch(hotelUrl), fetch(imagesUrl)])
 
     // 先把文字取出來，才能在錯的時候印出 body
