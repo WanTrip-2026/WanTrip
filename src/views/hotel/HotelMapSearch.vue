@@ -32,7 +32,7 @@
               <p class="text-xs font-bold leading-tight text-primary/70">想去哪</p>
               <div class="relative">
                 <input
-                  v-model="form.destination"
+                  v-model="keyword"
                   class="w-full bg-transparent text-sm outline-none appearance-none cursor-pointer pr-8 font-medium text-primary group-hover:text-main_800 transition-colors"
                   type="text"
                   placeholder="想住哪～"
@@ -214,7 +214,7 @@
           :key="hotel.id"
           class="bg-white w-full h-[180px] rounded-[20px] border border-gray-200 overflow-hidden flex flex-row hover:shadow-lg transition-shadow duration-300"
         >
-          <div class="h-full w-[160px] relative flex-shrink-0">
+          <div class="aspect-[2/3] relative flex-shrink-0">
             <img
               src="https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg"
               :alt="hotel.name"
@@ -260,7 +260,7 @@
             </div>
 
             <div class="flex justify-between items-end">
-              <div class="text-[#D14D4D] text-lg font-bold">
+              <div class="text-[#D14D4D] text-xl font-bold">
                 NT${{ hotel.min_price.toLocaleString() }}
               </div>
               <div class="flex gap-2">
@@ -407,13 +407,6 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-defineProps({
-  hotel: {
-    type: Object,
-    required: true,
-  },
-})
-
 function starCount(stars: number) {
   return stars
 }
@@ -451,12 +444,6 @@ const facilities = ref<FacilityName[]>([])
 const hotels = ref<Hotel[]>([])
 const keyword = ref('')
 const error = ref<string | null>(null)
-
-const form = reactive({
-  destination: '',
-  dateRange: '',
-  people: '',
-})
 
 const peopleConfig = reactive({
   adults: 2,
@@ -510,16 +497,6 @@ const peopleDisplayText = computed(() => {
   if (peopleConfig.hasPet) text += `｜帶寵物`
   return text
 })
-
-watch(
-  range,
-  (newRange) => {
-    if (newRange?.start && newRange?.end) {
-      form.dateRange = `${newRange.start.toLocaleDateString()} - ${newRange.end.toLocaleDateString()}`
-    }
-  },
-  { immediate: true },
-)
 
 const isListOpen = ref(true)
 const isFilterOpen = ref(false)
