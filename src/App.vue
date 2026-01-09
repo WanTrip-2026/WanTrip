@@ -20,11 +20,11 @@ onMounted(() => {
 })
 
 const showAppNavbar = computed(() => {
-  return route.meta.showAppNavbar !== false
+  return route && route.meta && route.meta.showAppNavbar !== false
 })
 
 const showFooter = computed(() => {
-  return route.meta.showFooter !== false
+  return route && route.meta && route.meta.showFooter !== false
 })
 </script>
 

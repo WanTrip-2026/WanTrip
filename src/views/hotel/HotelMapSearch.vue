@@ -389,6 +389,7 @@ import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { MarkerClusterer } from '@googlemaps/markerclusterer'
 
 declare global {
   interface Window {
@@ -610,16 +611,17 @@ onMounted(async () => {
 
     // 3. 建立全域 initMap，Google Maps callback 會呼叫
     window.initMap = async () => {
+      // 設定碰撞行為
       const { AdvancedMarkerElement, CollisionBehavior } = (await google.maps.importLibrary(
         'marker',
       )) as google.maps.MarkerLibrary
-      console.log('當前 Map ID:', mapId)
-      // 初始化地圖，必須加上 mapId
       const map = new google.maps.Map(document.getElementById('map') as HTMLElement, {
         center: { lat: 25.033964, lng: 121.564468 },
         zoom: 12,
         mapId: mapId,
       })
+
+      const markers: google.maps.marker.AdvancedMarkerElement[] = []
 
       // 2. 準備飯店標記
       hotels.value.forEach((hotel) => {
@@ -663,12 +665,47 @@ onMounted(async () => {
           </div>
         `,
           })
-          info.open({
-            anchor: marker,
-            map,
-          })
+          info.open({ anchor: marker, map })
         })
+        markers.push(marker)
       })
+      if (markers.length > 0) {
+        const customRenderer = {
+          render: ({ count, position }: { count: number; position: google.maps.LatLng }) => {
+            const container = document.createElement('div')
+            // 根據飯店數量決定圓圈大小，更有層次感
+            const size = count < 10 ? 40 : 50
+
+            container.style.cssText = `
+            width: ${size}px;
+            height: ${size}px;
+            background: rgba(47, 61, 64, 0.8);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            border: 1px solid white;
+            cursor: pointer;
+            backdrop-filter: blur(4px)
+        `
+            container.innerText = `${count}`
+
+            return new google.maps.marker.AdvancedMarkerElement({
+              position,
+              content: container,
+            })
+          },
+        }
+        new MarkerClusterer({
+          map,
+          markers,
+          renderer: customRenderer,
+        })
+      }
     }
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) console.error(err.response?.data || err.message)
