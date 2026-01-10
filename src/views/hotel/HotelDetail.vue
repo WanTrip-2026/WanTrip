@@ -7,7 +7,7 @@
         <div class="relative w-full h-12 md:h-full flex-1">
           <input
             type="text"
-            placeholder="台北萬豪酒店"
+            :placeholder="hotel?.name || '請輸入飯店名稱'"
             class="h-10 w-full pl-4 md:pl-10 pr-4 text-sm md:text-base border-none bg-gray-50 md:bg-transparent rounded-xl md:rounded-full focus:ring-2 focus:ring-primary/20 outline-none transition-all"
           />
         </div>
@@ -217,7 +217,7 @@
                 class="bg-main_100 flex items-center p-5 justify-center aspect-[4/3] overflow-hidden"
               >
                 <img
-                  :src="room.image"
+                  :src="room.image_url"
                   :alt="room.name"
                   class="w-full h-full rounded-[20px] object-cover"
                 />
@@ -252,7 +252,9 @@
             <div
               class="w-full md:w-[25%] p-[20px] bg-white flex flex-col justify-start border-t md:border-t-0 md:border-l border-gray-300"
             >
-              <span class="text-[#D14D4D] font-bold text-2xl self-end">NT$ {{ room.price }}</span>
+              <span class="text-[#D14D4D] font-bold text-2xl self-end">
+                NT$ {{ (room.price ?? 0).toLocaleString() }}</span
+              >
               <RouterLink to="/orders/checkout">
                 <button
                   class="bg-primary w-full text-white px-[40px] py-[10px] rounded-full mt-4 font-bold hover:bg-main_800"
@@ -447,13 +449,13 @@ interface HotelImage {
 }
 
 interface Room {
-  id: number
+  id: string
   name: string
-  price: string
+  price: number
   capacity: number
-  features: string[]
+  image_url: string
   details: string[]
-  image: string
+  features: string[]
 }
 
 interface Review {
@@ -476,37 +478,31 @@ const route = useRoute()
 const hotel = ref<Hotel | null>(null)
 const error = ref<string | null>(null)
 const images = ref<string[]>([])
+const rooms = ref<Room[]>([])
+//預設資訊
+const mockFeaturesDefault: string[] = [
+  '豐盛早餐付費 TWD935 (選購)',
+  '可免費取消',
+  '即時確認',
+  '線上預付',
+]
+//共同的資訊
+const mockFeaturesByKeyword: Array<{ keyword: string; features: string[] }> = [
+  {
+    keyword: '高級',
+    features: ['豐盛早餐付費 TWD935 (選購)', '可免費取消', '即時確認', '線上預付'],
+  },
+  {
+    keyword: '夜景',
+    features: ['豐盛早餐付費 TWD935 (選購)', '不可退款', '即時確認', '到店付款'],
+  },
+]
 
-// onMounted(async () => {
-//   try {
-//     // 取得飯店資料
-//     const apiUrl = import.meta.env.VITE_API_BASE_URL
-
-//     const [hotelRes, imagesRes] = await Promise.all([
-//       fetch(`${apiUrl}/hotels/${hotelId}`),
-//       fetch(`${apiUrl}/hotel_images/${hotelId}`),
-//     ])
-
-//     if (!hotelRes.ok) throw new Error('取得飯店資料失敗')
-//     hotel.value = await hotelRes.json()
-
-//     if (!imagesRes.ok) throw new Error('取得飯店圖片失敗')
-//     const data = await imagesRes.json()
-
-//     // 假設 API 回傳的結構 [{ id, hotel_id, image_url, ... }]
-//     images.value = (data as HotelImage[]).sort((a, b) => a.id - b.id).map((img) => img.image_url)
-//     error.value = null
-//   } catch (err: unknown) {
-//     console.error(err)
-//     error.value = '取得飯店資料或圖片時發生錯誤'
-//   }
-// })
 onMounted(async () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL
   try {
     if (!apiUrl) throw new Error('VITE_API_BASE_URL 未設定')
 
-    // 確保 hotelId 一定是 string
     const id =
       typeof route.params.id === 'string'
         ? route.params.id
@@ -518,91 +514,44 @@ onMounted(async () => {
 
     const hotelUrl = `${apiUrl}/hotels/${id}`
     const imagesUrl = `${apiUrl}/hotel_images/${id}`
+    const roomsUrl = `${apiUrl}/hotels/${id}/rooms`
 
-    console.log('[hotelUrl]', hotelUrl)
-    console.log('[imagesUrl]', imagesUrl)
-    const [hotelRes, imagesRes] = await Promise.all([fetch(hotelUrl), fetch(imagesUrl)])
+    const [hotelRes, imagesRes, roomsRes] = await Promise.all([
+      fetch(hotelUrl),
+      fetch(imagesUrl),
+      fetch(roomsUrl),
+    ])
 
-    // 先把文字取出來，才能在錯的時候印出 body
     const hotelText = await hotelRes.text()
     const imagesText = await imagesRes.text()
-
-    console.log('[hotelRes]', hotelRes.status, hotelText)
-    console.log('[imagesRes]', imagesRes.status, imagesText)
+    const roomsText = await roomsRes.text()
 
     if (!hotelRes.ok) throw new Error(`取得飯店資料失敗：${hotelRes.status}`)
     if (!imagesRes.ok) throw new Error(`取得飯店圖片失敗：${imagesRes.status}`)
+    if (!roomsRes.ok) throw new Error(`取得房型資料失敗：${roomsRes.status}`)
 
     hotel.value = JSON.parse(hotelText)
 
-    const data = JSON.parse(imagesText) as HotelImage[]
-
-    // 改用 sort_order
-    images.value = data
+    const imgData = JSON.parse(imagesText) as HotelImage[]
+    images.value = imgData
       .sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999))
       .map((img) => img.image_url)
 
+    const apiRooms = JSON.parse(roomsText) as Omit<Room, 'features'>[]
+    // 依房型有不同 features
+    rooms.value = apiRooms.map((r) => {
+      const rule = mockFeaturesByKeyword.find((x) => r.name?.includes(x.keyword))
+      return {
+        ...r,
+        features: [...(rule?.features ?? mockFeaturesDefault)],
+      }
+    })
     error.value = null
   } catch (err: unknown) {
     console.error('[HotelDetail error]', err)
     error.value = err instanceof Error ? err.message : '取得飯店資料或圖片時發生錯誤'
   }
 })
-
-const rooms = ref<Room[]>([
-  {
-    id: 1,
-    name: '豪華大床房',
-    price: '8,714',
-    capacity: 2,
-    features: ['豐盛早餐付費 TWD935 (選購)', '2026年2月16日前可免費取消', '即時確認', '線上預付'],
-    details: [
-      '1張特大雙人床',
-      '城市景觀',
-      '禁菸',
-      '40平方公尺 | 樓層：11-12',
-      '免費 Wi-Fi',
-      '空調',
-      '私人浴室',
-    ],
-    image: '/src/assets/hoteldetail_img/Wanhao5.jpg',
-  },
-
-  {
-    id: 2,
-    name: '豪華雙床房',
-    price: '8,150',
-    capacity: 4,
-    features: ['豐盛早餐付費 TWD935 (選購)', '不可退款', '即時確認', '線上預付'],
-    details: [
-      '2張單人床',
-      '城市景觀',
-      '禁菸',
-      '40平方公尺 | 樓層：11-12',
-      '免費 Wi-Fi',
-      '空調',
-      '私人浴室',
-    ],
-    image: '/src/assets/hoteldetail_img/Wanhao5.jpg',
-  },
-  {
-    id: 3,
-    name: '經典大床房',
-    price: '10,626',
-    capacity: 1,
-    features: ['豐盛早餐付費 TWD935 (選購)', '不可退款', '即時確認', '到店付款'],
-    details: [
-      '1張特大雙人床',
-      '城市景觀',
-      '禁菸',
-      '40平方公尺 | 樓層：6-10',
-      '免費 Wi-Fi',
-      '空調',
-      '私人浴室',
-    ],
-    image: '/src/assets/hoteldetail_img/Wanhao5.jpg',
-  },
-])
 
 const reviews = ref<Review[]>([
   {

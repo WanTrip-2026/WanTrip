@@ -39,8 +39,6 @@ const currentPage = ref(1)
 const itemsPerPage = 8
 const totalPages = ref(1)
 
-/* 星級選項：由於後端分頁，一頁只有 8 筆，不能用「當頁資料」推星級
- */
 const starOptions = computed(() => ['5星級', '4星級', '3星級', '2星級'])
 
 const HotelFiltered = reactive<FilterMenu[]>([
@@ -98,11 +96,11 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
     // types（住宿類型）
     const selectedTypes = HotelFiltered.find((m) => m.key === 'types')?.selected ?? []
     if (selectedTypes.length > 0) params.append('types', selectedTypes.join(','))
-    //星級：你後端目前沒支援，先不送（要支援我再幫你補後端）
+    //星級
     const selectedStars = HotelFiltered.find((m) => m.key === 'star_rating')?.selected ?? []
     if (selectedStars.length > 0) {
       const starNums = selectedStars
-        .map((s) => parseInt(s, 10)) // '5星級' → 5（parseInt 會吃到前面的數字）
+        .map((s) => parseInt(s, 10)) // '5星級' → 5
         .filter((n) => Number.isFinite(n))
       if (starNums.length > 0) params.append('star_ratings', starNums.join(','))
     }
