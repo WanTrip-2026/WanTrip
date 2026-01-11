@@ -195,6 +195,8 @@
         <div
           v-for="hotel in hotels"
           :key="hotel.id"
+          @mouseenter="handleHotelHover(hotel.id, true)"
+          @mouseleave="handleHotelHover(hotel.id, false)"
           class="bg-white w-full h-[180px] rounded-[20px] border border-gray-200 overflow-hidden flex flex-row hover:shadow-lg transition-shadow duration-300"
         >
           <div class="aspect-[2/3] relative flex-shrink-0">
@@ -436,6 +438,8 @@ interface Hotel {
 
 type FacilityName = string
 
+const markerMap = new Map<string | number, google.maps.marker.AdvancedMarkerElement>()
+
 const facilities = ref<FacilityName[]>([])
 
 const hotels = ref<Hotel[]>([])
@@ -652,13 +656,14 @@ onMounted(async () => {
 
         // 3. 建立進階標記
         const marker = new AdvancedMarkerElement({
-          map,
           position: { lat: Number(hotel.latitude), lng: Number(hotel.longitude) },
           content: priceTag,
           title: hotel.name,
           collisionBehavior: CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
           zIndex: 1000000 - Number(hotel.min_price),
         })
+
+        markerMap.set(hotel.id, marker)
 
         // 4. 點擊事件
         marker.addListener('click', () => {
@@ -735,6 +740,21 @@ onMounted(async () => {
     error.value = '初始化資料時發生錯誤'
   }
 })
+
+const handleHotelHover = (hotelId: string | number, isHover: boolean) => {
+  const marker = markerMap.get(hotelId)
+  if (!marker || !marker.content) return
+
+  const element = marker.content as HTMLElement
+
+  if (isHover) {
+    element.classList.add('scale-110', 'bg-[#D14D4D]', 'z-[9999]', 'shadow-xl')
+    element.classList.remove('bg-primary')
+  } else {
+    element.classList.remove('scale-110', 'bg-[#D14D4D]', 'z-[9999]', 'shadow-xl')
+    element.classList.add('bg-primary')
+  }
+}
 
 watch(
   () => HotelFiltered.find((m) => m.key === 'facilities')?.selected,
