@@ -439,6 +439,7 @@ interface Hotel {
 type FacilityName = string
 
 const markerMap = new Map<string | number, google.maps.marker.AdvancedMarkerElement>()
+const mapInstance = ref<google.maps.Map | null>(null)
 
 const facilities = ref<FacilityName[]>([])
 
@@ -563,6 +564,10 @@ const fetchHotels = async () => {
 
     hotels.value = await res.json()
     error.value = null
+
+    if (keyword.value.trim()) {
+      moveMapToKeyword(keyword.value.trim())
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message)
@@ -607,7 +612,7 @@ onMounted(async () => {
 
     // 2. 載入 Google Maps JS
     const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=marker`
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=marker,places`
     script.async = true
     script.defer = true
     // 注入到頁面
@@ -624,7 +629,7 @@ onMounted(async () => {
         zoom: 12,
         mapId: mapId,
       })
-
+      mapInstance.value = map
       const markers: google.maps.marker.AdvancedMarkerElement[] = []
 
       // 2. 準備飯店標記
@@ -744,6 +749,45 @@ onMounted(async () => {
     error.value = '初始化資料時發生錯誤'
   }
 })
+
+const moveMapToKeyword = async (searchKeyword: string) => {
+  if (!window.google || !mapInstance.value) return
+  if (!searchKeyword) return
+
+  const geocoder = new google.maps.Geocoder()
+
+  geocoder.geocode({ address: searchKeyword }, (results, status) => {
+    if (status === 'OK' && results && results[0]) {
+      const map = mapInstance.value!
+      const location = results[0].geometry.location
+      const viewport = results[0].geometry.viewport
+
+      // 1. 先平滑移動到中心
+      map.panTo(location)
+
+      if (viewport) {
+        // 2. 執行範圍縮放
+        map.fitBounds(viewport, {
+          top: 150,
+          bottom: 150,
+          left: 480,
+          right: 80,
+        })
+
+        google.maps.event.addListenerOnce(map, 'idle', () => {
+          if (map.getZoom()! < 14) {
+            map.setZoom(14)
+            map.panTo(location)
+          }
+        })
+      } else {
+        map.setZoom(15)
+      }
+    } else {
+      console.error('無法定位該位置：' + status)
+    }
+  })
+}
 
 const handleHotelHover = (hotelId: string | number, isHover: boolean) => {
   const marker = markerMap.get(hotelId)
