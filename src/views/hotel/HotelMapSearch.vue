@@ -416,7 +416,7 @@
 
 <script setup lang="ts">
 /// <reference types="@types/google.maps" />
-import { reactive, ref, watch, computed, onMounted } from 'vue'
+import { reactive, ref, watch, computed, onMounted, onUnmounted } from 'vue'
 import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
@@ -425,7 +425,7 @@ import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markercluste
 
 declare global {
   interface Window {
-    initMap: () => void
+    initMap?: (() => void) | null
     google: typeof google.maps
   }
 }
@@ -472,6 +472,19 @@ const markerMap = new Map<string | number, google.maps.marker.AdvancedMarkerElem
 const mapInstance = ref<google.maps.Map | null>(null)
 
 const facilities = ref<FacilityName[]>([])
+
+const generateStarHtml = (rating: number) => {
+  const starSvg = `<svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      viewBox="0 0 576 512" 
+      class="w-3 h-3 inline-block" 
+      fill="currentColor" 
+      style="width: 12px; height: 12px; color: #facc15; margin-right: 1px; flex-shrink: 0;"
+    >
+      <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.8 33.8-2.3s14.8-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/>
+    </svg>`
+  return Array(Math.floor(rating)).fill(starSvg).join('')
+}
 
 const hotels = ref<Hotel[]>([])
 const keyword = ref('')
@@ -625,7 +638,6 @@ onMounted(async () => {
       console.error('Google Maps API Key 遺失！')
       return
     }
-
     // 1. 同步抓飯店與設施資料（統一用 axios）
     const [facilitiesRes, hotelsRes] = await Promise.all([
       axios.get(`${apiUrl}/facilities`),
@@ -633,7 +645,6 @@ onMounted(async () => {
     ])
 
     if (!facilitiesRes.data) {
-      // 如果後端回來的資料是空的或 undefined，就丟錯
       throw new Error('取得設施資料失敗')
     }
 
@@ -647,27 +658,21 @@ onMounted(async () => {
 
     hotels.value = hotelsRes.data // 後端回傳的飯店資料
 
-    // 2. 載入 Google Maps JS
-    const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=marker,places`
-    script.async = true
-    script.defer = true
-    // 注入到頁面
-    document.head.appendChild(script)
-
-    // 3. 建立全域 initMap，Google Maps callback 會呼叫
-    window.initMap = async () => {
-      // 設定碰撞行為
+    const runMapInitialization = async () => {
+      // 確保載入 marker 函式庫
       const { AdvancedMarkerElement, CollisionBehavior } = (await google.maps.importLibrary(
         'marker',
       )) as google.maps.MarkerLibrary
+
       const map = new google.maps.Map(document.getElementById('map') as HTMLElement, {
         center: { lat: 25.033964, lng: 121.564468 },
         zoom: 12,
         mapId: mapId,
       })
       mapInstance.value = map
+
       const markers: google.maps.marker.AdvancedMarkerElement[] = []
+      const infoWindow = new google.maps.InfoWindow({ disableAutoPan: true })
 
       // 2. 準備飯店標記
       hotels.value.forEach((hotel) => {
@@ -707,26 +712,50 @@ onMounted(async () => {
 
         markerMap.set(hotel.id, marker)
 
-        // 4. 點擊事件
-        marker.addListener('click', () => {
-          const info = new google.maps.InfoWindow({
-            content: `
-              <div class="w-[250px] text-slate-900 p-1">
-                <strong class="text-lg font-bold block mb-1">${hotel.name}</strong>
-                <p class="text-sm text-slate-600 mb-1">${hotel.address ?? ''}</p>
-                <p class="text-base font-bold text-[#D14D4D] mb-2">
-                  最低房價: NT$ ${hotel.min_price.toLocaleString()}
-                </p>
-                <div class="w-full h-32 overflow-hidden rounded-lg shadow-sm">
-                  <img src="${hotel.cover_image ?? ''}" 
-                      class="w-full h-full object-cover" 
-                      alt="${hotel.name}" />
+        priceTag.addEventListener('mouseover', () => {
+          // 放大標籤效果 (選用)
+          priceTag.style.transform = 'scale(1.1)'
+          priceTag.style.zIndex = '1000'
+
+          infoWindow.setContent(`
+            <div class="flex w-[320px] bg-white rounded-[20px] overflow-hidden">
+              <div class="w-[100px] h-[120px] flex-shrink-0">
+                <img src="${hotel.cover_image || ''}" class="w-full h-full object-cover" />
+              </div>
+
+              <div class="relative flex-1 p-3 flex flex-col justify-between min-w-0">
+                <div class="absolute top-2 right-2 bg-[#2F3D4D] text-white px-2 py-0.5 rounded-[10px] text-[10px]">
+                  ${hotel.star_rating}.0
+                </div>
+
+                <div>
+                  <h3 class="m-0 text-base font-bold text-black truncate pr-8">
+                    ${hotel.name}
+                  </h3>
+                  <div class="flex gap-0.5 my-1">
+                    ${generateStarHtml(hotel.star_rating)}
+                  </div>
+                  <p class="m-0 text-slate-500 text-xs">
+                    ${hotel.city}${hotel.district}
+                  </p>
+                </div>
+
+                <div class="text-[#D14D4D] text-base font-bold">
+                  NT$ ${hotel.min_price.toLocaleString()}
                 </div>
               </div>
-            `,
-          })
-          info.open({ anchor: marker, map })
+            </div>
+          `)
+          infoWindow.open({ anchor: marker, map: mapInstance.value })
         })
+
+        // 監聽滑鼠移出
+        priceTag.addEventListener('mouseout', () => {
+          priceTag.style.transform = 'scale(1)'
+          priceTag.style.zIndex = ''
+          infoWindow.close()
+        })
+
         markers.push(marker)
       })
       if (markers.length > 0) {
@@ -772,10 +801,26 @@ onMounted(async () => {
           markers,
           renderer: customRenderer,
           algorithm: new SuperClusterAlgorithm({
-            radius: 20, // 數字越小，標籤越不容易被吃掉變成圓圈
-            maxZoom: 14, // 縮放到這個等級時，強迫所有圓圈解散，顯示標籤
+            radius: 20,
+            maxZoom: 14,
           }),
         })
+      }
+    }
+    // 3. 設定全域回呼，給 Google Maps 載入完成後呼叫
+    window.initMap = runMapInitialization
+
+    // 4. 檢查是否已經載入過腳本，防止重複載入導致 Element already defined
+    if (window.google && window.google.maps) {
+      runMapInitialization()
+    } else {
+      if (!document.getElementById('google-maps-script')) {
+        const script = document.createElement('script')
+        script.id = 'google-maps-script'
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=marker,places`
+        script.async = true
+        script.defer = true
+        document.head.appendChild(script)
       }
     }
   } catch (err: unknown) {
@@ -785,6 +830,10 @@ onMounted(async () => {
 
     error.value = '初始化資料時發生錯誤'
   }
+})
+
+onUnmounted(() => {
+  window.initMap = null
 })
 
 const moveMapToKeyword = async (searchKeyword: string) => {
