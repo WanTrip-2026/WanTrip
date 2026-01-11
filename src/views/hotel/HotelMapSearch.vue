@@ -628,19 +628,26 @@ onMounted(async () => {
         if (!hotel.latitude || !hotel.longitude) return
 
         const priceTag = document.createElement('div')
-        priceTag.className = 'custom-price-tag'
-        priceTag.style.cssText = `
-            background: #2F3D4D;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            white-space: nowrap;
-            font-size: 14px;
-            transition: transform 0.2s;
+        priceTag.className = `
+            custom-price-tag
+            bg-primary text-white
+            px-2 py-1
+            rounded-lg
+            font-bold
+            cursor-pointer
+            shadow-[0_2px_6px_rgba(0,0,0,0.3)]
+            whitespace-nowrap
+            text-sm
+            transition-all duration-200
         `
+        priceTag.addEventListener('mouseenter', () => {
+          priceTag.classList.add('scale-110', 'bg-[#D14D4D]', 'z-[9999]')
+          priceTag.classList.remove('bg-primary')
+        })
+        priceTag.addEventListener('mouseleave', () => {
+          priceTag.classList.remove('scale-110', 'bg-[#D14D4D]', 'z-[9999]')
+          priceTag.classList.add('bg-primary')
+        })
         priceTag.innerText = `NT$ ${hotel.min_price.toLocaleString()}`
 
         // 3. 建立進階標記
@@ -657,13 +664,19 @@ onMounted(async () => {
         marker.addListener('click', () => {
           const info = new google.maps.InfoWindow({
             content: `
-          <div style="width: 250px; color: black;">
-            <strong style="font-size: 16px;">${hotel.name}</strong><br>
-            <p style="margin: 4px 0;">${hotel.address ?? ''}</p>
-            <p style="margin: 4px 0; font-weight: bold; color: #D14D4D;">最低房價: NT$ ${hotel.min_price}</p>
-            <img src="${hotel.cover_image ?? ''}" style="width:100%; border-radius:8px; margin-top:8px;" />
-          </div>
-        `,
+              <div class="w-[250px] text-slate-900 p-1">
+                <strong class="text-lg font-bold block mb-1">${hotel.name}</strong>
+                <p class="text-sm text-slate-600 mb-1">${hotel.address ?? ''}</p>
+                <p class="text-base font-bold text-[#D14D4D] mb-2">
+                  最低房價: NT$ ${hotel.min_price.toLocaleString()}
+                </p>
+                <div class="w-full h-32 overflow-hidden rounded-lg shadow-sm">
+                  <img src="${hotel.cover_image ?? ''}" 
+                      class="w-full h-full object-cover" 
+                      alt="${hotel.name}" />
+                </div>
+              </div>
+            `,
           })
           info.open({ anchor: marker, map })
         })
@@ -676,22 +689,29 @@ onMounted(async () => {
             // 根據飯店數量決定圓圈大小，更有層次感
             const size = count < 10 ? 40 : 50
 
-            container.style.cssText = `
-            width: ${size}px;
-            height: ${size}px;
-            background: rgba(248, 253, 255, 0.5);
-            color: #2F3D4D;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-            border: 1px solid #2F3D4D;
+            container.style.width = `${size}px`
+            container.style.height = `${size}px`
+            container.className = `
+            bg-[#F8FDFF]/50
+            text-primary
+            rounded-full
+            flex items-center justify-center
+            font-bold text-sm
+            shadow-lg
+            border border-primary
             cursor: pointer;
-            backdrop-filter: blur(4px)
+            backdrop-blur-sm
+            transition-all duration-200
         `
+            container.addEventListener('mouseenter', () => {
+              container.classList.add('scale-110', 'bg-[#D14D4D]', 'text-white')
+              container.classList.remove('bg-[#F8FDFF]/50', 'text-primary')
+            })
+
+            container.addEventListener('mouseleave', () => {
+              container.classList.remove('scale-110', 'bg-[#D14D4D]', 'text-white')
+              container.classList.add('bg-[#F8FDFF]/50', 'text-primary')
+            })
             container.innerText = `${count}`
 
             return new google.maps.marker.AdvancedMarkerElement({
