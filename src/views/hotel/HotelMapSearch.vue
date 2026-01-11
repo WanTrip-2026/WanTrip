@@ -679,8 +679,8 @@ onMounted(async () => {
             container.style.cssText = `
             width: ${size}px;
             height: ${size}px;
-            background: rgba(47, 61, 64, 0.8);
-            color: white;
+            background: rgba(248, 253, 255, 0.5);
+            color: #2F3D4D;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -688,7 +688,7 @@ onMounted(async () => {
             font-weight: bold;
             font-size: 14px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-            border: 1px solid white;
+            border: 1px solid #2F3D4D;
             cursor: pointer;
             backdrop-filter: blur(4px)
         `
