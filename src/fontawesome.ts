@@ -7,8 +7,9 @@ import {
   faSearch,
   faUser,
   faEnvelope,
+  faStar,
 } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faCircleNotch, faChevronRight, faChevronLeft, faSearch, faUser, faEnvelope)
+library.add(faCircleNotch, faChevronRight, faChevronLeft, faSearch, faUser, faEnvelope, faStar)
 
 export { FontAwesomeIcon }
