@@ -391,7 +391,7 @@ import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { MarkerClusterer } from '@googlemaps/markerclusterer'
+import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer'
 
 declare global {
   interface Window {
@@ -729,6 +729,10 @@ onMounted(async () => {
           map,
           markers,
           renderer: customRenderer,
+          algorithm: new SuperClusterAlgorithm({
+            radius: 20, // 數字越小，標籤越不容易被吃掉變成圓圈
+            maxZoom: 14, // 縮放到這個等級時，強迫所有圓圈解散，顯示標籤
+          }),
         })
       }
     }
