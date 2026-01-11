@@ -751,14 +751,12 @@ onMounted(async () => {
 })
 
 const moveMapToKeyword = async (searchKeyword: string) => {
-  if (!window.google || !mapInstance.value) return
-  if (!searchKeyword) return
-
+  if (!window.google || !mapInstance.value || !searchKeyword) return
+  const map = mapInstance.value
   const geocoder = new google.maps.Geocoder()
 
   geocoder.geocode({ address: searchKeyword }, (results, status) => {
     if (status === 'OK' && results && results[0]) {
-      const map = mapInstance.value!
       const location = results[0].geometry.location
       const viewport = results[0].geometry.viewport
 
@@ -784,7 +782,22 @@ const moveMapToKeyword = async (searchKeyword: string) => {
         map.setZoom(15)
       }
     } else {
-      console.error('無法定位該位置：' + status)
+      console.warn('Google 找不到該地名，嘗試搜尋飯店名稱...')
+
+      const matchedHotel = hotels.value.find((h) =>
+        h.name.toLowerCase().includes(searchKeyword.toLowerCase()),
+      )
+
+      if (matchedHotel && matchedHotel.latitude && matchedHotel.longitude) {
+        const position = {
+          lat: Number(matchedHotel.latitude),
+          lng: Number(matchedHotel.longitude),
+        }
+        map.panTo(position)
+        map.setZoom(16) // 找到具體飯店，放大一點
+      } else {
+        console.error('地名與飯店名稱皆無法定位：' + status)
+      }
     }
   })
 }
