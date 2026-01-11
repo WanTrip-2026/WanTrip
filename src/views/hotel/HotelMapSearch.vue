@@ -191,7 +191,37 @@
       >
         <FontAwesomeIcon :icon="isListOpen ? ['fas', 'chevron-left'] : ['fas', 'chevron-right']" />
       </button>
-      <div v-show="isListOpen" class="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar">
+      <div
+        v-show="isListOpen"
+        class="relative flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar"
+      >
+        <div
+          v-if="isLoading"
+          class="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center"
+        >
+          <div class="animate-spin">
+            <FontAwesomeIcon :icon="['fas', 'circle-notch']" spin class="text-accent/60 text-5xl" />
+          </div>
+          <p class="text-primary font-bold mt-4">搜尋中 ···</p>
+        </div>
+
+        <div
+          v-else-if="!isLoading && hotels.length === 0"
+          class="flex flex-col items-center justify-center h-full py-10 text-center"
+        >
+          <div class="bg-accent/10 rounded-full p-5 mb-5">
+            <FontAwesomeIcon :icon="['fas', 'magnifying-glass']" class="text-4xl text-accent/60" />
+          </div>
+          <h3 class="text-lg font-bold text-primary">找不到符合的飯店</h3>
+          <p class="text-primary/60 text-sm mt-1">請嘗試變更關鍵字或篩選條件</p>
+
+          <button
+            @click="resetSearch"
+            class="mt-6 px-6 py-2 bg-primary text-white rounded-full hover:bg-main_800 transition shadow-md"
+          >
+            查看所有飯店
+          </button>
+        </div>
         <div
           v-for="hotel in hotels"
           :key="hotel.id"
@@ -545,8 +575,17 @@ const HotelFiltered = reactive<FilterMenu[]>([
   },
 ])
 
+const isLoading = ref(false)
+
+const resetSearch = () => {
+  keyword.value = ''
+  fetchHotels()
+}
+
 const fetchHotels = async () => {
   try {
+    isLoading.value = true
+    error.value = null
     const apiUrl = import.meta.env.VITE_API_BASE_URL
     const params = new URLSearchParams()
 
@@ -563,18 +602,16 @@ const fetchHotels = async () => {
     if (!res.ok) throw new Error('取得飯店失敗')
 
     hotels.value = await res.json()
-    error.value = null
 
-    if (keyword.value.trim()) {
+    if (hotels.value.length === 0) {
+    } else if (keyword.value.trim()) {
       moveMapToKeyword(keyword.value.trim())
     }
   } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.error(err.message)
-    } else {
-      console.error(err)
-    }
+    console.error(err)
     error.value = '搜尋飯店時發生錯誤'
+  } finally {
+    isLoading.value = false
   }
 }
 

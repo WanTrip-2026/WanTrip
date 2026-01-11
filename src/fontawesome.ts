@@ -1,6 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
+  faCircleNotch,
   faChevronRight,
   faChevronLeft,
   faSearch,
@@ -8,6 +9,6 @@ import {
   faEnvelope,
 } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faChevronRight, faChevronLeft, faSearch, faUser, faEnvelope)
+library.add(faCircleNotch, faChevronRight, faChevronLeft, faSearch, faUser, faEnvelope)
 
 export { FontAwesomeIcon }
