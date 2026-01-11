@@ -64,7 +64,7 @@
                       v-on="inputEvents.start">
                       <p class="text-xs font-bold text-dark_500">入住退房日期</p>
                       <input :value="inputValue.start ? `${inputValue.start} - ${inputValue.end}` : ''"
-                        class="mt-2 w-full bg-transparent text-sm outline-none pointer-events-none placeholder:text-primary/35 font-medium"
+                        class="mt-2 w-full bg-transparent text-sm outline-none pointer-events-none text-black placeholder:text-primary/35 font-medium"
                         placeholder="點選選擇日期" readonly />
                     </label>
                   </template>
@@ -92,14 +92,14 @@
                           <span class="text-sm font-bold text-primary">成人</span>
                           <div class="flex items-center gap-3">
                             <button @click.stop="peopleConfig.adults > 1 ? peopleConfig.adults-- : null" type="button"
-                              class="w-8 h-8 rounded-full border border-primary/10 flex items-center justify-center hover:bg-primary/5">
+                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100">
                               -
                             </button>
-                            <span class="text-sm font-medium w-4 text-center">{{
+                            <span class="text-sm font-medium w-4 text-center text-dark">{{
                               peopleConfig.adults
-                              }}</span>
+                            }}</span>
                             <button @click.stop="peopleConfig.adults++" type="button"
-                              class="w-8 h-8 rounded-full border border-primary/10 flex items-center justify-center hover:bg-primary/5">
+                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100">
                               +
                             </button>
                           </div>
@@ -110,22 +110,22 @@
                             <button @click.stop="
                               peopleConfig.children > 0 ? peopleConfig.children-- : null
                               " type="button"
-                              class="w-8 h-8 rounded-full border border-primary/10 flex items-center justify-center hover:bg-primary/5">
+                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100">
                               -
                             </button>
-                            <span class="text-sm font-medium w-4 text-center">{{
+                            <span class="text-sm font-medium w-4 text-center text-dark">{{
                               peopleConfig.children
-                              }}</span>
+                            }}</span>
                             <button @click.stop="peopleConfig.children++" type="button"
-                              class="w-8 h-8 rounded-full border border-primary/10 flex items-center justify-center hover:bg-primary/5">
+                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100">
                               +
                             </button>
                           </div>
                         </div>
-                        <label class="flex items-center justify-between pt-2 border-t border-gray-50 cursor-pointer">
+                        <label class="flex items-center justify-between pt-2 cursor-pointer">
                           <span class="text-sm font-bold text-primary">可帶寵物</span>
                           <input type="checkbox" v-model="peopleConfig.hasPet"
-                            class="w-5 h-5 accent-accent cursor-pointer" />
+                            class="w-5 h-5 accent-primary cursor-pointer" />
                         </label>
                       </div>
                     </div>
@@ -153,22 +153,29 @@
 
       <div class="mt-[40px] space-y-[40px]">
         <section v-for="section in [
-          { title: '最新消息', data: news, grid: 'grid-cols-2 sm:grid-cols-3 md:grid-cols-5' },
-          { title: '熱門飯店', data: hotHotels, grid: 'grid-cols-2 md:grid-cols-4' },
-          { title: '附近飯店', data: nearHotels, grid: 'grid-cols-2 md:grid-cols-4' },
+          { title: '最新消息', data: news, grid: 'grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-5' },
+          { title: '熱門飯店', data: hotHotels, grid: 'grid-cols-2 gap-5 md:grid-cols-4' },
+          { title: '附近飯店', data: nearHotels, grid: 'grid-cols-2 gap-5 md:grid-cols-4' },
           {
             title: '熱門城市',
             data: hotCities,
-            grid: 'grid-cols-2 sm:grid-cols-3 md:grid-cols-5',
+            grid: 'grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-5',
           },
         ]" :key="section.title">
-          <h2 class="text-lg font-black">{{ section.title }}</h2>
-          <div :class="'mt-[60px] grid gap-[40px] ' + section.grid">
-            <button v-for="item in section.data" :key="item.id" type="button"
-              class="group rounded-[20px] bg-white/70 p-[20px] text-left shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(47,61,77,0.12)]"
+          <h2 class="text-xl font-bold text-dark mb-5">{{ section.title }}</h2>
+          <div :class="'grid gap-5' + section.grid">
+            <RouterLink to="/" v-for="item in section.data" :key="item.id"
+              class="relative rounded-[20px] bg-white/70 text-left shadow-sm border border-gray-300 transition hover:shadow-lg"
               @click="onClick(section.title, item.id)">
-              <div class="checker aspect-square rounded-[20px]" />
-            </button>
+              <div class="absolute bottom-0 px-3 py-1 bg-black/15 backdrop-blur-xs w-full rounded-b-[20px] text-white">
+                <h3 class="text-lg font-semibold text-dark">標題</h3>
+                <div class="flex flex-row justify-between">
+                  <p class="text-base text-dark_700">地點</p>
+                  <p class="text-base font-semibold text-dark_700">NT$ 500 <span class="text-xs">/起</span></p>
+                </div>
+              </div>
+              <div class="checker aspect-square rounded-[20px]"></div>
+            </RouterLink>
           </div>
         </section>
       </div>
