@@ -1,6 +1,6 @@
 <template>
   <main class="min-h-screen mx-auto max-w-[1240px]">
-    <div class="mx-5 pt-24 pb-10">
+    <div class="mx-5 pt-24 pb-20">
       <section class="relative group h-[350px] md:h-[450px] overflow-hidden rounded-[40px] shadow-2xl px-5">
         <div v-for="(img, index) in hotelImages" :key="index">
           <transition name="fade-slide">
@@ -97,7 +97,7 @@
                             </button>
                             <span class="text-sm font-medium w-4 text-center text-dark">{{
                               peopleConfig.adults
-                            }}</span>
+                              }}</span>
                             <button @click.stop="peopleConfig.adults++" type="button"
                               class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100">
                               +
@@ -115,7 +115,7 @@
                             </button>
                             <span class="text-sm font-medium w-4 text-center text-dark">{{
                               peopleConfig.children
-                            }}</span>
+                              }}</span>
                             <button @click.stop="peopleConfig.children++" type="button"
                               class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100">
                               +
@@ -136,7 +136,7 @@
           </div>
           <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
             <button type="submit"
-              class="h-10 rounded-full bg-primary px-7 text-sm font-semibold text-white transition-all duration-300 hover:bg-primary_hover active:scale-[0.98] shadow-sm">
+              class="h-10 rounded-full bg-primary px-7 text-sm font-semibold text-white transition-all duration-300 hover:bg-main active:scale-[0.98] shadow-sm">
               搜尋
             </button>
           </div>
@@ -145,29 +145,15 @@
 
       <div class="mt-[40px] space-y-[40px]">
         <section v-for="section in [
-          { title: '最新消息', data: news, grid: 'grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-5' },
-          { title: '熱門飯店', data: hotHotels, grid: 'grid-cols-2 gap-5 md:grid-cols-4' },
-          { title: '附近飯店', data: nearHotels, grid: 'grid-cols-2 gap-5 md:grid-cols-4' },
-          {
-            title: '熱門城市',
-            data: hotCities,
-            grid: 'grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-5',
-          },
+          { title: '最新消息', data: news },
+          { title: '熱門飯店', data: hotHotels },
+          { title: '附近飯店', data: nearHotels },
+          { title: '熱門城市', data: hotCities },
         ]" :key="section.title">
           <h2 class="text-xl font-bold text-dark mb-5">{{ section.title }}</h2>
-          <div :class="'grid gap-5' + section.grid">
-            <RouterLink to="/" v-for="item in section.data" :key="item.id"
-              class="relative rounded-[20px] bg-white/70 text-left shadow-sm border border-gray-300 transition hover:shadow-lg"
-              @click="onClick(section.title, item.id)">
-              <div class="absolute bottom-0 px-3 py-1 bg-black/15 backdrop-blur-xs w-full rounded-b-[20px] text-white">
-                <h3 class="text-lg font-semibold text-dark">標題</h3>
-                <div class="flex flex-row justify-between">
-                  <p class="text-base text-dark_700">地點</p>
-                  <p class="text-base font-semibold text-dark_700">NT$ 500 <span class="text-xs">/起</span></p>
-                </div>
-              </div>
-              <div class="checker aspect-square rounded-[20px]"></div>
-            </RouterLink>
+          <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
+            <HomePageCard v-for="(item, index) in section.data" :key="item.id" v-bind="item"
+              :expand-left="index >= section.title.length - 2" @compare="handleWishlist" @book="handleBook" />
           </div>
         </section>
       </div>
@@ -180,6 +166,7 @@ import { reactive, ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
+import HomePageCard from '@/components/layout/HomePageCard.vue'
 
 const router = useRouter()
 const activeTab = ref<'stay'>('stay')
@@ -298,10 +285,19 @@ watch(
   { immediate: true },
 )
 
-const news = [{ id: 'n1' }, { id: 'n2' }, { id: 'n3' }, { id: 'n4' }, { id: 'n5' }]
-const hotHotels = [{ id: 'h1' }, { id: 'h2' }, { id: 'h3' }, { id: 'h4' }]
-const nearHotels = [{ id: 'nh1' }, { id: 'nh2' }, { id: 'nh3' }, { id: 'nh4' }]
-const hotCities = [{ id: 'c1' }, { id: 'c2' }, { id: 'c3' }, { id: 'c4' }, { id: 'c5' }]
+const news = [{ id: 'n1' }, { id: 'n2' }, { id: 'n3' }, { id: 'n4' }, { id: 'n5' }, { id: 'n6' }]
+const hotHotels = [{ id: 'h1' }, { id: 'h2' }, { id: 'h3' }, { id: 'h4' }, { id: 'h5' }, { id: 'h6' }]
+const nearHotels = [{ id: 'nh1' }, { id: 'nh2' }, { id: 'nh3' }, { id: 'nh4' }, { id: 'nh5' }, { id: 'nh6' }]
+const hotCities = [{ id: 'c1' }, { id: 'c2' }, { id: 'c3' }, { id: 'c4' }, { id: 'c5' }, { id: 'c6' }]
+
+const handleWishlist = (id: string | number) => {
+  const product = section.data.value.find(section => section.id === id);
+  console.log(`用戶收藏了: ${product?.name}`);
+};
+
+const handleBook = (id: string | number) => {
+  router.push(`/product/${id}`);
+};
 
 function onSearch() {
   console.log('[Hotel Search Submit]', { tab: activeTab.value, ...form, ...peopleConfig })
