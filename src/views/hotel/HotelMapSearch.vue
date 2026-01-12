@@ -188,15 +188,18 @@
     <!-- 飯店列表 -->
     <aside
       :class="[
-        'fixed top-[145px] bg-white  z-20 shadow-xl transition-all duration-500 flex flex-col self-start h-[calc(100vh-170px)] my-2.5 ml-5 rounded-[20px] rounded-tr-none',
-        isListOpen ? 'w-[400px]' : 'w-0',
+        'fixed top-[145px] bg-white  z-20 shadow-xl transition-transform duration-500 ease-in-out flex flex-col self-start h-[calc(100vh-170px)] my-2.5 ml-5 rounded-[20px] rounded-tr-none',
+        isListOpen ? 'translate-x-0' : '-translate-x-[420px]',
       ]"
+      class="w-[400px]"
     >
       <button
         @click="isListOpen = !isListOpen"
         :class="[
-          'absolute top-0 z-20 bg-white border shadow-md flex items-center justify-center text-primary hover:text-main_800 transition',
-          isListOpen ? 'left-full w-8 h-12 rounded-r-lg border-l-0' : 'left-0 w-12 h-12 rounded-lg',
+          'absolute top-0 z-20 bg-white border shadow-md flex items-center justify-center text-primary hover:text-main_800 transition-all duration-500 ease-in-out',
+          isListOpen
+            ? 'left-full w-8 h-12 rounded-r-lg border-l-0'
+            : 'left-[420px] w-12 h-12 rounded-lg',
         ]"
       >
         <FontAwesomeIcon :icon="isListOpen ? ['fas', 'chevron-left'] : ['fas', 'chevron-right']" />
