@@ -243,9 +243,7 @@
           </div>
 
           <div class="relative flex-1 flex flex-col justify-between p-4 min-w-0">
-            <p
-              class="absolute top-4 right-4 px-2 py-1 rounded-[12px] bg-primary text-white text-xs"
-            >
+            <p class="absolute top-4 right-4 p-2 rounded-full bg-primary text-white text-xs">
               {{ hotel.star_rating }}.0
             </p>
 
@@ -474,11 +472,11 @@ const mapInstance = ref<google.maps.Map | null>(null)
 const facilities = ref<FacilityName[]>([])
 
 const generateStarHtml = (rating: number) => {
-  const starSvg = `<svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      viewBox="0 0 576 512" 
-      class="w-3 h-3 inline-block" 
-      fill="currentColor" 
+  const starSvg = `<svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 576 512"
+      class="w-3 h-3 inline-block"
+      fill="currentColor"
       style="width: 12px; height: 12px; color: #facc15; margin-right: 1px; flex-shrink: 0;"
     >
       <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.8 33.8-2.3s14.8-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/>
@@ -672,9 +670,43 @@ onMounted(async () => {
       mapInstance.value = map
 
       const markers: google.maps.marker.AdvancedMarkerElement[] = []
-      const infoWindow = new google.maps.InfoWindow({ disableAutoPan: true })
 
-      // 2. 準備飯店標記
+      let closeTimeout: number | null = null
+      let currentOpenedMarker: google.maps.marker.AdvancedMarkerElement | null = null
+      const infoWindow = new google.maps.InfoWindow({ disableAutoPan: true, headerDisabled: true })
+
+      // 放入 domready 監聽
+      infoWindow.addListener('domready', () => {
+        const el = document.querySelector('.gm-style-iw.gm-style-iw-c') as HTMLElement | null
+        if (el) {
+          el.style.padding = '0'
+          el.style.backgroundColor = 'white'
+          el.style.border = 'none'
+          el.style.borderRadius = '12px'
+          el.style.boxShadow =
+            '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)'
+        }
+
+        const contentEl = document.querySelector('.gm-style-iw-d') as HTMLElement | null
+        if (contentEl) {
+          contentEl.style.overflow = 'hidden'
+          contentEl.style.maxHeight = 'none'
+          contentEl.style.maxWidth = '350px'
+
+          contentEl.addEventListener('mouseenter', () => {
+            if (closeTimeout) {
+              clearTimeout(closeTimeout)
+              closeTimeout = null
+            }
+          })
+
+          contentEl.addEventListener('mouseleave', () => {
+            infoWindow.close()
+          })
+        }
+      })
+
+      // 準備飯店標記
       hotels.value.forEach((hotel) => {
         if (!hotel.latitude || !hotel.longitude) return
 
@@ -691,17 +723,8 @@ onMounted(async () => {
             text-sm
             transition-all duration-200
         `
-        priceTag.addEventListener('mouseenter', () => {
-          priceTag.classList.add('scale-110', 'bg-[#D14D4D]', 'z-[9999]')
-          priceTag.classList.remove('bg-primary')
-        })
-        priceTag.addEventListener('mouseleave', () => {
-          priceTag.classList.remove('scale-110', 'bg-[#D14D4D]', 'z-[9999]')
-          priceTag.classList.add('bg-primary')
-        })
         priceTag.innerText = `NT$ ${hotel.min_price.toLocaleString()}`
 
-        // 3. 建立進階標記
         const marker = new AdvancedMarkerElement({
           position: { lat: Number(hotel.latitude), lng: Number(hotel.longitude) },
           content: priceTag,
@@ -710,52 +733,65 @@ onMounted(async () => {
           zIndex: 1000000 - Number(hotel.min_price),
         })
 
-        markerMap.set(hotel.id, marker)
+        priceTag.addEventListener('mouseenter', () => {
+          priceTag.classList.add('scale-110', 'bg-[#D14D4D]', 'z-[9999]')
+          priceTag.classList.remove('bg-primary')
 
-        priceTag.addEventListener('mouseover', () => {
-          // 放大標籤效果 (選用)
-          priceTag.style.transform = 'scale(1.1)'
-          priceTag.style.zIndex = '1000'
+          if (closeTimeout) {
+            clearTimeout(closeTimeout)
+            closeTimeout = null
+          }
 
-          infoWindow.setContent(`
-            <div class="flex w-[320px] bg-white rounded-[20px] overflow-hidden">
-              <div class="w-[100px] h-[120px] flex-shrink-0">
-                <img src="${hotel.cover_image || ''}" class="w-full h-full object-cover" />
+          if (currentOpenedMarker === marker) return
+
+          const newContent = `
+          <div class="bg-white rounded-[20px] p-2 w-[340px] box-border">
+            <div class="flex bg-white rounded-[12px] border border-gray-200 overflow-hidden h-[132px]">
+              <div class="w-[100px] flex-shrink-0">
+                <img src="${hotel.cover_image || 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg'}" class="w-full h-full object-cover" />
               </div>
 
               <div class="relative flex-1 p-3 flex flex-col justify-between min-w-0">
-                <div class="absolute top-2 right-2 bg-[#2F3D4D] text-white px-2 py-0.5 rounded-[10px] text-[10px]">
-                  ${hotel.star_rating}.0
+                <div class="min-w-0">  
+                  <div class="flex items-start justify-between gap-2">
+                    <h3 class="m-0 text-base font-bold text-black truncate pr-8">
+                      ${hotel.name}
+                    </h3>
+                    <div class="bg-[#2F3D4D] text-white p-2 rounded-full text-[10px]">
+                        ${hotel.star_rating}.0
+                    </div>
                 </div>
-
-                <div>
-                  <h3 class="m-0 text-base font-bold text-black truncate pr-8">
-                    ${hotel.name}
-                  </h3>
+                  
                   <div class="flex gap-0.5 my-1">
                     ${generateStarHtml(hotel.star_rating)}
                   </div>
                   <p class="m-0 text-slate-500 text-xs">
                     ${hotel.city}${hotel.district}
                   </p>
-                </div>
-
-                <div class="text-[#D14D4D] text-base font-bold">
-                  NT$ ${hotel.min_price.toLocaleString()}
-                </div>
+                  <p class="text-[10px] text-gray-400">6616 則評論</p>
+                  <div class="text-[#D14D4D] text-base font-bold mt-2">
+                    NT$ ${hotel.min_price.toLocaleString()}
+                  </div>
               </div>
             </div>
-          `)
+          </div>
+          `
+          infoWindow.setContent(newContent)
           infoWindow.open({ anchor: marker, map: mapInstance.value })
+
+          currentOpenedMarker = marker
+        })
+        priceTag.addEventListener('mouseleave', () => {
+          priceTag.classList.remove('scale-110', 'bg-[#D14D4D]', 'z-[9999]')
+          priceTag.classList.add('bg-primary')
+
+          closeTimeout = window.setTimeout(() => {
+            infoWindow.close()
+            currentOpenedMarker = null
+          }, 200)
         })
 
-        // 監聽滑鼠移出
-        priceTag.addEventListener('mouseout', () => {
-          priceTag.style.transform = 'scale(1)'
-          priceTag.style.zIndex = ''
-          infoWindow.close()
-        })
-
+        markerMap.set(hotel.id, marker)
         markers.push(marker)
       })
       if (markers.length > 0) {
