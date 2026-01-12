@@ -1,7 +1,7 @@
 <template>
   <main class="min-h-screen mx-auto max-w-[1240px]">
-    <div class="mx-5 pt-[96px] pb-[40px]">
-      <section class="mb-10 relative group h-[350px] md:h-[450px] overflow-hidden rounded-[40px] shadow-2xl px-5">
+    <div class="mx-5 pt-24 pb-10">
+      <section class="relative group h-[350px] md:h-[450px] overflow-hidden rounded-[40px] shadow-2xl px-5">
         <div v-for="(img, index) in hotelImages" :key="index">
           <transition name="fade-slide">
             <div v-if="currentSlide === index" class="absolute inset-0">
@@ -39,7 +39,7 @@
             <div class="w-full max-w-4xl">
               <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <label
-                  class="relative block rounded-[20px] bg-white p-[20px] shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 group cursor-pointer transition-all hover:ring-accent/50">
+                  class="relative block rounded-[20px] bg-white p-[20px] shadow-lg border border-gray-300 group cursor-pointer transition-all hover:border-primary">
                   <p class="text-xs font-bold text-dark_500">想去哪裡？</p>
                   <div class="relative mt-2">
                     <select v-model="form.destination"
@@ -60,7 +60,7 @@
                 <DatePicker v-model.range="range" :columns="2" color="teal">
                   <template #default="{ inputValue, inputEvents }">
                     <label
-                      class="block rounded-[20px] bg-white p-[20px] shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 cursor-pointer transition-all hover:ring-accent/50"
+                      class="block rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 cursor-pointer transition-all hover:border-primary"
                       v-on="inputEvents.start">
                       <p class="text-xs font-bold text-dark_500">入住退房日期</p>
                       <input :value="inputValue.start ? `${inputValue.start} - ${inputValue.end}` : ''"
@@ -72,7 +72,7 @@
 
                 <div class="relative" ref="peoplePickerRef">
                   <label @click="isPeoplePickerOpen = !isPeoplePickerOpen"
-                    class="block rounded-[20px] bg-white p-[20px] shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer">
+                    class="block h-full rounded-[20px] bg-white p-[20px] shadow-lg border border-gray-300 transition-all hover:border-primary cursor-pointer">
                     <p class="text-xs font-bold text-dark_500">人數、需求</p>
                     <div class="mt-2 flex items-center justify-between">
                       <span class="text-sm font-medium text-primary">{{ peopleDisplayText }}</span>
@@ -86,7 +86,7 @@
 
                   <transition name="fade">
                     <div v-if="isPeoplePickerOpen"
-                      class="absolute top-[calc(100%+8px)] left-0 z-[100] w-full rounded-[30px] bg-white p-6 shadow-2xl ring-1 ring-primary/5">
+                      class="absolute top-[calc(100%+8px)] left-0 z-[100] w-full rounded-[20px] bg-white p-6 shadow-2xl ring-1 ring-primary/5">
                       <div class="space-y-4">
                         <div class="flex items-center justify-between">
                           <span class="text-sm font-bold text-primary">成人</span>
@@ -135,14 +135,6 @@
             </div>
           </div>
           <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
-            <button type="button"
-              class="h-10 rounded-full border bg-dark_300 border-primary/25 px-8 text-sm font-semibold transition"
-              :class="activeTab === 'stay'
-                ? 'bg-main_800 text-white'
-                : 'bg-white text-primary/80 hover:bg-primary/5'
-                " @click="activeTab = 'stay'">
-              找住宿
-            </button>
             <button type="submit"
               class="h-10 rounded-full bg-primary px-7 text-sm font-semibold text-white transition-all duration-300 hover:bg-primary_hover active:scale-[0.98] shadow-sm">
               搜尋
@@ -263,23 +255,26 @@ onUnmounted(() => {
 })
 
 const taiwanCities = [
-  '基隆市',
-  '臺北市',
-  '新北市',
-  '桃園市',
-  '新竹市',
-  '苗栗市',
-  '臺中市',
-  '彰化市',
-  '南投市',
-  '雲林市',
-  '嘉義市',
-  '臺南市',
-  '高雄市',
-  '屏東市',
-  '宜蘭市',
-  '花蓮市',
-  '臺東市',
+  '基隆',
+  '臺北',
+  '新北',
+  '桃園',
+  '新竹',
+  '苗栗',
+  '臺中',
+  '彰化',
+  '南投',
+  '雲林',
+  '嘉義',
+  '臺南',
+  '高雄',
+  '屏東',
+  '宜蘭',
+  '花蓮',
+  '臺東',
+  '澎湖',
+  '金門',
+  '馬祖',
 ]
 
 const form = reactive({
