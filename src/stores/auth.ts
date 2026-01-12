@@ -1,55 +1,38 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { me, logoutApi, type SessionUser } from '@/services/authApi'
 import { supabase } from '@/utils/supabaseClient'
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref(null)
-  const profile = ref(null)
+  const user = ref<SessionUser | null>(null)
   const loading = ref(false)
+  const ready = ref(false)
 
   const isLoggedIn = computed(() => !!user.value)
 
-  // 🔹 初始化（頁面重整時呼叫）
+  // ✅ 初始化：用後端 cookie /me
   const init = async () => {
     loading.value = true
     try {
-      const { data } = await supabase.auth.getSession()
-      user.value = data.session?.user ?? null
-
-      if (user.value) {
-        const { data: p } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.value.id)
-          .single()
-        profile.value = p
-      }
+      const res = await me()
+      user.value = res.user
     } finally {
       loading.value = false
+      ready.value = true
     }
   }
 
-  // 🔹 登入後呼叫
-  const setAuth = async (newUser) => {
+  // ✅ 登入後：直接塞後端 user（LoginModal emit 的就是這個）
+  const setAuth = (newUser: SessionUser | null) => {
     user.value = newUser
-    if (newUser) {
-      const { data: p } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', newUser.id)
-        .single()
-      profile.value = p
-    } else {
-      profile.value = null
-    }
   }
 
-  // 🔹 登出
+  // ✅ 登出：清 cookie + 清 supabase session（保險）
   const logout = async () => {
+    await logoutApi()
     await supabase.auth.signOut()
     user.value = null
-    profile.value = null
   }
 
-  return { user, profile, isLoggedIn, loading, init, setAuth, logout }
+  return { user, isLoggedIn, loading, ready, init, setAuth, logout }
 })

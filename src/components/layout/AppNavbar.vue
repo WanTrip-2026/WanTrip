@@ -34,8 +34,18 @@
                   class="text-black font-medium px-4 py-2 hover:text-primary"
                   >住宿</RouterLink
                 >
+                <RouterLink
+                  to="/hotels"
+                  class="text-black font-medium px-4 py-2 hover:text-primary"
+                  >住宿</RouterLink
+                >
               </li>
               <li>
+                <RouterLink
+                  to="/tickets"
+                  class="text-black font-medium px-4 py-2 hover:text-primary"
+                  >體驗</RouterLink
+                >
                 <RouterLink
                   to="/tickets"
                   class="text-black font-medium px-4 py-2 hover:text-primary"
@@ -48,8 +58,18 @@
                   class="text-black font-medium px-4 py-2 hover:text-primary"
                   >比較</RouterLink
                 >
+                <RouterLink
+                  to="/hotels/compare"
+                  class="text-black font-medium px-4 py-2 hover:text-primary"
+                  >比較</RouterLink
+                >
               </li>
               <li>
+                <RouterLink
+                  to="/travel-dna/intro"
+                  class="text-black font-medium px-4 py-2 hover:text-primary"
+                  >旅行DNA</RouterLink
+                >
                 <RouterLink
                   to="/travel-dna/intro"
                   class="text-black font-medium px-4 py-2 hover:text-primary"
@@ -67,11 +87,19 @@
               class="hidden md:block text-black font-medium px-4 py-2 hover:text-primary"
               >常見問題</RouterLink
             >
+            <RouterLink
+              to="/support"
+              class="hidden md:block text-black font-medium px-4 py-2 hover:text-primary"
+              >常見問題</RouterLink
+            >
           </li>
+
 
           <li>
             <!-- 未登入 -->
+            <!-- 未登入 -->
             <button
+              v-if="!auth.isLoggedIn"
               v-if="!auth.isLoggedIn"
               type="button"
               class="text-white rounded-[20px] bg-primary px-4 py-2 border border-white/15 hover:bg-[#455A71]"
@@ -88,7 +116,7 @@
                 @click="toggleUserMenu"
               >
                 <span class="max-w-[160px] truncate">
-                  {{ auth.profile?.full_name || auth.user?.email || '會員' }}
+                  {{ auth.user?.full_name || auth.user?.email || '會員' }}
                 </span>
 
                 <svg
@@ -134,7 +162,6 @@
       </div>
     </nav>
   </header>
-
   <nav class="block md:hidden fixed w-full z-50 bottom-5 h-16 mx-auto pointer-events-auto">
     <ul
       class="flex flex-row justify-between items-center mx-5 p-1 rounded-full bg-white/80 backdrop-blur-md border border-white/45 pointer-events-auto"
@@ -156,7 +183,6 @@
             <span class="text-xs">{{ item.name }}</span>
           </li>
         </RouterLink>
-
         <li
           v-else
           @click="isOpen = true"
@@ -170,7 +196,6 @@
       </template>
     </ul>
   </nav>
-
   <div class="relative z-[100]">
     <Transition
       enter-active-class="transition-opacity ease-linear duration-300"
@@ -182,7 +207,6 @@
     >
       <div v-if="isOpen" @click="isOpen = false" class="fixed inset-0 bg-black/25 backdrop-blur-sm"></div>
     </Transition>
-
     <Transition
       enter-active-class="transition-transform ease-in-out duration-300"
       enter-from-class="translate-x-full"
@@ -200,8 +224,10 @@
           <button @click="isOpen = false" class="text-gray-500 text-2xl">&times;</button>
         </div>
 
+
         <nav class="flex flex-col gap-4">
           <button
+            v-if="!auth.isLoggedIn"
             v-if="!auth.isLoggedIn"
             type="button"
             class="text-left text-black font-medium border-b border-primary/25 pb-2"
@@ -216,7 +242,7 @@
               class="text-black font-medium hover:text-primary"
               @click="goProfile(); isOpen = false"
             >
-              {{ auth.profile?.full_name || auth.user?.email }}
+            {{ auth.user?.full_name || auth.user?.email || '會員' }}
             </button>
 
             <button
@@ -254,7 +280,6 @@
       </div>
     </Transition>
   </div>
-
   <LoginModal
     v-model="isLoginModalOpen"
     @login="handleLogin"
@@ -262,7 +287,6 @@
     @forgot-password="handleForgotPassword"
     @social="handleSocial"
   />
-
   <RegisterModal
     v-model="isRegisterModalOpen"
     @go-login="openLoginFromRegister"
@@ -281,6 +305,9 @@ const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 
+const router = useRouter()
+const route = useRoute()
+const auth = useAuthStore()
 const isOpen = ref(false)
 const isLoginModalOpen = ref(false)
 const isRegisterModalOpen = ref(false)
@@ -305,54 +332,42 @@ const openLogin = () => {
   isRegisterModalOpen.value = false
   isLoginModalOpen.value = true
 }
-
 const openRegister = () => {
   isLoginModalOpen.value = false
   isRegisterModalOpen.value = true
 }
-
 const openLoginFromRegister = () => {
   isRegisterModalOpen.value = false
   isLoginModalOpen.value = true
 }
-
 const handleLogout = async () => {
   isUserMenuOpen.value = false
   isOpen.value = false
   await auth.logout()
   router.push('/')
 }
-
 const onDocClick = (e: MouseEvent) => {
   if (!isUserMenuOpen.value) return
-
   const target = e.target as HTMLElement | null
   if (!target) return
-
   if (target.closest('[data-user-menu]')) return
-
   isUserMenuOpen.value = false
 }
-
 const closeAllAuthModal = () => {
   isLoginModalOpen.value = false
   isRegisterModalOpen.value = false
 }
-
-const handleLogin = async ({ user }: { user: any }) => {
-  await auth.setAuth(user)
+const handleLogin = ({ user }: { user: any }) => {
+  auth.setAuth(user)
   isLoginModalOpen.value = false
 }
-
 const handleSignup = () => {
   isLoginModalOpen.value = false
   openRegister()
 }
-
 const handleForgotPassword = () => {
   isLoginModalOpen.value = false
 }
-
 const handleSocial = (provider: 'google' | 'apple' | 'line') => {
   console.log('social login:', provider)
 }
@@ -398,7 +413,11 @@ const navItems = [
 ]
 
 onMounted(async () => {
-  await auth.init()
+  try {
+    await auth.init()
+  } catch (e) {
+    console.warn('[auth.init] failed:', e)
+  }
   document.addEventListener('click', onDocClick)
 })
 
