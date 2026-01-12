@@ -3,6 +3,7 @@ import { reactive, ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
+import HomePageCard from '@/components/layout/HomePageCard.vue'
 
 const router = useRouter()
 const activeTab = ref<'stay'>('stay')
@@ -199,6 +200,18 @@ const ticketClassify = [
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-%E5%B3%B6_qnxq42.jpg',
   },
 ]
+
+const tickets = ref([
+  { id: 1, ticketName: '2026 台北跨年晚會', price: 0, venue: '台北市民廣場', date: '2025-12-31', category: '節慶', imageUrl: 'https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=400', description: '全台最強卡司陪你迎接新的一年。' },
+  { id: 2, ticketName: '張學友 60+ 巡迴演唱會', price: 5800, venue: '台北小巨蛋', date: '2026-03-15', category: '演唱會', imageUrl: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400', description: '經典歌神再次降臨，不容錯過的視聽盛宴。' },
+  { id: 3, ticketName: '吉卜力展覽：宮崎駿世界', price: 450, venue: '華山1914文創園區', date: '2026-02-10', category: '展覽', imageUrl: 'https://images.unsplash.com/photo-1544943962-d26b73887014?w=400', description: '走進夢幻的手繪世界，重溫經典動畫瞬間。' },
+  { id: 4, ticketName: '台大藝術祭開幕音樂會', price: 1200, venue: '台大體育館', date: '2026-04-20', category: '音樂', imageUrl: 'https://images.unsplash.com/photo-1459749411177-042180ce673c?w=400', description: '校園最盛大的藝術節，集結各類新銳樂團。' },
+  { id: 5, ticketName: '2026 台灣燈會在桃園', price: 0, venue: '桃園青埔', date: '2026-02-15', category: '民俗', imageUrl: 'https://images.unsplash.com/photo-1517457373958-b7bdd458ad20?w=400', description: '炫爛燈飾閃耀桃園，體驗最傳統的元宵氛圍。' },
+  { id: 6, ticketName: '世界棒球經典賽 A 組', price: 3200, venue: '台中洲際棒球場', date: '2026-03-08', category: '體育', imageUrl: 'https://images.unsplash.com/photo-1508344928928-7165bdd36701?w=400', description: '熱血沸騰的國際大賽，為台灣英雄加油！' },
+]);
+
+const handleWishlist = (id) => console.log('收藏門票 ID:', id);
+const handleBook = (id) => console.log('購票 ID:', id);
 </script>
 
 <style scoped>
@@ -268,6 +281,15 @@ const ticketClassify = [
     0 14px,
     14px -14px,
     -14px 0px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>
 
@@ -443,6 +465,14 @@ const ticketClassify = [
             <span class="text-xl font-black text-white drop-shadow-sm">{{ tc.label }}</span>
           </div>
         </button>
+      </div>
+    </section>
+
+    <section class="mt-10">
+      <h2 class="mb-5 text-xl font-bold text-dark">熱門景點</h2>
+      <div class="grid grid-cols-2 lg:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
+        <HomePageCard v-for="(ticket, index) in tickets" :key="ticket.id" v-bind="ticket"
+          :expand-left="index >= tickets.length - 2" @compare="handleWishlist" @book="handleBook" />
       </div>
     </section>
 
