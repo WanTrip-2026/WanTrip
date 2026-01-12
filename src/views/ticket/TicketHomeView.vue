@@ -294,7 +294,7 @@ const handleBook = (id) => console.log('購票 ID:', id);
 </style>
 
 <template>
-  <main class="pb-10 pt-24 max-w-[1240px] px-5 mx-auto">
+  <main class="pb-20 pt-24 max-w-[1240px] px-5 mx-auto">
     <section class="relative group h-[350px] md:h-[450px] overflow-hidden rounded-[40px] shadow-2xl">
       <div v-for="(img, index) in hotelImages" :key="index">
         <transition name="fade-slide">
@@ -390,7 +390,7 @@ const handleBook = (id) => console.log('購票 ID:', id);
                           </button>
                           <span class="text-sm font-medium w-4 text-center text-black">{{
                             peopleConfig.adults
-                            }}</span>
+                          }}</span>
                           <button @click.stop="peopleConfig.adults++" type="button"
                             class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white">
                             +
@@ -408,7 +408,7 @@ const handleBook = (id) => console.log('購票 ID:', id);
                           </button>
                           <span class="text-sm font-medium w-4 text-center text-black">{{
                             peopleConfig.children
-                            }}</span>
+                          }}</span>
                           <button @click.stop="peopleConfig.children++" type="button"
                             class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white">
                             +
@@ -429,7 +429,7 @@ const handleBook = (id) => console.log('購票 ID:', id);
         </div>
         <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
           <button type="submit"
-            class="h-10 rounded-full bg-primary px-7 text-sm font-semibold text-white transition-all duration-300 hover:bg-primary_hover active:scale-[0.98] shadow-sm">
+            class="h-10 rounded-full bg-primary px-7 text-sm font-semibold text-white transition-all duration-300 hover:bg-main active:scale-[0.98] shadow-sm">
             搜尋
           </button>
         </div>
@@ -470,76 +470,18 @@ const handleBook = (id) => console.log('購票 ID:', id);
 
     <section class="mt-10">
       <h2 class="mb-5 text-xl font-bold text-dark">熱門景點</h2>
-      <div class="grid grid-cols-2 lg:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
+      <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
         <HomePageCard v-for="(ticket, index) in tickets" :key="ticket.id" v-bind="ticket"
           :expand-left="index >= tickets.length - 2" @compare="handleWishlist" @book="handleBook" />
       </div>
     </section>
 
-    <!-- <template v-else>
-        <section v-for="section in sections" :key="section.title" class="mb-10">
-          <h2 class="text-2xl font-bold text-dark mb-10">
-            {{ section.title }}
-          </h2>
-
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
-            <a href="#" v-for="item in section.items" :key="item.id"
-              class="rounded-[20px] overflow-hidden border border-gray-300 bg-white hover:shadow-lg transition">
-              <template v-if="isRegionSection(section.title)">
-                <div class="relative w-full bg-gray-100" :class="section.variant === 'portrait'
-                  ? 'aspect-[3/4]'
-                  : section.variant === 'region'
-                    ? 'aspect-[5/4]'
-                    : 'aspect-[4/3]'
-                  ">
-                  <img :src="item.image" class="w-full h-full object-cover" />
-
-                  <div class="absolute left-4 bottom-4 text-white">
-                    <p class="text-2xl font-extrabold leading-none drop-shadow">
-                      {{ item.title }}
-                    </p>
-                    <p class="mt-2 text-base font-semibold drop-shadow flex items-center gap-2">
-                      探索 <span class="text-xl leading-none">›</span>
-                    </p>
-                  </div>
-                </div>
-              </template>
-
-              <template v-else>
-                <div class="w-full bg-gray-100" :class="section.variant === 'portrait'
-                  ? 'aspect-[3/4]'
-                  : section.variant === 'region'
-                    ? 'aspect-[5/4]'
-                    : 'aspect-[4/3]'
-                  ">
-                  <img :src="item.image" class="w-full h-full object-cover" />
-                </div>
-
-                <div class="p-5">
-                  <h3 class="text-md font-bold text-black">
-                    {{ item.title }}
-                  </h3>
-
-                  <div class="mt-3 flex items-center gap-3">
-                    <span class="bg-main text-white font-bold text-sm px-3 py-1 rounded-full">
-                      {{ item.rating }} / 5
-                    </span>
-                    <span class="text-gray-500 text-sm">
-                      {{ item.reviews.toLocaleString() }}則評價
-                    </span>
-                  </div>
-                </div>
-              </template>
-            </a>
-          </div>
-
-          <div class="mt-5 flex justify-center">
-            <button type="button"
-              class="bg-main hover:bg-main_800 text-white font-bold px-10 py-3 rounded-full transition shadow-sm">
-              顯示更多
-            </button>
-          </div>
-        </section>
-      </template> -->
+    <section class="mt-10">
+      <h2 class="mb-5 text-xl font-bold text-dark">評價最高</h2>
+      <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
+        <HomePageCard v-for="(ticket, index) in tickets" :key="ticket.id" v-bind="ticket"
+          :expand-left="index >= tickets.length - 2" @compare="handleWishlist" @book="handleBook" />
+      </div>
+    </section>
   </main>
 </template>
