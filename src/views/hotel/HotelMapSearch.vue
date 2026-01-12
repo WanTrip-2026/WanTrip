@@ -175,6 +175,16 @@
         篩選
       </button>
     </div>
+    <div class="fixed bottom-[200px] right-[10px] z-10">
+      <button
+        @click="toggleMapType"
+        class="w-[40px] h-[40px] bg-white rounded-[20px] shadow-[0_1px_4px_-1px_rgba(0,0,0,0.3)] hover:bg-[#ebebeb] transition-colors flex items-center justify-center"
+      >
+        <div class="text-base">
+          {{ currentMapType === 'roadmap' ? '🛰️' : '🗺️' }}
+        </div>
+      </button>
+    </div>
     <!-- 飯店列表 -->
     <aside
       :class="[
@@ -522,6 +532,16 @@ watch(
   },
 )
 
+const currentMapType = ref('roadmap')
+
+const toggleMapType = () => {
+  if (!mapInstance.value) return
+
+  const newType = currentMapType.value === 'roadmap' ? 'hybrid' : 'roadmap'
+  mapInstance.value.setMapTypeId(newType)
+  currentMapType.value = newType
+}
+
 const isPeoplePickerOpen = ref(false)
 const peoplePickerRef = ref<HTMLElement | null>(null)
 
@@ -666,6 +686,10 @@ onMounted(async () => {
         center: { lat: 25.033964, lng: 121.564468 },
         zoom: 12,
         mapId: mapId,
+        streetViewControl: false,
+        fullscreenControl: false,
+        mapTypeControl: false,
+        zoomControl: true,
       })
       mapInstance.value = map
 
