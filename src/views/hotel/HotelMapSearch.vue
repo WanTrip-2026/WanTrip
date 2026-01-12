@@ -196,7 +196,7 @@
         class="relative flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar"
       >
         <div
-          v-if="isLoading"
+          v-if="isMapLoading"
           class="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center"
         >
           <div class="animate-spin">
@@ -206,7 +206,7 @@
         </div>
 
         <div
-          v-else-if="!isLoading && hotels.length === 0"
+          v-else-if="!isMapLoading && hotels.length === 0"
           class="flex flex-col items-center justify-center h-full py-10 text-center"
         >
           <div class="bg-accent/10 rounded-full p-5 mb-5">
@@ -484,6 +484,7 @@ const generateStarHtml = (rating: number) => {
   return Array(Math.floor(rating)).fill(starSvg).join('')
 }
 
+const isMapLoading = ref(true)
 const hotels = ref<Hotel[]>([])
 const keyword = ref('')
 const error = ref<string | null>(null)
@@ -586,8 +587,6 @@ const HotelFiltered = reactive<FilterMenu[]>([
   },
 ])
 
-const isLoading = ref(false)
-
 const resetSearch = () => {
   keyword.value = ''
   fetchHotels()
@@ -595,7 +594,7 @@ const resetSearch = () => {
 
 const fetchHotels = async () => {
   try {
-    isLoading.value = true
+    isMapLoading.value = true
     error.value = null
     const apiUrl = import.meta.env.VITE_API_BASE_URL
     const params = new URLSearchParams()
@@ -622,11 +621,12 @@ const fetchHotels = async () => {
     console.error(err)
     error.value = '搜尋飯店時發生錯誤'
   } finally {
-    isLoading.value = false
+    isMapLoading.value = false
   }
 }
 
 onMounted(async () => {
+  isMapLoading.value = true
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
@@ -865,6 +865,8 @@ onMounted(async () => {
     else console.error(err)
 
     error.value = '初始化資料時發生錯誤'
+  } finally {
+    isMapLoading.value = false // 3. 結束時設為 false
   }
 })
 
