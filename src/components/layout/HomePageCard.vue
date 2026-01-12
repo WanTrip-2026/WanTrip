@@ -1,5 +1,5 @@
 <template>
-  <RouterLink to="`/product/${id}`" :class="[
+  <RouterLink :to="`/product/${id}`" :class="[
     'group relative flex h-[270px] w-[183px] hover:w-[415px] z-[1] hover:z-[50] bg-white rounded-[20px] hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
     expandLeft ? 'hover:-translate-x-[232px]' : ''
   ]">
@@ -75,6 +75,8 @@ withDefaults(defineProps<Props>(), {
   imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
   price: 0,
   venue: '',
+  category: '',
+  date: 'YYYY-MM-DD',
   address: '',
   rating: 5,
   expandLeft: false

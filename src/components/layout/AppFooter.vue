@@ -133,6 +133,7 @@ import { RouterLink } from 'vue-router'
 
 const footerLinks = [
   {
+    title: '探索',
     links: [
       { label: '住宿', to: '/hotels' },
       { label: '體驗', to: '/tickets' },

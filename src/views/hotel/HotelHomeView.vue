@@ -97,7 +97,7 @@
                             </button>
                             <span class="text-sm font-medium w-4 text-center text-dark">{{
                               peopleConfig.adults
-                              }}</span>
+                            }}</span>
                             <button @click.stop="peopleConfig.adults++" type="button"
                               class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100">
                               +
@@ -115,7 +115,7 @@
                             </button>
                             <span class="text-sm font-medium w-4 text-center text-dark">{{
                               peopleConfig.children
-                              }}</span>
+                            }}</span>
                             <button @click.stop="peopleConfig.children++" type="button"
                               class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100">
                               +
@@ -291,8 +291,11 @@ const nearHotels = [{ id: 'nh1' }, { id: 'nh2' }, { id: 'nh3' }, { id: 'nh4' }, 
 const hotCities = [{ id: 'c1' }, { id: 'c2' }, { id: 'c3' }, { id: 'c4' }, { id: 'c5' }, { id: 'c6' }]
 
 const handleWishlist = (id: string | number) => {
-  const product = section.data.value.find(section => section.id === id);
-  console.log(`用戶收藏了: ${product?.name}`);
+  const allItems = [...news, ...hotHotels, ...nearHotels, ...hotCities];
+  const product = allItems.find(item => item.id === id);
+  if (product) {
+    console.log(`用戶收藏了: ${product.name}`);
+  }
 };
 
 const handleBook = (id: string | number) => {
