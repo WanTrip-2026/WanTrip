@@ -9,7 +9,6 @@
         @keydown.esc="close"
         tabindex="-1"
       >
-        <!-- overlay -->
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="close" />
 
         <!-- modal card -->
@@ -211,9 +210,7 @@
                   alt="Taipei 101"
                   class="absolute inset-0 h-full w-full object-cover"
                 />
-
                 <div class="absolute inset-0 bg-black/10"></div>
-
                 <div class="absolute left-6 top-6 text-left text-white drop-shadow">
                   <div class="text-3xl font-semibold leading-none">台北101</div>
                   <div class="text-sm opacity-90">Taipei 101</div>
@@ -239,6 +236,8 @@
 <script setup lang="ts">
 import { watch, ref, onUnmounted } from 'vue'
 import { supabase } from '@/utils/supabaseClient'
+import { exchangeToCookie, me } from '@/services/authApi'
+import type { SessionUser } from '@/services/authApi'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
@@ -251,7 +250,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (e: 'update:modelValue', v: boolean): void
-  (e: 'login', payload: { user: any }): void
+  (e: 'login', payload: { user: SessionUser }): void
   (e: 'signup'): void
   (e: 'forgot-password'): void
   (e: 'social', provider: 'google' | 'apple' | 'line'): void
@@ -267,22 +266,22 @@ const onSubmit = async () => {
   try {
     if (!email.value || !password.value) throw new Error('請輸入 email 與密碼')
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
       email: email.value,
       password: password.value,
     })
+    if (signInError) throw signInError
 
-    if (error) {
-      console.error('[login] error:', error)
-      alert(error.message)
-      return
-    }
+    const access_token = signInData.session?.access_token
+    if (!access_token) throw new Error('No access token')
 
-    const user = data?.user
-    if (!user) throw new Error('登入失敗：沒有取得 user 資料')
+    await exchangeToCookie(access_token)
 
-    emit('login', { user })
+    const meRes = await me()
 
+    if (!meRes?.user) throw new Error('登入失敗：cookie session 未建立')
+
+    emit('login', { user: meRes.user })
     emit('update:modelValue', false)
   } catch (err: any) {
     console.error('[login] error:', err)
