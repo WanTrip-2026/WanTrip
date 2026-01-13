@@ -1,15 +1,33 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useCompareStore } from '@/stores/compareStore'
 
-defineProps({
-  hotel: {
-    type: Object,
-    required: true,
-  },
-})
-
+const props = defineProps<{
+  hotel: any
+}>()
 function starCount(stars: number) {
   return stars
+}
+const compareStore = useCompareStore()
+
+function addToCompare() {
+  const result = compareStore.addHotel({
+    id: props.hotel.id,
+    name: props.hotel.name,
+    star_rating: props.hotel.star_rating,
+    min_price: props.hotel.min_price,
+    city: props.hotel.city,
+    district: props.hotel.district,
+    image_url: props.hotel.image_url,
+    types: props.hotel.types ?? [],
+    facilities: props.hotel.facilities ?? [],
+  })
+
+  if (!result.ok) {
+    if (result.reason === 'duplicate') alert('這間飯店已加入比較')
+    if (result.reason === 'full') alert('最多只能加入 5 間飯店比較')
+    return
+  }
 }
 </script>
 
@@ -22,6 +40,7 @@ function starCount(stars: number) {
       <div class="h-full w-[246px] aspect-[4/3] relative">
         <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
         <button
+          @click="addToCompare"
           class="absolute bottom-5 right-5 rounded-[20px] h-[40px] w-[90px] text-xs p-[2px] bg-primary opacity-80 hover:opacity-100 text-white"
         >
           <i class="fa-solid fa-plus"></i>加入比較
