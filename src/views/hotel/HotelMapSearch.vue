@@ -287,7 +287,7 @@
 
             <div class="flex justify-between items-end">
               <div class="text-[#D14D4D] text-xl font-bold">
-                NT${{ hotel.min_price.toLocaleString() }}
+                NT${{ hotel.min_price?.toLocaleString() ?? '0' }}
               </div>
               <div class="flex gap-2">
                 <button class="bg-primary text-white p-2 rounded-full hover:bg-main_800 transition">
@@ -662,24 +662,34 @@ onMounted(async () => {
     // 1. 同步抓飯店與設施資料（統一用 axios）
     const [facilitiesRes, hotelsRes] = await Promise.all([
       axios.get(`${apiUrl}/facilities`),
-      axios.get(`${apiUrl}/hotels`),
+      axios.get(`${apiUrl}/hotels`, {
+        params: {
+          page: 1,
+          limit: 1000,
+        },
+      }),
     ])
+
+    const rawHotels = hotelsRes.data
+
+    hotels.value = Array.isArray(rawHotels?.hotels) ? rawHotels.hotels : []
 
     if (!facilitiesRes.data) {
       throw new Error('取得設施資料失敗')
     }
 
     facilities.value = facilitiesRes.data
-    hotels.value = hotelsRes.data
 
     const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
     if (facilityMenu) {
       facilityMenu.options = facilities.value
     }
 
-    hotels.value = hotelsRes.data // 後端回傳的飯店資料
-
     const runMapInitialization = async () => {
+      if (!Array.isArray(hotels.value) || hotels.value.length === 0) {
+        console.warn('No hotels to render on map')
+        return
+      }
       // 確保載入 marker 函式庫
       const { AdvancedMarkerElement, CollisionBehavior } = (await google.maps.importLibrary(
         'marker',
@@ -735,7 +745,12 @@ onMounted(async () => {
 
       // 準備飯店標記
       hotels.value.forEach((hotel) => {
-        if (!hotel.latitude || !hotel.longitude) return
+        const lat = Number(hotel.latitude)
+        const lng = Number(hotel.longitude)
+        if (isNaN(lat) || isNaN(lng)) {
+          console.warn(`Hotel ${hotel.name} 沒有座標，略過`)
+          return
+        }
 
         const priceTag = document.createElement('div')
         priceTag.className = `
@@ -750,7 +765,7 @@ onMounted(async () => {
             text-sm
             transition-all duration-200
         `
-        priceTag.innerText = `NT$ ${hotel.min_price.toLocaleString()}`
+        priceTag.innerText = `NT$ ${Number(hotel.min_price).toLocaleString()}`
 
         const marker = new AdvancedMarkerElement({
           position: { lat: Number(hotel.latitude), lng: Number(hotel.longitude) },
@@ -779,7 +794,7 @@ onMounted(async () => {
               </div>
 
               <div class="relative flex-1 p-3 flex flex-col justify-between min-w-0">
-                <div class="min-w-0">  
+                <div class="min-w-0">
                   <div class="flex items-start justify-between gap-2">
                     <h3 class="m-0 text-base font-bold text-black truncate pr-8">
                       ${hotel.name}
@@ -788,7 +803,7 @@ onMounted(async () => {
                         ${hotel.star_rating}.0
                     </div>
                 </div>
-                  
+
                   <div class="flex gap-0.5 my-1">
                     ${generateStarHtml(hotel.star_rating)}
                   </div>
