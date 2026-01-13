@@ -34,18 +34,8 @@
                   class="text-black font-medium px-4 py-2 hover:text-primary"
                   >住宿</RouterLink
                 >
-                <RouterLink
-                  to="/hotels"
-                  class="text-black font-medium px-4 py-2 hover:text-primary"
-                  >住宿</RouterLink
-                >
               </li>
               <li>
-                <RouterLink
-                  to="/tickets"
-                  class="text-black font-medium px-4 py-2 hover:text-primary"
-                  >體驗</RouterLink
-                >
                 <RouterLink
                   to="/tickets"
                   class="text-black font-medium px-4 py-2 hover:text-primary"
@@ -58,18 +48,8 @@
                   class="text-black font-medium px-4 py-2 hover:text-primary"
                   >比較</RouterLink
                 >
-                <RouterLink
-                  to="/hotels/compare"
-                  class="text-black font-medium px-4 py-2 hover:text-primary"
-                  >比較</RouterLink
-                >
               </li>
               <li>
-                <RouterLink
-                  to="/travel-dna/intro"
-                  class="text-black font-medium px-4 py-2 hover:text-primary"
-                  >旅行DNA</RouterLink
-                >
                 <RouterLink
                   to="/travel-dna/intro"
                   class="text-black font-medium px-4 py-2 hover:text-primary"
@@ -87,19 +67,12 @@
               class="hidden md:block text-black font-medium px-4 py-2 hover:text-primary"
               >常見問題</RouterLink
             >
-            <RouterLink
-              to="/support"
-              class="hidden md:block text-black font-medium px-4 py-2 hover:text-primary"
-              >常見問題</RouterLink
-            >
           </li>
 
 
           <li>
-            <!-- 未登入 -->
-            <!-- 未登入 -->
+
             <button
-              v-if="!auth.isLoggedIn"
               v-if="!auth.isLoggedIn"
               type="button"
               class="text-white rounded-[20px] bg-primary px-4 py-2 border border-white/15 hover:bg-[#455A71]"
@@ -228,7 +201,6 @@
         <nav class="flex flex-col gap-4">
           <button
             v-if="!auth.isLoggedIn"
-            v-if="!auth.isLoggedIn"
             type="button"
             class="text-left text-black font-medium border-b border-primary/25 pb-2"
             @click="openLogin"
@@ -305,9 +277,6 @@ const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 
-const router = useRouter()
-const route = useRoute()
-const auth = useAuthStore()
 const isOpen = ref(false)
 const isLoginModalOpen = ref(false)
 const isRegisterModalOpen = ref(false)
