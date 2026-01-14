@@ -87,7 +87,106 @@
               </button>
             </form>
           </div>
+          <!-- 個資管理區 -->
+          <div
+            class="scroll-mt-[96px] bg-white w-full rounded-[20px] border border-gray-300 p-5 mb-10"
+            id="admin-section"
+          >
+            <button
+              type="button"
+              class="float-right text-dark_700 hover:text-main_800 font-medium"
+              @click="toggleEdit"
+            >
+              {{ isEditing ? '取消' : '編輯' }}
+            </button>
+            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">我的資料</h3>
+            <p v-if="loadingProfile" class="text-sm text-gray-500 mt-2">載入中...</p>
+            <p v-if="errorMsg" class="text-sm text-red-500 mt-2">{{ errorMsg }}</p>
 
+            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2"
+            @submit.prevent="saveProfile">
+              <!-- 使用者名稱 -->
+              <div>
+                <label for="fullName" class="block mb-1 font-medium">使用者名稱</label>
+                <input
+                  id="fullName"
+                  name="fullName"
+                  :disabled="!isEditing"
+                  type="text"
+                  required
+                  placeholder="請輸入姓名"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3"
+                  v-model="form.fullName"
+                />
+              </div>
+              <!-- 生日 -->
+              <div>
+                <label for="birthday" class="block mb-1 font-medium">
+                  生日（YYYY / MM / DD）
+                </label>
+                <input
+                  id="birthday"
+                  name="birthday"
+                  :disabled="!isEditing"
+                  type="date"
+                  required
+                  class="w-full rounded-full border border-gray-300 px-5 py-3"
+                  v-model="form.birthday"
+                />
+              </div>
+              <!-- 性別 -->
+              <div>
+                <span class="block mb-1 font-medium">性別</span>
+                <div class="flex items-center gap-4">
+                  <label class="flex items-center gap-1">
+                    <input
+                      type="radio"
+                      :disabled="!isEditing"
+                      name="gender"
+                      v-model="form.gender"
+                      value="male"
+                      class="accent-primary"
+                      required
+                    />
+                    男
+                  </label>
+                  <label class="flex items-center gap-1">
+                    <input
+                        type="radio"
+                        :disabled="!isEditing"
+                        name="gender"
+                        v-model="form.gender"
+                        value="female"
+                      class="accent-primary"
+                    />
+                    女
+                  </label>
+                </div>
+              </div>
+              <!-- 電話 -->
+              <div>
+                <label for="phone" class="block mb-1 font-medium">電話</label>
+                <input
+                  id="phone"
+                  name="phone"
+                  :disabled="!isEditing"
+                  type="tel"
+                  required
+                  placeholder="請輸入電話號碼"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3"
+                  v-model="form.phone"
+                />
+              </div>
+
+              <button
+                type="submit"
+                v-if="isEditing"
+                class="self-end rounded-full bg-primary hover:bg-main_800 px-4 py-2 text-white"
+              >
+                修改資料
+              </button>
+            </form>
+          </div>
           <!-- 我的訂單 -->
           <div
             class="scroll-mt-[96px] bg-white rounded-[20px] border border-gray-300 p-5 mb-10"
@@ -262,108 +361,7 @@
               </div>
             </div>
           </div>
-          <!-- 個資管理區 -->
-          <div
-            class="scroll-mt-[96px] bg-white w-full rounded-[20px] border border-gray-300 p-5"
-            id="admin-section"
-          >
-            <button
-              type="button"
-              class="float-right text-dark_700 hover:text-main_800 font-medium"
-              @click="toggleEdit"
-            >
-              {{ isEditing ? '取消' : '編輯' }}
-            </button>
-            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">我的資料</h3>
-            <p v-if="loadingProfile" class="text-sm text-gray-500 mt-2">載入中...</p>
-            <p v-if="errorMsg" class="text-sm text-red-500 mt-2">{{ errorMsg }}</p>
 
-            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2"
-            @submit.prevent="saveProfile">
-              <!-- 使用者名稱 -->
-              <div>
-                <label for="fullName" class="block mb-1 font-medium">使用者名稱</label>
-                <input
-                  id="fullName"
-                  name="fullName"
-                  :disabled="!isEditing"
-                  type="text"
-                  required
-                  placeholder="請輸入姓名"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3"
-                  v-model="form.fullName"
-                />
-              </div>
-              <!-- 生日 -->
-              <div>
-                <label for="birthday" class="block mb-1 font-medium">
-                  生日（YYYY / MM / DD）
-                </label>
-                <input
-                  id="birthday"
-                  name="birthday"
-                  :disabled="!isEditing"
-                  type="date"
-                  required
-                  class="w-full rounded-full border border-gray-300 px-5 py-3"
-                  v-model="form.birthday"
-                />
-              </div>
-
-              <!-- 性別 -->
-              <div>
-                <span class="block mb-1 font-medium">性別</span>
-                <div class="flex items-center gap-4">
-                  <label class="flex items-center gap-1">
-                    <input
-                      type="radio"
-                      :disabled="!isEditing"
-                      name="gender"
-                      v-model="form.gender"
-                      value="male"
-                      class="accent-primary"
-                      required
-                    />
-                    男
-                  </label>
-                  <label class="flex items-center gap-1">
-                    <input
-                        type="radio"
-                        :disabled="!isEditing"
-                        name="gender"
-                        v-model="form.gender"
-                        value="female"
-                      class="accent-primary"
-                    />
-                    女
-                  </label>
-                </div>
-              </div>
-
-              <!-- 電話 -->
-              <div>
-                <label for="phone" class="block mb-1 font-medium">電話</label>
-                <input
-                  id="phone"
-                  name="phone"
-                  :disabled="!isEditing"
-                  type="tel"
-                  required
-                  placeholder="請輸入電話號碼"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3"
-                  v-model="form.phone"
-                />
-              </div>
-
-              <button
-                type="submit"
-                v-if="isEditing"
-                class="self-end rounded-full bg-primary hover:bg-main_800 px-4 py-2 text-white"
-              >
-                修改資料
-              </button>
-            </form>
-          </div>
         </div>
       </div>
     </section>
@@ -410,7 +408,7 @@ const toggleEdit = () => {
     form.value.email = profile.value.email ?? user.value?.email ?? ''
     form.value.fullName = profile.value.full_name ?? ''
     form.value.birthday = profile.value.birthday ?? ''
-    form.value.gender = profile.value.gender ?? 'male/female'
+    form.value.gender = profile.value.gender ?? 'male'
     form.value.phone = profile.value.phone ?? ''
   }
 }
@@ -418,41 +416,32 @@ const toggleEdit = () => {
 const loadMe = async () => {
   errorMsg.value = ''
   loadingProfile.value = true
+  console.log("Loading user profile...")
+  console.log("User session:", user.value)
 
   try {
-    const { data: authData, error: authErr } = await supabase.auth.getUser()
-    if (authErr) throw authErr
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/me`, {
+      method: 'GET',
+      credentials: 'include', // ✅ 一定要帶，才會送 cookie
+    })
 
-    user.value = authData.user
-    if (!user.value) return
+    if (!res.ok) {
+      throw new Error('未登入或 session 失效')
+    }
 
-    // 1) auth email 塞入表單（通常 email 以 auth 為準）
-    form.value.email = user.value.email ?? ''
+    const data = await res.json()
+    if (!data.user) {
+      throw new Error('未登入')
+    }
 
-    // 2) 確保 profiles 一定有這筆（第一次登入自動建立）
-    const { error: upsertErr } = await supabase
-      .from('profiles')
-      .upsert(
-        { id: user.value.id, email: user.value.email ?? null },
-        { onConflict: 'id' }
-      )
-    if (upsertErr) throw upsertErr
+    // 用後端回傳的 user/profile 填表單
+    user.value = { id: data.user.id, email: data.user.email } as any
 
-    // 3) 讀回 profiles
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, email, full_name, birthday, gender, phone, updated_at, created_at')
-      .eq('id', user.value.id)
-      .single()
-
-    if (error) throw error
-    profile.value = data
-
-    // 4) 塞回表單
-    form.value.fullName = data.full_name ?? ''
-    form.value.birthday = data.birthday ?? ''
-    form.value.gender = data.gender ?? 'male'
-    form.value.phone = data.phone ?? ''
+    form.value.email = data.user.email ?? ''
+    form.value.fullName = data.user.full_name ?? ''
+    form.value.phone = data.user.phone ?? ''
+    form.value.gender = data.user.gender ?? 'male'
+    form.value.birthday = data.user.birthday ?? ''
   } catch (e: any) {
     errorMsg.value = e?.message || '載入會員資料失敗'
   } finally {
@@ -490,9 +479,10 @@ const saveProfile = async () => {
 const activeMenu = ref('#account-section')
 const menus = [
   { label: '我的帳號', id: 'account-section', href: '#account-section' },
+  { label: '個資管理', id: 'admin-section', href: '#admin-section' },
   { label: '我的訂單', id: 'order-section', href: '#order-section' },
   { label: '收藏清單', id: 'favorite-section', href: '#favorite-section' },
-  { label: '個資管理', id: 'admin-section', href: '#admin-section' },
+
 ]
 
 let observer: IntersectionObserver | null = null
@@ -503,8 +493,8 @@ const setActive = (href: string) => {
 let authSub: { unsubscribe: () => void } | null = null
 
 onMounted(() => {
-  loadMe()
-
+  loadMe();
+})
   const { data } = supabase.auth.onAuthStateChange((_event, session) => {
     user.value = session?.user ?? null
     if (user.value) loadMe()
@@ -527,7 +517,6 @@ onMounted(() => {
     const section = document.getElementById(menu.id)
     if (section) observer?.observe(section)
   })
-})
 
 onUnmounted(() => {
   authSub?.unsubscribe?.()
