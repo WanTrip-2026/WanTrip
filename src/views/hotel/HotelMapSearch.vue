@@ -406,7 +406,9 @@
                       :value="option"
                       v-model="HotelMenu.selected"
                     />
-                    {{ option }}
+                    <span>
+                      {{ HotelMenu.key === 'star_rating' ? `${option} 星級` : option }}
+                    </span>
                   </label>
                   <button
                     v-if="HotelMenu.options.length > 4 && !expandedMenus.includes(HotelMenu.key)"
@@ -522,6 +524,8 @@ const priceRange = ref<PriceRange>({
   max: maxPrice,
 })
 
+const starOptions = computed(() => ['5', '4', '3', '2'])
+
 // 確認價錢範圍的最小.最大值
 watch(
   () => [priceRange.value.min, priceRange.value.max] as [number, number],
@@ -569,27 +573,21 @@ function toggleMenu(key: string) {
 }
 
 const HotelFiltered = reactive<FilterMenu[]>([
-  { key: 'star_rating', title: '星級', options: ['五星級', '四星級', '三星級'], selected: [] },
+  { key: 'star_rating', title: '星級', options: starOptions.value, selected: [] },
   {
     key: 'reviews',
     title: '評價',
     options: ['好極了: 9分以上', '非常好: 8分以上', '好: 7分以上', '令人愉悅: 6分以上'],
     selected: [],
   },
-  { key: 'type', title: '住宿類型', options: ['飯店', '旅館', '民宿', '度假村'], selected: [] },
+  { key: 'types', title: '住宿類型', options: [], selected: [] },
   {
     key: 'policies',
     title: '付款政策',
     options: ['免費取消', '立即付款', '延後付款', '到店付款'],
     selected: [],
   },
-  {
-    //從資料庫代入
-    key: 'facilities',
-    title: '設施＆服務',
-    options: [],
-    selected: [],
-  },
+  { key: 'facilities', title: '設施＆服務', options: [], selected: [] },
   {
     key: 'districts',
     title: '地區',
@@ -622,19 +620,35 @@ const fetchHotels = async () => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
     const params = new URLSearchParams()
 
+    params.append('page', '1')
+    params.append('limit', '1000')
+
     if (keyword.value.trim()) {
       params.append('keyword', keyword.value.trim())
     }
 
     const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
-    if (selectedFacilities.length > 0) {
-      params.append('facility_name', selectedFacilities.join(','))
+    if (selectedFacilities.length > 0) params.append('facility_names', selectedFacilities.join(','))
+
+    const selectedTypes = HotelFiltered.find((m) => m.key === 'types')?.selected ?? []
+    if (selectedTypes.length > 0) params.append('types', selectedTypes.join(','))
+
+    const selectedStars = HotelFiltered.find((m) => m.key === 'star_rating')?.selected ?? []
+    if (selectedStars.length > 0) {
+      const starNums = selectedStars.map((s) => parseInt(s, 10)).filter((n) => Number.isFinite(n))
+      if (starNums.length > 0) params.append('star_ratings', starNums.join(','))
     }
 
     const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
     if (!res.ok) throw new Error('取得飯店失敗')
 
-    hotels.value = await res.json()
+    const data = await res.json()
+    hotels.value = (data.hotels || []).map((h: Hotel) => ({
+      ...h,
+      cover_image:
+        h.cover_image ||
+        'https://cdn.hk01.com/di/media/images/3366554/org/1a17ee577918293a276a61cded582477.jpg',
+    }))
 
     if (hotels.value.length === 0) {
     } else if (keyword.value.trim()) {
@@ -683,6 +697,13 @@ onMounted(async () => {
     const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
     if (facilityMenu) {
       facilityMenu.options = facilities.value
+    }
+
+    const typesRes = await axios.get(`${apiUrl}/hotel_types`)
+    const types: string[] = typesRes.data
+    const typeMenu = HotelFiltered.find((m) => m.key === 'types')
+    if (typeMenu) {
+      typeMenu.options = types
     }
 
     const runMapInitialization = async () => {
@@ -984,10 +1005,13 @@ const handleHotelHover = (hotelId: string | number, isHover: boolean) => {
 }
 
 watch(
-  () => HotelFiltered.find((m) => m.key === 'facilities')?.selected,
-  () => {
-    fetchHotels()
-  },
+  () =>
+    HotelFiltered.map((m) => ({
+      key: m.key,
+      selected: [...m.selected],
+    })),
+  fetchHotels,
+  { deep: true },
 )
 
 function clearOptions(key: string) {
