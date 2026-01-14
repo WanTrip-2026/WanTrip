@@ -330,7 +330,7 @@ function goToMapSearch() {
     <section class="gap-5 m-10 mx-auto flex">
       <aside class="flex flex-col gap-5 w-[285px]">
         <div
-          class="relative flex h-[120px] items-center justify-center rounded-[20px] border border-gray-300 overflow-hidden bg-center bg-cover bg-[url('/src/assets/hotelmapsearch_img/MapSearch.png')]"
+          class="relative flex h-[120px] items-center justify-center rounded-[20px] border border-gray-300 overflow-hidden bg-center bg-cover bg-[url('https://res.cloudinary.com/wantrip/image/upload/v1768379566/MapSearch_cezz0b.png')]"
         >
           <div class="absolute inset-0 bg-white/30"></div>
           <button
