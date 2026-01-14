@@ -210,7 +210,7 @@
       >
         <div
           v-if="isMapLoading"
-          class="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center"
+          class="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-[20px]"
         >
           <div class="animate-spin">
             <FontAwesomeIcon :icon="['fas', 'circle-notch']" spin class="text-accent/60 text-5xl" />
