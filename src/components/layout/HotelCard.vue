@@ -1,10 +1,23 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useCompareStore } from '@/stores/compareStore'
-
+type HotelCard = {
+  id: string
+  name: string
+  star_rating: number
+  min_price: number
+  city?: string
+  district?: string
+  image_url?: string
+  types?: string[]
+  facilities?: string[]
+  distance?: number | null
+  rules?: string[]
+}
 const props = defineProps<{
-  hotel: any
+  hotel: HotelCard
 }>()
+
 function starCount(stars: number) {
   return stars
 }

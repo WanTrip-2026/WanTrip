@@ -23,6 +23,14 @@ const OrderCompleted = () => import('@/views/order/OrderCompleted.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+
+    // 頁面跳轉，一律回到最上方
+    return { top: 0 }
+  },
   routes: [
     {
       path: '/',
