@@ -429,41 +429,12 @@
 
 <script setup lang="ts">
 /// <reference types="@types/google.maps" />
-import { reactive, ref, watch, computed, onMounted, onUnmounted } from 'vue'
+import { reactive, ref, shallowRef, watch, computed, onMounted, onUnmounted } from 'vue'
 import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer'
-
-declare global {
-  interface Window {
-    initMap?: (() => void) | null
-    google: typeof google.maps
-  }
-}
-
-const router = useRouter()
-
-function starCount(stars: number) {
-  return stars
-}
-
-function goBackToList() {
-  router.push('/hotels/search')
-}
-
-interface PriceRange {
-  min: number
-  max: number
-}
-
-interface FilterMenu {
-  key: string
-  title: string
-  options: string[]
-  selected: string[]
-}
 
 interface Hotel {
   id: string
@@ -479,11 +450,38 @@ interface Hotel {
   longitude: number
 }
 
-type FacilityName = string
+interface PriceRange {
+  min: number
+  max: number
+}
 
+interface FilterMenu {
+  key: string
+  title: string
+  options: string[]
+  selected: string[]
+}
+
+declare global {
+  interface Window {
+    initMap?: (() => void) | null
+    google: typeof google.maps
+  }
+}
+
+const router = useRouter()
 const markerMap = new Map<string | number, google.maps.marker.AdvancedMarkerElement>()
-const mapInstance = ref<google.maps.Map | null>(null)
+const mapInstance = shallowRef<google.maps.Map | null>(null)
 
+let clusterer: MarkerClusterer | null = null
+
+let closeTimeout: number | null = null
+let currentOpenedMarker: google.maps.marker.AdvancedMarkerElement | null = null
+
+const isMapLoading = ref(true)
+const hotels = ref<Hotel[]>([])
+const keyword = ref('')
+const error = ref<string | null>(null)
 const facilities = ref<FacilityName[]>([])
 
 const generateStarHtml = (rating: number) => {
@@ -499,10 +497,53 @@ const generateStarHtml = (rating: number) => {
   return Array(Math.floor(rating)).fill(starSvg).join('')
 }
 
-const isMapLoading = ref(true)
-const hotels = ref<Hotel[]>([])
-const keyword = ref('')
-const error = ref<string | null>(null)
+const starOptions = computed(() => ['5', '4', '3', '2'])
+
+const HotelFiltered = reactive<FilterMenu[]>([
+  { key: 'star_rating', title: '星級', options: starOptions.value, selected: [] },
+  {
+    key: 'reviews',
+    title: '評價',
+    options: ['好極了: 9分以上', '非常好: 8分以上', '好: 7分以上', '令人愉悅: 6分以上'],
+    selected: [],
+  },
+  { key: 'types', title: '住宿類型', options: [], selected: [] },
+  {
+    key: 'policies',
+    title: '付款政策',
+    options: ['免費取消', '立即付款', '延後付款', '到店付款'],
+    selected: [],
+  },
+  { key: 'facilities', title: '設施＆服務', options: [], selected: [] },
+  {
+    key: 'districts',
+    title: '地區',
+    options: ['中正區', '中山區', '萬華區', '大同區', '松山區'],
+    selected: [],
+  },
+  {
+    key: 'distance',
+    title: '距離市中心',
+    options: [
+      '位於市中心',
+      '距市中心1.5公里內',
+      '距市中心1.5-3公里內',
+      '距市中心3-5公里內',
+      '距市中心5公里以上',
+    ],
+    selected: [],
+  },
+])
+
+function starCount(stars: number) {
+  return stars
+}
+
+function goBackToList() {
+  router.push('/hotels/search')
+}
+
+type FacilityName = string
 
 const peopleConfig = reactive({
   adults: 2,
@@ -523,8 +564,6 @@ const priceRange = ref<PriceRange>({
   min: minPrice,
   max: maxPrice,
 })
-
-const starOptions = computed(() => ['5', '4', '3', '2'])
 
 // 確認價錢範圍的最小.最大值
 watch(
@@ -572,45 +611,178 @@ function toggleMenu(key: string) {
   }
 }
 
-const HotelFiltered = reactive<FilterMenu[]>([
-  { key: 'star_rating', title: '星級', options: starOptions.value, selected: [] },
-  {
-    key: 'reviews',
-    title: '評價',
-    options: ['好極了: 9分以上', '非常好: 8分以上', '好: 7分以上', '令人愉悅: 6分以上'],
-    selected: [],
-  },
-  { key: 'types', title: '住宿類型', options: [], selected: [] },
-  {
-    key: 'policies',
-    title: '付款政策',
-    options: ['免費取消', '立即付款', '延後付款', '到店付款'],
-    selected: [],
-  },
-  { key: 'facilities', title: '設施＆服務', options: [], selected: [] },
-  {
-    key: 'districts',
-    title: '地區',
-    options: ['中正區', '中山區', '萬華區', '大同區', '松山區'],
-    selected: [],
-  },
-  {
-    key: 'distance',
-    title: '距離市中心',
-    options: [
-      '位於市中心',
-      '距市中心1.5公里內',
-      '距市中心1.5-3公里內',
-      '距市中心3-5公里內',
-      '距市中心5公里以上',
-    ],
-    selected: [],
-  },
-])
-
 const resetSearch = () => {
   keyword.value = ''
   fetchHotels()
+}
+
+let infoWindow: google.maps.InfoWindow
+
+const renderMarkers = async () => {
+  if (!mapInstance.value || !window.google) return
+
+  if (clusterer) {
+    clusterer.clearMarkers()
+  }
+  markerMap.clear()
+
+  // 確保載入 marker 函式庫
+  const { AdvancedMarkerElement, CollisionBehavior } = (await google.maps.importLibrary(
+    'marker',
+  )) as google.maps.MarkerLibrary
+
+  const markers: google.maps.marker.AdvancedMarkerElement[] = []
+
+  hotels.value.forEach((hotel) => {
+    const lat = Number(hotel.latitude)
+    const lng = Number(hotel.longitude)
+    if (isNaN(lat) || isNaN(lng)) return
+
+    const priceTag = document.createElement('div')
+    priceTag.className = `
+            custom-price-tag
+            bg-primary text-white
+            px-2 py-1
+            rounded-lg
+            font-bold
+            cursor-pointer
+            shadow-[0_2px_6px_rgba(0,0,0,0.3)]
+            whitespace-nowrap
+            text-sm
+            transition-all duration-200
+        `
+    priceTag.innerText = `NT$ ${Number(hotel.min_price).toLocaleString()}`
+
+    const marker = new AdvancedMarkerElement({
+      position: { lat: Number(hotel.latitude), lng: Number(hotel.longitude) },
+      content: priceTag,
+      title: hotel.name,
+      collisionBehavior: CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
+      zIndex: 1000000 - Number(hotel.min_price),
+    })
+
+    priceTag.addEventListener('mouseenter', () => {
+      if (!infoWindow) return
+      priceTag.classList.add('scale-110', 'bg-[#D14D4D]', 'z-[9999]')
+      priceTag.classList.remove('bg-primary')
+
+      if (closeTimeout) {
+        clearTimeout(closeTimeout)
+        closeTimeout = null
+      }
+
+      if (currentOpenedMarker === marker) return
+
+      const newContent = `
+          <div class="bg-white rounded-[20px] p-2 w-[340px] box-border">
+            <div class="flex bg-white rounded-[12px] border border-gray-200 overflow-hidden h-[132px]">
+              <div class="w-[100px] flex-shrink-0">
+                <img 
+                    src="${hotel.cover_image || 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg'}" 
+                    class="w-full h-full object-cover" 
+                    onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=No+Image';"
+                 />              
+              </div>
+              <div class="relative flex-1 p-3 flex flex-col justify-between min-w-0">
+                <div class="min-w-0">
+                  <div class="flex items-start justify-between gap-2">
+                    <h3 class="m-0 text-base font-bold text-black truncate pr-8">
+                      ${hotel.name}
+                    </h3>
+                    <div class="bg-[#2F3D4D] text-white p-2 rounded-full text-[10px]">
+                        ${hotel.star_rating}.0
+                    </div>
+                </div>
+
+                  <div class="flex gap-0.5 my-1">
+                    ${generateStarHtml(hotel.star_rating)}
+                  </div>
+                  <p class="m-0 text-slate-500 text-xs">
+                    ${hotel.city}${hotel.district}
+                  </p>
+                  <p class="text-[10px] text-gray-400">6616 則評論</p>
+                  <div class="text-[#D14D4D] text-base font-bold mt-2">
+                    NT$ ${hotel.min_price.toLocaleString()}
+                  </div>
+              </div>
+            </div>
+          </div>
+          `
+      infoWindow.setContent(newContent)
+      infoWindow.open({ anchor: marker, map: mapInstance.value })
+      currentOpenedMarker = marker
+    })
+
+    priceTag.addEventListener('mouseleave', () => {
+      priceTag.classList.remove('scale-110', 'bg-[#D14D4D]', 'z-[9999]')
+      priceTag.classList.add('bg-primary')
+
+      closeTimeout = window.setTimeout(() => {
+        infoWindow.close()
+        currentOpenedMarker = null
+      }, 200)
+    })
+
+    markerMap.set(hotel.id, marker)
+    markers.push(marker)
+  })
+
+  if (markers.length > 0) {
+    const customRenderer = {
+      render: ({ count, position }: { count: number; position: google.maps.LatLng }) => {
+        const container = document.createElement('div')
+        // 根據飯店數量決定圓圈大小
+        const size = count < 10 ? 40 : 50
+
+        container.style.width = `${size}px`
+        container.style.height = `${size}px`
+        container.className = `
+            bg-[#F8FDFF]/50
+            text-primary
+            rounded-full
+            flex items-center justify-center
+            font-bold text-sm
+            shadow-lg
+            border border-primary
+            cursor: pointer;
+            backdrop-blur-sm
+            transition-all duration-200
+        `
+        container.addEventListener('mouseenter', () => {
+          container.classList.add('scale-110', 'bg-[#D14D4D]', 'text-white')
+          container.classList.remove('bg-[#F8FDFF]/50', 'text-primary')
+        })
+
+        container.addEventListener('mouseleave', () => {
+          container.classList.remove('scale-110', 'bg-[#D14D4D]', 'text-white')
+          container.classList.add('bg-[#F8FDFF]/50', 'text-primary')
+        })
+        container.innerText = `${count}`
+
+        return new google.maps.marker.AdvancedMarkerElement({
+          position,
+          content: container,
+        })
+      },
+    }
+    if (clusterer) {
+      clusterer.clearMarkers()
+      clusterer.addMarkers(markers)
+    } else {
+      clusterer = new MarkerClusterer({
+        map: mapInstance.value,
+        markers,
+        renderer: customRenderer,
+        algorithm: new SuperClusterAlgorithm({
+          radius: 60,
+          maxZoom: 14,
+        }),
+      })
+    }
+  } else if (clusterer) {
+    // 如果沒標記了，清空地圖
+    clusterer.clearMarkers()
+  }
 }
 
 const fetchHotels = async () => {
@@ -620,6 +792,7 @@ const fetchHotels = async () => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
     const params = new URLSearchParams()
 
+    // 第一步：先組裝篩選參數
     params.append('page', '1')
     params.append('limit', '1000')
 
@@ -627,6 +800,7 @@ const fetchHotels = async () => {
       params.append('keyword', keyword.value.trim())
     }
 
+    // 處理星級、設施、類型等篩選
     const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
     if (selectedFacilities.length > 0) params.append('facility_names', selectedFacilities.join(','))
 
@@ -639,6 +813,7 @@ const fetchHotels = async () => {
       if (starNums.length > 0) params.append('star_ratings', starNums.join(','))
     }
 
+    // 第二步：去後端拿「篩選後」的資料
     const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
     if (!res.ok) throw new Error('取得飯店失敗')
 
@@ -647,8 +822,11 @@ const fetchHotels = async () => {
       ...h,
       cover_image:
         h.cover_image ||
-        'https://cdn.hk01.com/di/media/images/3366554/org/1a17ee577918293a276a61cded582477.jpg',
+        'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
     }))
+
+    // 第三步：資料拿到了，才開始畫地圖標記
+    await renderMarkers()
 
     if (hotels.value.length === 0) {
     } else if (keyword.value.trim()) {
@@ -673,7 +851,7 @@ onMounted(async () => {
       console.error('Google Maps API Key 遺失！')
       return
     }
-    // 1. 同步抓飯店與設施資料（統一用 axios）
+    // 同步抓飯店與設施資料（統一用 axios）
     const [facilitiesRes, hotelsRes] = await Promise.all([
       axios.get(`${apiUrl}/facilities`),
       axios.get(`${apiUrl}/hotels`, {
@@ -707,15 +885,6 @@ onMounted(async () => {
     }
 
     const runMapInitialization = async () => {
-      if (!Array.isArray(hotels.value) || hotels.value.length === 0) {
-        console.warn('No hotels to render on map')
-        return
-      }
-      // 確保載入 marker 函式庫
-      const { AdvancedMarkerElement, CollisionBehavior } = (await google.maps.importLibrary(
-        'marker',
-      )) as google.maps.MarkerLibrary
-
       const map = new google.maps.Map(document.getElementById('map') as HTMLElement, {
         center: { lat: 25.033964, lng: 121.564468 },
         zoom: 12,
@@ -727,13 +896,34 @@ onMounted(async () => {
       })
       mapInstance.value = map
 
-      const markers: google.maps.marker.AdvancedMarkerElement[] = []
+      infoWindow = new google.maps.InfoWindow({
+        disableAutoPan: true,
+        headerDisabled: true,
+      })
 
-      let closeTimeout: number | null = null
-      let currentOpenedMarker: google.maps.marker.AdvancedMarkerElement | null = null
-      const infoWindow = new google.maps.InfoWindow({ disableAutoPan: true, headerDisabled: true })
+      setupInfoWindowDomListener()
+      await fetchHotels()
+    }
 
-      // 放入 domready 監聽
+    // 設定全域回呼，給 Google Maps 載入完成後呼叫
+    window.initMap = runMapInitialization
+
+    // 檢查是否已經載入過腳本，防止重複載入導致 Element already defined
+    if (window.google && window.google.maps) {
+      runMapInitialization()
+    } else {
+      if (!document.getElementById('google-maps-script')) {
+        const script = document.createElement('script')
+        script.id = 'google-maps-script'
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=marker,places`
+        script.async = true
+        script.defer = true
+        document.head.appendChild(script)
+      }
+    }
+
+    // 放入 domready 監聽
+    function setupInfoWindowDomListener() {
       infoWindow.addListener('domready', () => {
         const el = document.querySelector('.gm-style-iw.gm-style-iw-c') as HTMLElement | null
         if (el) {
@@ -763,164 +953,6 @@ onMounted(async () => {
           })
         }
       })
-
-      // 準備飯店標記
-      hotels.value.forEach((hotel) => {
-        const lat = Number(hotel.latitude)
-        const lng = Number(hotel.longitude)
-        if (isNaN(lat) || isNaN(lng)) {
-          console.warn(`Hotel ${hotel.name} 沒有座標，略過`)
-          return
-        }
-
-        const priceTag = document.createElement('div')
-        priceTag.className = `
-            custom-price-tag
-            bg-primary text-white
-            px-2 py-1
-            rounded-lg
-            font-bold
-            cursor-pointer
-            shadow-[0_2px_6px_rgba(0,0,0,0.3)]
-            whitespace-nowrap
-            text-sm
-            transition-all duration-200
-        `
-        priceTag.innerText = `NT$ ${Number(hotel.min_price).toLocaleString()}`
-
-        const marker = new AdvancedMarkerElement({
-          position: { lat: Number(hotel.latitude), lng: Number(hotel.longitude) },
-          content: priceTag,
-          title: hotel.name,
-          collisionBehavior: CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
-          zIndex: 1000000 - Number(hotel.min_price),
-        })
-
-        priceTag.addEventListener('mouseenter', () => {
-          priceTag.classList.add('scale-110', 'bg-[#D14D4D]', 'z-[9999]')
-          priceTag.classList.remove('bg-primary')
-
-          if (closeTimeout) {
-            clearTimeout(closeTimeout)
-            closeTimeout = null
-          }
-
-          if (currentOpenedMarker === marker) return
-
-          const newContent = `
-          <div class="bg-white rounded-[20px] p-2 w-[340px] box-border">
-            <div class="flex bg-white rounded-[12px] border border-gray-200 overflow-hidden h-[132px]">
-              <div class="w-[100px] flex-shrink-0">
-                <img src="${hotel.cover_image || 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg'}" class="w-full h-full object-cover" />
-              </div>
-
-              <div class="relative flex-1 p-3 flex flex-col justify-between min-w-0">
-                <div class="min-w-0">
-                  <div class="flex items-start justify-between gap-2">
-                    <h3 class="m-0 text-base font-bold text-black truncate pr-8">
-                      ${hotel.name}
-                    </h3>
-                    <div class="bg-[#2F3D4D] text-white p-2 rounded-full text-[10px]">
-                        ${hotel.star_rating}.0
-                    </div>
-                </div>
-
-                  <div class="flex gap-0.5 my-1">
-                    ${generateStarHtml(hotel.star_rating)}
-                  </div>
-                  <p class="m-0 text-slate-500 text-xs">
-                    ${hotel.city}${hotel.district}
-                  </p>
-                  <p class="text-[10px] text-gray-400">6616 則評論</p>
-                  <div class="text-[#D14D4D] text-base font-bold mt-2">
-                    NT$ ${hotel.min_price.toLocaleString()}
-                  </div>
-              </div>
-            </div>
-          </div>
-          `
-          infoWindow.setContent(newContent)
-          infoWindow.open({ anchor: marker, map: mapInstance.value })
-
-          currentOpenedMarker = marker
-        })
-        priceTag.addEventListener('mouseleave', () => {
-          priceTag.classList.remove('scale-110', 'bg-[#D14D4D]', 'z-[9999]')
-          priceTag.classList.add('bg-primary')
-
-          closeTimeout = window.setTimeout(() => {
-            infoWindow.close()
-            currentOpenedMarker = null
-          }, 200)
-        })
-
-        markerMap.set(hotel.id, marker)
-        markers.push(marker)
-      })
-      if (markers.length > 0) {
-        const customRenderer = {
-          render: ({ count, position }: { count: number; position: google.maps.LatLng }) => {
-            const container = document.createElement('div')
-            // 根據飯店數量決定圓圈大小，更有層次感
-            const size = count < 10 ? 40 : 50
-
-            container.style.width = `${size}px`
-            container.style.height = `${size}px`
-            container.className = `
-            bg-[#F8FDFF]/50
-            text-primary
-            rounded-full
-            flex items-center justify-center
-            font-bold text-sm
-            shadow-lg
-            border border-primary
-            cursor: pointer;
-            backdrop-blur-sm
-            transition-all duration-200
-        `
-            container.addEventListener('mouseenter', () => {
-              container.classList.add('scale-110', 'bg-[#D14D4D]', 'text-white')
-              container.classList.remove('bg-[#F8FDFF]/50', 'text-primary')
-            })
-
-            container.addEventListener('mouseleave', () => {
-              container.classList.remove('scale-110', 'bg-[#D14D4D]', 'text-white')
-              container.classList.add('bg-[#F8FDFF]/50', 'text-primary')
-            })
-            container.innerText = `${count}`
-
-            return new google.maps.marker.AdvancedMarkerElement({
-              position,
-              content: container,
-            })
-          },
-        }
-        new MarkerClusterer({
-          map,
-          markers,
-          renderer: customRenderer,
-          algorithm: new SuperClusterAlgorithm({
-            radius: 20,
-            maxZoom: 14,
-          }),
-        })
-      }
-    }
-    // 3. 設定全域回呼，給 Google Maps 載入完成後呼叫
-    window.initMap = runMapInitialization
-
-    // 4. 檢查是否已經載入過腳本，防止重複載入導致 Element already defined
-    if (window.google && window.google.maps) {
-      runMapInitialization()
-    } else {
-      if (!document.getElementById('google-maps-script')) {
-        const script = document.createElement('script')
-        script.id = 'google-maps-script'
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=marker,places`
-        script.async = true
-        script.defer = true
-        document.head.appendChild(script)
-      }
     }
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) console.error(err.response?.data || err.message)
@@ -929,7 +961,7 @@ onMounted(async () => {
 
     error.value = '初始化資料時發生錯誤'
   } finally {
-    isMapLoading.value = false // 3. 結束時設為 false
+    isMapLoading.value = false
   }
 })
 
@@ -981,7 +1013,7 @@ const moveMapToKeyword = async (searchKeyword: string) => {
           lng: Number(matchedHotel.longitude),
         }
         map.panTo(position)
-        map.setZoom(16) // 找到具體飯店，放大一點
+        map.setZoom(16)
       } else {
         console.error('地名與飯店名稱皆無法定位：' + status)
       }
@@ -1036,7 +1068,7 @@ function clearOptions(key: string) {
   animation: slide-in-left 0.3s ease-out forwards;
 }
 
-/* 隱藏捲軸但保持滾動功能 (選用) */
+/* 隱藏捲軸但保持滾動功能 */
 .overflow-y-auto::-webkit-scrollbar {
   width: 4px;
 }
