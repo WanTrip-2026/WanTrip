@@ -1,52 +1,3 @@
-<script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-
-const activeMenu = ref('#account-section')
-
-const menus = [
-  { label: '我的帳號', id: 'account-section', href: '#account-section' },
-  { label: '我的訂單', id: 'order-section', href: '#order-section' },
-  { label: '收藏清單', id: 'favorite-section', href: '#favorite-section' },
-  { label: '個資管理', id: 'admin-section', href: '#admin-section' },
-]
-let observer = null
-
-onMounted(() => {
-  const options = {
-    root: null,
-    rootMargin: '-120px 0px -60% 0px',
-    threshold: 0,
-  }
-
-  observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        activeMenu.value = `#${entry.target.id}`
-      }
-    })
-  }, options)
-
-  menus.forEach((menu) => {
-    const section = document.getElementById(menu.id)
-    if (section) observer.observe(section)
-  })
-})
-
-onUnmounted(() => {
-  if (observer) observer.disconnect()
-})
-
-const setActive = (href) => {
-  activeMenu.value = href
-}
-
-const isEditing = ref(false)
-
-const toggleEdit = () => {
-  isEditing.value = !isEditing.value
-}
-const gender = ref('male')
-</script>
 <template>
   <main class="max-w-[1240px] mx-auto pt-24 min-h-screen">
     <section class="mx-5">
@@ -84,6 +35,8 @@ const gender = ref('male')
                   name="email"
                   type="email"
                   required
+                  v-model="form.email"
+                  disabled
                   placeholder="example@email.com"
                   class="w-full rounded-full border border-gray-300 px-5 py-3"
                 />
@@ -134,6 +87,7 @@ const gender = ref('male')
               </button>
             </form>
           </div>
+
           <!-- 我的訂單 -->
           <div
             class="scroll-mt-[96px] bg-white rounded-[20px] border border-gray-300 p-5 mb-10"
@@ -321,10 +275,12 @@ const gender = ref('male')
               {{ isEditing ? '取消' : '編輯' }}
             </button>
             <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">我的資料</h3>
+            <p v-if="loadingProfile" class="text-sm text-gray-500 mt-2">載入中...</p>
+            <p v-if="errorMsg" class="text-sm text-red-500 mt-2">{{ errorMsg }}</p>
 
-            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2">
+            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2"
+            @submit.prevent="saveProfile">
               <!-- 使用者名稱 -->
-
               <div>
                 <label for="fullName" class="block mb-1 font-medium">使用者名稱</label>
                 <input
@@ -335,6 +291,7 @@ const gender = ref('male')
                   required
                   placeholder="請輸入姓名"
                   class="w-full rounded-full border border-gray-300 px-5 py-3"
+                  v-model="form.fullName"
                 />
               </div>
               <!-- 生日 -->
@@ -349,6 +306,7 @@ const gender = ref('male')
                   type="date"
                   required
                   class="w-full rounded-full border border-gray-300 px-5 py-3"
+                  v-model="form.birthday"
                 />
               </div>
 
@@ -361,7 +319,7 @@ const gender = ref('male')
                       type="radio"
                       :disabled="!isEditing"
                       name="gender"
-                      v-model="gender"
+                      v-model="form.gender"
                       value="male"
                       class="accent-primary"
                       required
@@ -370,10 +328,11 @@ const gender = ref('male')
                   </label>
                   <label class="flex items-center gap-1">
                     <input
-                      type="radio"
-                      name="gender"
-                      v-model="gender"
-                      value="female"
+                        type="radio"
+                        :disabled="!isEditing"
+                        name="gender"
+                        v-model="form.gender"
+                        value="female"
                       class="accent-primary"
                     />
                     女
@@ -392,6 +351,7 @@ const gender = ref('male')
                   required
                   placeholder="請輸入電話號碼"
                   class="w-full rounded-full border border-gray-300 px-5 py-3"
+                  v-model="form.phone"
                 />
               </div>
 
@@ -409,3 +369,168 @@ const gender = ref('male')
     </section>
   </main>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+import type { User } from '@supabase/supabase-js'
+import { supabase } from '@/utils/supabaseClient'
+
+type ProfileRow = {
+  id: string
+  email: string | null
+  full_name: string | null
+  phone: string | null
+  gender: string | null
+  birthday: string | null // date 會以 'YYYY-MM-DD' 字串回來
+  updated_at: string | null
+  created_at?: string
+}
+
+const user = ref<User | null>(null)
+const profile = ref<ProfileRow | null>(null)
+
+const loadingProfile = ref(false)
+const saving = ref(false)
+const errorMsg = ref('')
+
+const form = ref({
+  email: '',
+  fullName: '',
+  birthday: '',
+  gender: 'male/female',
+  phone: '',
+})
+
+const isEditing = ref(false)
+const toggleEdit = () => {
+  isEditing.value = !isEditing.value
+
+  // 取消編輯時還原表單
+  if (!isEditing.value && profile.value) {
+    form.value.email = profile.value.email ?? user.value?.email ?? ''
+    form.value.fullName = profile.value.full_name ?? ''
+    form.value.birthday = profile.value.birthday ?? ''
+    form.value.gender = profile.value.gender ?? 'male/female'
+    form.value.phone = profile.value.phone ?? ''
+  }
+}
+
+const loadMe = async () => {
+  errorMsg.value = ''
+  loadingProfile.value = true
+
+  try {
+    const { data: authData, error: authErr } = await supabase.auth.getUser()
+    if (authErr) throw authErr
+
+    user.value = authData.user
+    if (!user.value) return
+
+    // 1) auth email 塞入表單（通常 email 以 auth 為準）
+    form.value.email = user.value.email ?? ''
+
+    // 2) 確保 profiles 一定有這筆（第一次登入自動建立）
+    const { error: upsertErr } = await supabase
+      .from('profiles')
+      .upsert(
+        { id: user.value.id, email: user.value.email ?? null },
+        { onConflict: 'id' }
+      )
+    if (upsertErr) throw upsertErr
+
+    // 3) 讀回 profiles
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, email, full_name, birthday, gender, phone, updated_at, created_at')
+      .eq('id', user.value.id)
+      .single()
+
+    if (error) throw error
+    profile.value = data
+
+    // 4) 塞回表單
+    form.value.fullName = data.full_name ?? ''
+    form.value.birthday = data.birthday ?? ''
+    form.value.gender = data.gender ?? 'male'
+    form.value.phone = data.phone ?? ''
+  } catch (e: any) {
+    errorMsg.value = e?.message || '載入會員資料失敗'
+  } finally {
+    loadingProfile.value = false
+  }
+}
+
+const saveProfile = async () => {
+  if (!user.value) return
+  saving.value = true
+  errorMsg.value = ''
+
+  try {
+    const payload: Partial<ProfileRow> = {
+      full_name: form.value.fullName,
+      birthday: form.value.birthday || null,
+      gender: form.value.gender,
+      phone: form.value.phone,
+      updated_at: new Date().toISOString(),
+    }
+
+    const { error } = await supabase.from('profiles').update(payload).eq('id', user.value.id)
+    if (error) throw error
+
+    isEditing.value = false
+    await loadMe()
+  } catch (e: any) {
+    errorMsg.value = e?.message || '更新失敗'
+  } finally {
+    saving.value = false
+  }
+}
+
+/** 左側選單 IntersectionObserver（保留你原本功能） */
+const activeMenu = ref('#account-section')
+const menus = [
+  { label: '我的帳號', id: 'account-section', href: '#account-section' },
+  { label: '我的訂單', id: 'order-section', href: '#order-section' },
+  { label: '收藏清單', id: 'favorite-section', href: '#favorite-section' },
+  { label: '個資管理', id: 'admin-section', href: '#admin-section' },
+]
+
+let observer: IntersectionObserver | null = null
+const setActive = (href: string) => {
+  activeMenu.value = href
+}
+
+let authSub: { unsubscribe: () => void } | null = null
+
+onMounted(() => {
+  loadMe()
+
+  const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+    user.value = session?.user ?? null
+    if (user.value) loadMe()
+  })
+  authSub = data?.subscription ?? null
+
+  const options: IntersectionObserverInit = {
+    root: null,
+    rootMargin: '-120px 0px -60% 0px',
+    threshold: 0,
+  }
+
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) activeMenu.value = `#${entry.target.id}`
+    })
+  }, options)
+
+  menus.forEach((menu) => {
+    const section = document.getElementById(menu.id)
+    if (section) observer?.observe(section)
+  })
+})
+
+onUnmounted(() => {
+  authSub?.unsubscribe?.()
+  observer?.disconnect()
+})
+</script>
