@@ -243,11 +243,7 @@
           class="bg-white w-full h-[180px] rounded-[20px] border border-gray-200 overflow-hidden flex flex-row hover:shadow-lg transition-shadow duration-300"
         >
           <div class="aspect-[2/3] relative flex-shrink-0">
-            <img
-              src="https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg"
-              :alt="hotel.name"
-              class="w-full h-full object-cover"
-            />
+            <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
             <button
               class="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-[20px] h-[32px] w-[80px] text-[10px] bg-primary opacity-80 hover:opacity-100 text-white transition whitespace-nowrap"
             >
@@ -445,7 +441,7 @@ interface Hotel {
   min_price: number
   facilities?: string[]
   address?: string
-  cover_image?: string
+  image_url?: string
   latitude: number
   longitude: number
 }
@@ -678,7 +674,7 @@ const renderMarkers = async () => {
             <div class="flex bg-white rounded-[12px] border border-gray-200 overflow-hidden h-[132px]">
               <div class="w-[100px] flex-shrink-0">
                 <img 
-                    src="${hotel.cover_image || 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg'}" 
+                    src="${hotel.image_url || 'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg'}" 
                     class="w-full h-full object-cover" 
                     onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=No+Image';"
                  />              
@@ -820,8 +816,8 @@ const fetchHotels = async () => {
     const data = await res.json()
     hotels.value = (data.hotels || []).map((h: Hotel) => ({
       ...h,
-      cover_image:
-        h.cover_image ||
+      image_url:
+        h.image_url ||
         'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
     }))
 
