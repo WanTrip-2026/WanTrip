@@ -435,15 +435,22 @@ const loadMe = async () => {
     }
 
     // 用後端回傳的 user/profile 填表單
-    user.value = { id: data.user.id, email: data.user.email } as any
+    user.value = {
+      id: data.user.id,
+      email: data.user.email,
+      app_metadata: {},
+      user_metadata: {},
+      aud: 'authenticated',
+      created_at: data.user.created_at || new Date().toISOString(),
+    } as User
 
     form.value.email = data.user.email ?? ''
     form.value.fullName = data.user.full_name ?? ''
     form.value.phone = data.user.phone ?? ''
     form.value.gender = data.user.gender ?? 'male'
     form.value.birthday = data.user.birthday ?? ''
-  } catch (e: any) {
-    errorMsg.value = e?.message || '載入會員資料失敗'
+  } catch (e: unknown) {
+    errorMsg.value = (e instanceof Error ? e.message : String(e)) || '載入會員資料失敗'
   } finally {
     loadingProfile.value = false
   }
@@ -462,14 +469,14 @@ const saveProfile = async () => {
       phone: form.value.phone,
       updated_at: new Date().toISOString(),
     }
-
+console.log(form.value)
     const { error } = await supabase.from('profiles').update(payload).eq('id', user.value.id)
     if (error) throw error
 
     isEditing.value = false
     await loadMe()
-  } catch (e: any) {
-    errorMsg.value = e?.message || '更新失敗'
+  } catch (e: unknown) {
+    errorMsg.value = (e instanceof Error ? e.message : String(e)) || '更新失敗'
   } finally {
     saving.value = false
   }

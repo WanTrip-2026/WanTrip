@@ -3,11 +3,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '@/views/HomePage.vue'
 import HotelHomeView from '@/views/hotel/HotelHomeView.vue'
 import TicketHomeView from '@/views/ticket/TicketHomeView.vue'
-import Profile from '@/views/user/Profile.vue'
+import UserProfile from '@/views/user/UserProfile.vue'
 import Support from '@/views/Support.vue'
 import LoginModel from '@/views/user/LoginModel.vue'
 import TravelDNAIntro from '@/views/travel-dna/TravelDNAIntro.vue'
 import HotelMapSearch from '@/views/hotel/HotelMapSearch.vue'
+
 
 // Lazy Loading
 const HotelSearch = () => import('@/views/hotel/HotelSearch.vue')
@@ -40,8 +41,8 @@ const router = createRouter({
     },
     {
       path: '/profile', //RWD-OK
-      name: 'profile',
-      component: Profile,
+      name: 'userprofile',
+      component: UserProfile,
       meta: { showAppNavbar: true, showFooter: true },
     },
     {

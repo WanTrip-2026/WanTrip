@@ -31,43 +31,17 @@
                   />
                 </div>
 
-                <!-- 生日：YYYY / MM / DD 三欄下拉 -->
-                <div class="grid grid-cols-3 gap-3">
-                  <div>
-                    <label class="sr-only" for="birthYear">birth year</label>
-                    <select
-                      id="birthYear"
-                      v-model="birthYear"
-                      class="w-full rounded-[20px] border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700"
-                    >
-                      <option value="" disabled>YYYY</option>
-                      <option v-for="y in years" :key="y" :value="String(y)">{{ y }}</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label class="sr-only" for="birthMonth">birth month</label>
-                    <select
-                      id="birthMonth"
-                      v-model="birthMonth"
-                      class="w-full rounded-[20px] border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700"
-                    >
-                      <option value="" disabled>MM</option>
-                      <option v-for="m in months" :key="m" :value="String(m)">{{ String(m).padStart(2, '0') }}</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label class="sr-only" for="birthDay">birth day</label>
-                    <select
-                      id="birthDay"
-                      v-model="birthDay"
-                      class="w-full rounded-[20px] border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700"
-                    >
-                      <option value="" disabled>DD</option>
-                      <option v-for="d in days" :key="d" :value="String(d)">{{ String(d).padStart(2, '0') }}</option>
-                    </select>
-                  </div>
+                <!-- 生日 -->
+                <div>
+                  <label class="sr-only" for="birthday">生日</label>
+                  <input
+                    id="birthday"
+                    v-model="birthday"
+                    type="date"
+                    required
+                    placeholder="YYYY-MM-DD"
+                    class="w-full rounded-[20px] border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700"
+                  />
                 </div>
 
                 <div>
@@ -170,7 +144,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onUnmounted, watch, ref } from 'vue'
+import { onUnmounted, watch, ref } from 'vue'
 import { supabase } from '@/utils/supabaseClient'
 
 const props = defineProps({
@@ -190,53 +164,20 @@ const username = ref('')
 const email = ref('')
 const password = ref('')
 const password2 = ref('')
-
-const birthYear = ref<string>('')
-const birthMonth = ref<string>('')
-const birthDay = ref<string>('')
+const birthday = ref('')
 
 const close = () => emit('update:modelValue', false)
-
-const years = computed(() => {
-  const now = new Date()
-  const current = now.getFullYear()
-  const start = current - 100
-  const arr: number[] = []
-  for (let y = current; y >= start; y--) arr.push(y)
-  return arr
-})
-
-const months = computed(() => Array.from({ length: 12 }, (_, i) => i + 1))
-
-const days = computed(() => {
-  const y = Number(birthYear.value)
-  const m = Number(birthMonth.value)
-  if (!y || !m) return Array.from({ length: 31 }, (_, i) => i + 1)
-
-  const lastDay = new Date(y, m, 0).getDate()
-  const arr: number[] = []
-  for (let d = 1; d <= lastDay; d++) arr.push(d)
-
-  if (birthDay.value && Number(birthDay.value) > lastDay) birthDay.value = ''
-  return arr
-})
-
-const birthday = computed(() => {
-  if (!birthYear.value || !birthMonth.value || !birthDay.value) return ''
-  const mm = String(birthMonth.value).padStart(2, '0')
-  const dd = String(birthDay.value).padStart(2, '0')
-  return `${birthYear.value}/${mm}/${dd}`
-})
 
 const onSubmit = async () => {
   try {
     if (!username.value) throw new Error('請輸入使用者名稱')
-    if (!birthYear.value || !birthMonth.value || !birthDay.value) throw new Error('請選擇生日')
+    if (!birthday.value) throw new Error('請選擇生日')
     if (!email.value || !password.value) throw new Error('請輸入 email 與密碼')
     if (password.value !== password2.value) throw new Error('兩次輸入的密碼不一致')
 
     console.log('[env] VITE_SUPABASE_URL =', import.meta.env.VITE_SUPABASE_URL)
     console.log('[env] VITE_API_BASE_URL =', import.meta.env.VITE_API_BASE_URL)
+    console.log('[birthday] =', birthday.value)
 
     const { data, error } = await supabase.auth.signUp({
       email: email.value,
@@ -257,12 +198,34 @@ const onSubmit = async () => {
     const userId = data?.user?.id
     console.log('[signup] userId =', userId)
 
-    alert('註冊成功！請到信箱完成驗證（若有開啟信箱驗證）。')
+    // ✅ 將使用者資料寫入 profiles 表 (使用 upsert 避免重複插入)
+    if (userId) {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: userId,
+          email: email.value,
+          full_name: username.value,
+          birthday: birthday.value,
+          updated_at: new Date().toISOString(),
+        }, {
+          onConflict: 'id', // 如果 id 已存在,則更新
+        })
+
+      if (profileError) {
+        console.error('[profile upsert] error:', profileError)
+        // 即使 profile 寫入失敗,註冊還是成功了,所以只記錄錯誤
+      } else {
+        console.log('[profile upsert] success')
+      }
+    }
+
+    alert('註冊成功!請到信箱完成驗證(若有開啟信箱驗證)。')
     emit('registered', data)
     close()
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[register] error:', err)
-    alert(err?.message ?? String(err))
+    alert((err instanceof Error ? err.message : String(err)) || '註冊失敗')
   }
 }
 
