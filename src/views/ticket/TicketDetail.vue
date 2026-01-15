@@ -1,11 +1,11 @@
 <template>
   <div class="min-h-screen max-w-[1240px] mx-auto pt-24 pb-20">
-    <div class="mx-5 text-sm text-dark_500 space-x-1 py-2">
+    <!-- <div class="mx-5 text-sm text-dark_500 space-x-1 py-2">
       <RouterLink to="/" class="hover:underline underline-offset-2">首頁</RouterLink> >
       <RouterLink to="/" class="hover:underline underline-offset-2">體驗</RouterLink> >
       <RouterLink to="/" class="hover:underline underline-offset-2">景點門票</RouterLink> >
       <RouterLink to="/" class="hover:underline underline-offset-2">詳細資訊</RouterLink>
-    </div>
+    </div> -->
 
     <div class="mx-5 mb-8">
       <div class="grid grid-cols-[2fr_1fr] lg:grid-cols-[2fr_1fr_1fr_1fr] gap-2.5 mb-10">
@@ -203,8 +203,44 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { supabase } from '@/utils/supabaseClient'
+
+interface Attraction {
+  id: number
+  name: string
+  image_url: string
+  city: string
+  category: string[]
+  price: number
+  rating: number
+  comments_count: number
+}
+
+defineProps<{
+  attraction: Attraction
+}>()
+
+const attractions = ref<Attraction[]>([])
+const loading = ref<boolean>(true)
+const errorMsg = ref<string>('')
+
+const fetchAttractions = async (): Promise<void> => {
+  const { data, error } = await supabase
+    .from('attractions')
+    .select('*')
+
+  if (error) {
+    errorMsg.value = error.message
+  } else {
+    attractions.value = data ?? []
+  }
+
+  loading.value = false
+}
+
+onMounted(fetchAttractions)
 
 const router = useRouter()
 function onSearch() {
