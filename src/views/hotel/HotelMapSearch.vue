@@ -247,6 +247,7 @@
             <div class="aspect-[2/3] relative flex-shrink-0">
               <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
               <button
+                @click.prevent
                 class="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-[20px] h-[32px] w-[80px] text-[10px] bg-primary opacity-80 hover:opacity-100 text-white transition whitespace-nowrap"
               >
                 <i class="fa-solid fa-plus mr-1"></i>加入比較
