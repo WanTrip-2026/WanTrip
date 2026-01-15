@@ -390,7 +390,7 @@ const handleBook = (id) => console.log('購票 ID:', id);
                           </button>
                           <span class="text-sm font-medium w-4 text-center text-black">{{
                             peopleConfig.adults
-                            }}</span>
+                          }}</span>
                           <button @click.stop="peopleConfig.adults++" type="button"
                             class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white">
                             +
@@ -408,7 +408,7 @@ const handleBook = (id) => console.log('購票 ID:', id);
                           </button>
                           <span class="text-sm font-medium w-4 text-center text-black">{{
                             peopleConfig.children
-                            }}</span>
+                          }}</span>
                           <button @click.stop="peopleConfig.children++" type="button"
                             class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white">
                             +

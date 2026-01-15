@@ -104,9 +104,7 @@ const cities = [
 function selectCity(city: string): void {
   selectedCity.value = city
   isOpen.value = false
-  // Optional: trigger filter
 }
-
 const cityAreaMap: Record<string, string[]> = {
   台北市: ['中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區', '士林區', '北投區', '內湖區', '南港區', '文山區'],
   新北市: ['板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區'],
@@ -146,7 +144,7 @@ const ticketFiltered = computed(() => [
   },
 ])
 
-// Pagination
+// 切換頁數
 const currentPage = ref<number>(1)
 const itemsPerPage = 9
 
@@ -154,7 +152,7 @@ const totalPages = computed<number>(() =>
   Math.ceil(attractions.value.length / itemsPerPage),
 )
 
-const pagedattraction = computed<any[]>(() => {
+const pagedattraction = computed<Attraction[]>(() => {
   const start = (currentPage.value - 1) * itemsPerPage
   return attractions.value.slice(start, start + itemsPerPage)
 })
@@ -164,6 +162,10 @@ function goToPage(page: number): void {
     currentPage.value = page
   }
 }
+// 從 query 取得搜尋條件（未來可做過濾）
+const route = useRoute()
+const searchKeyword = computed(() => route.query.keyword ?? '')
+const searchCity = computed(() => route.query.city ?? '')
 </script>
 
 <template class="bg-page">
@@ -258,14 +260,7 @@ function goToPage(page: number): void {
             </button>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-             <div v-if="errorMsg" class="col-span-full p-4 text-red-700 bg-red-100 rounded">
-               {{ errorMsg }}
-             </div>
-             <div v-else-if="!loading && attractions.length === 0" class="col-span-full p-10 text-center text-gray-500 bg-gray-50 rounded">
-               <p class="text-xl font-bold mb-2">沒有找到相關體驗 (No Results)</p>
-               <p>請嘗試調整搜尋條件或是確認資料庫是否有資料。</p>
-             </div>
-            <TicketCard v-for="ticket in pagedattraction" :key="ticket.id" :ticket="ticket" />
+            <TicketCard v-for="attraction in pagedattraction" :key="attraction.id" :attraction="attraction" />
           </div>
           <div class="flex justify-center gap-2 mt-5 mb-10">
             <button v-for="page in totalPages" :key="page"
