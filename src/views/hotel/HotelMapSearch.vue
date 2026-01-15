@@ -1042,6 +1042,10 @@ const handleHotelHover = (hotelId: string | number, isHover: boolean) => {
   if (isHover) {
     element.classList.add('scale-110', 'bg-[#D14D4D]', 'z-[9999]', 'shadow-xl')
     element.classList.remove('bg-primary')
+    if (mapInstance.value && marker.position) {
+      mapInstance.value.panTo(marker.position)
+      mapInstance.value.setZoom(18)
+    }
   } else {
     element.classList.remove('scale-110', 'bg-[#D14D4D]', 'z-[9999]', 'shadow-xl')
     element.classList.add('bg-primary')
