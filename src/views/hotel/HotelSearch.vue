@@ -123,7 +123,7 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
       ...h,
       image_url:
         h.image_url ||
-        'https://cdn.hk01.com/di/media/images/3366554/org/1a17ee577918293a276a61cded582477.jpg/CwABjWRXi8m70sf513Oli2_Nrybz9IXncrQxZHK0MWQ?v=w1280r16_9',
+        'https://res.cloudinary.com/wantrip/image/upload/v1767939338/%E9%A3%AF%E5%BA%97%E9%A6%96%E5%9C%96_dualwy.jpg',
     }))
 
     currentPage.value = data.page
@@ -319,7 +319,7 @@ function goToMapSearch() {
       <div class="border border-gray-300 rounded-full md:h-full">
         <button
           @click="onSearch"
-          class="bg-primary hover:bg-main_800 text-white px-6 py-3 rounded-full transition-colors whitespace-nowrap"
+          class="bg-primary hover:bg-[#6D8FA3] text-white px-6 py-3 rounded-full transition-colors whitespace-nowrap"
         >
           搜尋
         </button>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useCompareStore } from '@/stores/compareStore'
+
 type HotelCard = {
   id: string
   name: string
@@ -14,32 +16,38 @@ type HotelCard = {
   distance?: number | null
   rules?: string[]
 }
+
 const props = defineProps<{
   hotel: HotelCard
 }>()
 
+const compareStore = useCompareStore()
+
 function starCount(stars: number) {
   return stars
 }
-const compareStore = useCompareStore()
 
-function addToCompare() {
+// 是否已加入比較：用 store getter（你前面已加 isInCompare 的話）
+const isInCompare = computed(() => compareStore.isInCompare(props.hotel.id))
+
+// 按鈕：已加入→移除；未加入→加入
+function toggleCompare() {
+  // 已加入就移除
+  if (isInCompare.value) {
+    compareStore.removeHotel(props.hotel.id)
+    return
+  }
+
   const result = compareStore.addHotel({
-    id: props.hotel.id,
-    name: props.hotel.name,
-    star_rating: props.hotel.star_rating,
-    min_price: props.hotel.min_price,
-    city: props.hotel.city,
-    district: props.hotel.district,
-    image_url: props.hotel.image_url,
+    ...props.hotel,
     types: props.hotel.types ?? [],
     facilities: props.hotel.facilities ?? [],
+    rules: props.hotel.rules ?? [],
+    distance: props.hotel.distance ?? undefined,
   })
-
   if (!result.ok) {
-    if (result.reason === 'duplicate') alert('這間飯店已加入比較')
     if (result.reason === 'full') alert('最多只能加入 5 間飯店比較')
-    return
+    // duplicate 理論上不會發生（因為 isInCompare 先擋了）
   }
 }
 </script>
@@ -53,10 +61,16 @@ function addToCompare() {
       <div class="h-full w-[246px] aspect-[4/3] relative">
         <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
         <button
-          @click="addToCompare"
-          class="absolute bottom-5 right-5 rounded-[20px] h-[40px] w-[90px] text-xs p-[2px] bg-primary opacity-80 hover:opacity-100 text-white"
+          @click="toggleCompare"
+          class="absolute bottom-5 right-5 rounded-[20px] h-[40px] w-[90px] text-xs p-[2px] opacity-80 hover:opacity-100 text-white"
+          :class="
+            isInCompare
+              ? 'bg-dark_300 text-white cursor-not-allowed'
+              : 'bg-primary text-white opacity-80 hover:bg-main_800'
+          "
         >
-          <i class="fa-solid fa-plus"></i>加入比較
+          <template v-if="isInCompare">已加入</template>
+          <template v-else>加入比較</template>
         </button>
       </div>
 

@@ -8,8 +8,10 @@ export interface CompareHotel {
   city?: string
   district?: string
   image_url?: string
-  types?: string[]
-  facilities?: string[]
+  types: string[]
+  facilities: string[]
+  rules?: string[]
+  distance?: number
 }
 
 const STORAGE_KEY = 'wantrip_compare_hotels_v1'
@@ -29,9 +31,7 @@ function loadFromStorage(): CompareHotel[] {
 function saveToStorage(hotels: CompareHotel[]) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(hotels))
-  } catch {
-    // 忽略 storage 滿了/隱私模式等錯誤
-  }
+  } catch {}
 }
 
 export const useCompareStore = defineStore('compare', {
@@ -41,13 +41,22 @@ export const useCompareStore = defineStore('compare', {
   getters: {
     count: (s) => s.hotels.length,
     isFull: (s) => s.hotels.length >= MAX,
+
+    isInCompare: (s) => (id: string) => s.hotels.some((h) => h.id === id),
   },
   actions: {
     addHotel(hotel: CompareHotel): { ok: boolean; reason?: 'duplicate' | 'full' } {
       if (this.hotels.some((h) => h.id === hotel.id)) return { ok: false, reason: 'duplicate' }
       if (this.hotels.length >= MAX) return { ok: false, reason: 'full' }
 
-      this.hotels.push(hotel)
+      const normalized: CompareHotel = {
+        ...hotel,
+        types: Array.isArray(hotel.types) ? hotel.types : [],
+        facilities: Array.isArray(hotel.facilities) ? hotel.facilities : [],
+        rules: Array.isArray(hotel.rules) ? hotel.rules : [],
+      }
+
+      this.hotels.push(normalized)
       saveToStorage(this.hotels)
       return { ok: true }
     },

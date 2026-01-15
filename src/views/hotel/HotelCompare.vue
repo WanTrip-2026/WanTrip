@@ -1,12 +1,12 @@
 <template>
-  <main class="max-w-[1200px] mx-auto py-5 mt-24 mb-10">
-    <div class="mx-5 lg:mx-0">
+  <main class="min-h-screen max-w-[1240px] mx-auto mt-24 mb-20">
+    <div class="mx-5">
       <!-- 上方操作：只出現一次 -->
       <button
         v-if="compareStore.hotels.length !== 0"
         type="button"
         @click="openPicker"
-        class="w-fit mx-auto px-6 py-3 my-5 rounded-[20px] text-center text-white text-lg font-bold shadow-sm bg-main hover:bg-main_800 transition-all"
+        class="w-fit mx-auto px-6 py-3 my-5 rounded-[20px] text-center text-white text-lg font-bold shadow-sm bg-primary hover:bg-main transition-all"
       >
         選擇住宿（已加入 {{ compareStore.hotels.length }}/5）
       </button>
@@ -19,7 +19,7 @@
         目前沒有加入任何飯店可以比較。請先回飯店列表按「加入比較」。
         <div class="mt-4">
           <button
-            class="px-5 py-2 rounded-[20px] bg-main hover:bg-main_800 text-white"
+            class="px-5 py-2 rounded-[20px] bg-primary hover:bg-main text-white transition-all"
             @click="goBackToList"
           >
             前往飯店列表
@@ -31,7 +31,7 @@
       <div v-else class="grid grid-cols-2 lg:grid-cols-3 gap-5">
         <div v-for="hotel in limitedHotels" :key="hotel.id" class="flex flex-col space-y-2">
           <button
-            class="w-full py-3 rounded-[20px] bg-dark_300 text-white font-bold hover:bg-dark_200"
+            class="w-full py-3 rounded-[20px] bg-dark_100 text-dark font-bold hover:bg-dark_200 transition-all"
             @click="removeFromCompare(hotel.id)"
           >
             移除比較
@@ -59,11 +59,17 @@
             {{ (hotel.types ?? []).join(' / ') }}
           </div>
 
-          <div class="bg-main_100 p-5 rounded-[20px] min-h-[220px] shadow-sm">
+          <div class="bg-main_100 p-5 rounded-[20px] min-h-[320px] shadow-sm">
             <p class="font-bold mb-2 text-center text-dark_700">設施 & 服務</p>
             <ul class="space-y-1">
               <li v-for="f in hotel.facilities ?? []" :key="f" class="text-dark_500">- {{ f }}</li>
             </ul>
+            <li
+              v-if="!hotel.facilities || hotel.facilities.length === 0"
+              class="text-dark_400 text-center italic"
+            >
+              尚未提供設施資訊
+            </li>
           </div>
 
           <!-- distance / rules 都要防呆 -->
@@ -90,14 +96,14 @@
 
           <div class="bg-main_100 p-5 rounded-[20px] text-center shadow-sm">
             <p class="font-bold text-dark_700">價格</p>
-            <p class="text-sm lg:text-2xl font-bold text-red-500">
-              NT$ {{ formatPrice(hotel.min_price) }} <span class="text-dark_500 text-sm">起</span>
+            <p class="text-base lg:text-xl font-bold text-red-500">
+              NT$ {{ formatPrice(hotel.min_price) }} <span class="text-dark_500 text-sm">/起</span>
             </p>
           </div>
 
           <RouterLink
             :to="`/hotels/${hotel.id}`"
-            class="w-full bg-main hover:bg-main_800 transition-all py-3 rounded-[20px] text-white text-center font-bold shadow-sm"
+            class="w-full bg-primary hover:bg-main transition-all py-3 rounded-[20px] text-white text-center font-bold shadow-sm"
           >
             立即預訂
           </RouterLink>
@@ -115,11 +121,16 @@
           class="absolute left-1/2 top-1/2 w-[92%] max-w-[720px] -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-5 shadow-lg"
         >
           <div class="flex items-center justify-between mb-4">
-            <p class="font-bold text-lg">已加入比較的飯店（最多 5 間）</p>
-            <button class="text-gray-500" @click="showPicker = false">✕</button>
+            <p class="font-bold text-lg text-dark">已加入比較的飯店（最多 5 間）</p>
+            <button
+              class="w-8 h-8 rounded-full transition-all text-dark_700 hover:bg-main_100"
+              @click="showPicker = false"
+            >
+              ✕
+            </button>
           </div>
 
-          <div v-if="compareStore.hotels.length === 0" class="text-gray-600">
+          <div v-if="compareStore.hotels.length === 0" class="text-dark_700">
             尚未加入飯店。請回列表按「加入比較」。
           </div>
 
@@ -132,11 +143,11 @@
               <input type="checkbox" :checked="selectedIds.includes(h.id)" @change="toggle(h.id)" />
               <img :src="h.image_url" class="w-20 h-14 object-cover rounded-lg" alt="" />
               <div class="flex-1">
-                <div class="font-bold">{{ h.name }}</div>
-                <div class="text-sm text-gray-500">{{ (h.types ?? []).join(' / ') }}</div>
+                <div class="font-bold text-dark">{{ h.name }}</div>
+                <div class="text-sm text-dark_500">{{ (h.types ?? []).join(' / ') }}</div>
               </div>
               <button
-                class="text-sm text-gray-700 hover:text-gray-300"
+                class="text-sm text-dark_700 hover:text-dark_500"
                 @click="removeFromCompare(h.id)"
               >
                 移除
@@ -146,13 +157,13 @@
 
           <div class="flex justify-end gap-3 mt-5">
             <button
-              class="px-4 py-2 rounded-xl border bg-dark_300 hover:bg-dark_200"
+              class="px-4 py-2 rounded-xl border text-dark bg-dark_100 hover:bg-dark_300"
               @click="clearAll"
             >
               清空
             </button>
             <button
-              class="px-4 py-2 rounded-xl bg-main hover:bg-main_800 text-white"
+              class="px-4 py-2 rounded-xl bg-primary hover:bg-main text-white"
               @click="showPicker = false"
             >
               完成
@@ -171,6 +182,8 @@ import { useCompareStore } from '@/stores/compareStore'
 
 const router = useRouter()
 const compareStore = useCompareStore()
+
+const props = defineProps<{ hotel: any }>()
 
 const showPicker = ref(false)
 const selectedIds = ref<string[]>([])
