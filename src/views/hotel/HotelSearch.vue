@@ -26,6 +26,23 @@ type FacilityName = string
 
 const router = useRouter()
 
+const getTodayStr = (): string => {
+  const date = new Date().toISOString().split('T')[0]
+  return date || '' // 如果 split 出現意外，回傳空字串
+}
+
+const getTomorrowStr = (): string => {
+  const date = new Date()
+  date.setDate(date.getDate() + 1)
+  const dateStr = date.toISOString().split('T')[0]
+  return dateStr || ''
+}
+
+const startDate = ref<string>(getTodayStr())
+const endDate = ref<string>(getTomorrowStr())
+const adultCount = ref<number>(2)
+const roomCount = ref<number>(1)
+
 const facilities = ref<FacilityName[]>([])
 const hotels = ref<Hotel[]>([])
 const keyword = ref('')
@@ -93,6 +110,16 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
     // keyword
     if (keyword.value.trim()) params.append('keyword', keyword.value.trim())
 
+    // 日期與人數參數
+    if (startDate.value) {
+      params.append('start_date', startDate.value)
+    }
+    if (endDate.value) {
+      params.append('end_date', endDate.value)
+    }
+    params.append('adults', String(adultCount.value))
+    params.append('rooms', String(roomCount.value))
+
     // facilities（後端支援 facility_names=xxx,yyy）
     const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
     if (selectedFacilities.length > 0) params.append('facility_names', selectedFacilities.join(','))
@@ -138,6 +165,16 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
     totalPages.value = 1
   }
 }
+
+// 預設日期
+onMounted(() => {
+  const today = new Date()
+  const tomorrow = new Date(today)
+  tomorrow.setDate(today.getDate() + 1)
+
+  startDate.value = today.toISOString().split('T')[0] as string
+  endDate.value = tomorrow.toISOString().split('T')[0] as string
+})
 
 // -------------------
 // 初始化：設施 + 第一頁飯店
@@ -304,16 +341,30 @@ function goToMapSearch() {
       </div>
       <div class="relative w-full border border-gray-300 rounded-full md:h-full flex-1">
         <input
-          type="text"
-          placeholder="入住及退房日期"
+          v-model="startDate"
+          type="date"
+          class="w-full pl-4 px-6 py-3 text-base text-black border-none bg-gray-50 rounded-full focus:ring-2 focus:ring-primary outline-none transition-all"
+        />
+        <input
+          v-model="endDate"
+          type="date"
           class="w-full pl-4 px-6 py-3 text-base text-black border-none bg-gray-50 rounded-full focus:ring-2 focus:ring-primary outline-none transition-all"
         />
       </div>
       <div class="relative w-full border border-gray-300 rounded-full md:h-full flex-1">
+        <span class="text-xs text-gray-500 whitespace-nowrap">成人</span>
         <input
-          type="text"
-          placeholder="2 位成人 · 1 間房"
-          class="w-full pl-4 px-6 py-3 text-base text-black border-none bg-gray-50 rounded-full focus:ring-2 focus:ring-primary outline-none transition-all"
+          v-model.number="adultCount"
+          type="number"
+          min="1"
+          class="w-full py-3 bg-transparent outline-none text-center"
+        />
+        <span class="text-xs text-gray-500 whitespace-nowrap">房</span>
+        <input
+          v-model.number="roomCount"
+          type="number"
+          min="1"
+          class="w-full py-3 bg-transparent outline-none text-center"
         />
       </div>
       <div class="border border-gray-300 rounded-full md:h-full">
