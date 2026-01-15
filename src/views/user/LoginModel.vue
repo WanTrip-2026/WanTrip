@@ -283,9 +283,23 @@ const onSubmit = async () => {
 
     emit('login', { user: meRes.user })
     emit('update:modelValue', false)
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[login] error:', err)
-    alert(err?.message ?? String(err))
+
+    // 提供更友善的錯誤訊息
+    let errorMessage = '登入失敗'
+
+    if (err instanceof Error) {
+      if (err.message.includes('Invalid login credentials')) {
+        errorMessage = '帳號或密碼錯誤,請確認:\n1. Email 是否正確\n2. 密碼是否正確\n3. 是否已完成 Email 驗證(請檢查信箱)'
+      } else if (err.message.includes('Email not confirmed')) {
+        errorMessage = '請先到信箱完成 Email 驗證後再登入'
+      } else {
+        errorMessage = err.message
+      }
+    }
+
+    alert(errorMessage)
   }
 }
 
