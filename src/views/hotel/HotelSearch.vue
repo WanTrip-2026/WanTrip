@@ -19,7 +19,7 @@ interface Hotel {
   star_rating: number
   min_price: number
   facilities?: string[]
-  image_url?: string
+  image_url: string
 }
 
 type FacilityName = string
