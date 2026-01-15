@@ -712,18 +712,17 @@ const renderMarkers = async () => {
           </div>
         </div>
       `
-      infoWindow.setContent(newContent)
+      const contentNode = document.createElement('div')
+      contentNode.innerHTML = newContent
+      const clickableCard = contentNode.querySelector<HTMLDivElement>('.clickable-card')
+      if (clickableCard) {
+        clickableCard.addEventListener('click', () => {
+          window.open(`/hotels/${hotel.id}`, '_blank')
+        })
+      }
+      infoWindow.setContent(contentNode)
       infoWindow.open({ anchor: marker, map: mapInstance.value })
       currentOpenedMarker = marker
-
-      setTimeout(() => {
-        const card = document.querySelector('.clickable-card')
-        if (card) {
-          card.addEventListener('click', () => {
-            window.open(`/hotels/${hotel.id}`, '_blank')
-          })
-        }
-      }, 0)
     })
 
     priceTag.addEventListener('mouseleave', () => {
