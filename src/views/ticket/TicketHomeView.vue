@@ -327,10 +327,10 @@ const handleBook = (id) => console.log('購票 ID:', id);
       </div>
     </section>
     <section class="flex justify-center">
-      <form class="w-full max-w-4xl" @submit.prevent="onSearch">
+      <form class="w-full max-w-2xl" @submit.prevent="onSearch">
         <div class="mt-4 flex justify-center">
           <div class="w-full max-w-4xl">
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label
                 class="relative block rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 group cursor-pointer transition-all hover:border-primary">
                 <p class="text-xs font-bold text-dark_500">想去哪裡？</p>
@@ -349,19 +349,6 @@ const handleBook = (id) => console.log('購票 ID:', id);
                   </div>
                 </div>
               </label>
-
-              <DatePicker v-model.range="range" :columns="2" color="teal">
-                <template #default="{ inputValue, inputEvents }">
-                  <label
-                    class="block rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 cursor-pointer transition-all hover:border-primary"
-                    v-on="inputEvents.start">
-                    <p class="text-xs font-bold text-dark_500">入住退房日期</p>
-                    <input :value="inputValue.start ? `${inputValue.start} - ${inputValue.end}` : ''"
-                      class="mt-2 w-full bg-transparent text-sm outline-none pointer-events-none placeholder:text-primary/35 font-medium text-black"
-                      placeholder="點選選擇日期" readonly />
-                  </label>
-                </template>
-              </DatePicker>
 
               <div class="relative" ref="peoplePickerRef">
                 <label @click="isPeoplePickerOpen = !isPeoplePickerOpen"
@@ -390,7 +377,7 @@ const handleBook = (id) => console.log('購票 ID:', id);
                           </button>
                           <span class="text-sm font-medium w-4 text-center text-black">{{
                             peopleConfig.adults
-                          }}</span>
+                            }}</span>
                           <button @click.stop="peopleConfig.adults++" type="button"
                             class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white">
                             +
@@ -408,7 +395,7 @@ const handleBook = (id) => console.log('購票 ID:', id);
                           </button>
                           <span class="text-sm font-medium w-4 text-center text-black">{{
                             peopleConfig.children
-                          }}</span>
+                            }}</span>
                           <button @click.stop="peopleConfig.children++" type="button"
                             class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white">
                             +
@@ -429,7 +416,7 @@ const handleBook = (id) => console.log('購票 ID:', id);
         </div>
         <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
           <button type="submit"
-            class="h-10 rounded-full bg-primary px-7 text-sm font-semibold text-white transition-all duration-300 hover:bg-main active:scale-[0.98] shadow-sm">
+            class="h-10 rounded-full bg-primary px-8 text-sm font-semibold text-white transition-all duration-300 hover:bg-main active:scale-[0.98] shadow-sm">
             搜尋
           </button>
         </div>
