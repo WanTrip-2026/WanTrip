@@ -302,15 +302,15 @@ onMounted(() => {
   startTimer()
   window.addEventListener('click', handleOutsideClick)
   fetchHotHotels()
+  fetchNearHotels()
 })
 onUnmounted(() => {
   stopTimer()
   window.removeEventListener('click', handleOutsideClick)
 })
 const sections = computed(() => [
-  { title: '最新消息', data: news },
   { title: '熱門飯店', data: hotHotels.value },
-  { title: '附近飯店', data: nearHotels },
+  { title: '附近飯店', data: nearHotels.value },
   { title: '熱門城市', data: hotCities },
 ])
 const taiwanCities = [
@@ -357,15 +357,6 @@ watch(
   { immediate: true },
 )
 
-const news = [{ id: 'n1' }, { id: 'n2' }, { id: 'n3' }, { id: 'n4' }, { id: 'n5' }, { id: 'n6' }]
-const nearHotels = [
-  { id: 'nh1' },
-  { id: 'nh2' },
-  { id: 'nh3' },
-  { id: 'nh4' },
-  { id: 'nh5' },
-  { id: 'nh6' },
-]
 const hotCities = [
   { id: 'c1' },
   { id: 'c2' },
@@ -401,6 +392,17 @@ type HomePageCardItem = {
   address?: string
 }
 
+type HotelApi = {
+  id: string
+  name: string
+  city: string | null
+  district: string | null
+  address: string | null
+  star_rating: number | null
+  min_price: number | null
+  cover_image_url?: string | null
+}
+
 const hotHotels = ref<HomePageCardItem[]>([])
 const hotHotelsLoading = ref(false)
 const hotHotelsError = ref<string | null>(null)
@@ -430,9 +432,46 @@ async function fetchHotHotels() {
     hotHotelsLoading.value = false
   }
 }
+const nearHotels = ref<HomePageCardItem[]>([])
+const nearHotelsLoading = ref(false)
+const nearHotelsError = ref<string | null>(null)
+
+async function fetchNearHotels() {
+  nearHotelsLoading.value = true
+  nearHotelsError.value = null
+  try {
+    const url = new URL(`${import.meta.env.VITE_API_BASE_URL}/hotels`)
+
+    url.searchParams.set('city', '台北市')
+    url.searchParams.set('limit', '6')
+
+    const res = await fetch(url.toString())
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+    const data = (await res.json()) as HotelApi[]
+
+    nearHotels.value = data.map((h) => ({
+      id: h.id,
+      name: h.name,
+      imageUrl:
+        (h.cover_image_url as string | null) ??
+        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
+      price: h.min_price ?? 0,
+      rating: h.star_rating ?? 0,
+      venue: [h.city, h.district].filter(Boolean).join('｜'),
+      address: h.address ?? '',
+    }))
+  } catch (e) {
+    console.error(e)
+    nearHotelsError.value = '附近飯店載入失敗'
+    nearHotels.value = []
+  } finally {
+    nearHotelsLoading.value = false
+  }
+}
 
 const handleWishlist = (id: string | number) => {
-  const allItems: CardItem[] = [...news, ...hotHotels.value, ...nearHotels, ...hotCities]
+  const allItems: CardItem[] = [...hotHotels.value, ...nearHotels.value, ...hotCities]
 
   const product = allItems.find((item) => item.id === id)
 
