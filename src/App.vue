@@ -11,6 +11,7 @@ import AppNavbar from './components/layout/AppNavbar.vue'
 import AppFooter from './components/layout/AppFooter.vue'
 import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useFavoriteStore } from '@/stores/favoriteStore'
 
 const auth = useAuthStore()
 const route = useRoute()
@@ -25,6 +26,13 @@ const showAppNavbar = computed(() => {
 
 const showFooter = computed(() => {
   return route && route.meta && route.meta.showFooter !== false
+})
+
+
+const favoriteStore = useFavoriteStore()
+
+onMounted(() => {
+  favoriteStore.fetchFavorites()
 })
 </script>
 
