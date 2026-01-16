@@ -400,7 +400,7 @@ type HotelApi = {
   address: string | null
   star_rating: number | null
   min_price: number | null
-  cover_image_url?: string | null
+  cover_image_url: string | null
 }
 
 const hotHotels = ref<HomePageCardItem[]>([])
@@ -440,13 +440,16 @@ async function fetchNearHotels() {
   nearHotelsLoading.value = true
   nearHotelsError.value = null
   try {
-    const url = new URL(`${import.meta.env.VITE_API_BASE_URL}/hotels`)
-
+    const base = import.meta.env.VITE_API_BASE_URL as string
+    const url = new URL('/api/hotels/nearby', base)
     url.searchParams.set('city', '台北市')
     url.searchParams.set('limit', '6')
 
     const res = await fetch(url.toString())
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    if (!res.ok) {
+      const text = await res.text().catch(() => '')
+      throw new Error(`HTTP ${res.status} ${text}`)
+    }
 
     const data = (await res.json()) as HotelApi[]
 
@@ -454,8 +457,7 @@ async function fetchNearHotels() {
       id: h.id,
       name: h.name,
       imageUrl:
-        (h.cover_image_url as string | null) ??
-        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
+        h.cover_image_url ?? 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
       price: h.min_price ?? 0,
       rating: h.star_rating ?? 0,
       venue: [h.city, h.district].filter(Boolean).join('｜'),
