@@ -1,35 +1,56 @@
 <template>
   <main class="min-h-screen mx-auto max-w-[1240px]">
     <div class="mx-5 pt-24 pb-20">
-      <section class="relative group h-[350px] md:h-[450px] overflow-hidden rounded-[40px] shadow-2xl px-5">
+      <section
+        class="relative group h-[350px] md:h-[450px] overflow-hidden rounded-[40px] shadow-2xl px-5"
+      >
         <div v-for="(img, index) in hotelImages" :key="index">
           <transition name="fade-slide">
             <div v-if="currentSlide === index" class="absolute inset-0">
               <img :src="img.url" class="w-full h-full object-cover" />
               <div
-                class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent flex flex-col justify-end p-10 md:p-14">
+                class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent flex flex-col justify-end p-10 md:p-14"
+              >
                 <h3 class="text-white text-3xl font-bold mb-2">{{ img.title }}</h3>
                 <p class="text-white/80 text-lg">{{ img.desc }}</p>
               </div>
             </div>
           </transition>
         </div>
-        <button @click="prevSlide"
-          class="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg">
+        <button
+          @click="prevSlide"
+          class="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg"
+        >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
         </button>
-        <button @click="nextSlide"
-          class="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg">
+        <button
+          @click="nextSlide"
+          class="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg"
+        >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            />
           </svg>
         </button>
         <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-          <button v-for="(_, index) in hotelImages" :key="index" @click="currentSlide = index"
+          <button
+            v-for="(_, index) in hotelImages"
+            :key="index"
+            @click="currentSlide = index"
             class="w-2.5 h-2.5 rounded-full transition-all duration-300"
-            :class="currentSlide === index ? 'bg-[#93ACAA] w-8' : 'bg-white/50 hover:bg-white'"></button>
+            :class="currentSlide === index ? 'bg-[#93ACAA] w-8' : 'bg-white/50 hover:bg-white'"
+          ></button>
         </div>
       </section>
 
@@ -39,19 +60,29 @@
             <div class="w-full max-w-4xl">
               <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <label
-                  class="relative block rounded-[20px] bg-white p-[20px] shadow-lg border border-gray-300 group cursor-pointer transition-all hover:border-primary">
+                  class="relative block rounded-[20px] bg-white p-[20px] shadow-lg border border-gray-300 group cursor-pointer transition-all hover:border-primary"
+                >
                   <p class="text-xs font-bold text-dark_500">想去哪裡？</p>
                   <div class="relative mt-2">
-                    <select v-model="form.destination"
-                      class="w-full bg-transparent text-sm outline-none appearance-none cursor-pointer pr-8 font-medium text-primary group-hover:text-main_800 transition-colors">
-                      <option value="" disabled selected>選擇城市、景點</option>
+                    <select
+                      v-model="form.destination"
+                      class="w-full bg-transparent text-sm outline-none appearance-none cursor-pointer pr-8 font-medium text-primary group-hover:text-main_800 transition-colors"
+                    >
+                      <option value="" disabled>選擇城市、景點</option>
                       <option v-for="city in taiwanCities" :key="city" :value="city">
                         {{ city }}
                       </option>
                     </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-primary/30">
+                    <div
+                      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-primary/30"
+                    >
                       <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 9l-7 7-7-7"
+                        />
                       </svg>
                     </div>
                   </div>
@@ -61,45 +92,68 @@
                   <template #default="{ inputValue, inputEvents }">
                     <label
                       class="block rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 cursor-pointer transition-all hover:border-primary"
-                      v-on="inputEvents.start">
+                      v-on="inputEvents.start"
+                    >
                       <p class="text-xs font-bold text-dark_500">入住退房日期</p>
-                      <input :value="inputValue.start ? `${inputValue.start} - ${inputValue.end}` : ''"
+                      <input
+                        :value="inputValue.start ? `${inputValue.start} - ${inputValue.end}` : ''"
                         class="mt-2 w-full bg-transparent text-sm outline-none pointer-events-none text-black placeholder:text-primary/35 font-medium"
-                        placeholder="點選選擇日期" readonly />
+                        placeholder="點選選擇日期"
+                        readonly
+                      />
                     </label>
                   </template>
                 </DatePicker>
 
                 <div class="relative" ref="peoplePickerRef">
-                  <label @click="isPeoplePickerOpen = !isPeoplePickerOpen"
-                    class="block h-full rounded-[20px] bg-white p-[20px] shadow-lg border border-gray-300 transition-all hover:border-primary cursor-pointer">
+                  <label
+                    @click="isPeoplePickerOpen = !isPeoplePickerOpen"
+                    class="block h-full rounded-[20px] bg-white p-[20px] shadow-lg border border-gray-300 transition-all hover:border-primary cursor-pointer"
+                  >
                     <p class="text-xs font-bold text-dark_500">人數、需求</p>
                     <div class="mt-2 flex items-center justify-between">
                       <span class="text-sm font-medium text-primary">{{ peopleDisplayText }}</span>
-                      <svg class="h-4 w-4 text-primary/30 transition-transform duration-300"
-                        :class="{ 'rotate-180': isPeoplePickerOpen }" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      <svg
+                        class="h-4 w-4 text-primary/30 transition-transform duration-300"
+                        :class="{ 'rotate-180': isPeoplePickerOpen }"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 9l-7 7-7-7"
+                        />
                       </svg>
                     </div>
                   </label>
 
                   <transition name="fade">
-                    <div v-if="isPeoplePickerOpen"
-                      class="absolute top-[calc(100%+8px)] left-0 z-[100] w-full rounded-[20px] bg-white p-6 shadow-2xl ring-1 ring-primary/5">
+                    <div
+                      v-if="isPeoplePickerOpen"
+                      class="absolute top-[calc(100%+8px)] left-0 z-[100] w-full rounded-[20px] bg-white p-6 shadow-2xl ring-1 ring-primary/5"
+                    >
                       <div class="space-y-4">
                         <div class="flex items-center justify-between">
                           <span class="text-sm font-bold text-primary">成人</span>
                           <div class="flex items-center gap-3">
-                            <button @click.stop="peopleConfig.adults > 1 ? peopleConfig.adults-- : null" type="button"
-                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100">
+                            <button
+                              @click.stop="peopleConfig.adults > 1 ? peopleConfig.adults-- : null"
+                              type="button"
+                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100"
+                            >
                               -
                             </button>
                             <span class="text-sm font-medium w-4 text-center text-dark">{{
                               peopleConfig.adults
                             }}</span>
-                            <button @click.stop="peopleConfig.adults++" type="button"
-                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100">
+                            <button
+                              @click.stop="peopleConfig.adults++"
+                              type="button"
+                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100"
+                            >
                               +
                             </button>
                           </div>
@@ -107,25 +161,34 @@
                         <div class="flex items-center justify-between">
                           <span class="text-sm font-bold text-primary">孩童</span>
                           <div class="flex items-center gap-3">
-                            <button @click.stop="
-                              peopleConfig.children > 0 ? peopleConfig.children-- : null
-                              " type="button"
-                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100">
+                            <button
+                              @click.stop="
+                                peopleConfig.children > 0 ? peopleConfig.children-- : null
+                              "
+                              type="button"
+                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100"
+                            >
                               -
                             </button>
                             <span class="text-sm font-medium w-4 text-center text-dark">{{
                               peopleConfig.children
                             }}</span>
-                            <button @click.stop="peopleConfig.children++" type="button"
-                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100">
+                            <button
+                              @click.stop="peopleConfig.children++"
+                              type="button"
+                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100"
+                            >
                               +
                             </button>
                           </div>
                         </div>
                         <label class="flex items-center justify-between pt-2 cursor-pointer">
                           <span class="text-sm font-bold text-primary">可帶寵物</span>
-                          <input type="checkbox" v-model="peopleConfig.hasPet"
-                            class="w-5 h-5 accent-primary cursor-pointer" />
+                          <input
+                            type="checkbox"
+                            v-model="peopleConfig.hasPet"
+                            class="w-5 h-5 accent-primary cursor-pointer"
+                          />
                         </label>
                       </div>
                     </div>
@@ -135,8 +198,10 @@
             </div>
           </div>
           <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
-            <button type="submit"
-              class="h-10 rounded-full bg-primary px-7 text-sm font-semibold text-white transition-all duration-300 hover:bg-main active:scale-[0.98] shadow-sm">
+            <button
+              type="submit"
+              class="h-10 rounded-full bg-primary px-7 text-sm font-semibold text-white transition-all duration-300 hover:bg-main active:scale-[0.98] shadow-sm"
+            >
               搜尋
             </button>
           </div>
@@ -144,16 +209,19 @@
       </section>
 
       <div class="mt-[40px] space-y-[40px]">
-        <section v-for="section in [
-          { title: '最新消息', data: news },
-          { title: '熱門飯店', data: hotHotels },
-          { title: '附近飯店', data: nearHotels },
-          { title: '熱門城市', data: hotCities },
-        ]" :key="section.title">
+        <section v-for="section in sections" :key="section.title">
           <h2 class="text-xl font-bold text-dark mb-5">{{ section.title }}</h2>
-          <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
-            <HomePageCard v-for="(item, index) in section.data" :key="item.id" v-bind="item"
-              :expand-left="index >= section.title.length - 2" @compare="handleWishlist" @book="handleBook" />
+          <div
+            class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar"
+          >
+            <HomePageCard
+              v-for="(item, index) in section.data"
+              :key="item.id"
+              v-bind="item"
+              :expand-left="index >= section.data.length - 2"
+              @compare="handleWishlist"
+              @book="handleBook"
+            />
           </div>
         </section>
       </div>
@@ -230,17 +298,21 @@ const handleOutsideClick = (e: MouseEvent) => {
     isPeoplePickerOpen.value = false
   }
 }
-
 onMounted(() => {
   startTimer()
   window.addEventListener('click', handleOutsideClick)
+  fetchHotHotels()
 })
-
 onUnmounted(() => {
   stopTimer()
   window.removeEventListener('click', handleOutsideClick)
 })
-
+const sections = computed(() => [
+  { title: '最新消息', data: news },
+  { title: '熱門飯店', data: hotHotels.value },
+  { title: '附近飯店', data: nearHotels },
+  { title: '熱門城市', data: hotCities },
+])
 const taiwanCities = [
   '基隆',
   '臺北',
@@ -286,30 +358,79 @@ watch(
 )
 
 const news = [{ id: 'n1' }, { id: 'n2' }, { id: 'n3' }, { id: 'n4' }, { id: 'n5' }, { id: 'n6' }]
-const hotHotels = [{ id: 'h1' }, { id: 'h2' }, { id: 'h3' }, { id: 'h4' }, { id: 'h5' }, { id: 'h6' }]
-const nearHotels = [{ id: 'nh1' }, { id: 'nh2' }, { id: 'nh3' }, { id: 'nh4' }, { id: 'nh5' }, { id: 'nh6' }]
-const hotCities = [{ id: 'c1' }, { id: 'c2' }, { id: 'c3' }, { id: 'c4' }, { id: 'c5' }, { id: 'c6' }]
+const nearHotels = [
+  { id: 'nh1' },
+  { id: 'nh2' },
+  { id: 'nh3' },
+  { id: 'nh4' },
+  { id: 'nh5' },
+  { id: 'nh6' },
+]
+const hotCities = [
+  { id: 'c1' },
+  { id: 'c2' },
+  { id: 'c3' },
+  { id: 'c4' },
+  { id: 'c5' },
+  { id: 'c6' },
+]
+type Hotel = {
+  id: string
+  name: string
+  city: string | null
+  district: string | null
+  star_rating: number | null
+  min_price: number | null
+  featured_order: number | null
+  cover_image_url: string | null
+  image_url?: string | null
+}
+
+type CardItem = {
+  id: string | number
+  name?: string
+  title?: string
+}
+
+const hotHotels = ref<Hotel[]>([])
+const hotHotelsLoading = ref(false)
+const hotHotelsError = ref<string | null>(null)
+
+async function fetchHotHotels() {
+  hotHotelsLoading.value = true
+  hotHotelsError.value = null
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/hotel_featured`)
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    hotHotels.value = await res.json()
+  } catch (e) {
+    console.error(e)
+    hotHotelsError.value = '熱門飯店載入失敗'
+    hotHotels.value = []
+  } finally {
+    hotHotelsLoading.value = false
+  }
+}
 
 const handleWishlist = (id: string | number) => {
-  const allItems = [...news, ...hotHotels, ...nearHotels, ...hotCities];
-  const product = allItems.find(item => item.id === id);
+  const allItems: CardItem[] = [...news, ...hotHotels.value, ...nearHotels, ...hotCities]
+
+  const product = allItems.find((item) => item.id === id)
+
   if (product) {
-    console.log(`用戶收藏了: ${product.name}`);
+    console.log(`用戶收藏了: ${product.name ?? product.title ?? product.id}`)
   }
-};
+}
 
 const handleBook = (id: string | number) => {
-  router.push(`/product/${id}`);
-};
+  router.push(`/product/${id}`)
+}
 
 function onSearch() {
   console.log('[Hotel Search Submit]', { tab: activeTab.value, ...form, ...peopleConfig })
 
   // 跳轉到 /hotels/search
   router.push('/hotels/search')
-}
-function onClick(type: string, id: string) {
-  console.log('[Click]', { type, id })
 }
 </script>
 
