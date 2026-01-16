@@ -52,23 +52,13 @@
           /起
         </div>
         <div class="flex justify-end gap-3">
-          <button
-            @click.stop.prevent="$emit('favorite', id)"
-            class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-dark_500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              />
+          <button @click.stop.prevent="onFavoriteClick"
+            class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors"
+              :class="isFav ? 'text-red-500 fill-red-500' : 'text-dark_500'" :fill="isFav ? 'currentColor' : 'none'"
+              viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </button>
           <button
@@ -84,8 +74,9 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { RouterLink } from 'vue-router'
 import { useCompareStore } from '@/stores/compareStore'
+import { RouterLink, useRouter } from 'vue-router';
+import { useFavoriteStore } from '@/stores/favoriteStore';
 
 // 統一命名規範與預設值
 interface Props {
@@ -142,6 +133,18 @@ async function toggleCompare() {
     }
   } finally {
     isLoading.value = false
+const router = useRouter()
+const favoriteStore = useFavoriteStore()
+
+const isFav = computed(() => {
+  return favoriteStore.isFavorite(Number(props.id))
+})}
+
+const onFavoriteClick = async () => {
+  try {
+    await favoriteStore.toggleFavorite(Number(props.id))
+  } catch {
+    router.push('/login')
   }
-}
+}}
 </script>
