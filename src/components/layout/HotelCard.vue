@@ -62,11 +62,11 @@ function toggleCompare() {
         <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
         <button
           @click="toggleCompare"
-          class="absolute bottom-5 right-5 rounded-[20px] h-[40px] w-[90px] text-xs p-[2px] opacity-80 hover:opacity-100 text-white"
+          class="absolute bottom-5 right-5 rounded-[20px] h-[40px] w-[90px] text-xs p-[2px] opacity-80 hover:opacity-100 text-black"
           :class="
             isInCompare
-              ? 'bg-dark_300 text-white cursor-not-allowed'
-              : 'bg-primary text-white opacity-80 hover:bg-main_800'
+              ? 'bg-dark_300 text-black cursor-not-allowed'
+              : 'bg-white/45 text-black opacity-80 hover:bg-white'
           "
         >
           <template v-if="isInCompare">已加入</template>

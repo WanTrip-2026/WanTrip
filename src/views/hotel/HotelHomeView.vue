@@ -374,7 +374,13 @@ const hotCities = [
   { id: 'c5' },
   { id: 'c6' },
 ]
-type Hotel = {
+
+type CardItem = {
+  id: string | number
+  name?: string
+  title?: string
+}
+type FeaturedHotelApi = {
   id: string
   name: string
   city: string | null
@@ -383,16 +389,19 @@ type Hotel = {
   min_price: number | null
   featured_order: number | null
   cover_image_url: string | null
-  image_url?: string | null
 }
 
-type CardItem = {
-  id: string | number
-  name?: string
-  title?: string
+type HomePageCardItem = {
+  id: string
+  name: string
+  imageUrl: string
+  price: number
+  rating: number
+  venue: string
+  address?: string
 }
 
-const hotHotels = ref<Hotel[]>([])
+const hotHotels = ref<HomePageCardItem[]>([])
 const hotHotelsLoading = ref(false)
 const hotHotelsError = ref<string | null>(null)
 
@@ -402,7 +411,17 @@ async function fetchHotHotels() {
   try {
     const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/hotel_featured`)
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    hotHotels.value = await res.json()
+    const data = (await res.json()) as FeaturedHotelApi[]
+
+    hotHotels.value = data.map((h) => ({
+      id: h.id,
+      name: h.name,
+      imageUrl:
+        h.cover_image_url ?? 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
+      price: h.min_price ?? 0,
+      rating: h.star_rating ?? 0,
+      venue: [h.city, h.district].filter(Boolean).join('｜'), // 例如：台北｜中山區
+    }))
   } catch (e) {
     console.error(e)
     hotHotelsError.value = '熱門飯店載入失敗'
