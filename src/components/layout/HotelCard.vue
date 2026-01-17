@@ -56,12 +56,20 @@ const router = useRouter()
 const favoriteStore = useFavoriteStore()
 
 const isFav = computed(() => {
-  return favoriteStore.isFavorite(Number(props.id))
+  return favoriteStore.isFavorite(props.hotel.id)
 })
 
 const onFavoriteClick = async () => {
   try {
-    await favoriteStore.toggleFavorite(Number(props.id))
+    await favoriteStore.toggleFavorite({
+        id: props.hotel.id,
+        name: props.hotel.name,
+        imageUrl: props.hotel.image_url || '',
+        price: props.hotel.min_price,
+        city: props.hotel.city,
+        type: 'hotel', // distinguishing type
+        rating: props.hotel.star_rating
+    })
   } catch {
     router.push('/login')
   }

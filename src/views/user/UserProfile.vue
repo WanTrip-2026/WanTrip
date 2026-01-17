@@ -159,21 +159,24 @@
           <!-- 收藏清單 -->
           <div class="scroll-mt-[96px] bg-white rounded-[20px] border border-gray-300 p-5 mb-10" id="favorite-section">
             <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">收藏清單</h3>
-            <div class="flex gap-2.5 mt-5 overflow-x-auto flex-nowrap">
-              <div v-for="id in favorites" :key="id"
-                class="w-[240px] shrink-0 rounded-[20px] border border-gray-300 overflow-hidden">
-                <div class="flex flex-col p-2.5 gap-1">
-                  <h3 class="text-md font-bold text-nowrap">商品 ID：{{ id }}</h3>
-                  <div class="flex gap-2">
-                    <button class="rounded-[20px] bg-dark_100 w-full py-2">
-                      取消收藏
-                    </button>
-                    <button class="rounded-[20px] bg-primary text-white w-full py-2">
-                      訂購
-                    </button>
-                  </div>
-                </div>
+            <div class="flex gap-2.5 mt-5 overflow-x-auto flex-nowrap pb-4">
+              <div v-if="favorites.length === 0" class="w-full text-center py-10 text-gray-500">
+                  尚無收藏項目
               </div>
+              <HomePageCard
+                 v-for="item in favorites"
+                 :key="item.id"
+                 :id="item.id"
+                 :name="item.name"
+                 :imageUrl="item.imageUrl"
+                 :price="item.price"
+                 :venue="item.venue"
+                 :category="item.category"
+                 :date="item.date"
+                 :address="item.address"
+                 :rating="item.rating"
+                 class="shrink-0"
+              />
             </div>
           </div>
         </div>
@@ -187,6 +190,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import type { User } from '@supabase/supabase-js'
 import { supabase } from '@/utils/supabaseClient'
 import { useFavoriteStore } from '@/stores/favoriteStore'
+import HomePageCard from '@/components/layout/HomePageCard.vue'
 
 type ProfileRow = {
   id: string
@@ -237,7 +241,7 @@ const loadMe = async () => {
   try {
     const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/me`, {
       method: 'GET',
-      credentials: 'include', // ✅ 一定要帶，才會送 cookie
+      credentials: 'include',
     })
 
     if (!res.ok) {
@@ -297,14 +301,13 @@ const saveProfile = async () => {
   }
 }
 
-/** 左側選單 IntersectionObserver（保留你原本功能） */
+/** 左側選單 IntersectionObserver */
 const activeMenu = ref('#account-section')
 const menus = [
   { label: '我的帳號', id: 'account-section', href: '#account-section' },
   { label: '個資管理', id: 'admin-section', href: '#admin-section' },
   { label: '我的訂單', id: 'order-section', href: '#order-section' },
   { label: '收藏清單', id: 'favorite-section', href: '#favorite-section' },
-
 ]
 
 let observer: IntersectionObserver | null = null
@@ -339,7 +342,7 @@ const setActive = (href: string) => {
 const favoriteStore = useFavoriteStore()
 
 const favorites = computed(() => {
-  return [...favoriteStore.favorites]
+  return favoriteStore.favoriteList
 })
 
 onUnmounted(() => {
