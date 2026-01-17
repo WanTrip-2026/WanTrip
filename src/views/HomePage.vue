@@ -6,8 +6,11 @@
       <section class="relative pb-32 md:pb-20">
         <div class="relative">
           <div class="relative w-full overflow-hidden rounded-[40px] bg-gray-200 shadow-sm">
-            <img src="https://res.cloudinary.com/wantrip/image/upload/v1767445158/%E5%9F%8E%E5%B8%82_luoarw.jpg"
-              class="aspect-[3/4] absolute inset-0 w-full h-full object-fill" alt="banner" />
+            <img
+              src="https://res.cloudinary.com/wantrip/image/upload/v1767445158/%E5%9F%8E%E5%B8%82_luoarw.jpg"
+              class="aspect-[3/4] absolute inset-0 w-full h-full object-fill"
+              alt="banner"
+            />
             <div class="h-[340px] md:h-[420px]"></div>
           </div>
 
@@ -15,53 +18,86 @@
           <div class="absolute inset-x-0 bottom-0 z-20 flex justify-center translate-y-1/2">
             <form
               class="w-full lg:max-w-[1024px] rounded-[28px] md:rounded-full border border-gray-300 bg-white shadow-sm p-2"
-              @submit.prevent="onSearch">
+              @submit.prevent="onSearch"
+            >
               <div class="flex flex-col gap-2 md:flex-row md:items-center">
                 <!-- Tabs -->
-                <div class="h-11 flex items-center rounded-full border border-gray-300 bg-dark_100 p-0.5">
-                  <button type="button"
-                    class="h-full rounded-full text-nowrap w-full text-sm font-semibold transition px-4" :class="activeTab === 'package'
-                      ? 'bg-primary text-white shadow-sm'
-                      : 'text-dark hover:bg-main_100'
-                      " @click="activeTab = 'package'">
+                <div
+                  class="h-11 flex items-center rounded-full border border-gray-300 bg-dark_100 p-0.5"
+                >
+                  <button
+                    type="button"
+                    class="h-full rounded-full text-nowrap w-full text-sm font-semibold transition px-4"
+                    :class="
+                      activeTab === 'package'
+                        ? 'bg-primary text-white shadow-sm'
+                        : 'text-dark hover:bg-main_100'
+                    "
+                    @click="activeTab = 'package'"
+                  >
                     找門票
                   </button>
-                  <button type="button"
-                    class="h-full rounded-full text-nowrap w-full text-sm font-semibold transition px-4" :class="activeTab === 'stay'
-                      ? 'bg-primary text-white shadow-sm'
-                      : 'text-dark hover:bg-main_100'
-                      " @click="activeTab = 'stay'">
+                  <button
+                    type="button"
+                    class="h-full rounded-full text-nowrap w-full text-sm font-semibold transition px-4"
+                    :class="
+                      activeTab === 'stay'
+                        ? 'bg-primary text-white shadow-sm'
+                        : 'text-dark hover:bg-main_100'
+                    "
+                    @click="activeTab = 'stay'"
+                  >
                     找住宿
                   </button>
                 </div>
 
                 <!-- Fields -->
                 <div class="grid flex-1 grid-cols-1 gap-2 md:grid-cols-3">
-                  <label class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1">
-                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80">想去哪裡</span>
-                    <input v-model="form.destination"
+                  <label
+                    class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1"
+                  >
+                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80"
+                      >想去哪裡</span
+                    >
+                    <input
+                      v-model="form.destination"
                       class="w-full h-full px-4 bg-transparent text-sm text-nowrap outline-none rounded-full transition text-black focus:bg-dark_100 placeholder:text-dark_500"
-                      placeholder="輸入城市、景點" />
+                      placeholder="輸入城市、景點"
+                    />
                   </label>
 
-                  <label class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1">
-                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80">入住/退房日期</span>
-                    <input v-model="form.dateRange"
+                  <label
+                    class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1"
+                  >
+                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80"
+                      >入住/退房日期</span
+                    >
+                    <input
+                      v-model="form.dateRange"
                       class="w-full h-full px-4 bg-transparent text-sm text-nowrap outline-none rounded-full transition text-black focus:bg-dark_100 placeholder:text-dark_500"
-                      placeholder="選擇日期" />
+                      placeholder="選擇日期"
+                    />
                   </label>
 
-                  <label class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1">
-                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80">人數/需求</span>
-                    <input v-model="form.people"
+                  <label
+                    class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1"
+                  >
+                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80"
+                      >人數/需求</span
+                    >
+                    <input
+                      v-model="form.people"
                       class="w-full h-full px-4 bg-transparent text-sm text-nowrap outline-none rounded-full transition text-black focus:bg-dark_100 placeholder:text-dark_500"
-                      placeholder="2 人｜1 間｜可帶寵物" />
+                      placeholder="2 人｜1 間｜可帶寵物"
+                    />
                   </label>
                 </div>
 
                 <!-- Submit -->
-                <button type="submit"
-                  class="h-11 rounded-full bg-primary px-6 text-md font-semibold text-white transition hover:bg-main">
+                <button
+                  type="submit"
+                  class="h-11 rounded-full bg-primary px-6 text-md font-semibold text-white transition hover:bg-main"
+                >
                   搜尋
                 </button>
               </div>
@@ -75,13 +111,20 @@
         <h2 class="mb-5 text-xl font-bold text-dark">想去哪裡玩？</h2>
 
         <div class="grid grid-cols-5 gap-5">
-          <button v-for="r in regions" :key="r.key" type="button"
+          <button
+            v-for="r in regions"
+            :key="r.key"
+            type="button"
             class="relative group overflow-hidden rounded-[20px] bg-white/70 border border-gray-300 transition shadow-sm hover:shadow-xl"
-            @click="onClickRegion(r)">
-            <div class="h-[110px] w-full aspect-[3/4]" :style="{
-              backgroundImage: `url(${r.img})`,
-              backgroundSize: 'cover',
-            }"></div>
+            @click="onClickRegion(r)"
+          >
+            <div
+              class="h-[110px] w-full aspect-[3/4]"
+              :style="{
+                backgroundImage: `url(${r.img})`,
+                backgroundSize: 'cover',
+              }"
+            ></div>
 
             <div class="absolute inset-0 flex items-center justify-center">
               <span class="text-xl font-black text-white drop-shadow-sm">{{ r.label }}</span>
@@ -94,8 +137,14 @@
       <section class="mt-20">
         <h2 class="mb-5 text-xl font-bold text-dark">熱門飯店</h2>
         <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
-          <HomePageCard v-for="(hotel, index) in hotHotelsA" :key="hotel.id" v-bind="hotel"
-            :expand-left="index >= hotHotelsA.length - 2" @compare="handleWishlist" @book="handleBook" />
+          <HomePageCard
+            v-for="(hotel, index) in hotHotelsA"
+            :key="hotel.id"
+            v-bind="hotel"
+            :expand-left="index >= hotHotelsA.length - 2"
+            @compare="handleWishlist"
+            @book="handleBook"
+          />
         </div>
       </section>
 
@@ -103,16 +152,28 @@
       <section class="mt-20">
         <h2 class="mb-5 text-xl font-bold text-dark">推薦飯店</h2>
         <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
-          <HomePageCard v-for="(hotel, index) in hotHotelsB" :key="hotel.id" v-bind="hotel"
-            :expand-left="index >= hotHotelsB.length - 2" @compare="handleWishlist" @book="handleBook" />
+          <HomePageCard
+            v-for="(hotel, index) in hotHotelsB"
+            :key="hotel.id"
+            v-bind="hotel"
+            :expand-left="index >= hotHotelsB.length - 2"
+            @compare="handleWishlist"
+            @book="handleBook"
+          />
         </div>
       </section>
 
       <section class="mt-20">
         <h2 class="font-bold text-xl mb-5 text-dark">熱門體驗</h2>
         <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
-          <HomePageCard v-for="(recommend, index) in recommendations" :key="recommend.id" v-bind="recommend"
-            :expand-left="index >= recommendations.length - 2" @compare="handleWishlist" @book="handleBook" />
+          <HomePageCard
+            v-for="(recommend, index) in recommendations"
+            :key="recommend.id"
+            v-bind="recommend"
+            :expand-left="index >= recommendations.length - 2"
+            @compare="handleWishlist"
+            @book="handleBook"
+          />
         </div>
       </section>
 
@@ -121,30 +182,35 @@
         <div class="rounded-[20px] bg-white/75 p-5 text-center shadow-sm border border-gray-300">
           <p class="text-2xl font-bold text-dark">大家都在找...</p>
           <div class="mt-5 flex flex-wrap justify-center gap-2">
-            <button v-for="k in stayKeywords" :key="k" type="button"
-              class="rounded-full px-4 py-1 text-sm font-semibold border transition" :class="selectedKeywords.has(k)
-                ? 'bg-primary text-white border-primary shadow-sm'
-                : 'bg-gray-100 text-primary/80 border-primary/10 hover:bg-main_100'
-                " @click="toggleKeyword(k)">
+            <button
+              v-for="k in stayKeywords"
+              :key="k"
+              type="button"
+              class="rounded-full px-4 py-1 text-sm font-semibold border transition"
+              :class="
+                selectedKeywords.has(k)
+                  ? 'bg-primary text-white border-primary shadow-sm'
+                  : 'bg-gray-100 text-primary/80 border-primary/10 hover:bg-main_100'
+              "
+              @click="toggleKeyword(k)"
+            >
               {{ k }}
             </button>
           </div>
         </div>
       </section>
     </div>
-
-
   </main>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router';
+import { reactive, ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import HomePageCard from '@/components/layout/HomePageCard.vue'
 
 const activeTab = ref('stay')
 
-const router = useRouter();
+const router = useRouter()
 
 const form = reactive({
   destination: '',
@@ -180,100 +246,113 @@ const regions = [
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-%E5%B3%B6_qnxq42.jpg',
   },
 ]
+type HotelBaseApi = {
+  id: string
+  name: string
+  city: string | null
+  district: string | null
+  star_rating: number | null
+  min_price: number | null
+  cover_image_url: string | null
+}
 
-const hotHotelsA = ref([
-  {
-    id: 1,
-    name: '台北君悅酒店',
-    city: '台北市',
-    address: '信義區，近台北 101／世貿',
-    imageUrl: 'https://picsum.photos/600/400?random=1',
-    price: 6166,
-  },
-  {
-    id: 2,
-    name: '晶華酒店',
-    city: '台北市',
-    address: '中山區，近捷運中山站商圈',
-    imageUrl: 'https://picsum.photos/600/400?random=2',
-    price: 5800,
-  },
-  {
-    id: 3,
-    name: '日月潭涵碧樓',
-    city: '南投縣',
-    address: '魚池鄉，日月潭湖畔景觀',
-    imageUrl: 'https://picsum.photos/600/400?random=3',
-    price: 8900,
-  },
-  {
-    id: 4,
-    name: '台南晶英酒店',
-    city: '台南市',
-    address: '中西區，近國華街／正興街',
-    imageUrl: 'https://picsum.photos/600/400?random=4',
-    price: 4200,
-  },
-  {
-    id: 5,
-    name: '高雄漢來大飯店',
-    city: '高雄市',
-    address: '前金區，近愛河／中央公園',
-    imageUrl: 'https://picsum.photos/600/400?random=5',
-    price: 3800,
-  },
-  {
-    id: 6,
-    name: '礁溪寒沐酒店',
-    city: '宜蘭縣',
-    address: '礁溪市區，溫泉步行可達',
-    imageUrl: 'https://picsum.photos/600/400?random=6',
-    price: 5500,
-  },
-])
+type FeaturedHotelApi = HotelBaseApi & {
+  featured_order: number | null
+}
 
-const hotHotelsB = ref([
-  {
-    id: 7,
-    name: '台北君悅酒店',
-    address: '台北市',
-    imageUrl: 'https://picsum.photos/600/400?random=1',
-  },
-  { id: 8, name: '晶華酒店', address: '台北市', imageUrl: 'https://picsum.photos/600/400?random=2' },
-  {
-    id: 9,
-    name: '日月潭涵碧樓',
-    address: '南投縣',
-    imageUrl: 'https://picsum.photos/600/400?random=3',
-  },
-  {
-    id: 10,
-    name: '台南晶英酒店',
-    address: '台南市',
-    imageUrl: 'https://picsum.photos/600/400?random=7',
-  },
-  {
-    id: 11,
-    name: '礁溪寒沐酒店',
-    address: '宜蘭縣',
-    imageUrl: 'https://picsum.photos/600/400?random=8',
-  },
-  {
-    id: 12,
-    name: '墾丁凱撒大飯店',
-    address: '屏東縣',
-    imageUrl: 'https://picsum.photos/600/400?random=9',
-  },
-])
+type HotelApi = HotelBaseApi & {
+  address: string | null
+}
+
+type HomePageCardItem = {
+  id: string
+  name: string
+  imageUrl: string
+  price: number
+  rating: number
+  venue: string
+  address?: string
+}
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL as string
+const api = (path: string) => new URL(path, API_BASE + '/').toString()
+
+const FALLBACK_IMG =
+  'https://res.cloudinary.com/wantrip/image/upload/v1767939338/%E9%A3%AF%E5%BA%97%E9%A6%96%E5%9C%96_dualwy.jpg'
+const featuredHotels = ref<HomePageCardItem[]>([])
+const featuredLoading = ref(false)
+const featuredError = ref<string | null>(null)
+const hotHotelsA = computed(() => featuredHotels.value.slice(0, 6))
+
+const recommendedHotels = ref<HomePageCardItem[]>([])
+const recommendedLoading = ref(false)
+const recommendedError = ref<string | null>(null)
+const hotHotelsB = computed(() => recommendedHotels.value.slice(0, 6))
+
+async function fetchFeaturedHotels() {
+  featuredLoading.value = true
+  featuredError.value = null
+  try {
+    const res = await fetch(api('hotel_featured'))
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+    const data = (await res.json()) as FeaturedHotelApi[]
+    featuredHotels.value = (data ?? []).map((h) => ({
+      id: h.id,
+      name: h.name,
+      imageUrl: h.cover_image_url ?? FALLBACK_IMG,
+      price: h.min_price ?? 0,
+      rating: h.star_rating ?? 0,
+      venue: [h.city, h.district].filter(Boolean).join('｜'),
+    }))
+  } catch (e) {
+    console.error(e)
+    featuredError.value = '熱門飯店載入失敗'
+    featuredHotels.value = []
+  } finally {
+    featuredLoading.value = false
+  }
+}
+
+async function fetchRecommendedHotels() {
+  recommendedLoading.value = true
+  recommendedError.value = null
+  try {
+    const res = await fetch(api('hotels/recommended?limit=6'))
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+    const data = (await res.json()) as HotelApi[]
+    recommendedHotels.value = (data ?? []).map((h) => ({
+      id: h.id,
+      name: h.name,
+      imageUrl: h.cover_image_url ?? FALLBACK_IMG,
+      price: h.min_price ?? 0,
+      rating: h.star_rating ?? 0,
+      venue: [h.city, h.district].filter(Boolean).join('｜'),
+      address: h.address ?? '',
+    }))
+  } catch (e) {
+    console.error(e)
+    recommendedError.value = '推薦飯店載入失敗'
+    recommendedHotels.value = []
+  } finally {
+    recommendedLoading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchFeaturedHotels()
+  fetchRecommendedHotels()
+})
 
 const handleWishlist = (id: string | number) => {
-  const product = hotHotelsA.value.find(t => t.id === id);
-  console.log(`用戶收藏了: ${product?.name}`);
-};
+  const product = hotHotelsA.value.find((t) => t.id === id)
+  console.log(`用戶收藏了: ${product?.name}`)
+}
 
 const handleBook = (id: string | number) => {
-  router.push(`/product/${id}`);
-};
+  router.push(`/product/${id}`)
+}
 
 const stayKeywords = [
   '台北住宿',

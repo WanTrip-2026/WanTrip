@@ -303,6 +303,7 @@ onMounted(() => {
   window.addEventListener('click', handleOutsideClick)
   fetchHotHotels()
   fetchNearHotels()
+  fetchKaohsiungHotels()
 })
 onUnmounted(() => {
   stopTimer()
@@ -311,7 +312,7 @@ onUnmounted(() => {
 const sections = computed(() => [
   { title: '熱門飯店', data: hotHotels.value },
   { title: '附近飯店', data: nearHotels.value },
-  { title: '熱門城市', data: hotCities },
+  { title: '熱門城市', data: kaohsiungHotels.value },
 ])
 const taiwanCities = [
   '基隆',
@@ -357,29 +358,28 @@ watch(
   { immediate: true },
 )
 
-const hotCities = [
-  { id: 'c1' },
-  { id: 'c2' },
-  { id: 'c3' },
-  { id: 'c4' },
-  { id: 'c5' },
-  { id: 'c6' },
-]
-
 type CardItem = {
   id: string | number
   name?: string
   title?: string
 }
-type FeaturedHotelApi = {
+// 1) API 共用 base（兩支 API 都會有的欄位）
+type HotelBaseApi = {
   id: string
   name: string
   city: string | null
   district: string | null
   star_rating: number | null
   min_price: number | null
-  featured_order: number | null
   cover_image_url: string | null
+}
+
+type FeaturedHotelApi = HotelBaseApi & {
+  featured_order: number | null
+}
+
+type HotelApi = HotelBaseApi & {
+  address: string | null
 }
 
 type HomePageCardItem = {
@@ -392,16 +392,12 @@ type HomePageCardItem = {
   address?: string
 }
 
-type HotelApi = {
-  id: string
-  name: string
-  city: string | null
-  district: string | null
-  address: string | null
-  star_rating: number | null
-  min_price: number | null
-  cover_image_url: string | null
-}
+const API_BASE = import.meta.env.VITE_API_BASE_URL as string
+const api = (path: string) =>
+  new URL(path, API_BASE.endsWith('/') ? API_BASE : `${API_BASE}/`).toString()
+
+const FALLBACK_IMG =
+  'https://res.cloudinary.com/wantrip/image/upload/v1767939338/%E9%A3%AF%E5%BA%97%E9%A6%96%E5%9C%96_dualwy.jpg'
 
 const hotHotels = ref<HomePageCardItem[]>([])
 const hotHotelsLoading = ref(false)
@@ -411,15 +407,14 @@ async function fetchHotHotels() {
   hotHotelsLoading.value = true
   hotHotelsError.value = null
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/hotel_featured`)
+    const res = await fetch(api('hotel_featured'))
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = (await res.json()) as FeaturedHotelApi[]
 
     hotHotels.value = data.map((h) => ({
       id: h.id,
       name: h.name,
-      imageUrl:
-        h.cover_image_url ?? 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
+      imageUrl: h.cover_image_url ?? FALLBACK_IMG,
       price: h.min_price ?? 0,
       rating: h.star_rating ?? 0,
       venue: [h.city, h.district].filter(Boolean).join('｜'), // 例如：台北｜中山區
@@ -440,8 +435,7 @@ async function fetchNearHotels() {
   nearHotelsLoading.value = true
   nearHotelsError.value = null
   try {
-    const base = import.meta.env.VITE_API_BASE_URL as string
-    const url = new URL('/api/hotels/nearby', base)
+    const url = new URL(api('hotels/nearby'))
     url.searchParams.set('city', '台北市')
     url.searchParams.set('limit', '6')
 
@@ -472,8 +466,45 @@ async function fetchNearHotels() {
   }
 }
 
+const kaohsiungHotels = ref<HomePageCardItem[]>([])
+const kaohsiungLoading = ref(false)
+const kaohsiungError = ref<string | null>(null)
+async function fetchKaohsiungHotels() {
+  kaohsiungLoading.value = true
+  kaohsiungError.value = null
+  try {
+    const url = new URL(api('hotels/nearby'))
+    url.searchParams.set('city', '高雄市')
+    url.searchParams.set('limit', '6')
+
+    const res = await fetch(url.toString())
+    if (!res.ok) {
+      const text = await res.text().catch(() => '')
+      throw new Error(`HTTP ${res.status} ${text}`)
+    }
+
+    const data = (await res.json()) as HotelApi[]
+
+    kaohsiungHotels.value = data.map((h) => ({
+      id: h.id,
+      name: h.name,
+      imageUrl: h.cover_image_url ?? FALLBACK_IMG,
+      price: h.min_price ?? 0,
+      rating: h.star_rating ?? 0,
+      venue: [h.city, h.district].filter(Boolean).join('｜'),
+      address: h.address ?? '',
+    }))
+  } catch (e) {
+    console.error(e)
+    kaohsiungError.value = '高雄飯店載入失敗'
+    kaohsiungHotels.value = []
+  } finally {
+    kaohsiungLoading.value = false
+  }
+}
+
 const handleWishlist = (id: string | number) => {
-  const allItems: CardItem[] = [...hotHotels.value, ...nearHotels.value, ...hotCities]
+  const allItems: CardItem[] = [...hotHotels.value, ...nearHotels.value, ...kaohsiungHotels.value]
 
   const product = allItems.find((item) => item.id === id)
 
