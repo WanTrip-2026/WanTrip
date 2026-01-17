@@ -159,12 +159,26 @@
           <!-- 收藏清單 -->
           <div class="scroll-mt-[96px] bg-white rounded-[20px] border border-gray-300 p-5 mb-10" id="favorite-section">
             <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">收藏清單</h3>
-            <div class="flex gap-2.5 mt-5 overflow-x-auto flex-nowrap pb-4">
-              <div v-if="favorites.length === 0" class="w-full text-center py-10 text-gray-500">
+
+            <!-- Tabs -->
+            <div class="flex gap-4 mt-5 border-b border-gray-200">
+              <button
+                v-for="cat in ['all', 'hotel', 'ticket']"
+                :key="cat"
+                @click="selectedCategory = cat"
+                class="pb-2 px-4 text-dark_500 font-medium transition-colors border-b-2"
+                :class="selectedCategory === cat ? 'border-primary text-primary' : 'border-transparent hover:text-dark_900'"
+              >
+                {{ cat === 'all' ? '全部' : (cat === 'hotel' ? '住宿' : '體驗') }}
+              </button>
+            </div>
+
+            <div class="h-[270px] flex items-center gap-2.5 mt-5 overflow-x-auto flex-nowrap">
+              <div v-if="filteredFavorites.length === 0" class="w-full text-center py-10 text-gray-500">
                   尚無收藏項目
               </div>
               <HomePageCard
-                 v-for="item in favorites"
+                 v-for="item in filteredFavorites"
                  :key="item.id"
                  :id="item.id"
                  :name="item.name"
@@ -332,7 +346,7 @@ onMounted(async () => {
 
   menus.forEach((menu) => {
     const section = document.getElementById(menu.id)
-    if (section) observer.observe(section)
+    if (section) observer?.observe(section)
   })
 })
 const setActive = (href: string) => {
@@ -341,8 +355,13 @@ const setActive = (href: string) => {
 
 const favoriteStore = useFavoriteStore()
 
-const favorites = computed(() => {
-  return favoriteStore.favoriteList
+const selectedCategory = ref('all')
+
+const filteredFavorites = computed(() => {
+  if (selectedCategory.value === 'all') {
+    return favoriteStore.favoriteList
+  }
+  return favoriteStore.favoriteList.filter(item => item.type === selectedCategory.value)
 })
 
 onUnmounted(() => {
