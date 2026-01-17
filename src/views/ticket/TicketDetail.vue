@@ -10,36 +10,36 @@
     <div class="mx-5 mb-8">
       <div class="grid grid-cols-[2fr_1fr] lg:grid-cols-[2fr_1fr_1fr_1fr] gap-2.5 mb-10">
         <div class="relative h-[400px] rounded-[20px] overflow-hidden">
-          <img src="/src/assets/hoteldetail_img/Wanhao.jpg" class="absolute inset-0 w-full h-full object-cover" />
+          <img :src="attractionImages[0]?.image_url || '/src/assets/hoteldetail_img/Wanhao.jpg'" class="absolute inset-0 w-full h-full object-cover" />
         </div>
 
         <div class="grid grid-rows-2 gap-2.5 h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
-            <img src="/src/assets/hoteldetail_img/Wanhao2.jpg" class="absolute inset-0 w-full h-full object-cover" />
+            <img :src="attractionImages[1]?.image_url || '/src/assets/hoteldetail_img/Wanhao2.jpg'" class="absolute inset-0 w-full h-full object-cover" />
           </div>
 
           <div class="relative rounded-[20px] overflow-hidden">
-            <img src="/src/assets/hoteldetail_img/Wanhao3.jpg" class="absolute inset-0 w-full h-full object-cover" />
-          </div>
-        </div>
-
-        <div class="grid grid-rows-2 gap-2.5 h-[400px]">
-          <div class="relative rounded-[20px] overflow-hidden">
-            <img src="/src/assets/hoteldetail_img/Wanhao4.jpg" class="absolute inset-0 w-full h-full object-cover" />
-          </div>
-
-          <div class="relative rounded-[20px] overflow-hidden">
-            <img src="/src/assets/hoteldetail_img/Wanhao5.jpg" class="absolute inset-0 w-full h-full object-cover" />
+            <img :src="attractionImages[2]?.image_url || '/src/assets/hoteldetail_img/Wanhao3.jpg'" class="absolute inset-0 w-full h-full object-cover" />
           </div>
         </div>
 
         <div class="grid grid-rows-2 gap-2.5 h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
-            <img src="/src/assets/hoteldetail_img/Wanhao6.jpg" class="absolute inset-0 w-full h-full object-cover" />
+            <img :src="attractionImages[3]?.image_url || '/src/assets/hoteldetail_img/Wanhao4.jpg'" class="absolute inset-0 w-full h-full object-cover" />
           </div>
 
           <div class="relative rounded-[20px] overflow-hidden">
-            <img src="/src/assets/hoteldetail_img/Wanhao7.jpg" class="absolute inset-0 w-full h-full object-cover" />
+            <img :src="attractionImages[4]?.image_url || '/src/assets/hoteldetail_img/Wanhao5.jpg'" class="absolute inset-0 w-full h-full object-cover" />
+          </div>
+        </div>
+
+        <div class="grid grid-rows-2 gap-2.5 h-[400px]">
+          <div class="relative rounded-[20px] overflow-hidden">
+            <img :src="attractionImages[5]?.image_url || '/src/assets/hoteldetail_img/Wanhao6.jpg'" class="absolute inset-0 w-full h-full object-cover" />
+          </div>
+
+          <div class="relative rounded-[20px] overflow-hidden">
+            <img :src="attractionImages[6]?.image_url || '/src/assets/hoteldetail_img/Wanhao7.jpg'" class="absolute inset-0 w-full h-full object-cover" />
             <div
               class="absolute inset-0 bg-black/30 flex items-center justify-center text-white font-bold cursor-pointer transition-all hover:bg-black/40">
               查看全部照片
@@ -202,88 +202,111 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabaseClient'
+import type { Attraction, AttractionImage } from '@/types/database'
 
-interface Attraction {
-  id: number
-  name: string
-  image_url: string
-  city: string
-  category: string[]
-  price: number
-  rating: number
-  comments_count: number
-}
-
-defineProps<{
-  attraction: Attraction
-}>()
-
-const attractions = ref<Attraction[]>([])
+const route = useRoute()
+const attraction = ref<Attraction | null>(null)
+const attractionImages = ref<AttractionImage[]>([])
 const loading = ref<boolean>(true)
 const errorMsg = ref<string>('')
 
-const fetchAttractions = async (): Promise<void> => {
-  const { data, error } = await supabase
-    .from('attractions')
-    .select('*')
+// Reactive object for the top section
+const ticketIntro = ref({
+  title: '',
+  rating: 0,
+  reviewCount: 0,
+  soldCount: '0',
+  status: '隨訂隨用',
+  highlights: [] as string[],
+})
 
-  if (error) {
+const fetchAttractionData = async () => {
+  const id = route.params.id
+  if (!id) return
+
+  loading.value = true
+
+  try {
+    // Fetch Attraction Details
+    const { data: attractionData, error: attractionError } = await supabase
+      .from('attractions')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (attractionError) throw attractionError
+
+    attraction.value = attractionData
+
+    // Map to ticketIntro
+    if (attractionData) {
+      ticketIntro.value = {
+        title: attractionData.name,
+        rating: attractionData.rating || 0,
+        reviewCount: 0, // Placeholder
+        soldCount: '0', // Placeholder
+        status: '隨訂隨用',
+        highlights: attractionData.highlights || [],
+      }
+    }
+
+    // Fetch Images
+    const { data: imagesData, error: imagesError } = await supabase
+      .from('attraction_images')
+      .select('*')
+      .eq('attraction_id', id)
+
+    if (imagesError) throw imagesError
+
+    attractionImages.value = imagesData || []
+
+    // Update ticketDetail content
+    const details = []
+    if (attractionData?.description) {
+       details.push({
+         id: 1,
+         type: 'text',
+         content: attractionData.description
+       })
+    }
+    // Add intro if needed, or if description is essentially the detail.
+    // The user mentioned 'detail' column as well. Let's check which one to use.
+    // User said: "intro, description, detail".
+    // Usually 'description' is short, 'detail' is long.
+    if (attractionData?.detail) {
+        details.push({
+            id: 2,
+            type: 'text',
+            content: attractionData.detail
+        })
+    }
+
+    // Check for images that should be in the body?
+    // For now, let's just keep the body text.
+    ticketDetail.value = details
+
+  } catch (error: any) {
     errorMsg.value = error.message
-  } else {
-    attractions.value = data ?? []
+  } finally {
+    loading.value = false
   }
-
-  loading.value = false
 }
 
-onMounted(fetchAttractions)
+onMounted(() => {
+  fetchAttractionData()
+})
 
 const router = useRouter()
 function onSearch() {
   router.push('/orders/checkout')
 }
 
-const ticketIntro = {
-  title: '[限時優惠] 台北極致景觀體驗 | 雲端漫步與特色下午茶套餐',
-  rating: 4.9,
-  reviewCount: 1234,
-  soldCount: '10,000+',
-  status: '隨訂隨用',
-  highlights: [
-    '體驗全台最高樓層景觀，俯瞰城市美景',
-    '專業導覽解說，深入了解建築歷史',
-    '獨家贈送精美紀念品與電子證書',
-    '親子友善設施，適合全家同遊',
-  ],
-}
+// ticketIntro is defined above
 
-const ticketDetail = [
-  {
-    id: 1,
-    type: 'text',
-    content: '這是一個純文字區塊。體驗全台最高樓層景觀...',
-  },
-  {
-    id: 2,
-    type: 'image',
-    url: 'https://placehold.co/800x400/f1f5f9/94a3b8?text=Pure+Image',
-  },
-  {
-    id: 3,
-    type: 'text',
-    content: '這是一個純文字區塊。體驗全台最高樓層景觀...',
-  },
-  {
-    id: 4,
-    type: 'image-caption',
-    url: 'https://placehold.co/800x400/334155/f8fafc?text=Image+with+Caption',
-    caption: 'img+text這是位於 89 樓的觀景台實景，天氣晴朗時可遠眺至淡水河口。',
-  },
-]
+const ticketDetail = ref<any[]>([])
 
 const policies = ref([
   {
