@@ -40,6 +40,12 @@ const router = createRouter({
       meta: { showAppNavbar: true, showFooter: true },
     },
     {
+      path: '/favorites',
+      name: 'favorites',
+      component: () => import('@/views/user/FavoritesView.vue'),
+      meta: { showAppNavbar: true, showFooter: true },
+    },
+    {
       path: '/profile', //RWD-OK
       name: 'userprofile',
       component: UserProfile,
