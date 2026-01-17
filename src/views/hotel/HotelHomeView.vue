@@ -235,6 +235,8 @@ import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
 import HomePageCard from '@/components/layout/HomePageCard.vue'
+import { useHotelApi } from '@/composables/useHotelApi'
+import type { HomePageCardItem } from '@/types/hotel'
 
 const router = useRouter()
 const activeTab = ref<'stay'>('stay')
@@ -298,13 +300,27 @@ const handleOutsideClick = (e: MouseEvent) => {
     isPeoplePickerOpen.value = false
   }
 }
-onMounted(() => {
+
+const { fetchFeaturedHotels, fetchNearbyHotels } = useHotelApi()
+
+const hotHotels = ref<HomePageCardItem[]>([])
+const nearHotels = ref<HomePageCardItem[]>([])
+const kaohsiungHotels = ref<HomePageCardItem[]>([])
+
+onMounted(async () => {
   startTimer()
   window.addEventListener('click', handleOutsideClick)
-  fetchHotHotels()
-  fetchNearHotels()
-  fetchKaohsiungHotels()
+
+  const { data: featured } = await fetchFeaturedHotels()
+  hotHotels.value = featured.value
+
+  const { data: nearby } = await fetchNearbyHotels('台北市', 6)
+  nearHotels.value = nearby.value
+
+  const { data: kaohsiung } = await fetchNearbyHotels('高雄市', 6)
+  kaohsiungHotels.value = kaohsiung.value
 })
+
 onUnmounted(() => {
   stopTimer()
   window.removeEventListener('click', handleOutsideClick)
@@ -314,6 +330,7 @@ const sections = computed(() => [
   { title: '附近飯店', data: nearHotels.value },
   { title: '熱門城市', data: kaohsiungHotels.value },
 ])
+
 const taiwanCities = [
   '基隆',
   '臺北',
@@ -358,158 +375,17 @@ watch(
   { immediate: true },
 )
 
-type CardItem = {
-  id: string | number
-  name?: string
-  title?: string
-}
-// 1) API 共用 base（兩支 API 都會有的欄位）
-type HotelBaseApi = {
-  id: string
-  name: string
-  city: string | null
-  district: string | null
-  star_rating: number | null
-  min_price: number | null
-  cover_image_url: string | null
-}
-
-type FeaturedHotelApi = HotelBaseApi & {
-  featured_order: number | null
-}
-
-type HotelApi = HotelBaseApi & {
-  address: string | null
-}
-
-type HomePageCardItem = {
-  id: string
-  name: string
-  imageUrl: string
-  price: number
-  rating: number
-  venue: string
-  address?: string
-}
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL as string
-const api = (path: string) =>
-  new URL(path, API_BASE.endsWith('/') ? API_BASE : `${API_BASE}/`).toString()
-
-const FALLBACK_IMG =
-  'https://res.cloudinary.com/wantrip/image/upload/v1767939338/%E9%A3%AF%E5%BA%97%E9%A6%96%E5%9C%96_dualwy.jpg'
-
-const hotHotels = ref<HomePageCardItem[]>([])
-const hotHotelsLoading = ref(false)
-const hotHotelsError = ref<string | null>(null)
-
-async function fetchHotHotels() {
-  hotHotelsLoading.value = true
-  hotHotelsError.value = null
-  try {
-    const res = await fetch(api('hotel_featured'))
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    const data = (await res.json()) as FeaturedHotelApi[]
-
-    hotHotels.value = data.map((h) => ({
-      id: h.id,
-      name: h.name,
-      imageUrl: h.cover_image_url ?? FALLBACK_IMG,
-      price: h.min_price ?? 0,
-      rating: h.star_rating ?? 0,
-      venue: [h.city, h.district].filter(Boolean).join('｜'), // 例如：台北｜中山區
-    }))
-  } catch (e) {
-    console.error(e)
-    hotHotelsError.value = '熱門飯店載入失敗'
-    hotHotels.value = []
-  } finally {
-    hotHotelsLoading.value = false
-  }
-}
-const nearHotels = ref<HomePageCardItem[]>([])
-const nearHotelsLoading = ref(false)
-const nearHotelsError = ref<string | null>(null)
-
-async function fetchNearHotels() {
-  nearHotelsLoading.value = true
-  nearHotelsError.value = null
-  try {
-    const url = new URL(api('hotels/nearby'))
-    url.searchParams.set('city', '台北市')
-    url.searchParams.set('limit', '6')
-
-    const res = await fetch(url.toString())
-    if (!res.ok) {
-      const text = await res.text().catch(() => '')
-      throw new Error(`HTTP ${res.status} ${text}`)
-    }
-
-    const data = (await res.json()) as HotelApi[]
-
-    nearHotels.value = data.map((h) => ({
-      id: h.id,
-      name: h.name,
-      imageUrl:
-        h.cover_image_url ?? 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
-      price: h.min_price ?? 0,
-      rating: h.star_rating ?? 0,
-      venue: [h.city, h.district].filter(Boolean).join('｜'),
-      address: h.address ?? '',
-    }))
-  } catch (e) {
-    console.error(e)
-    nearHotelsError.value = '附近飯店載入失敗'
-    nearHotels.value = []
-  } finally {
-    nearHotelsLoading.value = false
-  }
-}
-
-const kaohsiungHotels = ref<HomePageCardItem[]>([])
-const kaohsiungLoading = ref(false)
-const kaohsiungError = ref<string | null>(null)
-async function fetchKaohsiungHotels() {
-  kaohsiungLoading.value = true
-  kaohsiungError.value = null
-  try {
-    const url = new URL(api('hotels/nearby'))
-    url.searchParams.set('city', '高雄市')
-    url.searchParams.set('limit', '6')
-
-    const res = await fetch(url.toString())
-    if (!res.ok) {
-      const text = await res.text().catch(() => '')
-      throw new Error(`HTTP ${res.status} ${text}`)
-    }
-
-    const data = (await res.json()) as HotelApi[]
-
-    kaohsiungHotels.value = data.map((h) => ({
-      id: h.id,
-      name: h.name,
-      imageUrl: h.cover_image_url ?? FALLBACK_IMG,
-      price: h.min_price ?? 0,
-      rating: h.star_rating ?? 0,
-      venue: [h.city, h.district].filter(Boolean).join('｜'),
-      address: h.address ?? '',
-    }))
-  } catch (e) {
-    console.error(e)
-    kaohsiungError.value = '高雄飯店載入失敗'
-    kaohsiungHotels.value = []
-  } finally {
-    kaohsiungLoading.value = false
-  }
-}
-
 const handleWishlist = (id: string | number) => {
-  const allItems: CardItem[] = [...hotHotels.value, ...nearHotels.value, ...kaohsiungHotels.value]
+  const allItems: HomePageCardItem[] = [
+    ...hotHotels.value,
+    ...nearHotels.value,
+    ...kaohsiungHotels.value,
+  ]
 
   const product = allItems.find((item) => item.id === id)
 
   if (product) {
-    console.log(`用戶收藏了: ${product.name ?? product.title ?? product.id}`)
+    console.log(`用戶收藏了: ${product.name}`)
   }
 }
 

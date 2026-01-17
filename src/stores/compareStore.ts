@@ -75,5 +75,47 @@ export const useCompareStore = defineStore('compare', {
     reload() {
       this.hotels = loadFromStorage()
     },
+
+    async fetchAndAddHotel(
+      id: string,
+    ): Promise<{ ok: boolean; reason?: 'duplicate' | 'full' | 'error' }> {
+      // 1. 先檢查是否已存在或已滿，避免多餘 API 請求
+      if (this.hotels.some((h) => h.id === id)) return { ok: false, reason: 'duplicate' }
+      if (this.hotels.length >= MAX) return { ok: false, reason: 'full' }
+
+      try {
+        const apiUrl = import.meta.env.VITE_API_BASE_URL
+        const res = await fetch(`${apiUrl}/hotels/${id}`)
+        if (!res.ok) throw new Error('Fetch failed')
+
+        const hotelData = await res.json()
+
+        // 2. 再次檢查（防止在 fetch 期間被加入）
+        if (this.hotels.some((h) => h.id === id)) return { ok: false, reason: 'duplicate' }
+        if (this.hotels.length >= MAX) return { ok: false, reason: 'full' }
+
+        // 3. 整理資料並加入
+        const normalized: CompareHotel = {
+          id: hotelData.id,
+          name: hotelData.name,
+          star_rating: hotelData.star_rating,
+          min_price: hotelData.min_price,
+          city: hotelData.city,
+          district: hotelData.district,
+          image_url: hotelData.image_url,
+          types: Array.isArray(hotelData.types) ? hotelData.types : [],
+          facilities: Array.isArray(hotelData.facilities) ? hotelData.facilities : [],
+          rules: Array.isArray(hotelData.rules) ? hotelData.rules : [],
+          distance: hotelData.distance,
+        }
+
+        this.hotels.push(normalized)
+        saveToStorage(this.hotels)
+        return { ok: true }
+      } catch (e) {
+        console.error(e)
+        return { ok: false, reason: 'error' }
+      }
+    },
   },
 })
