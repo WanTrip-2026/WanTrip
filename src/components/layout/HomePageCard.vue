@@ -117,6 +117,10 @@ const detailLink = computed(() => {
 })
 
 const onFavoriteClick = async () => {
+  if (!authStore.isLoggedIn) {
+     alert('請先登入會員以加入收藏')
+     return
+  }
   try {
     await favoriteStore.toggleFavorite({
         id: props.id,
@@ -130,7 +134,7 @@ const onFavoriteClick = async () => {
         rating: props.rating
     })
   } catch {
-    router.push('/login')
+    // If API fails
   }
 }
 </script>

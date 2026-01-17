@@ -267,7 +267,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
 import LoginModal from '@/views/user/LoginModel.vue'
 import RegisterModal from '@/views/user/RegisterModal.vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
@@ -278,7 +278,12 @@ const route = useRoute()
 const auth = useAuthStore()
 
 const isOpen = ref(false)
-const isLoginModalOpen = ref(false)
+const isLoginModalOpen = computed({
+  get: () => auth.showLoginModal,
+  set: (val) => {
+    auth.showLoginModal = val
+  },
+})
 const isRegisterModalOpen = ref(false)
 
 const isUserMenuOpen = ref(false)
@@ -299,15 +304,15 @@ const goProfileFromMenu = () => {
 const openLogin = () => {
   isOpen.value = false
   isRegisterModalOpen.value = false
-  isLoginModalOpen.value = true
+  auth.openLoginModal()
 }
 const openRegister = () => {
-  isLoginModalOpen.value = false
+  auth.closeLoginModal()
   isRegisterModalOpen.value = true
 }
 const openLoginFromRegister = () => {
   isRegisterModalOpen.value = false
-  isLoginModalOpen.value = true
+  auth.openLoginModal()
 }
 const handleLogout = async () => {
   isUserMenuOpen.value = false
@@ -323,19 +328,19 @@ const onDocClick = (e: MouseEvent) => {
   isUserMenuOpen.value = false
 }
 const closeAllAuthModal = () => {
-  isLoginModalOpen.value = false
+  auth.closeLoginModal()
   isRegisterModalOpen.value = false
 }
 const handleLogin = ({ user }: { user: any }) => {
   auth.setAuth(user)
-  isLoginModalOpen.value = false
+  auth.closeLoginModal()
 }
 const handleSignup = () => {
-  isLoginModalOpen.value = false
+  auth.closeLoginModal()
   openRegister()
 }
 const handleForgotPassword = () => {
-  isLoginModalOpen.value = false
+  auth.closeLoginModal()
 }
 const handleSocial = (provider: 'google' | 'apple' | 'line') => {
   console.log('social login:', provider)
