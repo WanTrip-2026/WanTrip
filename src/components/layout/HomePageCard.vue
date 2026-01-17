@@ -119,7 +119,7 @@ const detailLink = computed(() => {
 const onFavoriteClick = async () => {
   try {
     await favoriteStore.toggleFavorite({
-        id: Number(props.id),
+        id: props.id,
         name: props.name,
         imageUrl: props.imageUrl,
         price: props.price,
