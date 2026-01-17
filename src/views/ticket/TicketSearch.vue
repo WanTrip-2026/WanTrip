@@ -3,63 +3,36 @@ import TicketCard from '@/components/layout/TicketCard.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/utils/supabaseClient'
+import type { Attraction } from '@/types/database'
 
-const route = useRoute()
-const attractions = ref<any[]>([])
+// Local interface extending DB attraction with UI fields
+interface AttractionWithImage extends Attraction {
+  image_url: string
+  comments_count: number
+}
+
+const attractions = ref<AttractionWithImage[]>([])
 const loading = ref<boolean>(true)
 const errorMsg = ref<string>('')
 
-// Fetch logic
-const fetchAttractions = async () => {
-  loading.value = true
-  errorMsg.value = ''
+const fetchAttractions = async (): Promise<void> => {
+  // Fetch attractions with their images
+  const { data, error } = await supabase
+    .from('attractions')
+    .select('*, attraction_images(image_url)')
 
-  try {
-    let query = supabase
-      .from('attractions')
-      .select('*, attraction_images(image_url)')
-
-    // Filter by category if present in route query
-    if (route.query.category) {
-       // Assuming category in DB is a text array or string.
-       // If it is an array: .contains('category', [route.query.category])
-       // If it is a string: .eq('category', route.query.category)
-       // Based on mock data it was '節慶', '演唱會' etc. In DB it is array?
-       // Let's assume array for now based on previous type definitions, or ilike if string.
-       // Safe bet for array column:
-       query = query.contains('category', [route.query.category])
-    }
-
-    // Filter by keyword/destination if present
-    if (route.query.keyword) {
-      query = query.or(`name.ilike.%${route.query.keyword}%,city.ilike.%${route.query.keyword}%`)
-    }
-    if (route.query.city) {
-        query = query.eq('city', route.query.city)
-    }
-
-    const { data, error } = await query
-
-    if (error) throw error
-
-    // Transform to match TicketCard structure
-    attractions.value = (data ?? []).map((item: any) => ({
-      id: item.id,
-      name: item.name,
+  if (error) {
+    errorMsg.value = error.message
+  } else {
+    // Transform data to assign the first image as the main image_url and default comments_count
+    const mappedData = (data ?? []).map((item: any) => ({
+      ...item,
+      // If attraction_images is an array and has items, use the first one
       image_url: item.attraction_images?.[0]?.image_url || 'https://placehold.co/300x200?text=No+Image',
-      city: item.city,
-      category: item.category, // Keep original for now
-      // TicketCard expects 'option' array for tags. We can use [city, category[0]]
-      option: [item.city, ...(Array.isArray(item.category) ? item.category : [item.category])].filter(Boolean),
-      comments: '0 則評論', // Placeholder
-      price: item.price,
+      comments_count: 0
     }))
-
-  } catch (err: any) {
-    console.error('Error fetching attractions:', err)
-    errorMsg.value = err.message
-  } finally {
-    loading.value = false
+    console.log('TicketSearch data:', mappedData)
+    attractions.value = mappedData
   }
 }
 
@@ -152,7 +125,7 @@ const totalPages = computed<number>(() =>
   Math.ceil(attractions.value.length / itemsPerPage),
 )
 
-const pagedattraction = computed<Attraction[]>(() => {
+const pagedattraction = computed<AttractionWithImage[]>(() => {
   const start = (currentPage.value - 1) * itemsPerPage
   return attractions.value.slice(start, start + itemsPerPage)
 })
@@ -260,6 +233,13 @@ const searchCity = computed(() => route.query.city ?? '')
             </button>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+             <div v-if="errorMsg" class="col-span-full p-4 text-red-700 bg-red-100 rounded">
+               {{ errorMsg }}
+             </div>
+             <div v-else-if="!loading && attractions.length === 0" class="col-span-full p-10 text-center text-gray-500 bg-gray-50 rounded">
+               <p class="text-xl font-bold mb-2">沒有找到相關體驗 (No Results)</p>
+               <p>請嘗試調整搜尋條件或是確認資料庫是否有資料。</p>
+             </div>
             <TicketCard v-for="attraction in pagedattraction" :key="attraction.id" :attraction="attraction" />
           </div>
           <div class="flex justify-center gap-2 mt-5 mb-10">
