@@ -110,7 +110,7 @@
 
               <div
                 v-show="isUserMenuOpen"
-                class="absolute right-0 mt-2 w-40 rounded-2xl bg-white/90 backdrop-blur-md border border-white/50 shadow-lg overflow-hidden"
+                class="absolute right-0 mt-2 w-40 rounded-2xl bg-white/80 backdrop-blur-md border border-white/50 shadow-lg overflow-hidden"
               >
                 <button
                   type="button"
@@ -118,14 +118,6 @@
                   @click="goProfileFromMenu"
                 >
                   會員中心
-                </button>
-
-                <button
-                  type="button"
-                  class="w-full text-left px-4 py-3 text-sm text-black hover:bg-primary/10"
-                  @click="router.push('/favorites'); isUserMenuOpen = false"
-                >
-                  我的收藏
                 </button>
 
                 <button

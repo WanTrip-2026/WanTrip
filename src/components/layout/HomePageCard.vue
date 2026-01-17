@@ -1,11 +1,8 @@
 <template>
-  <RouterLink
-    :to="`/hotels/${id}`"
-    :class="[
-      'group relative flex h-[270px] w-[183px] hover:w-[415px] z-[1] hover:z-[50] bg-white rounded-[20px] hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
-      expandLeft ? 'hover:-translate-x-[232px]' : '',
-    ]"
-  >
+  <RouterLink :to="detailLink" :class="[
+    'group relative flex h-[270px] w-[183px] md:hover:w-[408px] z-[1] md:hover:z-[20] bg-white rounded-[20px] md:hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
+    expandLeft ? 'hover:-translate-x-[224px]' : ''
+  ]">
     <div class="relative h-full w-[183px] flex-shrink-0">
       <img :src="imageUrl" :alt="name" class="h-full w-full object-cover" />
       <div
@@ -73,23 +70,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useCompareStore } from '@/stores/compareStore'
-import { RouterLink, useRouter } from 'vue-router';
+import { RouterLink } from 'vue-router';
 import { useFavoriteStore } from '@/stores/favoriteStore';
+import { computed } from 'vue';
 
 // 統一命名規範與預設值
 interface Props {
-  id?: number | string
-  name?: string
-  imageUrl?: string
-  price?: number
-  venue?: string
-  category?: string
-  date?: string
-  address?: string
-  rating?: number
-  expandLeft?: boolean
+  id?: number | string;
+  name?: string;
+  imageUrl?: string;
+  price?: number;
+  venue?: string;
+  category?: string;
+  date?: string;
+  address?: string;
+  rating?: number;
+  expandLeft?: boolean;
+  type?: 'hotel' | 'ticket'; // Add type prop
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -103,47 +100,30 @@ const props = withDefaults(defineProps<Props>(), {
   address: '',
   rating: 5,
   expandLeft: false,
-})
+  type: 'hotel' // Default to hotel
+});
 
-defineEmits(['favorite', 'details'])
+import { useAuthStore } from '@/stores/auth'
 
-const compareStore = useCompareStore()
-
-// 是否已加入比較
-const isInCompare = computed(() => compareStore.isInCompare(String(props.id)))
-
-// 按鈕：已加入→移除；未加入→加入
-const isLoading = ref(false)
-
-async function toggleCompare() {
-  const hotelId = String(props.id)
-
-  // 已加入就移除
-  if (isInCompare.value) {
-    compareStore.removeHotel(hotelId)
-    return
-  }
-
-  isLoading.value = true
-  try {
-    const result = await compareStore.fetchAndAddHotel(hotelId)
-    if (!result.ok) {
-      if (result.reason === 'full') alert('最多只能加入 5 間飯店比較')
-      if (result.reason === 'error') alert('加入失敗，請稍後再試')
-    }
-  } finally {
-    isLoading.value = false
-const router = useRouter()
 const favoriteStore = useFavoriteStore()
+const authStore = useAuthStore()
 
 const isFav = computed(() => {
-  return favoriteStore.isFavorite(Number(props.id))
-})}
+  return favoriteStore.isFavorite(props.id)
+})
+
+const detailLink = computed(() => {
+  return props.type === 'hotel' ? `/hotels/${props.id}` : `/tickets/${props.id}`;
+})
 
 const onFavoriteClick = async () => {
+  if (!authStore.isLoggedIn) {
+     alert('請先登入會員以加入收藏')
+     return
+  }
   try {
     await favoriteStore.toggleFavorite({
-        id: Number(props.id),
+        id: props.id,
         name: props.name,
         imageUrl: props.imageUrl,
         price: props.price,
@@ -151,10 +131,11 @@ const onFavoriteClick = async () => {
         category: props.category,
         date: props.date,
         address: props.address,
-        rating: props.rating
+        rating: props.rating,
+        type: props.type // Pass type
     })
   } catch {
-    router.push('/login')
+    // If API fails
   }
 }}
 </script>
