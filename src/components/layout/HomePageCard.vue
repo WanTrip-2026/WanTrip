@@ -18,10 +18,17 @@
         class="absolute bottom-[20px] right-[20px] flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
       >
         <button
-          @click.stop.prevent="$emit('compare', id)"
-          class="flex items-center gap-1 bg-white/45 backdrop-blur-sm hover:bg-white px-4 py-2 rounded-full text-sm font-medium text-black transition-colors shadow-sm"
+          @click.stop.prevent="toggleCompare"
+          class="flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-sm"
+          :class="
+            isInCompare
+              ? 'bg-dark_300 text-black cursor-not-allowed'
+              : 'bg-white/45 backdrop-blur-sm hover:bg-white text-black'
+          "
         >
-          加入比較
+          <template v-if="isLoading">處理中...</template>
+          <template v-else-if="isInCompare">已加入</template>
+          <template v-else>加入比較</template>
         </button>
       </div>
     </div>
@@ -64,13 +71,11 @@
               />
             </svg>
           </button>
-          <RouterLink :to="`/hotels/${id}`" @click.stop>
-            <button
-              class="h-10 bg-primary hover:bg-main text-white px-6 rounded-full font-medium transition-colors"
-            >
-              了解更多
-            </button>
-          </RouterLink>
+          <button
+            class="h-10 bg-primary hover:bg-main text-white px-6 rounded-full font-medium transition-colors"
+          >
+            了解更多
+          </button>
         </div>
       </div>
     </div>
@@ -78,7 +83,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useCompareStore } from '@/stores/compareStore'
 
 // 統一命名規範與預設值
 interface Props {
@@ -94,7 +101,7 @@ interface Props {
   expandLeft?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   id: 0,
   name: '卡片名稱',
   imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
@@ -107,5 +114,34 @@ withDefaults(defineProps<Props>(), {
   expandLeft: false,
 })
 
-defineEmits(['compare', 'favorite', 'details'])
+defineEmits(['favorite', 'details'])
+
+const compareStore = useCompareStore()
+
+// 是否已加入比較
+const isInCompare = computed(() => compareStore.isInCompare(String(props.id)))
+
+// 按鈕：已加入→移除；未加入→加入
+const isLoading = ref(false)
+
+async function toggleCompare() {
+  const hotelId = String(props.id)
+
+  // 已加入就移除
+  if (isInCompare.value) {
+    compareStore.removeHotel(hotelId)
+    return
+  }
+
+  isLoading.value = true
+  try {
+    const result = await compareStore.fetchAndAddHotel(hotelId)
+    if (!result.ok) {
+      if (result.reason === 'full') alert('最多只能加入 5 間飯店比較')
+      if (result.reason === 'error') alert('加入失敗，請稍後再試')
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>

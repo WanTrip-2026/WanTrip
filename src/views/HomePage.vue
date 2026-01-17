@@ -207,6 +207,8 @@
 import { reactive, ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import HomePageCard from '@/components/layout/HomePageCard.vue'
+import { useHotelApi } from '@/composables/useHotelApi'
+import type { HomePageCardItem } from '@/types/hotel'
 
 const activeTab = ref('stay')
 
@@ -246,103 +248,21 @@ const regions = [
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-%E5%B3%B6_qnxq42.jpg',
   },
 ]
-type HotelBaseApi = {
-  id: string
-  name: string
-  city: string | null
-  district: string | null
-  star_rating: number | null
-  min_price: number | null
-  cover_image_url: string | null
-}
 
-type FeaturedHotelApi = HotelBaseApi & {
-  featured_order: number | null
-}
+const { fetchFeaturedHotels, fetchRecommendedHotels } = useHotelApi()
 
-type HotelApi = HotelBaseApi & {
-  address: string | null
-}
-
-type HomePageCardItem = {
-  id: string
-  name: string
-  imageUrl: string
-  price: number
-  rating: number
-  venue: string
-  address?: string
-}
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL as string
-const api = (path: string) => new URL(path, API_BASE + '/').toString()
-
-const FALLBACK_IMG =
-  'https://res.cloudinary.com/wantrip/image/upload/v1767939338/%E9%A3%AF%E5%BA%97%E9%A6%96%E5%9C%96_dualwy.jpg'
 const featuredHotels = ref<HomePageCardItem[]>([])
-const featuredLoading = ref(false)
-const featuredError = ref<string | null>(null)
 const hotHotelsA = computed(() => featuredHotels.value.slice(0, 6))
 
 const recommendedHotels = ref<HomePageCardItem[]>([])
-const recommendedLoading = ref(false)
-const recommendedError = ref<string | null>(null)
 const hotHotelsB = computed(() => recommendedHotels.value.slice(0, 6))
 
-async function fetchFeaturedHotels() {
-  featuredLoading.value = true
-  featuredError.value = null
-  try {
-    const res = await fetch(api('hotel_featured'))
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+onMounted(async () => {
+  const { data: featured } = await fetchFeaturedHotels()
+  featuredHotels.value = featured.value
 
-    const data = (await res.json()) as FeaturedHotelApi[]
-    featuredHotels.value = (data ?? []).map((h) => ({
-      id: h.id,
-      name: h.name,
-      imageUrl: h.cover_image_url ?? FALLBACK_IMG,
-      price: h.min_price ?? 0,
-      rating: h.star_rating ?? 0,
-      venue: [h.city, h.district].filter(Boolean).join('｜'),
-    }))
-  } catch (e) {
-    console.error(e)
-    featuredError.value = '熱門飯店載入失敗'
-    featuredHotels.value = []
-  } finally {
-    featuredLoading.value = false
-  }
-}
-
-async function fetchRecommendedHotels() {
-  recommendedLoading.value = true
-  recommendedError.value = null
-  try {
-    const res = await fetch(api('hotels/recommended?limit=6'))
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-
-    const data = (await res.json()) as HotelApi[]
-    recommendedHotels.value = (data ?? []).map((h) => ({
-      id: h.id,
-      name: h.name,
-      imageUrl: h.cover_image_url ?? FALLBACK_IMG,
-      price: h.min_price ?? 0,
-      rating: h.star_rating ?? 0,
-      venue: [h.city, h.district].filter(Boolean).join('｜'),
-      address: h.address ?? '',
-    }))
-  } catch (e) {
-    console.error(e)
-    recommendedError.value = '推薦飯店載入失敗'
-    recommendedHotels.value = []
-  } finally {
-    recommendedLoading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchFeaturedHotels()
-  fetchRecommendedHotels()
+  const { data: recommended } = await fetchRecommendedHotels()
+  recommendedHotels.value = recommended.value
 })
 
 const handleWishlist = (id: string | number) => {
