@@ -255,13 +255,12 @@
               <span class="text-[#D14D4D] font-bold text-2xl self-end">
                 NT$ {{ (room.price ?? 0).toLocaleString() }}</span
               >
-              <RouterLink to="/orders/checkout">
-                <button
-                  class="bg-primary w-full text-white px-[40px] py-[10px] rounded-full mt-4 font-bold hover:bg-main_800"
-                >
-                  立即預定
-                </button>
-              </RouterLink>
+              <button
+                @click="handleBook(room)"
+                class="bg-primary w-full text-white px-[40px] py-[10px] rounded-full mt-4 font-bold hover:bg-main_800"
+              >
+                立即預定
+              </button>
 
               <button
                 class="bg-white text-primary hover:text-primary/50 border border-primary px-[40px] py-[10px] rounded-full mt-4 font-bold"
@@ -421,8 +420,9 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ref, computed, onMounted } from 'vue'
+import { useOrderStore } from '@/stores/orderStore'
 
 interface Hotel {
   id: string
@@ -474,6 +474,20 @@ interface Review {
 }
 
 const route = useRoute()
+const router = useRouter()
+const orderStore = useOrderStore()
+
+const handleBook = (room: Room) => {
+  orderStore.setOrder({
+    title: hotel.value?.name || '未知名稱',
+    subtitle: room.name,
+    date: '住宿',
+    note: room.features.join(' / '),
+    price: room.price,
+    image: room.image_url,
+  })
+  router.push('/orders/checkout')
+}
 
 const hotel = ref<Hotel | null>(null)
 const error = ref<string | null>(null)
