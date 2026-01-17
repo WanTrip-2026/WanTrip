@@ -142,7 +142,17 @@ const isFav = computed(() => {
 
 const onFavoriteClick = async () => {
   try {
-    await favoriteStore.toggleFavorite(Number(props.id))
+    await favoriteStore.toggleFavorite({
+        id: Number(props.id),
+        name: props.name,
+        imageUrl: props.imageUrl,
+        price: props.price,
+        venue: props.venue,
+        category: props.category,
+        date: props.date,
+        address: props.address,
+        rating: props.rating
+    })
   } catch {
     router.push('/login')
   }

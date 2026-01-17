@@ -3,6 +3,8 @@ const API = import.meta.env.VITE_API_BASE_URL
 export type SessionUser = {
   id: string
   email: string | null
+  full_name?: string | null
+  avatar_url?: string | null
 }
 
 export async function exchangeToCookie(access_token: string) {
