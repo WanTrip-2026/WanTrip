@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import { useCompareStore } from '@/stores/compareStore'
 import { useFavoriteStore } from '@/stores/favoriteStore'
+import { useAuthStore } from '@/stores/auth'
 
 type HotelCard = {
   id: string
@@ -52,14 +53,19 @@ function toggleCompare() {
   }
 }
 
-const router = useRouter()
 const favoriteStore = useFavoriteStore()
 
 const isFav = computed(() => {
   return favoriteStore.isFavorite(props.hotel.id)
 })
 
+const authStore = useAuthStore()
+
 const onFavoriteClick = async () => {
+  if (!authStore.isLoggedIn) {
+     alert('請先登入會員以加入收藏')
+     return
+  }
   try {
     await favoriteStore.toggleFavorite({
         id: props.hotel.id,
@@ -71,7 +77,7 @@ const onFavoriteClick = async () => {
         rating: props.hotel.star_rating
     })
   } catch {
-    router.push('/login')
+    // If API fails or something else
   }
 }
 </script>
