@@ -122,6 +122,14 @@
 
                 <button
                   type="button"
+                  class="w-full text-left px-4 py-3 text-sm text-black hover:bg-primary/10"
+                  @click="router.push('/favorites'); isUserMenuOpen = false"
+                >
+                  我的收藏
+                </button>
+
+                <button
+                  type="button"
                   class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-primary/10"
                   @click="handleLogout"
                 >
