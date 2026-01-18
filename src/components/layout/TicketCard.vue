@@ -31,7 +31,7 @@ const onFavoriteClick = async () => {
       price: props.ticket.price,
       city: props.ticket.city, // Assuming ticket has city or similar?
       type: 'ticket',
-      rating: 4.5 // Mock rating? Ticket might not have star_rating
+      rating: props.ticket.rating,
     })
   } catch {
     // API error

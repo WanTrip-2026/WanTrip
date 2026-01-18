@@ -91,6 +91,10 @@ const onFavoriteClick = async () => {
      alert('請先登入會員以加入收藏')
      return
   }
+  if (!props.id) {
+    console.warn('Cannot add item with invalid ID to favorites.');
+    return;
+  }
   try {
     await favoriteStore.toggleFavorite({
         id: props.id!,

@@ -71,11 +71,6 @@ const fetchAttractions = async (): Promise<void> => {
 // Watch for route changes to re-fetch
 watch(() => route.query, fetchAttractions, { deep: true })
 
-// Watch for route query changes to refetch data
-watch(() => route.query, () => {
-  fetchAttractions()
-}, { deep: true })
-
 onMounted(() => {
   if (route.query.keyword) {
     searchInput.value = route.query.keyword as string
