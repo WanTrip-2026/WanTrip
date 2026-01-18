@@ -131,7 +131,8 @@ const onFavoriteClick = async () => {
         category: props.category,
         date: props.date,
         address: props.address,
-        rating: props.rating
+        rating: props.rating,
+        type: props.type // Pass type
     })
   } catch {
     // If API fails
