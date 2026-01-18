@@ -54,20 +54,7 @@ const formatRangeDisplay = (): string => {
   return `${formatDate(start)} - ${formatDate(end)}`
 }
 
-const MAX_PEOPLE_PER_ROOM = 4
-
-const validatePeople = () => {
-  const maxTotalPeople = peopleConfig.rooms * MAX_PEOPLE_PER_ROOM
-  if (peopleConfig.people > maxTotalPeople) {
-    peopleConfig.people = maxTotalPeople
-  }
-  if (peopleConfig.people < 1) {
-    peopleConfig.people = 1
-  }
-}
-
 function onSearch() {
-  validatePeople()
   goToPage(1)
 }
 
@@ -730,12 +717,12 @@ input[type='range']::-webkit-slider-thumb {
 }
 
 .dp__menu {
-  border-radius: 20px !important; /* 圓角跟房間選單一致 */
-  background-color: #ffffff; /* 白底 */
-  padding: 24px; /* 內距 */
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08); /* 跟房間下拉陰影一致 */
-  border: 1px solid rgba(0, 0, 0, 0.05); /* 跟房間選單邊框一致 */
-  z-index: 100; /* 確保浮在上層 */
+  border-radius: 20px !important;
+  background-color: #ffffff;
+  padding: 24px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05); /
+  z-index: 100;
 }
 
 .dp__range_start,
