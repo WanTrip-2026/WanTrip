@@ -249,7 +249,18 @@ const fetchAttractionData = async () => {
         reviewCount: Math.floor(Math.random() * 1000) + 100, // Placeholder
         soldCount: (Math.floor(Math.random() * 5000) + 500).toString(), // Placeholder
         status: '隨訂隨用',
-        highlights: attractionData.highlights || [],
+        highlights: (() => {
+          if (Array.isArray(attractionData.highlights)) return attractionData.highlights
+          if (typeof attractionData.highlights === 'string') {
+            try {
+              const parsed = JSON.parse(attractionData.highlights)
+              return Array.isArray(parsed) ? parsed : [attractionData.highlights]
+            } catch {
+              return [attractionData.highlights]
+            }
+          }
+          return []
+        })(),
       }
     }
 

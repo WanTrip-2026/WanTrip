@@ -145,13 +145,13 @@ const fetchTickets = async () => {
     const { data: popularData, error: popularError } = await supabase
       .from('attractions')
       .select('*, attraction_images(image_url)')
-      .limit(8)
+      .limit(6)
 
     const { data: topRatedData, error: topRatedError } = await supabase
       .from('attractions')
       .select('*, attraction_images(image_url)')
       .order('rating', { ascending: false })
-      .limit(8)
+      .limit(6)
 
     if (popularError || topRatedError) {
        console.error('Supabase error:', popularError || topRatedError)
@@ -250,9 +250,7 @@ function onSearch() {
     }
   })
 }
-function onClick(type: string, id: string) {
-  console.log('[Click]', { type, id })
-}
+
 
 const ticketClassify = [
   {
@@ -283,8 +281,8 @@ const ticketClassify = [
   },
 ]
 
-const handleWishlist = (id) => console.log('收藏門票 ID:', id);
-const handleBook = (id) => console.log('購票 ID:', id);
+const handleWishlist = (id: number | string) => console.log('收藏門票 ID:', id);
+const handleBook = (id: number | string) => console.log('購票 ID:', id);
 
 function onClickRegion(tc: { label: string }) {
     console.log('Category clicked:', tc);

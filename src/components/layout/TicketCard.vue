@@ -20,18 +20,18 @@ const isFav = computed(() => {
 
 const onFavoriteClick = async () => {
   if (!authStore.isLoggedIn) {
-     alert('請先登入會員以加入收藏')
-     return
+    alert('請先登入會員以加入收藏')
+    return
   }
   try {
     await favoriteStore.toggleFavorite({
-        id: props.ticket.id,
-        name: props.ticket.name,
-        imageUrl: props.ticket.image_url || '',
-        price: props.ticket.price,
-        city: props.ticket.city, // Assuming ticket has city or similar?
-        type: 'ticket',
-        rating: 4.5 // Mock rating? Ticket might not have star_rating
+      id: props.ticket.id,
+      name: props.ticket.name,
+      imageUrl: props.ticket.image_url || '',
+      price: props.ticket.price,
+      city: props.ticket.city, // Assuming ticket has city or similar?
+      type: 'ticket',
+      rating: 4.5 // Mock rating? Ticket might not have star_rating
     })
   } catch {
     // API error
@@ -43,19 +43,19 @@ const onFavoriteClick = async () => {
   <div>
     <div
       class="w-[280px] rounded-[20px] border bg-white border-gray-300 transition-all shadow-sm hover:shadow-lg overflow-hidden">
-      <RouterLink :to="`/tickets/${props.ticket.id}`" class="w-full h-full flex flex-col gap-2">
+      <RouterLink :to="`/tickets/${props.ticket.id}`" class="w-full h-full flex flex-col">
         <div class="w-full">
-          <img :src="props.ticket.image_url" :alt="props.ticket.name" class="w-full h-full object-cover" />
+          <img :src="props.ticket.image_url" :alt="props.ticket.name" class="w-full h-40 object-cover" />
         </div>
 
         <!-- 內容 -->
-        <div class="flex-1 flex flex-col justify-between px-4 py-2 w-full">
+        <div class="flex-1 flex flex-col justify-between px-5 py-2.5 w-full">
           <div class="flex flex-col gap-1">
-          <div class="flex flex-row gap-1 items-baseline justify-between">
-              <h3 class="text-xl font-bold text-dark w-[80%] line-clamp-1">
+            <div class="flex flex-row gap-1 items-center justify-between">
+              <h3 class="text-lg font-bold text-dark w-[80%] line-clamp-1">
                 {{ props.ticket.name }}
               </h3>
-               <button @click.stop.prevent="onFavoriteClick"
+              <button @click.stop.prevent="onFavoriteClick"
                 class="relative z-10 p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors bg-white">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors"
                   :class="isFav ? 'text-red-500 fill-red-500' : 'text-dark_500'" :fill="isFav ? 'currentColor' : 'none'"
@@ -65,21 +65,28 @@ const onFavoriteClick = async () => {
                 </svg>
               </button>
             </div>
-            <div class="flex flex-row justify-between items-center">
-               <p class="text-sm text-dark_500 line-clamp-1">
-                 {{ props.ticket.comments }}
-               </p>
-            </div>
+            <!-- <p class="text-sm text-dark_500 line-clamp-1">
+              {{ props.ticket.comments_count }} 則評論
+            </p> -->
 
-            <p class="text-dark_700 text-sm flex gap-2 mt-2">
-              <span class="bg-main_300 border border-primary/60 rounded-[20px] px-2 py-1"
-                v-for="(opt, index) in props.ticket.option" :key="index">
-                {{ opt }}
+            <p class="text-white text-sm flex flex-wrap gap-1">
+              <span v-if="props.ticket.city" class="bg-main rounded-[20px] px-3 py-1.5">
+                {{ props.ticket.city }}
+              </span>
+              <template v-if="Array.isArray(props.ticket.category)">
+                <span v-for="(cat, index) in props.ticket.category" :key="index"
+                  class="bg-main rounded-[20px] px-3 py-1.5">
+                  {{ cat }}
+                </span>
+              </template>
+              <span v-else-if="props.ticket.category"
+                class="bg-main rounded-[20px] px-3 py-1.5">
+                {{ props.ticket.category }}
               </span>
             </p>
 
             <p class="text-dark_500 text-sm mt-1">
-              <span class="text-dark text-xl font-bold">NT${{ props.ticket.price }}</span>
+              <span class="text-dark text-lg font-bold">NT${{ props.ticket.price }}</span>
               起
             </p>
           </div>

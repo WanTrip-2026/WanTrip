@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import TicketCard from '@/components/layout/TicketCard.vue'
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { supabase } from '@/utils/supabaseClient'
 import type { Attraction } from '@/types/database'
 
@@ -198,7 +198,7 @@ function onLocalSearch() {
 }
 </script>
 
-<template class="bg-page">
+<template>
   <main class="max-w-[1240px] mx-auto w-full bg-page pt-24 min-h-screen">
     <div class="mx-5">
       <section
@@ -299,7 +299,7 @@ function onLocalSearch() {
                <p class="text-xl font-bold mb-2">沒有找到相關體驗 (No Results)</p>
                <p>請嘗試調整搜尋條件或是確認資料庫是否有資料。</p>
              </div>
-            <TicketCard v-for="attraction in pagedattraction" :key="attraction.id" :attraction="attraction" />
+            <TicketCard v-for="attraction in pagedattraction" :key="attraction.id" :ticket="attraction" />
           </div>
           <div class="flex justify-center gap-2 mt-5 mb-10">
             <button v-for="page in totalPages" :key="page"
