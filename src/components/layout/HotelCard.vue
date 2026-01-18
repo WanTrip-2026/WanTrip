@@ -29,12 +29,9 @@ function starCount(stars: number) {
   return stars
 }
 
-// 是否已加入比較：用 store getter（你前面已加 isInCompare 的話）
 const isInCompare = computed(() => compareStore.isInCompare(props.hotel.id))
 
-// 按鈕：已加入→移除；未加入→加入
 function toggleCompare() {
-  // 已加入就移除
   if (isInCompare.value) {
     compareStore.removeHotel(props.hotel.id)
     return
@@ -49,7 +46,34 @@ function toggleCompare() {
   })
   if (!result.ok) {
     if (result.reason === 'full') alert('最多只能加入 5 間飯店比較')
-    // duplicate 理論上不會發生（因為 isInCompare 先擋了）
+  }
+}
+
+const favoriteStore = useFavoriteStore()
+
+const isFav = computed(() => {
+  return favoriteStore.isFavorite(props.hotel.id)
+})
+
+const authStore = useAuthStore()
+
+const onFavoriteClick = async () => {
+  if (!authStore.isLoggedIn) {
+     alert('請先登入會員以加入收藏')
+     return
+  }
+  try {
+    await favoriteStore.toggleFavorite({
+        id: props.hotel.id,
+        name: props.hotel.name,
+        imageUrl: props.hotel.image_url || '',
+        price: props.hotel.min_price,
+        city: props.hotel.city,
+        type: 'hotel',
+        rating: props.hotel.star_rating
+    })
+  } catch {
+    // If API fails or something else
   }
 }
 
