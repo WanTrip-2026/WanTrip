@@ -90,7 +90,7 @@ const onFavoriteClick = async () => {
         <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
         <button
           @click="toggleCompare"
-          class="absolute bottom-5 right-5 rounded-[20px] h-[40px] w-[90px] text-xs p-[2px] opacity-80 hover:opacity-100 text-black"
+          class="absolute bottom-5 right-5 rounded-[20px] h-[40px] w-[90px] text-xs p-[2px] opacity-80 hover:opacity-100 text-black transition-colors"
           :class="
             isInCompare
               ? 'bg-dark_300 text-black cursor-not-allowed'
