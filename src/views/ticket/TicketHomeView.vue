@@ -4,10 +4,25 @@ import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
 import HomePageTicketCard from '@/components/layout/HomePageTicketCard.vue'
 import { supabase } from '@/utils/supabaseClient'
+import type { Attraction } from '@/types/database'
 
 const router = useRouter()
 const activeTab = ref<'stay'>('stay')
-const tickets = ref<any[]>([])
+interface TicketItem {
+  id: number | string
+  name: string
+  imageUrl: string
+  price: number
+  venue: string
+  category: string
+  date: string
+  address: string
+  rating: number
+  description: string
+}
+
+const tickets = ref<TicketItem[]>([])
+const topRatedTickets = ref<TicketItem[]>([])
 const errorMsg = ref<string>('')
 
 // --- 輪播盒邏輯 ---
@@ -85,7 +100,7 @@ interface Section {
 
 const sections = ref<Section[]>([])
 const isLoading = ref(true)
-const isticketSection = (sectionTitle: string) => sectionTitle === '人氣地區'
+// function isticketSection(sectionTitle: string) { return sectionTitle === '人氣地區' } // Unused
 
 onMounted(() => {
   setTimeout(() => {
@@ -118,40 +133,63 @@ onMounted(() => {
 
 const fetchTickets = async () => {
   errorMsg.value = ''
+  isLoading.value = true
   try {
-    const { data, error } = await supabase
+    // Connection test
+    const { count, error: countError } = await supabase
+      .from('attractions')
+      .select('*', { count: 'exact', head: true })
+
+    console.log('Total attractions in DB:', count, 'Error:', countError)
+
+    const { data: popularData, error: popularError } = await supabase
       .from('attractions')
       .select('*, attraction_images(image_url)')
-      .limit(10)
+      .limit(8)
 
-    if (error) {
-       console.error('Supabase error:', error)
-       errorMsg.value = `Error: ${error.message} (Code: ${error.code})`
+    const { data: topRatedData, error: topRatedError } = await supabase
+      .from('attractions')
+      .select('*, attraction_images(image_url)')
+      .order('rating', { ascending: false })
+      .limit(8)
+
+    if (popularError || topRatedError) {
+       console.error('Supabase error:', popularError || topRatedError)
+       errorMsg.value = `Error fetching tickets: ${(popularError || topRatedError)?.message}`
        return
     }
 
-    if (!data || data.length === 0) {
-       console.log('No data returned from attractions')
+    const mapItem = (item: AttractionWithImages): TicketItem => ({
+      id: item.id,
+      name: item.name || '',
+      imageUrl: item.attraction_images?.[0]?.image_url || 'https://placehold.co/400x300?text=No+Image',
+      price: item.price || 0,
+      venue: item.city || '',
+      category: Array.isArray(item.category) ? (item.category[0] || '') : (item.category || ''),
+      date: item.created_at || '2026-01-01',
+      address: item.address || '',
+      rating: item.rating || 0,
+      description: item.intro || item.description || ''
+    })
+
+    if (popularData) {
+      tickets.value = (popularData as unknown as AttractionWithImages[]).map(mapItem)
     }
 
-    if (data) {
-      tickets.value = data.map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        imageUrl: item.attraction_images?.[0]?.image_url || 'https://placehold.co/400x300?text=No+Image',
-        price: item.price,
-        venue: item.city,
-        category: Array.isArray(item.category) ? item.category[0] : item.category,
-        date: item.created_at || '2026-01-01',
-        address: item.address,
-        rating: item.rating,
-        description: item.intro || item.description
-      }))
+    if (topRatedData) {
+      topRatedTickets.value = (topRatedData as unknown as AttractionWithImages[]).map(mapItem)
     }
+
   } catch (err: any) {
      console.error('Unexpected error:', err)
      errorMsg.value = `Unexpected Error: ${err.message}`
+  } finally {
+    isLoading.value = false
   }
+}
+
+interface AttractionWithImages extends Attraction {
+  attraction_images: { image_url: string }[]
 }
 
 onUnmounted(() => {
@@ -205,9 +243,12 @@ watch(
 
 function onSearch() {
   console.log('[Ticket Search Submit]', { tab: activeTab.value, ...form, ...peopleConfig })
-
-  // 跳轉到 /tickets/search
-  router.push('/tickets/search')
+  router.push({
+    path: '/tickets/search',
+    query: {
+      destination: form.destination
+    }
+  })
 }
 function onClick(type: string, id: string) {
   console.log('[Click]', { type, id })
@@ -245,7 +286,7 @@ const ticketClassify = [
 const handleWishlist = (id) => console.log('收藏門票 ID:', id);
 const handleBook = (id) => console.log('購票 ID:', id);
 
-function onClickRegion(tc: any) {
+function onClickRegion(tc: { label: string }) {
     console.log('Category clicked:', tc);
     router.push({ path: '/tickets/search', query: { category: tc.label } });
 }
@@ -511,9 +552,12 @@ function onClickRegion(tc: any) {
 
     <section class="mt-10">
       <h2 class="mb-5 text-xl font-bold text-dark">評價最高</h2>
+      <div v-if="!isLoading && topRatedTickets.length === 0 && !errorMsg" class="p-4 mb-4 text-gray-500 bg-gray-100 rounded-lg">
+        目前沒有評價最高資料 (No tickets found)
+      </div>
       <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
-        <HomePageTicketCard v-for="(ticket, index) in tickets" :key="ticket.id" v-bind="ticket"
-          :expand-left="index >= tickets.length - 2" @compare="handleWishlist" @book="handleBook" />
+        <HomePageTicketCard v-for="(ticket, index) in topRatedTickets" :key="ticket.id" v-bind="ticket"
+          :expand-left="index >= topRatedTickets.length - 2" @compare="handleWishlist" @book="handleBook" />
       </div>
     </section>
   </main>

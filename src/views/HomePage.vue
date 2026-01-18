@@ -324,6 +324,21 @@ function toggleKeyword(k: string) {
 // Methods
 function onSearch() {
   console.log('[Home Search]', { tab: activeTab.value, ...form })
+  if (activeTab.value === 'package') {
+    router.push({
+      path: '/tickets/search',
+      query: {
+        destination: form.destination
+      }
+    })
+  } else {
+    router.push({
+      path: '/hotels/search',
+      query: {
+        destination: form.destination
+      }
+    })
+  }
 }
 
 function onClickRegion(region: { key: string }) {

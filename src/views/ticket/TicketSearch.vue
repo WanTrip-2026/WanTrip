@@ -1,45 +1,87 @@
 <script setup lang="ts">
 import TicketCard from '@/components/layout/TicketCard.vue'
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/utils/supabaseClient'
 import type { Attraction } from '@/types/database'
 
+const route = useRoute()
+
 // Local interface extending DB attraction with UI fields
-interface AttractionWithImage extends Attraction {
+interface AttractionWithImages extends Attraction {
+  attraction_images: { image_url: string }[]
+}
+
+interface AttractionWithUI extends Attraction {
   image_url: string
   comments_count: number
 }
 
-const attractions = ref<AttractionWithImage[]>([])
+const attractions = ref<AttractionWithUI[]>([])
 const loading = ref<boolean>(true)
 const errorMsg = ref<string>('')
+const searchInput = ref<string>('')
+const router = useRouter()
 
 const fetchAttractions = async (): Promise<void> => {
-  // Fetch attractions with their images
-  const { data, error } = await supabase
+  loading.value = true
+  errorMsg.value = ''
+
+  const keyword = route.query.keyword as string
+  const city = (route.query.city as string) || (route.query.destination as string)
+  const category = route.query.category as string
+
+  let query = supabase
     .from('attractions')
     .select('*, attraction_images(image_url)')
 
+  if (keyword) {
+    query = query.ilike('name', `%${keyword}%`)
+  }
+  if (city && city !== '選擇城市' && city !== '全部城市') {
+    query = query.eq('city', city)
+  }
+  if (category) {
+    // Try to match category as a string or within an array
+    query = query.or(`category.cs.{${category}},category.ilike.%${category}%`)
+  }
+
+  const { data, error } = await query
+
   if (error) {
+    console.error('Fetch attractions error:', error)
     errorMsg.value = error.message
   } else {
-    // Transform data to assign the first image as the main image_url and default comments_count
-    const mappedData = (data ?? []).map((item: any) => ({
+    console.log('Raw data from Supabase:', data)
+    const mappedData: AttractionWithUI[] = (data as unknown as AttractionWithImages[] ?? []).map((item: AttractionWithImages) => ({
       ...item,
-      // If attraction_images is an array and has items, use the first one
       image_url: item.attraction_images?.[0]?.image_url || 'https://placehold.co/300x200?text=No+Image',
       comments_count: 0
     }))
-    console.log('TicketSearch data:', mappedData)
+    console.log('Mapped attractions:', mappedData)
     attractions.value = mappedData
+
+    // Update selectedCity if filtering by city
+    if (city && city !== '選擇城市' && city !== '全部城市') {
+      selectedCity.value = city
+    }
   }
 }
 
 // Watch for route changes to re-fetch
 watch(() => route.query, fetchAttractions, { deep: true })
 
-onMounted(fetchAttractions)
+// Watch for route query changes to refetch data
+watch(() => route.query, () => {
+  fetchAttractions()
+}, { deep: true })
+
+onMounted(() => {
+  if (route.query.keyword) {
+    searchInput.value = route.query.keyword as string
+  }
+  fetchAttractions()
+})
 
 // City Selection Logic
 const selectedCity = ref<string>('選擇城市')
@@ -77,6 +119,13 @@ const cities = [
 function selectCity(city: string): void {
   selectedCity.value = city
   isOpen.value = false
+  router.push({
+    path: '/tickets/search',
+    query: {
+      ...route.query,
+      city: city
+    }
+  })
 }
 const cityAreaMap: Record<string, string[]> = {
   台北市: ['中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區', '士林區', '北投區', '內湖區', '南港區', '文山區'],
@@ -125,7 +174,7 @@ const totalPages = computed<number>(() =>
   Math.ceil(attractions.value.length / itemsPerPage),
 )
 
-const pagedattraction = computed<AttractionWithImage[]>(() => {
+const pagedattraction = computed<AttractionWithUI[]>(() => {
   const start = (currentPage.value - 1) * itemsPerPage
   return attractions.value.slice(start, start + itemsPerPage)
 })
@@ -136,9 +185,17 @@ function goToPage(page: number): void {
   }
 }
 // 從 query 取得搜尋條件（未來可做過濾）
-const route = useRoute()
-const searchKeyword = computed(() => route.query.keyword ?? '')
-const searchCity = computed(() => route.query.city ?? '')
+// searchKeyword and searchCity removed as they were unused
+
+function onLocalSearch() {
+  router.push({
+    path: '/tickets/search',
+    query: {
+      ...route.query,
+      keyword: searchInput.value || undefined
+    }
+  })
+}
 </script>
 
 <template class="bg-page">
@@ -175,12 +232,14 @@ const searchCity = computed(() => route.query.city ?? '')
         </div>
         <div class="flex-auto">
           <label class="text-dark_500 rounded-full"></label>
-          <input type="text" placeholder="搜尋目的地/當地體驗"
+          <input v-model="searchInput" type="text" placeholder="搜尋目的地/當地體驗"
+            @keyup.enter="onLocalSearch"
             class="w-full border text-center text-black border-gray-300 rounded-full px-6 py-3 focus:ring-2 focus:ring-primary outline-none" />
         </div>
 
         <div class="text-dark_500 rounded-full flex-none">
           <button
+            @click="onLocalSearch"
             class="text-center bg-primary hover:bg-main text-white font-bold px-6 py-3 rounded-full transition-colors text-nowrap">
             搜尋
           </button>
