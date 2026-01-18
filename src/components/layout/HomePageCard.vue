@@ -1,7 +1,7 @@
 <template>
   <RouterLink :to="detailLink" :class="[
     'group relative flex h-[270px] w-[183px] md:hover:w-[408px] z-[1] md:hover:z-[20] bg-white rounded-[20px] md:hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
-    expandLeft ? 'hover:-translate-x-[224px]' : ''
+    expandLeft ? 'hover:-translate-x-[225px]' : ''
   ]">
     <div class="relative h-full w-[183px] flex-shrink-0">
       <img :src="imageUrl" :alt="name" class="h-full w-full object-cover" />

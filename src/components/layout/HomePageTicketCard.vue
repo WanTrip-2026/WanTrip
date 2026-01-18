@@ -1,7 +1,7 @@
 <template>
   <RouterLink :to="`/tickets/${id}`" :class="[
-    'group relative flex h-[270px] w-[183px] hover:w-[415px] z-[1] hover:z-[50] bg-white rounded-[20px] hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
-    expandLeft ? 'hover:-translate-x-[232px]' : ''
+    'group relative flex h-[270px] w-[183px] hover:w-[408px] z-[1] hover:z-[50] bg-white rounded-[20px] hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
+    expandLeft ? 'hover:-translate-x-[225px]' : ''
   ]">
     <div class="relative h-full w-[183px] flex-shrink-0">
       <img :src="imageUrl" :alt="name" class="h-full w-full object-cover" />
