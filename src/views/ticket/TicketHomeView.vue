@@ -135,13 +135,6 @@ const fetchTickets = async () => {
   errorMsg.value = ''
   isLoading.value = true
   try {
-    // Connection test
-    const { count, error: countError } = await supabase
-      .from('attractions')
-      .select('*', { count: 'exact', head: true })
-
-    console.log('Total attractions in DB:', count, 'Error:', countError)
-
     const { data: popularData, error: popularError } = await supabase
       .from('attractions')
       .select('*, attraction_images(image_url)')
@@ -254,17 +247,17 @@ function onSearch() {
 
 const ticketClassify = [
   {
-    key: 'amusement-park',
+    key: 'leisure',
     label: '休閒活動',
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-tp_zyi27w.jpg',
   },
   {
-    key: 'meuseum',
+    key: 'museum',
     label: '觀光導覽',
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445157/640x480_image636446327579990356_qeu0ii.jpg',
   },
   {
-    key: 'tourism-factory',
+    key: 'outdoor',
     label: '戶外活動',
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445160/%E7%86%B1%E9%96%80%E5%9F%8E%E5%B8%821_ybmlyx.jpg',
   },
@@ -275,8 +268,13 @@ const ticketClassify = [
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445159/%E5%9F%8E%E5%B8%821_bl2w6i.jpg',
   },
   {
-    key: 'exhibition',
+    key: 'park',
     label: '公園與樂園',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-%E5%B3%B6_qnxq42.jpg',
+  },
+  {
+    key: 'exhibition',
+    label: '展覽與文化',
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-%E5%B3%B6_qnxq42.jpg',
   },
 ]

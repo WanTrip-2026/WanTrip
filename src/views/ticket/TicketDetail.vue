@@ -284,7 +284,7 @@ const fetchAttractionData = async () => {
               const parsed = JSON.parse(attractionData.highlights)
               return Array.isArray(parsed) ? parsed : [attractionData.highlights]
             } catch {
-              return [attractionData.highlights]
+              return []
             }
           }
           return []
