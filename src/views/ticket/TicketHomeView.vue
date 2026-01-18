@@ -513,7 +513,7 @@ function onClickRegion(tc: { label: string }) {
 
     <section class="mt-10">
       <h2 class="mb-5 text-xl font-bold text-dark">想去哪裡玩？</h2>
-      <div class="grid grid-cols-5 gap-5">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
         <button v-for="tc in ticketClassify" :key="tc.key" type="button"
           class="relative group overflow-hidden rounded-[20px] bg-white/70 border border-gray-300 transition shadow-sm hover:shadow-lg"
           @click="onClickRegion(tc)">
