@@ -172,21 +172,42 @@
               {{ ticketIntro.title }}
             </h2>
             <div>
-              <span class="text-xs lg:text-sm text-dark_500 line-through text-nowrap">TWD 1,200</span>
+              <span v-if="selectedTicket && selectedTicket.price > 0" class="text-xs lg:text-sm text-dark_500 line-through text-nowrap">
+                TWD {{ (selectedTicket.price * 1.5).toLocaleString() }}
+              </span>
               <div class="flex items-end gap-1 lg:gap-2">
-                <span class="text-lg lg:text-2xl font-bold text-red-500 text-nowrap">TWD 880</span>
+                <span class="text-lg lg:text-2xl font-bold text-red-500 text-nowrap">
+                  TWD {{ selectedTicket ? selectedTicket.price.toLocaleString() : (attraction?.price?.toLocaleString() || '0') }}
+                </span>
                 <span class="text-sm text-dark_500 mb-0.5 lg:mb-1 text-nowrap">/ 每人</span>
               </div>
             </div>
           </div>
           <div class="flex flex-row items-stretch gap-5 text-nowrap lg:gap-2.5 lg:flex-col">
-            <div class="p-3 w-full border rounded-[10px] hover:border-[#365475] cursor-pointer transition">
-              <div class="text-xs text-dark_700 mb-1">選擇日期</div>
-              <div class="font-medium text-dark">2023-12-25 (週一)</div>
-            </div>
-            <div class="p-3 w-full border rounded-[10px] hover:border-[#365475] cursor-pointer transition">
-              <div class="text-xs text-dark_700 mb-1">選擇方案</div>
-              <div class="font-medium text-dark">成人票 x 2</div>
+            <DatePicker v-model="selectedDate" color="teal" :masks="{ input: 'YYYY-MM-DD' }">
+              <template #default="{ inputValue, inputEvents }">
+                <div class="p-3 w-full border rounded-[10px] hover:border-primary cursor-pointer transition" v-on="inputEvents">
+                  <div class="text-xs text-dark_700 mb-1">選擇日期</div>
+                  <div class="font-medium text-dark">{{ inputValue || '請選擇日期' }}</div>
+                </div>
+              </template>
+            </DatePicker>
+
+            <div class="relative group">
+              <div class="p-3 w-full border rounded-[10px] hover:border-primary cursor-pointer transition">
+                <div class="text-xs text-dark_700 mb-1">選擇方案</div>
+                <select v-model="selectedTicket" class="w-full bg-transparent font-medium text-dark outline-none appearance-none cursor-pointer">
+                  <option v-for="t in tickets" :key="t.id" :value="t">
+                    {{ t.name }} - NT$ {{ t.price }}
+                  </option>
+                  <option v-if="tickets.length === 0" disabled>目前無可用方案</option>
+                </select>
+                <div class="pointer-events-none absolute right-3 bottom-4 text-dark_300">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
             </div>
             <div class="flex-shrink-0">
               <button type="submit" @click="onSearch"
@@ -204,14 +225,19 @@
 <script setup lang="ts">
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
+import { DatePicker } from 'v-calendar'
+import 'v-calendar/style.css'
 import { supabase } from '@/utils/supabaseClient'
-import type { Attraction, AttractionImage } from '@/types/database'
+import type { Attraction, AttractionImage, Ticket } from '@/types/database'
 
 const route = useRoute()
 const attraction = ref<Attraction | null>(null)
 const attractionImages = ref<AttractionImage[]>([])
 const loading = ref<boolean>(true)
 const errorMsg = ref<string>('')
+const tickets = ref<Ticket[]>([])
+const selectedTicket = ref<Ticket | null>(null)
+const selectedDate = ref<Date>(new Date())
 
 // Reactive object for the top section
 const ticketIntro = ref({
@@ -228,6 +254,8 @@ const fetchAttractionData = async () => {
   if (!id) return
 
   loading.value = true
+  tickets.value = []
+  selectedTicket.value = null
 
   try {
     // Fetch Attraction Details
@@ -274,6 +302,18 @@ const fetchAttractionData = async () => {
 
     attractionImages.value = imagesData || []
 
+    // Fetch Available Tickets
+    const { data: ticketsData, error: ticketsError } = await supabase
+      .from('tickets')
+      .select('*')
+      .eq('attraction_id', id)
+
+    if (ticketsError) throw ticketsError
+    tickets.value = (ticketsData as Ticket[]) || []
+    if (tickets.value.length > 0) {
+      selectedTicket.value = tickets.value[0] || null
+    }
+
     // Update ticketDetail content
     const details = []
     if (attractionData?.description) {
@@ -319,7 +359,7 @@ onMounted(() => {
 })
 
 interface TicketItem {
-  id: number;
+  id: number | string;
   name: string;
   imageUrl: string;
   price: number;
@@ -341,8 +381,9 @@ const mapItem = (item: AttractionWithImages): TicketItem => ({
   date: item.created_at || '2026-01-01',
   address: item.address || '',
   rating: item.rating || 0,
-  description: item.intro || item.description || ''
+  description: item.intro || item.description || '',
 })
+
 
 // Define AttractionWithImages locally or import if possible
 interface AttractionWithImages extends Attraction {
