@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HotelCard from '../../components/layout/HotelCard.vue'
-import { ref, reactive, watch, computed, onMounted } from 'vue'
+import { ref, reactive, watch, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -93,6 +93,10 @@ const handleClickOutside = (e: MouseEvent) => {
 
 onMounted(() => {
   window.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleClickOutside)
 })
 
 const facilities = ref<FacilityName[]>([])
@@ -721,7 +725,7 @@ input[type='range']::-webkit-slider-thumb {
   background-color: #ffffff;
   padding: 24px;
   box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.05); /
+  border: 1px solid rgba(0, 0, 0, 0.05);
   z-index: 100;
 }
 
