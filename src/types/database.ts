@@ -1,7 +1,7 @@
 export interface Attraction {
-  id: number
+  id: string | number
   name: string
-  category: string[] | string // Handle both just in case, typically array or comma-separated
+  category: string[] | string
   city: string
   address: string
   intro: string
@@ -9,16 +9,26 @@ export interface Attraction {
   price: number
   district: string
   rating: number
-  detail: string // Could be HTML or JSON, treating as string for now
+  detail: string
   highlights: string[]
   created_at?: string
 }
 
 export interface AttractionImage {
-  id: number
-  attraction_id: number
+  id: string | number
+  attraction_id: string | number
   image_url: string
   caption?: string
-  is_cover?: boolean // Assuming we might interpret cover image logic
+  is_cover?: boolean
+  created_at?: string
+}
+
+export interface Ticket {
+  id: string | number
+  attraction_id: string | number
+  name: string
+  ticket_type: string
+  price: number
+  description: string
   created_at?: string
 }
