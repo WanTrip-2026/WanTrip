@@ -72,21 +72,22 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
 import { useFavoriteStore } from '@/stores/favoriteStore';
-import { computed } from 'vue';
+import { useCompareStore } from '@/stores/compareStore';
+import { computed, ref } from 'vue';
 
 // 統一命名規範與預設值
 interface Props {
-  id?: number | string;
-  name?: string;
-  imageUrl?: string;
-  price?: number;
-  venue?: string;
-  category?: string;
-  date?: string;
-  address?: string;
-  rating?: number;
-  expandLeft?: boolean;
-  type?: 'hotel' | 'ticket'; // Add type prop
+  id?: number | string
+  name?: string
+  imageUrl?: string
+  price?: number
+  venue?: string
+  category?: string
+  date?: string
+  address?: string
+  rating?: number
+  expandLeft?: boolean
+  type?: 'hotel' | 'ticket'
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -136,6 +137,30 @@ const onFavoriteClick = async () => {
     })
   } catch {
     // If API fails
+  }
+}
+defineEmits(['favorite', 'details'])
+const compareStore = useCompareStore()
+// 是否已加入比較
+const isInCompare = computed(() => compareStore.isInCompare(String(props.id)))
+// 按鈕：已加入→移除；未加入→加入
+const isLoading = ref(false)
+async function toggleCompare() {
+  const hotelId = String(props.id)
+  // 已加入就移除
+  if (isInCompare.value) {
+    compareStore.removeHotel(hotelId)
+    return
+  }
+  isLoading.value = true
+  try {
+    const result = await compareStore.fetchAndAddHotel(hotelId)
+    if (!result.ok) {
+      if (result.reason === 'full') alert('最多只能加入 5 間飯店比較')
+      if (result.reason === 'error') alert('加入失敗，請稍後再試')
+    }
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
