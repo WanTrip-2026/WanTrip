@@ -347,8 +347,8 @@ const fetchAttractionData = async () => {
       }
     }
 
-  } catch (error: any) {
-    errorMsg.value = error.message
+  } catch (error: unknown) {
+    errorMsg.value = error instanceof Error ? error.message : String(error)
   } finally {
     loading.value = false
   }

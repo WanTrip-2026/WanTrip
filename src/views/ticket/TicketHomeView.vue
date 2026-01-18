@@ -180,9 +180,9 @@ const fetchTickets = async () => {
       topRatedTickets.value = (topRatedData as unknown as AttractionWithImages[]).map(mapItem)
     }
 
-  } catch (err: any) {
+  } catch (err: unknown) {
      console.error('Unexpected error:', err)
-     errorMsg.value = `Unexpected Error: ${err.message}`
+     errorMsg.value = `Unexpected Error: ${err instanceof Error ? err.message : String(err)}`
   } finally {
     isLoading.value = false
   }
@@ -255,28 +255,28 @@ function onSearch() {
 const ticketClassify = [
   {
     key: 'amusement-park',
-    label: '遊樂園',
+    label: '休閒活動',
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-tp_zyi27w.jpg',
   },
   {
     key: 'meuseum',
-    label: '博物館',
+    label: '觀光導覽',
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445157/640x480_image636446327579990356_qeu0ii.jpg',
   },
   {
     key: 'tourism-factory',
-    label: '觀光工廠',
+    label: '戶外活動',
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445160/%E7%86%B1%E9%96%80%E5%9F%8E%E5%B8%821_ybmlyx.jpg',
   },
 
   {
     key: 'zoo/aquarium',
-    label: '動物園/水族館',
+    label: '大自然與野生動物',
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445159/%E5%9F%8E%E5%B8%821_bl2w6i.jpg',
   },
   {
     key: 'exhibition',
-    label: '展覽',
+    label: '公園與樂園',
     img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-%E5%B3%B6_qnxq42.jpg',
   },
 ]
@@ -504,11 +504,11 @@ function onClickRegion(tc: { label: string }) {
         <div class="h-6 w-32 bg-gray-200 rounded mb-10 animate-pulse"></div>
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
-          <div v-for="i in 4" :key="i" class="bg-gray-200 rounded-[20px] aspect-[4/3] animate-pulse" />
+          <div v-for="i in 4" :key="i" class="bg-gray-200 rounded-[20px] aspect-[4/3] animate-pulse"></div>
         </div>
 
         <div class="mt-5 flex justify-center">
-          <div class="h-[44px] w-[120px] bg-gray-200 rounded-full animate-pulse" />
+          <div class="h-[44px] w-[120px] bg-gray-200 rounded-full animate-pulse"></div>
         </div>
       </section>
     </template>
