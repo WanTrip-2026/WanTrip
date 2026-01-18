@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import { supabase } from '@/utils/supabaseClient'
+import { useAuthStore } from '@/stores/auth'
 
 export interface Product {
     id: number | string;
@@ -11,12 +12,14 @@ export interface Product {
     date?: string;
     address?: string;
     rating?: number;
+    type: 'hotel' | 'ticket';
+    city?: string;
     [key: string]: unknown;
 }
 
 export const useFavoriteStore = defineStore('favorite', {
   state: () => ({
-    favorites: new Map<string | number, Product>(), // 修正為 Map 儲存完整物件
+    favorites: new Map<string | number, Product>(), // Key: id
     loaded: false
   }),
 
@@ -26,61 +29,79 @@ export const useFavoriteStore = defineStore('favorite', {
     },
     favoriteList: (state): Product[] => {
       return Array.from(state.favorites.values())
+    },
+    hotelCount: (state): number => {
+        return Array.from(state.favorites.values()).filter(p => p.type === 'hotel').length;
+    },
+    ticketCount: (state): number => {
+        return Array.from(state.favorites.values()).filter(p => p.type === 'ticket').length;
     }
   },
 
   actions: {
     async fetchFavorites() {
-      // 嘗試從 LocalStorage 讀取 (Mock Mode / Cache)
-      const localData = localStorage.getItem('wantrip_favorites');
-      if (localData) {
+      const startLocal = localStorage.getItem('wantrip_favorites');
+      if (startLocal) {
         try {
-          const parsed = JSON.parse(localData);
+          const parsed = JSON.parse(startLocal);
           if (Array.isArray(parsed)) {
              parsed.forEach((item: Product) => {
-                 if (item && item.id) {
-                     this.favorites.set(item.id, item);
-                 }
+                 if (item && item.id) this.favorites.set(item.id, item);
              });
           }
         } catch (e) {
-          console.error('Failed to parse local favorites', e);
+          console.error('[Favorites] Local parse error', e);
         }
       }
 
-      const token = localStorage.getItem('token')
-      if (token) {
+      const authStore = useAuthStore()
+      if (authStore.user) {
            try {
-              const res = await axios.get<{ id: number; product?: Product }[]>(
-                '/api/favorites',
-                {
-                  headers: { Authorization: `Bearer ${token}` }
-                }
-              )
-              // 如果後端只回傳 ID，我們可能無法顯示列表，除非另外 fetch。
-              // 假設後端未來會回傳完整資訊，或者我們暫時僅依賴 LocalStorage 做為展示。
-              // 這裡採混合策略：如果後端有回傳 product details 則更新，否則保留 local。
-              res.data.forEach(item => {
-                  if (item.product) {
-                      this.favorites.set(item.id, item.product); // Assuming backend structure
-                  } else {
-                     // If backend only returns ID, strictly speaking we can't show it in the list without fetching details.
-                     // For now, we trust LocalStorage contains the details deemed as "Favorites" by the user in this session.
-                  }
-              })
+              // Fetch from profiles table
+              const { data, error } = await supabase
+                .from('profiles')
+                .select('favorites')
+                .eq('id', authStore.user.id)
+                .single();
+
+              if (error) throw error;
+
+              if (data && data.favorites && Array.isArray(data.favorites)) {
+                  this.favorites.clear();
+                  data.favorites.forEach((item: Product) => {
+                      if (item && item.id) {
+                          this.favorites.set(item.id, item);
+                      }
+                  });
+              }
            } catch (e) {
-               console.warn('Failed to fetch from API, using local only.', e);
+               console.warn('[Favorites] Supabase fetch error', e);
            }
       }
 
       this.loaded = true
+      this.saveToLocal();
     },
 
     async toggleFavorite(product: Product) {
       const id = product.id;
-      const token = localStorage.getItem('token')
+      const type = product.type;
+      const authStore = useAuthStore();
+      const user = authStore.user;
 
       const isFav = this.favorites.has(id);
+
+      if (!isFav) {
+          // Check limits
+          if (type === 'hotel' && this.hotelCount >= 10) {
+              alert('飯店收藏已達上限 (10 筆)');
+              return;
+          }
+           if (type === 'ticket' && this.ticketCount >= 10) {
+              alert('票券收藏已達上限 (10 筆)');
+              return;
+          }
+      }
 
       // Optimistic Update
       if (isFav) {
@@ -89,27 +110,27 @@ export const useFavoriteStore = defineStore('favorite', {
           this.favorites.set(id, product);
       }
 
-      // Sync to LocalStorage
       this.saveToLocal();
 
-      if (!token) return; // Guest mode supports local favorites too
+      if (!user) return;
 
       try {
-        if (isFav) {
-          await axios.delete(
-            `/api/favorites/${id}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          )
-        } else {
-          await axios.post('/api/favorites', { hotelId: id }, { // Note: Backend seems to expect hotelId? Adapt as needed.
-            withCredentials: true,
-            headers: { Authorization: `Bearer ${token}` }
-          })
-        }
+        // Prepare array for JSONB column
+        const favoritesArray = Array.from(this.favorites.values());
+
+        const { error } = await supabase
+          .from('profiles')
+          .update({ favorites: favoritesArray })
+          .eq('id', user.id);
+
+        if (error) throw error;
+
       } catch (e) {
-        console.error('API sync failed', e);
-        // Rollback on critical failure? Or just keep local?
-        // Keeping local is better UX for now.
+        console.error('[Favorites] Sync failed', e);
+        // Rollback local state on error
+        if (isFav) this.favorites.set(id, product);
+        else this.favorites.delete(id);
+        alert('同步收藏失敗，請稍後再試');
       }
     },
 
@@ -124,4 +145,3 @@ export const useFavoriteStore = defineStore('favorite', {
     }
   }
 })
-
