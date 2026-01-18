@@ -2,6 +2,8 @@
 import HotelCard from '../../components/layout/HotelCard.vue'
 import { ref, reactive, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { VueDatePicker } from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 
 interface PriceRange {
   min: number
@@ -26,22 +28,85 @@ type FacilityName = string
 
 const router = useRouter()
 
-const getTodayStr = (): string => {
-  const date = new Date().toISOString().split('T')[0]
-  return date || '' // 如果 split 出現意外，回傳空字串
+// 日期處理 - VueDatePicker 版本
+const today = new Date()
+today.setHours(0, 0, 0, 0)
+
+const tomorrow = new Date(today)
+tomorrow.setDate(today.getDate() + 1)
+tomorrow.setHours(0, 0, 0, 0)
+
+const range = ref<[Date, Date]>([today, tomorrow])
+
+const formatDate = (date: Date | null): string => {
+  if (!date) return ''
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
-const getTomorrowStr = (): string => {
-  const date = new Date()
-  date.setDate(date.getDate() + 1)
-  const dateStr = date.toISOString().split('T')[0]
-  return dateStr || ''
+// 格式化日期範圍顯示
+const formatRangeDisplay = (): string => {
+  if (!range.value || !Array.isArray(range.value) || range.value.length !== 2) return ''
+  const [start, end] = range.value
+  if (!start || !end) return ''
+  return `${formatDate(start)} - ${formatDate(end)}`
 }
 
-const startDate = ref<string>(getTodayStr())
-const endDate = ref<string>(getTomorrowStr())
-const adultCount = ref<number>(2)
-const roomCount = ref<number>(1)
+const MAX_PEOPLE_PER_ROOM = 4
+
+const validatePeople = () => {
+  const maxTotalPeople = peopleConfig.rooms * MAX_PEOPLE_PER_ROOM
+  if (peopleConfig.people > maxTotalPeople) {
+    peopleConfig.people = maxTotalPeople
+  }
+  if (peopleConfig.people < 1) {
+    peopleConfig.people = 1
+  }
+}
+
+function onSearch() {
+  validatePeople()
+  goToPage(1)
+}
+
+const peoplePickerRef = ref<HTMLElement | null>(null)
+
+const peopleConfig = reactive({
+  people: 2,
+  rooms: 1,
+})
+
+const peopleDisplayText = computed(() => {
+  return `${peopleConfig.rooms} 間房 · ${peopleConfig.people} 位旅客`
+})
+
+const handleClickOutside = (e: MouseEvent) => {
+  const target = e.target as HTMLElement
+
+  // VueDatePicker 的彈窗 class
+  if (target.closest('.dp__menu') || target.closest('.dp__overlay')) {
+    return
+  }
+
+  if (target.closest('.search-bar-container')) {
+    if (
+      activePicker.value === 'people' &&
+      peoplePickerRef.value &&
+      !peoplePickerRef.value.contains(target)
+    ) {
+      activePicker.value = 'none'
+    }
+    return
+  }
+
+  activePicker.value = 'none'
+}
+
+onMounted(() => {
+  window.addEventListener('click', handleClickOutside)
+})
 
 const facilities = ref<FacilityName[]>([])
 const hotels = ref<Hotel[]>([])
@@ -58,6 +123,36 @@ const priceRange = ref<PriceRange>({ min: minPrice, max: maxPrice })
 const currentPage = ref(1)
 const itemsPerPage = 8
 const totalPages = ref(1)
+
+const activePicker = ref('none')
+
+const togglePicker = (name: string) => {
+  if (activePicker.value === name) {
+    activePicker.value = 'none'
+  } else {
+    activePicker.value = name
+  }
+}
+
+const handleDateChange = (newRange: Date[] | null) => {
+  if (!newRange || newRange.length !== 2) return
+
+  const [start, end] = newRange
+  if (!start || !end) return
+
+  const startDate = new Date(start)
+  const endDate = new Date(end)
+  startDate.setHours(0, 0, 0, 0)
+  endDate.setHours(0, 0, 0, 0)
+
+  const diffDays = (endDate.getTime() - startDate.getTime()) / 86400000
+
+  if (diffDays < 1) {
+    const fixedEnd = new Date(startDate)
+    fixedEnd.setDate(startDate.getDate() + 1)
+    range.value = [startDate, fixedEnd]
+  }
+}
 
 const starOptions = computed(() => ['5星級', '4星級', '3星級', '2星級'])
 
@@ -97,41 +192,33 @@ const HotelFiltered = reactive<FilterMenu[]>([
   },
 ])
 
-// -------------------
-// 取得飯店資料（後端分頁）
-// -------------------
-
 const fetchHotels = async (page = 1, limit = itemsPerPage) => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
 
     const params = new URLSearchParams()
 
-    // keyword
     if (keyword.value.trim()) params.append('keyword', keyword.value.trim())
 
-    // 日期與人數參數
-    if (startDate.value) {
-      params.append('start_date', startDate.value)
+    // VueDatePicker 格式:陣列 [start, end]
+    if (range.value && range.value[0]) {
+      params.append('start_date', formatDate(range.value[0]))
     }
-    if (endDate.value) {
-      params.append('end_date', endDate.value)
+    if (range.value && range.value[1]) {
+      params.append('end_date', formatDate(range.value[1]))
     }
-    params.append('adults', String(adultCount.value))
-    params.append('rooms', String(roomCount.value))
+    params.append('adults', String(peopleConfig.people))
+    params.append('rooms', String(peopleConfig.rooms))
 
-    // facilities（後端支援 facility_names=xxx,yyy）
     const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
     if (selectedFacilities.length > 0) params.append('facility_names', selectedFacilities.join(','))
-    // types（住宿類型）
+
     const selectedTypes = HotelFiltered.find((m) => m.key === 'types')?.selected ?? []
     if (selectedTypes.length > 0) params.append('types', selectedTypes.join(','))
-    //星級
+
     const selectedStars = HotelFiltered.find((m) => m.key === 'star_rating')?.selected ?? []
     if (selectedStars.length > 0) {
-      const starNums = selectedStars
-        .map((s) => parseInt(s, 10)) // '5星級' → 5
-        .filter((n) => Number.isFinite(n))
+      const starNums = selectedStars.map((s) => parseInt(s, 10)).filter((n) => Number.isFinite(n))
       if (starNums.length > 0) params.append('star_ratings', starNums.join(','))
     }
     params.append('page', String(page))
@@ -145,7 +232,6 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
 
     const data: { total: number; page: number; limit: number; hotels: Hotel[] } = await res.json()
 
-    // 後端已經幫你把 image_url 算好、facilities 也整理好了
     hotels.value = (data.hotels ?? []).map((h) => ({
       ...h,
       image_url:
@@ -166,31 +252,17 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
   }
 }
 
-// 預設日期
-onMounted(() => {
-  const today = new Date()
-  const tomorrow = new Date(today)
-  tomorrow.setDate(today.getDate() + 1)
-
-  startDate.value = today.toISOString().split('T')[0] as string
-  endDate.value = tomorrow.toISOString().split('T')[0] as string
-})
-
-// -------------------
-// 初始化：設施 + 第一頁飯店
-// -------------------
 onMounted(async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
 
-    // 設施清單
     const facilitiesRes = await fetch(`${apiUrl}/facilities`)
     if (!facilitiesRes.ok) throw new Error('取得設施資料失敗')
     facilities.value = await facilitiesRes.json()
 
     const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
     if (facilityMenu) facilityMenu.options = facilities.value
-    //類型清單
+
     const typesRes = await fetch(`${apiUrl}/hotel_types`)
     if (!typesRes.ok) throw new Error('取得住宿類型失敗')
 
@@ -201,7 +273,6 @@ onMounted(async () => {
       typeMenu.options = types
     }
 
-    // 第一頁飯店
     await fetchHotels(1, itemsPerPage)
   } catch (err) {
     console.error(err)
@@ -209,9 +280,6 @@ onMounted(async () => {
   }
 })
 
-// -------------------
-// 監聽：設施勾選 → 回到第 1 頁重抓
-// -------------------
 watch(
   () => HotelFiltered.find((m) => m.key === 'facilities')?.selected,
   () => {
@@ -234,9 +302,6 @@ watch(
   { deep: true },
 )
 
-// -------------------
-// 分頁顯示
-// -------------------
 const visiblePagination = computed(() => {
   const pages: (number | string)[] = []
   const total = totalPages.value
@@ -262,9 +327,6 @@ const visiblePagination = computed(() => {
   return pages
 })
 
-// -------------------
-// 分頁方法
-// -------------------
 function goToPage(page: number) {
   const p = Math.min(Math.max(page, 1), totalPages.value)
   currentPage.value = p
@@ -283,9 +345,6 @@ function nextPage() {
   goToPage(currentPage.value + 1)
 }
 
-// -------------------
-// 價格範圍監控（目前只做 UI 限制，尚未送後端）
-// -------------------
 watch(
   () => [priceRange.value.min, priceRange.value.max],
   ([min, max]) => {
@@ -295,9 +354,6 @@ watch(
   },
 )
 
-// -------------------
-// 篩選選單方法
-// -------------------
 function clearOptions(key: string) {
   const menu = HotelFiltered.find((m) => m.key === key)
   if (menu) menu.selected = []
@@ -313,13 +369,6 @@ function toggleMenu(key: string) {
   }
 }
 
-/**
- * 搜尋按鈕：回到第 1 頁重抓（避免人在第 5 頁搜尋，結果以為壞掉）
- */
-function onSearch() {
-  goToPage(1)
-}
-
 function goToMapSearch() {
   router.push('/hotels/map-search')
 }
@@ -329,43 +378,133 @@ function goToMapSearch() {
   <main class="max-w-[1200px] mx-auto pt-24 bg-page px-5 lg:px-0">
     <!-- search-bar -->
     <section
-      class="max-w-[800px] mx-auto p-2 mb-10 bg-white rounded-[20px] md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-2 sticky shadow-sm"
+      class="max-w-[800px] mx-auto p-2 mb-10 bg-white rounded-[20px] md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-2 sticky shadow-sm z-20 search-bar-container"
     >
       <div class="relative w-full border border-gray-300 rounded-full md:h-full flex-1">
         <input
           v-model="keyword"
           type="text"
           placeholder="想住哪～"
+          @click.stop="togglePicker('keyword')"
           class="w-full pl-4 px-6 py-3 text-base text-black border-none bg-gray-50 rounded-full focus:ring-2 focus:ring-primary outline-none transition-all"
         />
       </div>
-      <div class="relative w-full border border-gray-300 rounded-full md:h-full flex-1">
-        <input
-          v-model="startDate"
-          type="date"
-          class="w-full pl-4 px-6 py-3 text-base text-black border-none bg-gray-50 rounded-full focus:ring-2 focus:ring-primary outline-none transition-all"
-        />
-        <input
-          v-model="endDate"
-          type="date"
-          class="w-full pl-4 px-6 py-3 text-base text-black border-none bg-gray-50 rounded-full focus:ring-2 focus:ring-primary outline-none transition-all"
-        />
+
+      <!-- VueDatePicker -->
+      <div class="relative w-full md:h-full flex-1">
+        <VueDatePicker
+          v-model="range"
+          range
+          :min-range="1"
+          :enable-time-picker="false"
+          format="yyyy-MM-dd"
+          :min-date="new Date()"
+          auto-apply
+          hide-input-icon
+          :clearable="false"
+          @update:model-value="handleDateChange"
+          @open="activePicker = 'none'"
+        >
+          <template #dp-input>
+            <div
+              class="w-full h-full rounded-full bg-gray-50 px-6 py-3 flex flex-col justify-center border border-gray-300 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all"
+            >
+              <p class="text-[10px] font-bold text-primary/70 uppercase">入住 - 退房日期</p>
+              <input
+                :value="formatRangeDisplay()"
+                class="w-full bg-transparent text-sm text-black outline-none pointer-events-none"
+                placeholder="點選選擇日期"
+                readonly
+              />
+            </div>
+          </template>
+        </VueDatePicker>
       </div>
-      <div class="relative w-full border border-gray-300 rounded-full md:h-full flex-1">
-        <span class="text-xs text-gray-500 whitespace-nowrap">成人</span>
-        <input
-          v-model.number="adultCount"
-          type="number"
-          min="1"
-          class="w-full py-3 bg-transparent outline-none text-center"
-        />
-        <span class="text-xs text-gray-500 whitespace-nowrap">房</span>
-        <input
-          v-model.number="roomCount"
-          type="number"
-          min="1"
-          class="w-full py-3 bg-transparent outline-none text-center"
-        />
+
+      <div class="relative flex-1" ref="peoplePickerRef">
+        <label
+          @click="togglePicker('people')"
+          class="h-full rounded-full bg-gray-50 px-6 py-3 flex flex-col justify-center border border-gray-300 transition-all hover:ring-2 hover:ring-primary/50 cursor-pointer"
+        >
+          <p class="text-[10px] font-bold leading-tight text-primary/70 uppercase tracking-wider">
+            人數、需求
+          </p>
+          <div class="min-h-[24px] flex items-center justify-between">
+            <span class="text-sm font-medium text-black">{{ peopleDisplayText }}</span>
+            <svg
+              class="h-4 w-4 text-primary/30 transition-transform duration-300"
+              :class="{ 'rotate-180': activePicker === 'people' }"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+        </label>
+
+        <transition name="fade">
+          <div
+            v-if="activePicker === 'people'"
+            @click.stop
+            class="absolute top-[calc(100%+12px)] space-y-5 left-0 z-[100] w-[280px] rounded-[24px] bg-white p-6 shadow-2xl ring-1 ring-black/5"
+          >
+            <!-- 房間數 -->
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-bold text-slate-800">房間</p>
+                <p class="text-[10px] text-slate-400">所需的客房數量</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <button
+                  @click.stop="peopleConfig.rooms > 1 ? peopleConfig.rooms-- : null"
+                  type="button"
+                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 active:scale-95 transition-all"
+                >
+                  -
+                </button>
+                <span class="text-sm font-bold w-4 text-center">{{ peopleConfig.rooms }}</span>
+                <button
+                  @click.stop="peopleConfig.rooms++"
+                  type="button"
+                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 active:scale-95 transition-all"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <!-- 旅客數 -->
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-bold text-slate-800">旅客</p>
+                <p class="text-[10px] text-slate-400">總人數</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <button
+                  @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null"
+                  type="button"
+                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 active:scale-95 transition-all"
+                >
+                  -
+                </button>
+                <span class="text-sm font-bold w-4 text-center">{{ peopleConfig.people }}</span>
+                <button
+                  @click.stop="peopleConfig.people++"
+                  type="button"
+                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 active:scale-95 transition-all"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+        </transition>
       </div>
       <div class="border border-gray-300 rounded-full md:h-full">
         <button
