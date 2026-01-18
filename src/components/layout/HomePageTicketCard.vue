@@ -27,10 +27,11 @@
           <span class="text-red-500 font-bold text-lg">NT$ {{ (price || 0).toLocaleString() }}</span> /起
         </div>
         <div class="flex justify-end gap-3">
-          <button @click.stop.prevent="$emit('favorite', id)"
+          <button @click.stop.prevent="onFavoriteClick"
             class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-dark_500" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors"
+              :class="isFav ? 'text-red-500 fill-red-500' : 'text-dark_500'" :fill="isFav ? 'currentColor' : 'none'"
+              viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
@@ -47,6 +48,9 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
+import { useFavoriteStore } from '@/stores/favoriteStore';
+import { useAuthStore } from '@/stores/auth'
+import { computed } from 'vue';
 
 // 統一命名規範與預設值
 interface Props {
@@ -62,7 +66,7 @@ interface Props {
   expandLeft?: boolean;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   id: 0,
   name: '卡片名稱',
   imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
@@ -74,6 +78,36 @@ withDefaults(defineProps<Props>(), {
   rating: 5,
   expandLeft: false
 });
+
+const favoriteStore = useFavoriteStore()
+const authStore = useAuthStore()
+
+const isFav = computed(() => {
+  return props.id ? favoriteStore.isFavorite(props.id) : false
+})
+
+const onFavoriteClick = async () => {
+  if (!authStore.isLoggedIn) {
+     alert('請先登入會員以加入收藏')
+     return
+  }
+  try {
+    await favoriteStore.toggleFavorite({
+        id: props.id!,
+        name: props.name!,
+        imageUrl: props.imageUrl!,
+        price: props.price!,
+        venue: props.venue,
+        category: props.category,
+        date: props.date,
+        address: props.address,
+        rating: props.rating,
+        type: 'ticket'
+    })
+  } catch {
+    // Error handled in store
+  }
+}
 
 defineEmits(['compare', 'favorite', 'details']);
 </script>
