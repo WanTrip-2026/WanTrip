@@ -380,13 +380,15 @@ function goToMapSearch() {
     <section
       class="max-w-[800px] mx-auto p-2 mb-10 bg-white rounded-[20px] md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-2 sticky shadow-sm z-20 search-bar-container"
     >
-      <div class="relative w-full border border-gray-300 rounded-full md:h-full flex-1">
+      <div
+        class="relative w-full rounded-full bg-gray-50 px-6 py-[5px] flex flex-col justify-center border border-gray-300 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all md:h-full flex-1"
+      >
         <input
           v-model="keyword"
           type="text"
           placeholder="想住哪～"
           @click.stop="togglePicker('keyword')"
-          class="w-full pl-4 px-6 py-3 text-base text-black border-none bg-gray-50 rounded-full focus:ring-2 focus:ring-primary outline-none transition-all"
+          class="w-full pl-4 px-6 py-3 text-base text-black bg-transparent border-none bg-gray-50 rounded-full outline-none transition-all"
         />
       </div>
 
@@ -452,7 +454,7 @@ function goToMapSearch() {
           <div
             v-if="activePicker === 'people'"
             @click.stop
-            class="absolute top-[calc(100%+12px)] space-y-5 left-0 z-[100] w-[280px] rounded-[24px] bg-white p-6 shadow-2xl ring-1 ring-black/5"
+            class="absolute top-[calc(100%+12px)] space-y-5 left-0 z-[100] w-[280px] rounded-[20px] bg-white p-6 shadow-2xl ring-1 ring-black/5"
           >
             <!-- 房間數 -->
             <div class="flex items-center justify-between">
@@ -722,8 +724,23 @@ input[type='range']::-webkit-slider-thumb {
   appearance: none;
   width: 18px;
   height: 18px;
-  background-color: #6d8fa3;
+  background-color: #2f3d4d;
   border-radius: 9999px;
   cursor: pointer;
+}
+
+.dp__menu {
+  border-radius: 20px !important; /* 圓角跟房間選單一致 */
+  background-color: #ffffff; /* 白底 */
+  padding: 24px; /* 內距 */
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08); /* 跟房間下拉陰影一致 */
+  border: 1px solid rgba(0, 0, 0, 0.05); /* 跟房間選單邊框一致 */
+  z-index: 100; /* 確保浮在上層 */
+}
+
+.dp__range_start,
+.dp__range_end {
+  background-color: #2f3d4d !important;
+  color: #fff !important;
 }
 </style>
