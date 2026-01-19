@@ -54,7 +54,7 @@
         </div>
       </section>
 
-      <SearchBar mode="redirect" @search="handleSearchSubmit" />
+      <SearchBar mode="redirect" @search="handleSearchSubmit" class="mt-12" />
 
       <div class="mt-[40px] space-y-[40px]">
         <section v-for="section in sections" :key="section.title">

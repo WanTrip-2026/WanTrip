@@ -3,6 +3,7 @@ import { ref, reactive, watch, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import HotelCard from '../../components/layout/HotelCard.vue'
 import SearchBar from '../../components/layout/SearchBar.vue'
+import type { LocationQueryRaw } from 'vue-router'
 
 interface Hotel {
   id: string
@@ -191,8 +192,29 @@ const toggleMenu = (key: string) => {
     expandedMenus.value.push(key)
   }
 }
+const goToMapSearch = () => {
+  // 1. 準備搜尋參數
+  const queryParams: LocationQueryRaw = {
+    keyword: keyword.value || '',
+    adults: peopleConfig.people,
+    rooms: peopleConfig.rooms,
+  }
 
-const goToMapSearch = () => router.push('/hotels/map-search')
+  // 2. 處理日期
+  if (range.value && range.value.length === 2) {
+    const [start, end] = range.value
+    if (start && end) {
+      queryParams.start_date = formatDate(start)
+      queryParams.end_date = formatDate(end)
+    }
+  }
+
+  // 3. 執行跳轉
+  router.push({
+    path: '/hotels/map-search',
+    query: queryParams,
+  })
+}
 
 // --- 從 URL 解析參數的函式 ---
 const initStatesFromUrl = () => {
@@ -218,7 +240,7 @@ onMounted(async () => {
   initStatesFromUrl()
 
   try {
-    // B. 同步抓取設施與類型 (你原本的邏輯)
+    // B. 同步抓取設施與類型
     const [facRes, typeRes] = await Promise.all([
       fetch(`${apiUrl}/facilities`),
       fetch(`${apiUrl}/hotel_types`),
@@ -253,7 +275,7 @@ watch(
   },
 )
 
-// 側邊欄篩選器變動即重新搜尋 (你原本的邏輯)
+// 側邊欄篩選器變動即重新搜尋
 watch(
   () => HotelFiltered.map((m) => m.selected),
   () => fetchHotels(1),
@@ -452,7 +474,6 @@ watch(
 </template>
 
 <style scoped>
-/* 這裡只放頁面必要的特殊樣式 */
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 18px;
