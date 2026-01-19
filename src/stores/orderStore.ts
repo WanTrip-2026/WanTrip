@@ -2,17 +2,27 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 type OrderData = {
+  // Common fields
   title: string
   subtitle: string
   date: string
   note: string
   price: number
   image: string
+  // User info (often filled during checkout, but can be pre-filled)
   address: string
   phone: string
+
+  // Hotel specific
   hotel_id: string
   latitude: number
   longitude: number
+
+  // Attraction specific
+  type?: 'hotel' | 'attraction'
+  city?: string
+  category?: string | string[]
+  highlights?: string[]
 }
 
 const STORAGE_KEY = 'orderData'
@@ -29,6 +39,10 @@ const DEFAULT_ORDER: OrderData = {
   hotel_id: '',
   latitude: 0,
   longitude: 0,
+  type: 'hotel',
+  city: '',
+  category: '',
+  highlights: [],
 }
 
 function safeLoadOrder(): OrderData {
@@ -58,6 +72,10 @@ export const useOrderStore = defineStore('order', () => {
       hotel_id: data.hotel_id ?? orderData.value.hotel_id,
       latitude: data.latitude ?? orderData.value.latitude,
       longitude: data.longitude ?? orderData.value.longitude,
+      type: data.type ?? orderData.value.type,
+      city: data.city ?? orderData.value.city,
+      category: data.category ?? orderData.value.category,
+      highlights: data.highlights ?? orderData.value.highlights,
     }
 
     orderData.value = newData

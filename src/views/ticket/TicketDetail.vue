@@ -10,38 +10,60 @@
     <div class="mx-5 mb-8">
       <div class="grid grid-cols-[2fr_1fr] lg:grid-cols-[2fr_1fr_1fr_1fr] gap-2.5 mb-10">
         <div class="relative h-[400px] rounded-[20px] overflow-hidden">
-          <img :src="attractionImages[0]?.image_url || '/src/assets/hoteldetail_img/Wanhao.jpg'" class="absolute inset-0 w-full h-full object-cover" />
+          <img
+            :src="attractionImages[0]?.image_url || '/src/assets/hoteldetail_img/Wanhao.jpg'"
+            class="absolute inset-0 w-full h-full object-cover"
+          />
         </div>
 
         <div class="grid grid-rows-2 gap-2.5 h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
-            <img :src="attractionImages[1]?.image_url || '/src/assets/hoteldetail_img/Wanhao2.jpg'" class="absolute inset-0 w-full h-full object-cover" />
+            <img
+              :src="attractionImages[1]?.image_url || '/src/assets/hoteldetail_img/Wanhao2.jpg'"
+              class="absolute inset-0 w-full h-full object-cover"
+            />
           </div>
 
           <div class="relative rounded-[20px] overflow-hidden">
-            <img :src="attractionImages[2]?.image_url || '/src/assets/hoteldetail_img/Wanhao3.jpg'" class="absolute inset-0 w-full h-full object-cover" />
-          </div>
-        </div>
-
-        <div class="grid grid-rows-2 gap-2.5 h-[400px]">
-          <div class="relative rounded-[20px] overflow-hidden">
-            <img :src="attractionImages[3]?.image_url || '/src/assets/hoteldetail_img/Wanhao4.jpg'" class="absolute inset-0 w-full h-full object-cover" />
-          </div>
-
-          <div class="relative rounded-[20px] overflow-hidden">
-            <img :src="attractionImages[4]?.image_url || '/src/assets/hoteldetail_img/Wanhao5.jpg'" class="absolute inset-0 w-full h-full object-cover" />
+            <img
+              :src="attractionImages[2]?.image_url || '/src/assets/hoteldetail_img/Wanhao3.jpg'"
+              class="absolute inset-0 w-full h-full object-cover"
+            />
           </div>
         </div>
 
         <div class="grid grid-rows-2 gap-2.5 h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
-            <img :src="attractionImages[5]?.image_url || '/src/assets/hoteldetail_img/Wanhao6.jpg'" class="absolute inset-0 w-full h-full object-cover" />
+            <img
+              :src="attractionImages[3]?.image_url || '/src/assets/hoteldetail_img/Wanhao4.jpg'"
+              class="absolute inset-0 w-full h-full object-cover"
+            />
           </div>
 
           <div class="relative rounded-[20px] overflow-hidden">
-            <img :src="attractionImages[6]?.image_url || '/src/assets/hoteldetail_img/Wanhao7.jpg'" class="absolute inset-0 w-full h-full object-cover" />
+            <img
+              :src="attractionImages[4]?.image_url || '/src/assets/hoteldetail_img/Wanhao5.jpg'"
+              class="absolute inset-0 w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-rows-2 gap-2.5 h-[400px]">
+          <div class="relative rounded-[20px] overflow-hidden">
+            <img
+              :src="attractionImages[5]?.image_url || '/src/assets/hoteldetail_img/Wanhao6.jpg'"
+              class="absolute inset-0 w-full h-full object-cover"
+            />
+          </div>
+
+          <div class="relative rounded-[20px] overflow-hidden">
+            <img
+              :src="attractionImages[6]?.image_url || '/src/assets/hoteldetail_img/Wanhao7.jpg'"
+              class="absolute inset-0 w-full h-full object-cover"
+            />
             <div
-              class="absolute inset-0 bg-black/30 flex items-center justify-center text-white font-bold cursor-pointer transition-all hover:bg-black/40">
+              class="absolute inset-0 bg-black/30 flex items-center justify-center text-white font-bold cursor-pointer transition-all hover:bg-black/40"
+            >
               查看全部照片
             </div>
           </div>
@@ -49,7 +71,9 @@
       </div>
     </div>
 
-    <div class="max-w-[1200px] mx-auto px-5 lg:px-0 grid grid-cols-1 lg:grid-cols-12 gap-5 relative">
+    <div
+      class="max-w-[1200px] mx-auto px-5 lg:px-0 grid grid-cols-1 lg:grid-cols-12 gap-5 relative"
+    >
       <div class="col-span-12 lg:col-span-8 space-y-5">
         <section class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
           <h2 class="text-xl line-clamp-2 md:text-2xl font-bold text-dark_900 mb-4">
@@ -69,11 +93,23 @@
           <div>
             <h4 class="font-bold text-dark_900 mb-3">行程特色</h4>
             <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-              <li v-for="(feature, index) in ticketIntro.highlights" :key="index"
-                class="flex items-start text-dark_600">
-                <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              <li
+                v-for="(feature, index) in ticketIntro.highlights"
+                :key="index"
+                class="flex items-start text-dark_600"
+              >
+                <svg
+                  class="w-5 h-5 text-dark_700 mr-2 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
                 </svg>
                 <span>{{ feature }}</span>
               </li>
@@ -87,7 +123,10 @@
 
           <div class="space-y-6 mt-4">
             <div v-for="detail in ticketDetail" :key="detail.id">
-              <div v-if="detail.type === 'text'" class="prose max-w-none text-dark_700 text-sm leading-relaxed">
+              <div
+                v-if="detail.type === 'text'"
+                class="prose max-w-none text-dark_700 text-sm leading-relaxed"
+              >
                 <p class="whitespace-pre-line">{{ detail.content }}</p>
               </div>
               <div v-else-if="detail.type === 'image'" class="overflow-hidden rounded-[10px]">
@@ -114,10 +153,13 @@
               <p v-if="policy.type === 'text'">
                 {{ policy.content }}
               </p>
-              <ul v-else-if="policy.type === 'list'" :class="[
-                'list-disc list-inside space-y-1',
-                policy.highlight ? 'bg-main_100 p-5 rounded-[10px] border border-white-300' : '',
-              ]">
+              <ul
+                v-else-if="policy.type === 'list'"
+                :class="[
+                  'list-disc list-inside space-y-1',
+                  policy.highlight ? 'bg-main_100 p-5 rounded-[10px] border border-white-300' : '',
+                ]"
+              >
                 <li v-for="(item, i) in policy.items" :key="i">
                   {{ item }}
                 </li>
@@ -129,12 +171,21 @@
         <section class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
           <h3 class="text-xl font-bold text-dark_900 mb-2">常見問題</h3>
           <div class="space-y-2.5">
-            <div v-for="(faq, index) in faqs" :key="index" class="border rounded-lg overflow-hidden">
-              <button @click="toggleFaq(index)"
-                class="w-full flex justify-between items-center px-5 py-4 bg-main_100 hover:bg-main_200 transition text-left">
+            <div
+              v-for="(faq, index) in faqs"
+              :key="index"
+              class="border rounded-lg overflow-hidden"
+            >
+              <button
+                @click="toggleFaq(index)"
+                class="w-full flex justify-between items-center px-5 py-4 bg-main_100 hover:bg-main_200 transition text-left"
+              >
                 <span class="font-medium text-dark_900">{{ faq.question }}</span>
-                <span class="text-dark_700 transform transition-transform duration-200"
-                  :class="{ 'rotate-180': activeIndex === index }">▼</span>
+                <span
+                  class="text-dark_700 transform transition-transform duration-200"
+                  :class="{ 'rotate-180': activeIndex === index }"
+                  >▼</span
+                >
               </button>
               <div v-show="activeIndex === index" class="px-5 py-4 bg-white text-md text-dark_700">
                 {{ faq.answer }}
@@ -146,14 +197,23 @@
         <section class="mt-10">
           <h3 class="font-bold text-2xl mb-5 text-dark">熱門體驗</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
-            <RouterLink v-for="recommend in recommendations" :key="recommend.id" :to="`/tickets/${recommend.id}`"
-              class="group bg-white rounded-[20px] shadow-sm overflow-hidden border border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer">
+            <RouterLink
+              v-for="recommend in recommendations"
+              :key="recommend.id"
+              :to="`/tickets/${recommend.id}`"
+              class="group bg-white rounded-[20px] shadow-sm overflow-hidden border border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer"
+            >
               <div class="h-32 bg-dark_100 overflow-hidden">
-                <img :src="recommend.imageUrl" :alt="recommend.name"
-                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <img
+                  :src="recommend.imageUrl"
+                  :alt="recommend.name"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
               </div>
               <div class="p-5">
-                <div class="text-sm font-bold truncate mb-1 text-dark_900 group-hover:text-main_800 transition-colors">
+                <div
+                  class="text-sm font-bold truncate mb-1 text-dark_900 group-hover:text-main_800 transition-colors"
+                >
                   {{ recommend.name }}
                 </div>
                 <div class="text-xs text-dark_700 font-medium">TWD {{ recommend.price }} 起</div>
@@ -164,29 +224,36 @@
       </div>
 
       <div
-        class="fixed bottom-[84px] left-0 right-0 bg-white rounded-[20px] z-50 p-5 mx-5 border border-white-300 lg:relative lg:bottom-auto lg:left-auto lg:w-full lg:right-auto lg:z-0 lg:p-0 lg:mr-5 lg:ml-0 lg:col-span-4 lg:border-0 lg:bg-transparent">
+        class="fixed bottom-[84px] left-0 right-0 bg-white rounded-[20px] z-50 p-5 mx-5 border border-white-300 lg:relative lg:bottom-auto lg:left-auto lg:w-full lg:right-auto lg:z-0 lg:p-0 lg:mr-5 lg:ml-0 lg:col-span-4 lg:border-0 lg:bg-transparent"
+      >
         <div
-          class="lg:sticky lg:top-[96px] bg-white lg:rounded-[20px] lg:shadow-sm lg:border lg:border-gray-300 lg:p-5">
+          class="lg:sticky lg:top-[96px] bg-white lg:rounded-[20px] lg:shadow-sm lg:border lg:border-gray-300 lg:p-5"
+        >
           <div class="mb-4 flex flex-row gap-2 lg:gap-5 lg:flex-col">
             <h2 class="w-full text-lg line-clamp-1 lg:line-clamp-2 md:text-xl font-bold text-dark">
               {{ ticketIntro.title }}
             </h2>
             <div>
-              <span v-if="selectedTicket && selectedTicket.price > 0" class="text-xs lg:text-sm text-dark_500 line-through text-nowrap">
-                TWD {{ (selectedTicket.price * 1.5).toLocaleString() }}
+              <span
+                v-if="totalPrice > 0"
+                class="text-xs lg:text-sm text-dark_500 line-through text-nowrap"
+              >
+                TWD {{ (totalPrice * 1.5).toLocaleString() }}
               </span>
               <div class="flex items-end gap-1 lg:gap-2">
                 <span class="text-lg lg:text-2xl font-bold text-red-500 text-nowrap">
-                  TWD {{ selectedTicket ? selectedTicket.price.toLocaleString() : (attraction?.price?.toLocaleString() || '0') }}
+                  TWD {{ totalPrice.toLocaleString() }}
                 </span>
-                <span class="text-sm text-dark_500 mb-0.5 lg:mb-1 text-nowrap">/ 每人</span>
               </div>
             </div>
           </div>
           <div class="flex flex-row items-stretch gap-5 text-nowrap lg:gap-2.5 lg:flex-col">
             <DatePicker v-model="selectedDate" color="teal" :masks="{ input: 'YYYY-MM-DD' }">
               <template #default="{ inputValue, inputEvents }">
-                <div class="p-3 w-full border rounded-[10px] hover:border-primary cursor-pointer transition" v-on="inputEvents">
+                <div
+                  class="p-3 w-full border rounded-[10px] hover:border-primary cursor-pointer transition"
+                  v-on="inputEvents"
+                >
                   <div class="text-xs text-dark_700 mb-1">選擇日期</div>
                   <div class="font-medium text-dark">{{ inputValue || '請選擇日期' }}</div>
                 </div>
@@ -194,24 +261,44 @@
             </DatePicker>
 
             <div class="relative group">
-              <div class="p-3 w-full border rounded-[10px] hover:border-primary cursor-pointer transition">
-                <div class="text-xs text-dark_700 mb-1">選擇方案</div>
-                <select v-model="selectedTicket" class="w-full bg-transparent font-medium text-dark outline-none appearance-none cursor-pointer">
-                  <option v-for="t in tickets" :key="t.id" :value="t">
-                    {{ t.name }} - NT$ {{ t.price }}
-                  </option>
-                  <option v-if="tickets.length === 0" disabled>目前無可用方案</option>
-                </select>
-                <div class="pointer-events-none absolute right-3 bottom-4 text-dark_300">
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                  </svg>
+              <div class="p-3 w-full border rounded-[10px] transition hover:border-primary">
+                <div class="text-xs text-dark_700 mb-2">選擇方案</div>
+
+                <div v-if="tickets.length === 0" class="text-sm text-dark_500">目前無可用方案</div>
+
+                <div v-else class="space-y-3">
+                  <div v-for="t in tickets" :key="t.id" class="flex items-center justify-between">
+                    <div class="flex flex-col">
+                      <span class="font-medium text-dark text-sm">{{ t.name }}</span>
+                      <span class="text-xs text-dark_500">NT$ {{ t.price }}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <button
+                        @click="decreaseQuantity(t.id)"
+                        class="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100 disabled:opacity-50"
+                        :disabled="t.quantity <= 0"
+                      >
+                        -
+                      </button>
+                      <span class="w-4 text-center text-sm font-medium">{{ t.quantity }}</span>
+                      <button
+                        @click="increaseQuantity(t.id)"
+                        class="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
             <div class="flex-shrink-0">
-              <button type="submit" @click="onSearch"
-                class="h-full flex items-center justify-center lg:w-full bg-primary hover:bg-main text-white font-bold py-3 px-6 rounded-[10px] transition duration-200 shadow-md">
+              <button
+                type="submit"
+                @click="onSearch"
+                class="h-full flex items-center justify-center lg:w-full bg-primary hover:bg-main text-white font-bold py-3 px-6 rounded-[10px] transition duration-200 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
+                :disabled="totalPrice === 0"
+              >
                 立即預訂
               </button>
             </div>
@@ -224,20 +311,39 @@
 
 <script setup lang="ts">
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 import { supabase } from '@/utils/supabaseClient'
 import type { Attraction, AttractionImage, Ticket } from '@/types/database'
+import { useOrderStore } from '@/stores/orderStore'
+import { format } from 'date-fns'
 
 const route = useRoute()
 const attraction = ref<Attraction | null>(null)
 const attractionImages = ref<AttractionImage[]>([])
 const loading = ref<boolean>(true)
 const errorMsg = ref<string>('')
-const tickets = ref<Ticket[]>([])
-const selectedTicket = ref<Ticket | null>(null)
+interface TicketWithQuantity extends Ticket {
+  quantity: number
+}
+
+const tickets = ref<TicketWithQuantity[]>([])
 const selectedDate = ref<Date>(new Date())
+
+const totalPrice = computed(() => {
+  return tickets.value.reduce((sum, t) => sum + t.price * t.quantity, 0)
+})
+
+const increaseQuantity = (id: string | number) => {
+  const ticket = tickets.value.find((t) => t.id === id)
+  if (ticket) ticket.quantity++
+}
+
+const decreaseQuantity = (id: string | number) => {
+  const ticket = tickets.value.find((t) => t.id === id)
+  if (ticket && ticket.quantity > 0) ticket.quantity--
+}
 
 // Reactive object for the top section
 const ticketIntro = ref({
@@ -255,7 +361,7 @@ const fetchAttractionData = async () => {
 
   loading.value = true
   tickets.value = []
-  selectedTicket.value = null
+  // selectedTicket.value = null // This line is no longer needed as selectedTicket is removed
 
   try {
     // Fetch Attraction Details
@@ -309,32 +415,31 @@ const fetchAttractionData = async () => {
       .eq('attraction_id', id)
 
     if (ticketsError) throw ticketsError
-    tickets.value = (ticketsData as Ticket[]) || []
-    if (tickets.value.length > 0) {
-      selectedTicket.value = tickets.value[0] || null
-    }
+    tickets.value = (ticketsData as Ticket[]).map((t) => ({ ...t, quantity: 0 })) || []
 
     // Update ticketDetail content
     const details = []
     if (attractionData?.description) {
-       details.push({
-         id: 1,
-         type: 'text',
-         content: attractionData.description
-       })
+      details.push({
+        id: 1,
+        type: 'text',
+        content: attractionData.description,
+      })
     }
     if (attractionData?.detail) {
-        details.push({
-            id: 2,
-            type: 'text',
-            content: attractionData.detail
-        })
+      details.push({
+        id: 2,
+        type: 'text',
+        content: attractionData.detail,
+      })
     }
     ticketDetail.value = details
 
     // Fetch Recommendations based on category
     if (attractionData?.category) {
-      const category = Array.isArray(attractionData.category) ? attractionData.category[0] : attractionData.category
+      const category = Array.isArray(attractionData.category)
+        ? attractionData.category[0]
+        : attractionData.category
       const { data: recData } = await supabase
         .from('attractions')
         .select('*, attraction_images(image_url)')
@@ -343,10 +448,9 @@ const fetchAttractionData = async () => {
         .limit(4)
 
       if (recData) {
-        recommendations.value = recData.map(item => mapItem(item as AttractionWithImages))
+        recommendations.value = recData.map((item) => mapItem(item as AttractionWithImages))
       }
     }
-
   } catch (error: unknown) {
     errorMsg.value = error instanceof Error ? error.message : String(error)
   } finally {
@@ -359,16 +463,16 @@ onMounted(() => {
 })
 
 interface TicketItem {
-  id: number | string;
-  name: string;
-  imageUrl: string;
-  price: number;
-  venue: string;
-  category: string;
-  date: string;
-  address: string;
-  rating: number;
-  description: string;
+  id: number | string
+  name: string
+  imageUrl: string
+  price: number
+  venue: string
+  category: string
+  date: string
+  address: string
+  rating: number
+  description: string
 }
 
 const mapItem = (item: AttractionWithImages): TicketItem => ({
@@ -377,13 +481,12 @@ const mapItem = (item: AttractionWithImages): TicketItem => ({
   imageUrl: item.attraction_images?.[0]?.image_url || 'https://placehold.co/400x300?text=No+Image',
   price: item.price || 0,
   venue: item.city || '',
-  category: Array.isArray(item.category) ? (item.category[0] || '') : (item.category || ''),
+  category: Array.isArray(item.category) ? item.category[0] || '' : item.category || '',
   date: item.created_at || '2026-01-01',
   address: item.address || '',
   rating: item.rating || 0,
   description: item.intro || item.description || '',
 })
-
 
 // Define AttractionWithImages locally or import if possible
 interface AttractionWithImages extends Attraction {
@@ -391,7 +494,37 @@ interface AttractionWithImages extends Attraction {
 }
 
 const router = useRouter()
+const orderStore = useOrderStore()
+
 function onSearch() {
+  const selectedTickets = tickets.value.filter((t) => t.quantity > 0)
+
+  if (selectedTickets.length === 0 || !attraction.value) {
+    alert('請至少選擇一張票券')
+    return
+  }
+
+  const dateStr = format(selectedDate.value, 'yyyy/MM/dd')
+
+  // Aggregate selection
+  const subtitle = selectedTickets.map((t) => `${t.name} x${t.quantity}`).join(', ')
+
+  // Total price is already computed in totalPrice
+
+  orderStore.setOrder({
+    type: 'attraction',
+    title: attraction.value.name,
+    subtitle: subtitle,
+    date: dateStr,
+    note: '隨買隨用', // Or pull from policy
+    price: totalPrice.value,
+    image: attractionImages.value[0]?.image_url || '',
+    city: attraction.value.city,
+    category: attraction.value.category || '',
+    highlights: ticketIntro.value.highlights,
+    address: attraction.value.address || '',
+  })
+
   router.push('/orders/checkout')
 }
 
@@ -405,7 +538,9 @@ interface Policy {
   highlight: boolean
 }
 
-const ticketDetail = ref<{ id: number; type: string; content?: string; url?: string; caption?: string }[]>([])
+const ticketDetail = ref<
+  { id: number; type: string; content?: string; url?: string; caption?: string }[]
+>([])
 
 const policies = ref<Policy[]>([
   {
