@@ -1,5 +1,5 @@
 <template>
-  <RouterLink :to="detailLink" :class="[
+  <RouterLink :to="`hotels/${id}`" :class="[
     'group relative flex h-[270px] w-[183px] md:hover:w-[408px] z-[1] md:hover:z-[20] bg-white rounded-[20px] md:hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
     expandLeft ? 'hover:-translate-x-[225px]' : ''
   ]">
@@ -111,10 +111,6 @@ const authStore = useAuthStore()
 
 const isFav = computed(() => {
   return favoriteStore.isFavorite(props.id)
-})
-
-const detailLink = computed(() => {
-  return props.type === 'hotel' ? `/hotels/${props.id}` : `/tickets/${props.id}`;
 })
 
 const onFavoriteClick = async () => {

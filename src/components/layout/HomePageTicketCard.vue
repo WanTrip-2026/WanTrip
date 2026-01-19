@@ -19,7 +19,10 @@
           <span v-for="i in 5" :key="i" :class="{ 'text-amber-400': i <= (rating || 5) }">★</span>
         </div>
         <p class="text-dark_500 text-sm leading-relaxed">
-          {{ venue || address }}
+          {{ category }}
+        </p>
+        <p class="text-dark_500 text-sm leading-relaxed">
+          {{ venue || address }}{{ address }}
         </p>
       </div>
       <div class="mt-auto">
