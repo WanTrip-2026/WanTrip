@@ -12,7 +12,7 @@
       </div>
     </div>
     <div
-      class="flex flex-col flex-1 p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150 min-w-[232px]">
+      class="flex flex-col flex-1 p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150 w-full">
       <div class="flex-1">
         <h3 class="text-lg lg:text-xl font-bold text-black">{{ name }}</h3>
         <div class="flex text-dark_300">
@@ -25,7 +25,7 @@
           {{ venue || address }}{{ address }}
         </p>
       </div>
-      <div class="mt-auto">
+      <div class="mt-auto text-nowrap">
         <div class="text-right mb-1 text-xs text-dark_500">
           <span class="text-red-500 font-bold text-lg">NT$ {{ (price || 0).toLocaleString() }}</span> /起
         </div>
