@@ -32,6 +32,11 @@ const product = reactive({
   address: orderData.address || '',
   phone: orderData.phone || '',
   hotel_id: orderData.hotel_id || '',
+  type: orderData.type || 'hotel',
+  city: orderData.city || '台北',
+  category: orderData.category || '',
+  highlights: orderData.highlights || [],
+  peopleNum: 2, // Default or from store if available
 })
 
 const form = reactive({
@@ -287,9 +292,41 @@ function applyCoupon() {
               </div>
               <div class="min-w-0">
                 <div class="text-base text-dark font-bold leading-snug">{{ product.title }}</div>
-                <div class="mt-1 line-clamp-2 text-sm text-dark_500">{{ product.subtitle }}</div>
-                <div class="mt-1 text-sm text-dark_500">{{ product.date }}</div>
-                <div class="text-sm text-dark_500">{{ product.note }}</div>
+
+                <!-- Hotel View -->
+                <div v-if="product.type === 'hotel'" class="mt-1">
+                  <div class="line-clamp-2 text-sm text-dark_500">{{ product.subtitle }}</div>
+                  <div class="mt-1 text-sm text-dark_500">{{ product.date }}</div>
+                  <div class="text-sm text-dark_500">{{ product.note }}</div>
+                </div>
+
+                <!-- Attraction View -->
+                <div v-else class="mt-1 flex flex-col gap-1">
+                  <div class="text-sm text-dark_500 font-medium">
+                    {{ product.city }} |
+                    {{
+                      Array.isArray(product.category)
+                        ? product.category.join(', ')
+                        : product.category
+                    }}
+                  </div>
+                  <div class="text-sm text-dark_700 font-bold mt-1">{{ product.subtitle }}</div>
+                  <!-- Ticket Name -->
+                  <div class="text-xs text-dark_500">{{ product.date }}</div>
+
+                  <div
+                    v-if="product.highlights && product.highlights.length > 0"
+                    class="mt-1.5 flex flex-wrap gap-1.5"
+                  >
+                    <span
+                      v-for="(tag, i) in product.highlights.slice(0, 3)"
+                      :key="i"
+                      class="px-2 py-0.5 bg-green-50 text-green-600 text-[10px] rounded-md border border-green-100"
+                    >
+                      {{ tag }}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
