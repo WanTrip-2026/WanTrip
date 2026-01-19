@@ -464,6 +464,7 @@ import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer'
 
@@ -501,6 +502,7 @@ declare global {
 }
 
 const router = useRouter()
+const route = useRoute()
 const markerMap = new Map<string | number, google.maps.marker.AdvancedMarkerElement>()
 const mapInstance = shallowRef<google.maps.Map | null>(null)
 
@@ -943,6 +945,26 @@ const fetchHotels = async () => {
 onMounted(async () => {
   isMapLoading.value = true
   try {
+    // 1. 關鍵字
+    if (route.query.keyword) {
+      keyword.value = route.query.keyword as string
+    }
+
+    // 2. 人數與房間
+    if (route.query.adults) {
+      peopleConfig.people = parseInt(route.query.adults as string, 10)
+    }
+    if (route.query.rooms) {
+      peopleConfig.rooms = parseInt(route.query.rooms as string, 10)
+    }
+
+    // 3. 日期區間 (start_date & end_date)
+    if (route.query.start_date && route.query.end_date) {
+      range.value = [
+        new Date(route.query.start_date as string),
+        new Date(route.query.end_date as string),
+      ]
+    }
     const apiUrl = import.meta.env.VITE_API_BASE_URL
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID
@@ -952,37 +974,50 @@ onMounted(async () => {
       return
     }
     // 同步抓飯店與設施資料（統一用 axios）
-    const [facilitiesRes, hotelsRes] = await Promise.all([
+    const [facilitiesRes, typesRes] = await Promise.all([
       axios.get(`${apiUrl}/facilities`),
-      axios.get(`${apiUrl}/hotels`, {
-        params: {
-          page: 1,
-          limit: 1000,
-        },
-      }),
+      axios.get(`${apiUrl}/hotel_types`),
     ])
 
-    const rawHotels = hotelsRes.data
-
-    hotels.value = Array.isArray(rawHotels?.hotels) ? rawHotels.hotels : []
-
-    if (!facilitiesRes.data) {
-      throw new Error('取得設施資料失敗')
+    // 設定設施選單
+    if (facilitiesRes.data) {
+      facilities.value = facilitiesRes.data
+      const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
+      if (facilityMenu) {
+        facilityMenu.options = facilities.value
+      }
     }
 
-    facilities.value = facilitiesRes.data
-
-    const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
-    if (facilityMenu) {
-      facilityMenu.options = facilities.value
+    // 設定類型選單
+    if (typesRes.data) {
+      const types: string[] = typesRes.data
+      const typeMenu = HotelFiltered.find((m) => m.key === 'types')
+      if (typeMenu) {
+        typeMenu.options = types
+      }
     }
 
-    const typesRes = await axios.get(`${apiUrl}/hotel_types`)
-    const types: string[] = typesRes.data
-    const typeMenu = HotelFiltered.find((m) => m.key === 'types')
-    if (typeMenu) {
-      typeMenu.options = types
-    }
+    // const rawHotels = hotelsRes.data
+
+    // hotels.value = Array.isArray(rawHotels?.hotels) ? rawHotels.hotels : []
+
+    // if (!facilitiesRes.data) {
+    //   throw new Error('取得設施資料失敗')
+    // }
+
+    // facilities.value = facilitiesRes.data
+
+    // const facilityMenu = HotelFiltered.find((m) => m.key === 'facilities')
+    // if (facilityMenu) {
+    //   facilityMenu.options = facilities.value
+    // }
+
+    // const typesRes = await axios.get(`${apiUrl}/hotel_types`)
+    // const types: string[] = typesRes.data
+    // const typeMenu = HotelFiltered.find((m) => m.key === 'types')
+    // if (typeMenu) {
+    //   typeMenu.options = types
+    // }
 
     const runMapInitialization = async () => {
       const map = new google.maps.Map(document.getElementById('map') as HTMLElement, {
