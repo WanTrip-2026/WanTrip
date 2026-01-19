@@ -54,159 +54,7 @@
         </div>
       </section>
 
-      <section class="flex justify-center">
-        <form class="w-full max-w-4xl" @submit.prevent="onSearch">
-          <div class="mt-4 flex justify-center">
-            <div class="w-full max-w-4xl">
-              <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <label
-                  class="relative block rounded-[20px] bg-white p-[20px] shadow-lg border border-gray-300 group cursor-pointer transition-all hover:border-primary"
-                >
-                  <p class="text-xs font-bold text-dark_500">想去哪裡？</p>
-                  <div class="relative mt-2">
-                    <select
-                      v-model="form.destination"
-                      class="w-full bg-transparent text-sm outline-none appearance-none cursor-pointer pr-8 font-medium text-primary group-hover:text-main_800 transition-colors"
-                    >
-                      <option value="" disabled>選擇城市、景點</option>
-                      <option v-for="city in taiwanCities" :key="city" :value="city">
-                        {{ city }}
-                      </option>
-                    </select>
-                    <div
-                      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-primary/30"
-                    >
-                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </label>
-
-                <DatePicker v-model.range="range" :columns="2" color="teal">
-                  <template #default="{ inputValue, inputEvents }">
-                    <label
-                      class="block rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 cursor-pointer transition-all hover:border-primary"
-                      v-on="inputEvents.start"
-                    >
-                      <p class="text-xs font-bold text-dark_500">入住退房日期</p>
-                      <input
-                        :value="inputValue.start ? `${inputValue.start} - ${inputValue.end}` : ''"
-                        class="mt-2 w-full bg-transparent text-sm outline-none pointer-events-none text-black placeholder:text-primary/35 font-medium"
-                        placeholder="點選選擇日期"
-                        readonly
-                      />
-                    </label>
-                  </template>
-                </DatePicker>
-
-                <div class="relative" ref="peoplePickerRef">
-                  <label
-                    @click="isPeoplePickerOpen = !isPeoplePickerOpen"
-                    class="block h-full rounded-[20px] bg-white p-[20px] shadow-lg border border-gray-300 transition-all hover:border-primary cursor-pointer"
-                  >
-                    <p class="text-xs font-bold text-dark_500">人數、需求</p>
-                    <div class="mt-2 flex items-center justify-between">
-                      <span class="text-sm font-medium text-primary">{{ peopleDisplayText }}</span>
-                      <svg
-                        class="h-4 w-4 text-primary/30 transition-transform duration-300"
-                        :class="{ 'rotate-180': isPeoplePickerOpen }"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </div>
-                  </label>
-
-                  <transition name="fade">
-                    <div
-                      v-if="isPeoplePickerOpen"
-                      class="absolute top-[calc(100%+8px)] left-0 z-[100] w-full rounded-[20px] bg-white p-6 shadow-2xl ring-1 ring-primary/5"
-                    >
-                      <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                          <span class="text-sm font-bold text-primary">成人</span>
-                          <div class="flex items-center gap-3">
-                            <button
-                              @click.stop="peopleConfig.adults > 1 ? peopleConfig.adults-- : null"
-                              type="button"
-                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100"
-                            >
-                              -
-                            </button>
-                            <span class="text-sm font-medium w-4 text-center text-dark">{{
-                              peopleConfig.adults
-                            }}</span>
-                            <button
-                              @click.stop="peopleConfig.adults++"
-                              type="button"
-                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100"
-                            >
-                              +
-                            </button>
-                          </div>
-                        </div>
-                        <div class="flex items-center justify-between">
-                          <span class="text-sm font-bold text-primary">孩童</span>
-                          <div class="flex items-center gap-3">
-                            <button
-                              @click.stop="
-                                peopleConfig.children > 0 ? peopleConfig.children-- : null
-                              "
-                              type="button"
-                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100"
-                            >
-                              -
-                            </button>
-                            <span class="text-sm font-medium w-4 text-center text-dark">{{
-                              peopleConfig.children
-                            }}</span>
-                            <button
-                              @click.stop="peopleConfig.children++"
-                              type="button"
-                              class="w-8 h-8 rounded-full border border-gray-300 text-dark flex items-center justify-center hover:bg-main_100"
-                            >
-                              +
-                            </button>
-                          </div>
-                        </div>
-                        <label class="flex items-center justify-between pt-2 cursor-pointer">
-                          <span class="text-sm font-bold text-primary">可帶寵物</span>
-                          <input
-                            type="checkbox"
-                            v-model="peopleConfig.hasPet"
-                            class="w-5 h-5 accent-primary cursor-pointer"
-                          />
-                        </label>
-                      </div>
-                    </div>
-                  </transition>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
-            <button
-              type="submit"
-              class="h-10 rounded-full bg-primary px-7 text-sm font-semibold text-white transition-all duration-300 hover:bg-main active:scale-[0.98] shadow-sm"
-            >
-              搜尋
-            </button>
-          </div>
-        </form>
-      </section>
+      <SearchBar mode="redirect" @search="handleSearchSubmit" />
 
       <div class="mt-[40px] space-y-[40px]">
         <section v-for="section in sections" :key="section.title">
@@ -231,16 +79,21 @@
 
 <script setup lang="ts">
 import { reactive, ref, watch, onMounted, onUnmounted, computed } from 'vue'
-import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
 import HomePageCard from '@/components/layout/HomePageCard.vue'
 import { useHotelApi } from '@/composables/useHotelApi'
 import type { HomePageCardItem } from '@/types/hotel'
+import SearchBar from '@/components/layout/SearchBar.vue'
+
+interface SearchPayload {
+  keyword: string
+  range: [Date, Date]
+  rooms: number
+  people: number
+}
 
 const router = useRouter()
-const activeTab = ref<'stay'>('stay')
-
 // --- 輪播盒邏輯 ---
 const hotelImages = [
   {
@@ -282,19 +135,6 @@ const prevSlide = () => {
 const isPeoplePickerOpen = ref(false)
 const peoplePickerRef = ref<HTMLElement | null>(null)
 
-const peopleConfig = reactive({
-  adults: 2,
-  children: 0,
-  hasPet: false,
-})
-
-const peopleDisplayText = computed(() => {
-  let text = `${peopleConfig.adults} 位成人`
-  if (peopleConfig.children > 0) text += `｜${peopleConfig.children} 位孩童`
-  if (peopleConfig.hasPet) text += `｜帶寵物`
-  return text
-})
-
 const handleOutsideClick = (e: MouseEvent) => {
   if (peoplePickerRef.value && !peoplePickerRef.value.contains(e.target as Node)) {
     isPeoplePickerOpen.value = false
@@ -331,29 +171,6 @@ const sections = computed(() => [
   { title: '熱門城市', data: kaohsiungHotels.value },
 ])
 
-const taiwanCities = [
-  '基隆',
-  '臺北',
-  '新北',
-  '桃園',
-  '新竹',
-  '苗栗',
-  '臺中',
-  '彰化',
-  '南投',
-  '雲林',
-  '嘉義',
-  '臺南',
-  '高雄',
-  '屏東',
-  '宜蘭',
-  '花蓮',
-  '臺東',
-  '澎湖',
-  '金門',
-  '馬祖',
-]
-
 const form = reactive({
   destination: '',
   dateRange: '',
@@ -375,6 +192,28 @@ watch(
   { immediate: true },
 )
 
+const formatDate = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+const handleSearchSubmit = (searchData: SearchPayload) => {
+  // 將資料解構，並手動對應到 URL Query
+  router.push({
+    path: '/hotels/search',
+    query: {
+      keyword: searchData.keyword,
+      // 使用首頁現有的 formatDate 或是臨時處理成字串
+      start_date: formatDate(searchData.range[0]),
+      end_date: formatDate(searchData.range[1]),
+      adults: String(searchData.people),
+      rooms: String(searchData.rooms),
+    },
+  })
+}
+
 const handleWishlist = (id: string | number) => {
   const allItems: HomePageCardItem[] = [
     ...hotHotels.value,
@@ -391,13 +230,6 @@ const handleWishlist = (id: string | number) => {
 
 const handleBook = (id: string | number) => {
   router.push(`/product/${id}`)
-}
-
-function onSearch() {
-  console.log('[Hotel Search Submit]', { tab: activeTab.value, ...form, ...peopleConfig })
-
-  // 跳轉到 /hotels/search
-  router.push('/hotels/search')
 }
 </script>
 
