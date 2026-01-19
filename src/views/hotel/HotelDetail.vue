@@ -1,40 +1,13 @@
 <template>
   <main class="max-w-[1200px] mx-auto min-h-screen lg:px-0 px-5">
     <div class="pt-24 pb-[60px]">
-      <section
-        class="max-w-[1200px] w-full p-2 mb-10 bg-white rounded-2xl md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-3"
-      >
-        <div class="relative w-full h-12 md:h-full flex-1">
-          <input
-            type="text"
-            :placeholder="hotel?.name || '請輸入飯店名稱'"
-            class="h-10 w-full pl-4 md:pl-10 pr-4 text-sm md:text-base border-none bg-gray-50 md:bg-transparent rounded-xl md:rounded-full focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-          />
-        </div>
-        <div class="hidden md:block w-[1px] h-8 bg-gray-200"></div>
-        <div class="relative w-full h-12 md:h-full flex-1">
-          <input
-            type="text"
-            placeholder="入住及退房日期"
-            class="h-10 w-full pl-4 md:pl-10 pr-4 text-sm md:text-base border-none bg-gray-50 md:bg-transparent rounded-xl md:rounded-full focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-          />
-        </div>
-        <div class="hidden md:block w-[1px] h-8 bg-gray-200"></div>
-        <div class="relative w-full h-12 md:h-full flex-1">
-          <input
-            type="text"
-            placeholder="2 位成人 · 1 間房"
-            class="h-10 w-full pl-4 md:pl-10 pr-4 text-sm md:text-base border-none bg-gray-50 md:bg-transparent rounded-xl md:rounded-full focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-          />
-        </div>
-        <div class="w-full md:w-auto h-12 md:h-full">
-          <button
-            class="h-10 w-full md:w-auto bg-primary hover:bg-[#6D8FA3] text-white py-1 px-7 rounded-xl md:rounded-full transition-colors whitespace-nowrap"
-          >
-            搜尋
-          </button>
-        </div>
-      </section>
+      <SearchBar
+        mode="emit"
+        :initial-keyword="keyword"
+        :initial-range="range"
+        :initial-people="{ rooms: peopleConfig.rooms, people: peopleConfig.people }"
+        @search="handleSearchUpdate"
+      />
       <div v-if="error" class="text-red-600 p-4 bg-red-100 rounded mb-4">
         {{ error }}
       </div>
@@ -496,11 +469,13 @@
 </template>
 
 <script setup lang="ts">
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ref, computed, onMounted } from 'vue'
 import { useOrderStore } from '@/stores/orderStore'
 import { useAuthStore } from '@/stores/auth'
+import SearchBar from '../../components/layout/SearchBar.vue'
 
+// --- 1. 型別定義 ---
 interface Hotel {
   id: string
   name: string
@@ -509,7 +484,6 @@ interface Hotel {
   district: string
   address: string
   min_price: number
-  facilities?: string[]
   description?: string
   phone?: string
   email?: string
@@ -518,6 +492,7 @@ interface Hotel {
   rating_count?: number
   latitude?: number
   longitude?: number
+  facilities?: string[]
 }
 
 interface HotelImage {
@@ -552,6 +527,14 @@ interface Review {
   date: string
 }
 
+interface SearchPayload {
+  keyword: string
+  range: [Date, Date]
+  rooms: number
+  people: number
+}
+
+// --- 2. 狀態定義 ---
 const route = useRoute()
 const router = useRouter()
 const orderStore = useOrderStore()
@@ -616,91 +599,29 @@ const handleTagClick = (tag: string) => {
 }
 
 const hotel = ref<Hotel | null>(null)
-const error = ref<string | null>(null)
 const images = ref<string[]>([])
 const rooms = ref<Room[]>([])
-//預設資訊
-const mockFeaturesDefault: string[] = [
-  '豐盛早餐付費 TWD935 (選購)',
-  '可免費取消',
-  '即時確認',
-  '線上預付',
-]
-//共同的資訊
-const mockFeaturesByKeyword: Array<{ keyword: string; features: string[] }> = [
-  {
-    keyword: '高級',
-    features: ['豐盛早餐付費 TWD935 (選購)', '可免費取消', '即時確認', '線上預付'],
-  },
-  {
-    keyword: '夜景',
-    features: ['豐盛早餐付費 TWD935 (選購)', '不可退款', '即時確認', '到店付款'],
-  },
-]
+const error = ref<string | null>(null)
 
-onMounted(async () => {
-  const apiUrl = import.meta.env.VITE_API_BASE_URL
-  try {
-    if (!apiUrl) throw new Error('VITE_API_BASE_URL 未設定')
+// 搜尋狀態
+const keyword = ref('')
+const range = ref<[Date, Date]>([
+  new Date(),
+  new Date(new Date().setDate(new Date().getDate() + 1)),
+])
+const peopleConfig = reactive({ people: 2, rooms: 1 })
 
-    const id =
-      typeof route.params.id === 'string'
-        ? route.params.id
-        : Array.isArray(route.params.id)
-          ? route.params.id[0]
-          : ''
+// 評論與篩選狀態
+const filterMemberType = ref('')
+const filterRoomType = ref('')
+const sortOption = ref('ratingDesc')
+const currentPage = ref(1)
+const reviewsPerPage = 2
 
-    if (!id) throw new Error('route.params.id 取不到值')
-
-    const hotelUrl = `${apiUrl}/hotels/${id}`
-    const imagesUrl = `${apiUrl}/hotel_images/${id}`
-    const roomsUrl = `${apiUrl}/hotels/${id}/rooms`
-
-    const [hotelRes, imagesRes, roomsRes] = await Promise.all([
-      fetch(hotelUrl),
-      fetch(imagesUrl),
-      fetch(roomsUrl),
-    ])
-
-    const hotelText = await hotelRes.text()
-    const imagesText = await imagesRes.text()
-    const roomsText = await roomsRes.text()
-
-    if (!hotelRes.ok) throw new Error(`取得飯店資料失敗：${hotelRes.status}`)
-    if (!imagesRes.ok) throw new Error(`取得飯店圖片失敗：${imagesRes.status}`)
-    if (!roomsRes.ok) throw new Error(`取得房型資料失敗：${roomsRes.status}`)
-
-    hotel.value = JSON.parse(hotelText)
-
-    const imgData = JSON.parse(imagesText) as HotelImage[]
-    images.value = imgData
-      .sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999))
-      .map((img) => img.image_url)
-
-    const apiRooms = JSON.parse(roomsText) as Omit<Room, 'features'>[]
-    // 依房型有不同 features
-    rooms.value = apiRooms.map((r) => {
-      const rule = mockFeaturesByKeyword.find((x) => r.name?.includes(x.keyword))
-      return {
-        ...r,
-        features: [...(rule?.features ?? mockFeaturesDefault)],
-      }
-    })
-
-    // 讓評論的房型隨機帶入飯店有的房型
-    if (rooms.value.length > 0) {
-      reviews.value = reviews.value.map((review) => ({
-        ...review,
-        roomType: rooms.value[Math.floor(Math.random() * rooms.value.length)]?.name || '標準房',
-      }))
-    }
-
-    error.value = null
-  } catch (err: unknown) {
-    console.error('[HotelDetail error]', err)
-    error.value = err instanceof Error ? err.message : '取得飯店資料或圖片時發生錯誤'
-  }
-})
+// 輪播狀態
+const currentIndex = ref(0)
+const startX = ref(0)
+const endX = ref(0)
 
 const reviews = ref<Review[]>([
   {
@@ -774,102 +695,209 @@ const reviews = ref<Review[]>([
     date: '2024/08/30',
   },
 ])
-const currentIndex = ref(0)
-const startX = ref(0)
-const endX = ref(0)
-const currentPage = ref(1) // 當前頁
-const reviewsPerPage = ref(2) // 每頁顯示評論數
-// 篩選條件
-const filterMemberType = ref('')
-const filterRoomType = ref('')
-const sortOption = ref('ratingDesc')
 
-function starCount(stars: number = 0) {
-  return stars
+// --- 3. 核心邏輯 ---
+
+const formatDate = (date: Date | null): string => {
+  if (!date) return ''
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
-const desktopGallery = computed(() => {
-  return [
-    { type: 'large', images: images.value.slice(0, 1) },
-    { type: 'stack', images: images.value.slice(1, 3) },
-    { type: 'stack', images: images.value.slice(3, 5) },
-    { type: 'stack', images: images.value.slice(5, 7) },
-  ]
-})
+// --- 從 URL 解析參數的函式 ---
+const initStatesFromUrl = () => {
+  const { keyword: urlKeyword, start_date, end_date, adults, rooms } = route.query
 
-const goTo = (index: number) => {
-  currentIndex.value = index
-}
+  if (urlKeyword) {
+    keyword.value = String(urlKeyword)
+  }
 
-const onTouchStart = (e: TouchEvent) => {
-  const touch = e.touches?.[0]
-  if (!touch) return // 保護空陣列
-  startX.value = touch.clientX
-  endX.value = touch.clientX
-}
+  if (start_date && end_date) {
+    const start = new Date(String(start_date))
+    const end = new Date(String(end_date))
 
-const onTouchMove = (e: TouchEvent) => {
-  const touch = e.touches?.[0]
-  if (!touch) return
-  endX.value = touch.clientX
-}
-
-const onTouchEnd = () => {
-  const diff = endX.value - startX.value
-  const len = images.value.length
-  if (Math.abs(diff) > 50) {
-    if (diff < 0) {
-      if (len === 0) return
-      currentIndex.value = (currentIndex.value + 1) % len
-    } else {
-      currentIndex.value = (currentIndex.value - 1 + len) % len
+    // 檢查轉換是否成功
+    if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+      range.value = [start, end]
     }
   }
-  startX.value = 0
-  endX.value = 0
+
+  if (adults) peopleConfig.people = Number(adults)
+  if (rooms) peopleConfig.rooms = Number(rooms)
 }
 
 // 動態生成選項
 const memberTypes = computed(() => Array.from(new Set(reviews.value.map((r) => r.memberType))))
 const roomTypes = computed(() => rooms.value.map((r) => r.name))
+const fetchHotelDetail = async () => {
+  const apiUrl = import.meta.env.VITE_API_BASE_URL
+  if (!apiUrl) return
 
-// 篩選 + 排序後的評論
+  // 1. 取得 ID
+  const rawId = route.params.id
+  const id = Array.isArray(rawId) ? rawId[0] : rawId
+
+  if (!id) {
+    error.value = '無法取得飯店 ID'
+    return
+  }
+
+  try {
+    // 2. 設定 URL
+    const hotelUrl = `${apiUrl}/hotels/${id}`
+    const imagesUrl = `${apiUrl}/hotel_images/${id}`
+    const roomsUrl = `${apiUrl}/hotels/${id}/rooms`
+
+    // 3. 同時發送請求
+    const [hotelRes, imagesRes, roomsRes] = await Promise.all([
+      fetch(hotelUrl),
+      fetch(imagesUrl),
+      fetch(roomsUrl),
+    ])
+
+    // 4. 檢查狀態
+    if (!hotelRes.ok) throw new Error(`取得飯店資料失敗：${hotelRes.status}`)
+    if (!imagesRes.ok) throw new Error(`取得飯店圖片失敗：${imagesRes.status}`)
+    if (!roomsRes.ok) throw new Error(`取得房型資料失敗：${roomsRes.status}`)
+
+    // 5. 解析資料 (直接用 .json() 比較簡潔)
+    const hotelData = (await hotelRes.json()) as Hotel
+    const imgData = (await imagesRes.json()) as HotelImage[]
+    const apiRooms = (await roomsRes.json()) as Omit<Room, 'features'>[]
+
+    // 6. 更新狀態
+    hotel.value = hotelData
+    if (hotelData.name) keyword.value = hotelData.name
+
+    // 處理圖片
+    images.value = imgData
+      .sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999))
+      .map((img) => img.image_url)
+
+    // 處理房型 (加入預設特徵)
+    rooms.value = apiRooms.map((r) => ({
+      ...r,
+      features: ['豐盛早餐付費 TWD935 (選購)', '可免費取消', '即時確認', '線上預付'],
+    }))
+
+    // 7. 隨機分配評論的房型 (讓 UI 看起來比較真實)
+    if (rooms.value.length > 0) {
+      reviews.value = reviews.value.map((review) => ({
+        ...review,
+        roomType: rooms.value[Math.floor(Math.random() * rooms.value.length)]?.name || '標準房',
+      }))
+    }
+
+    error.value = null
+  } catch (err: unknown) {
+    console.error('[HotelDetail error]', err)
+    error.value = err instanceof Error ? err.message : '取得飯店資料時發生錯誤'
+  }
+}
+
+// --- 4. 計算屬性 ---
+const desktopGallery = computed(() => [
+  { type: 'large', images: images.value.slice(0, 1) },
+  { type: 'stack', images: images.value.slice(1, 3) },
+  { type: 'stack', images: images.value.slice(3, 5) },
+  { type: 'stack', images: images.value.slice(5, 7) },
+])
+
 const filteredReviews = computed(() => {
-  let result = reviews.value
+  let result = [...reviews.value]
+  if (filterMemberType.value) result = result.filter((r) => r.memberType === filterMemberType.value)
+  if (filterRoomType.value) result = result.filter((r) => r.roomType === filterRoomType.value)
 
-  // 篩選住客類型
-  if (filterMemberType.value) {
-    result = result.filter((r) => r.memberType === filterMemberType.value)
-  }
-
-  // 篩選房型
-  if (filterRoomType.value) {
-    result = result.filter((r) => r.roomType === filterRoomType.value)
-  }
-
-  // 排序
-  if (sortOption.value === 'ratingDesc') {
-    result = [...result].sort((a, b) => b.rating - a.rating)
-  } else if (sortOption.value === 'ratingAsc') {
-    result = [...result].sort((a, b) => a.rating - b.rating)
-  } else if (sortOption.value === 'recent') {
-    result = [...result].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  }
+  if (sortOption.value === 'ratingDesc') result.sort((a, b) => b.rating - a.rating)
+  else if (sortOption.value === 'ratingAsc') result.sort((a, b) => a.rating - b.rating)
+  else if (sortOption.value === 'recent')
+    result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   return result
 })
 
-// 計算篩選後的平均分數
+const paginatedReviews = computed(() => {
+  const start = (currentPage.value - 1) * reviewsPerPage
+  return filteredReviews.value.slice(start, start + reviewsPerPage)
+})
+
+const totalPages = computed(() => Math.ceil(filteredReviews.value.length / reviewsPerPage))
 const filteredAverageRating = computed(() => {
   if (filteredReviews.value.length === 0) return '0.0'
   const total = filteredReviews.value.reduce((sum, r) => sum + r.rating, 0)
   return (total / filteredReviews.value.length).toFixed(1)
 })
+// --- 5. 事件處理 ---
+const handleSearchUpdate = (data: SearchPayload) => {
+  // 1. 同步本地狀態，確保 SearchBar UI 顯示正確
+  keyword.value = data.keyword
+  range.value = data.range
+  peopleConfig.people = data.people
+  peopleConfig.rooms = data.rooms
 
-const paginatedReviews = computed(() => {
-  const start = (currentPage.value - 1) * reviewsPerPage.value
-  const end = start + reviewsPerPage.value
-  return filteredReviews.value.slice(start, end)
+  // 2. 如果關鍵字變了，通常代表 user 想找別家店，這時才跳轉回搜尋頁
+  // 如果只是改日期，我們可以留在本頁重新 fetch 資料
+  if (hotel.value && data.keyword !== hotel.value.name) {
+    router.push({
+      path: '/hotels/search',
+      query: {
+        keyword: data.keyword,
+        start_date: formatDate(data.range[0]),
+        end_date: formatDate(data.range[1]),
+        adults: data.people,
+        rooms: data.rooms,
+      },
+    })
+  } else {
+    // 只是改日期或人數，留在本頁重新抓取該飯店的最新房價/空房
+    fetchHotelDetail()
+  }
+}
+
+const starCount = (stars: number | undefined): number => {
+  return stars || 0
+}
+
+// --- 6. 生命週期 ---
+onMounted(() => {
+  initStatesFromUrl()
+  fetchHotelDetail()
 })
-const totalPages = computed(() => Math.ceil(filteredReviews.value.length / reviewsPerPage.value))
+
+watch(
+  () => route.params.id,
+  () => {
+    fetchHotelDetail()
+  },
+)
+
+// 輪播手勢
+const goTo = (index: number) => {
+  currentIndex.value = index
+}
+const onTouchStart = (e: TouchEvent) => {
+  const touch = e.touches[0]
+  if (touch) {
+    startX.value = touch.clientX
+    endX.value = touch.clientX
+  }
+}
+
+const onTouchMove = (e: TouchEvent) => {
+  const touch = e.touches[0]
+  if (touch) {
+    endX.value = touch.clientX
+  }
+}
+
+const onTouchEnd = () => {
+  const diff = endX.value - startX.value
+  const len = images.value.length
+  if (len > 0 && Math.abs(diff) > 50) {
+    if (diff < 0) currentIndex.value = (currentIndex.value + 1) % len
+    else currentIndex.value = (currentIndex.value - 1 + len) % len
+  }
+}
 </script>
