@@ -3,12 +3,20 @@ const API = import.meta.env.VITE_API_BASE_URL
 export interface Order {
   id: string
   user_id: string
-  title: string
-  subtitle: string
-  date: string
-  note: string
+  // Backend columns
+  hotel_name?: string
+  room_type?: string
+  image_url?: string
+  check_in_date?: string
+  check_out_date?: string
+  order_id?: string
+  // Legacy/Frontend props (optional now)
+  title?: string
+  subtitle?: string
+  date?: string
+  note?: string
   price: number
-  image: string
+  image?: string
   status: string
   created_at: string
 }
@@ -23,4 +31,18 @@ export async function getUserOrders(userId: string) {
   if (!r.ok) throw new Error(data?.message || 'fetch orders failed')
 
   return data as Order[]
+  return data as Order[]
+}
+
+export async function createOrder(orderData: object) {
+  const r = await fetch(`${API}/orders`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(orderData),
+  })
+
+  const data = await r.json().catch(() => ({}))
+  if (!r.ok) throw new Error(data?.message || 'create order failed')
+
+  return data
 }

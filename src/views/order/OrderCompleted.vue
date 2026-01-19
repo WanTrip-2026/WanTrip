@@ -2,16 +2,22 @@
 import { computed } from 'vue'
 import { useOrderStore } from '@/stores/orderStore'
 
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 const orderStore = useOrderStore()
 
 const now = new Date()
 const formattedDate = `${now.getFullYear()}年${String(now.getMonth() + 1).padStart(2, '0')}月${String(now.getDate()).padStart(2, '0')}日 ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
 
-const orderId = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${Math.floor(
-  Math.random() * 1000000,
-)
-  .toString()
-  .padStart(6, '0')}`
+const queryOrderId = route.query.orderId || route.query.MerchantTradeNo || route.query.order_id
+const orderId = queryOrderId
+  ? String(queryOrderId)
+  : `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${Math.floor(
+      Math.random() * 1000000,
+    )
+      .toString()
+      .padStart(6, '0')}`
 
 const order = computed(() => ({
   id: orderId,
