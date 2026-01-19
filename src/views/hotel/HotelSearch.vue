@@ -401,7 +401,15 @@ watch(
             @click="handleGoToDetail(hotel.id)"
             class="cursor-pointer"
           >
-            <HotelCard :hotel="hotel" />
+            <HotelCard
+              :hotel="hotel"
+              :search-params="{
+                start_date: range?.[0] ? formatDate(range[0]) : '',
+                end_date: range?.[1] ? formatDate(range[1]) : '',
+                adults: peopleConfig.people,
+                rooms: peopleConfig.rooms,
+              }"
+            />
           </div>
           <div v-if="hotels.length === 0 && !error" class="text-center py-20 text-gray-400">
             沒有符合條件的飯店，試著調整篩選條件吧！
