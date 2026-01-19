@@ -8,6 +8,7 @@ import Support from '@/views/Support.vue'
 import LoginModel from '@/views/user/LoginModel.vue'
 import TravelDNAIntro from '@/views/travel-dna/TravelDNAIntro.vue'
 import HotelMapSearch from '@/views/hotel/HotelMapSearch.vue'
+import AuthCallback from '@/views/user/AuthCallback.vue'
 
 
 // Lazy Loading
@@ -50,6 +51,12 @@ const router = createRouter({
       name: 'login',
       component: LoginModel,
       meta: { showAppNavbar: true, showFooter: true },
+    },
+    {
+      path: '/auth/callback',
+      name: 'authCallback',
+      component: AuthCallback,
+      meta: { showAppNavbar: false, showFooter: false },
     },
     {
       path: '/hotels', //RWD-OK
