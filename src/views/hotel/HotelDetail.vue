@@ -119,6 +119,7 @@
               NT$ {{ hotel?.min_price.toLocaleString() }}
             </div>
             <button
+              @click="scrollToRooms"
               class="w-full md:w-auto bg-primary text-white text-base px-10 py-3 md:py-[10px] rounded-xl md:rounded-[20px] hover:bg-main transition mt-3"
             >
               查看房間詳情
@@ -193,14 +194,15 @@
         </div>
       </div>
 
-      <section class="mb-10">
+      <section class="mb-10" id="room-section">
         <div
           class="bg-white border border-gray-300 rounded-full p-2 hidden md:flex md:gap-[12px] z-60 shadow-sm"
         >
           <button
-            v-for="tag in ['房型', '房客評論', '服務及設施', '政策']"
+            v-for="tag in ['房型', '服務及設施', '房客評論', '政策']"
             :key="tag"
-            class="px-6 py-2 bg-primary text-white rounded-full text-lg"
+            @click="handleTagClick(tag)"
+            class="px-6 py-2 bg-primary text-white rounded-full text-lg hover:bg-main_800 transition-colors"
           >
             {{ tag }}
           </button>
@@ -261,13 +263,87 @@
               >
                 立即預定
               </button>
-
-              <button
-                class="bg-white text-primary hover:text-primary/50 border border-primary px-[40px] py-[10px] rounded-full mt-4 font-bold"
-              >
-                加入收藏
-              </button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="mb-10 p-5 rounded-[20px] border border-gray-300 bg-white"
+        id="facilities-section"
+      >
+        <h3 class="text-2xl font-bold mb-6 text-dark flex items-center gap-2">服務及設施</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Column 1: Cleaning Services -->
+          <div class="space-y-4">
+            <h4 class="font-bold text-lg text-dark border-b border-gray-200 pb-2">清潔服務</h4>
+            <ul class="space-y-3 text-gray-600">
+              <li class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>洗衣間
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>乾洗
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>熨燙服務
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>外送洗衣服務
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>洗衣服務
+              </li>
+            </ul>
+          </div>
+
+          <!-- Column 2: Safety Facilities -->
+          <div class="space-y-4">
+            <h4 class="font-bold text-lg text-dark border-b border-gray-200 pb-2">安全設施</h4>
+            <ul class="space-y-3 text-gray-600">
+              <li class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>煙霧感應器
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>公共區域監視器
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>滅火器
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>保全人員
+              </li>
+            </ul>
+          </div>
+
+          <!-- Column 3: Front Desk Services -->
+          <div class="space-y-4">
+            <h4 class="font-bold text-lg text-dark border-b border-gray-200 pb-2">櫃台服務</h4>
+            <ul class="space-y-3 text-gray-600">
+              <li class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>櫃檯保險箱
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>行李寄存免費
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>英文翻譯
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Dynamic Facilities from DB -->
+        <div v-if="hotel?.facilities?.length" class="mt-8 pt-8 border-t border-gray-200">
+          <h4 class="font-bold text-lg text-dark mb-4">其他設施</h4>
+          <div class="flex flex-wrap gap-3">
+            <span
+              v-for="(facility, index) in hotel.facilities"
+              :key="index"
+              class="px-4 py-2 bg-gray-50 text-gray-700 rounded-lg text-sm border border-gray-100"
+            >
+              {{ facility }}
+            </span>
           </div>
         </div>
       </section>
@@ -423,6 +499,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { ref, computed, onMounted } from 'vue'
 import { useOrderStore } from '@/stores/orderStore'
+import { useAuthStore } from '@/stores/auth'
 
 interface Hotel {
   id: string
@@ -476,8 +553,14 @@ interface Review {
 const route = useRoute()
 const router = useRouter()
 const orderStore = useOrderStore()
+const authStore = useAuthStore()
 
 const handleBook = (room: Room) => {
+  if (!authStore.isLoggedIn) {
+    alert('請先登入會員以完成結帳')
+    return
+  }
+
   orderStore.setOrder({
     title: hotel.value?.name || '未知名稱',
     subtitle: room.name,
@@ -487,6 +570,29 @@ const handleBook = (room: Room) => {
     image: room.image_url,
   })
   router.push('/orders/checkout')
+}
+
+const scrollToRooms = () => {
+  const element = document.getElementById('room-section')
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
+const handleTagClick = (tag: string) => {
+  const map: Record<string, string> = {
+    房型: 'room-section',
+    服務及設施: 'facilities-section',
+    // 其他標籤暫時無對應 ID
+  }
+
+  const id = map[tag]
+  if (id) {
+    const element = document.getElementById(id)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
 }
 
 const hotel = ref<Hotel | null>(null)
@@ -560,6 +666,15 @@ onMounted(async () => {
         features: [...(rule?.features ?? mockFeaturesDefault)],
       }
     })
+
+    // 讓評論的房型隨機帶入飯店有的房型
+    if (rooms.value.length > 0) {
+      reviews.value = reviews.value.map((review) => ({
+        ...review,
+        roomType: rooms.value[Math.floor(Math.random() * rooms.value.length)].name,
+      }))
+    }
+
     error.value = null
   } catch (err: unknown) {
     console.error('[HotelDetail error]', err)
@@ -696,7 +811,7 @@ const onTouchEnd = () => {
 
 // 動態生成選項
 const memberTypes = computed(() => Array.from(new Set(reviews.value.map((r) => r.memberType))))
-const roomTypes = computed(() => Array.from(new Set(reviews.value.map((r) => r.roomType))))
+const roomTypes = computed(() => rooms.value.map((r) => r.name))
 
 // 篩選 + 排序後的評論
 const filteredReviews = computed(() => {
