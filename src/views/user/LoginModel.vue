@@ -236,8 +236,14 @@
 <script setup lang="ts">
 import { watch, ref, onUnmounted } from 'vue'
 import { supabase } from '@/utils/supabaseClient'
-import { exchangeToCookie, me } from '@/services/authApi'
-import type { SessionUser } from '@/services/authApi'
+// import { exchangeToCookie, me } from '@/services/authApi' // Removed
+// import type { SessionUser } from '@/services/authApi' // Removed
+
+// Simple local type definition matching Supabase user shape partially
+interface SessionUser {
+  id: string
+  email?: string
+}
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
@@ -250,7 +256,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (e: 'update:modelValue', v: boolean): void
-  (e: 'login', payload: { user: SessionUser }): void
+  (e: 'login', payload: { user: any }): void // Use any or strict type
   (e: 'signup'): void
   (e: 'forgot-password'): void
   (e: 'social', provider: 'google' | 'apple' | 'line'): void
@@ -272,16 +278,14 @@ const onSubmit = async () => {
     })
     if (signInError) throw signInError
 
-    const access_token = signInData.session?.access_token
-    if (!access_token) throw new Error('No access token')
+    const user = signInData.session?.user
+    if (!user) throw new Error('No user data')
 
-    await exchangeToCookie(access_token)
+    // No need to call old APIs
+    // await exchangeToCookie(access_token)
+    // const meRes = await me()
 
-    const meRes = await me()
-
-    if (!meRes?.user) throw new Error('登入失敗：cookie session 未建立')
-
-    emit('login', { user: meRes.user })
+    emit('login', { user })
     emit('update:modelValue', false)
   } catch (err: unknown) {
     console.error('[login] error:', err)
@@ -291,7 +295,8 @@ const onSubmit = async () => {
 
     if (err instanceof Error) {
       if (err.message.includes('Invalid login credentials')) {
-        errorMessage = '帳號或密碼錯誤,請確認:\n1. Email 是否正確\n2. 密碼是否正確\n3. 是否已完成 Email 驗證(請檢查信箱)'
+        errorMessage =
+          '帳號或密碼錯誤,請確認:\n1. Email 是否正確\n2. 密碼是否正確\n3. 是否已完成 Email 驗證(請檢查信箱)'
       } else if (err.message.includes('Email not confirmed')) {
         errorMessage = '請先到信箱完成 Email 驗證後再登入'
       } else {

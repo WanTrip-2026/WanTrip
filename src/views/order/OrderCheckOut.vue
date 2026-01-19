@@ -13,6 +13,7 @@ import iconLinePay from '@/assets/pay_img/LINE_Pay_logo_(2019).svg.png'
 import iconJkoPay from '@/assets/pay_img/uBKC2XeyRaWsA2sgjVFxTohcqQi6mmypd0MMWxdI.png'
 import { useOrderStore } from '@/stores/orderStore'
 import { useAuthStore } from '@/stores/auth'
+import { createOrder } from '@/services/orderApi'
 
 const orderStore = useOrderStore()
 const authStore = useAuthStore()
@@ -27,6 +28,9 @@ const product = reactive({
   date: orderData.date || '2025/01/02 09:00 - 18:00',
   note: orderData.note || '含免排隊 / 電子憑證',
   image: orderData.image || '',
+  price: orderData.price || 0,
+  address: orderData.address || '',
+  phone: orderData.phone || '',
 })
 
 const form = reactive({
@@ -65,15 +69,26 @@ const handleCheckout = async () => {
   }
 }
 
+const generateOrderId = () => {
+  const now = new Date()
+  return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${Math.floor(
+    Math.random() * 1000000,
+  )
+    .toString()
+    .padStart(6, '0')}`
+}
+
 const startAioPayment = async () => {
   try {
     isProcessing.value = true
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+    const orderId = generateOrderId()
 
     const response = await axios.post(`${apiBaseUrl}/payment/get-aio-params`, {
       amount: total.value,
       paymentMethod: selectedPayment.value, // 傳送關鍵字如 'credit', 'atm'
       userId: authStore.user?.id, // 傳送會員 ID
+      orderId: orderId,
     })
 
     if (!response.data.success) {
@@ -82,6 +97,31 @@ const startAioPayment = async () => {
 
     const params = response.data.data
     const actionUrl = params.actionUrl
+
+    // 建立訂單
+    await createOrder({
+      user_id: authStore.user?.id,
+      order_id: orderId,
+      title: product.title,
+      subtitle: product.subtitle,
+      date: product.date,
+      note: product.note,
+      price: product.price,
+      image: product.image,
+      checkInDate: '2025-12-31', // Mock dates for now
+      checkOutDate: '2026-01-01',
+      peopleNum: 2,
+      roomType: product.subtitle,
+      userInfo: {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+      },
+      hotelName: product.title,
+      orderAmount: product.price,
+      address: product.address,
+      phone: product.phone,
+    })
 
     const paymentForm = document.createElement('form')
     paymentForm.method = 'POST'
@@ -122,12 +162,40 @@ const startAioPayment = async () => {
 
 const startLinePay = async () => {
   try {
+    isProcessing.value = true
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+    const orderId = generateOrderId()
+
+    // 先建立訂單
+    await createOrder({
+      user_id: authStore.user?.id,
+      order_id: orderId,
+      title: product.title,
+      subtitle: product.subtitle,
+      date: product.date,
+      note: product.note,
+      price: product.price,
+      image: product.image,
+      checkInDate: '2025-12-31',
+      checkOutDate: '2026-01-01',
+      peopleNum: 2,
+      roomType: product.subtitle,
+      userInfo: {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+      },
+      hotelName: product.title,
+      orderAmount: product.price,
+      address: product.address,
+      phone: product.phone,
+    })
 
     const paymentPayload = {
       amount: total.value,
       productName: product.title,
       userId: authStore.user?.id, // 傳送會員 ID
+      orderId: orderId,
     }
 
     const response = await axios.post(`${apiBaseUrl}/payment/linepay/request`, paymentPayload)

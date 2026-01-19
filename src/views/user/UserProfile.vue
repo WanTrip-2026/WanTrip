@@ -208,16 +208,20 @@
                 <div class="flex h-[120px]">
                   <img
                     class="aspect-[4/3] object-cover min-w-10"
-                    :src="order.image || 'https://fakeimg.pl/300x200/'"
+                    :src="order.image_url || order.image || 'https://fakeimg.pl/300x200/'"
                     alt="產品照片"
                   />
                   <div class="flex flex-col justify-center gap-1 px-5">
-                    <h3 class="text-md lg:text-xl font-bold">{{ order.title }}</h3>
-                    <p class="text-sm">詳細：{{ order.subtitle }}</p>
-                    <p class="text-sm">
-                      訂單日期：{{ new Date(order.created_at).toLocaleDateString() }}
+                    <h3 class="text-md lg:text-xl font-bold">
+                      {{ order.hotel_name || order.title }}
+                    </h3>
+                    <p class="text-sm text-gray-600">訂單編號：{{ order.order_id || order.id }}</p>
+                    <p class="text-sm text-gray-600">
+                      住宿日期：{{ order.check_in_date }} - {{ order.check_out_date }}
                     </p>
-                    <p class="text-sm text-red-500 font-bold">NT$ {{ order.price }}</p>
+                    <p class="text-sm font-bold">
+                      總價：<span class="text-red-500">NT$ {{ order.price }}</span>
+                    </p>
                   </div>
                 </div>
                 <!-- 按鈕區可依需求加上功能 -->
@@ -282,12 +286,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import type { User } from '@supabase/supabase-js'
 import { supabase } from '@/utils/supabaseClient'
+import { useAuthStore } from '@/stores/auth'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 import HomePageCard from '@/components/layout/HomePageCard.vue'
 import { getUserOrders, type Order } from '@/services/orderApi'
+
+const authStore = useAuthStore()
 
 type ProfileRow = {
   id: string
@@ -333,48 +340,67 @@ const toggleEdit = () => {
 const loadMe = async () => {
   errorMsg.value = ''
   loadingProfile.value = true
-  console.log('Loading user profile...')
-  console.log('User session:', user.value)
+
+  // Wait for auth to be ready
+  if (!authStore.ready) {
+    // simpler to just return and let watch handle it, or wait
+    // But since we call this onMounted, we might need to wait manually or just rely on watch.
+    // actually, let's just proceed if ready, or return.
+  }
+
+  const currentUser = authStore.user
+  user.value = currentUser
+
+  if (!currentUser) {
+    errorMsg.value = '未登入'
+    loadingProfile.value = false
+    return
+  }
 
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/me`, {
-      method: 'GET',
-      credentials: 'include',
-    })
+    // 1. Fetch Profile
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', currentUser.id)
+      .single()
 
-    if (!res.ok) {
-      throw new Error('未登入或 session 失效')
+    if (error && error.code !== 'PGRST116') {
+      // PGRST116: JSON object requested, multiple (or no) rows returned
+      throw error
     }
 
-    const data = await res.json()
-    if (!data.user) {
-      throw new Error('未登入')
-    }
+    profile.value = data
 
-    // 用後端回傳的 user/profile 填表單
-    user.value = {
-      id: data.user.id,
-      email: data.user.email,
-      app_metadata: {},
-      user_metadata: {},
-      aud: 'authenticated',
-      created_at: data.user.created_at || new Date().toISOString(),
-    } as User
+    // 2. Fill Form
+    form.value.email = currentUser.email ?? ''
+    form.value.fullName = data?.full_name ?? currentUser.user_metadata?.full_name ?? ''
+    form.value.phone = data?.phone ?? currentUser.user_metadata?.phone ?? ''
+    form.value.gender = data?.gender ?? 'male'
+    form.value.birthday = data?.birthday ?? ''
 
-    form.value.email = data.user.email ?? ''
-    form.value.fullName = data.user.full_name ?? ''
-    form.value.phone = data.user.phone ?? ''
-    form.value.gender = data.user.gender ?? 'male'
-    form.value.birthday = data.user.birthday ?? ''
-
-    // 載入訂單
-    await loadOrders(data.user.id)
+    // 3. Load Orders
+    await loadOrders(currentUser.id)
   } catch (e: unknown) {
-    errorMsg.value = (e instanceof Error ? e.message : String(e)) || '載入會員資料失敗'
+    console.error(e)
+    errorMsg.value = '載入會員資料失敗'
   } finally {
     loadingProfile.value = false
   }
 }
+
+// Watch for auth changes to reload
+watch(
+  () => authStore.user,
+  (newUser) => {
+    if (newUser) loadMe()
+    else {
+      user.value = null
+      profile.value = null
+      orders.value = []
+    }
+  },
+)
 
 const loadOrders = async (userId: string) => {
   try {
