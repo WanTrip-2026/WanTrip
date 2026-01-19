@@ -117,6 +117,10 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
       const starNums = selectedStars.map((s) => parseInt(s)).filter((n) => !isNaN(n))
       params.append('star_ratings', starNums.join(','))
     }
+    const selectedTypes = HotelFiltered.find((m) => m.key === 'types')?.selected ?? []
+    if (selectedTypes.length > 0) {
+      params.append('types', selectedTypes.join(','))
+    }
 
     params.append('page', String(page))
     params.append('limit', String(limit))
