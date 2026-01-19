@@ -9,16 +9,22 @@ const errorMsg = ref('')
 
 onMounted(async () => {
   const id = route.params.id as string
-  console.log('[OrderConfirmation] Mounted with ID:', id)
-  if (id) {
-    try {
-      order.value = await getOrderById(id)
-    } catch (e: any) {
-      console.error('[OrderConfirmation] Error:', e)
-      errorMsg.value = e.message || '無法讀取訂單'
-    }
-  } else {
+
+  if (!id) {
     errorMsg.value = '無效的訂單編號'
+    return
+  }
+
+  try {
+    order.value = await getOrderById(id)
+  } catch (e: unknown) {
+    console.error('[OrderConfirmation] Error:', e)
+
+    if (e instanceof Error) {
+      errorMsg.value = e.message
+    } else {
+      errorMsg.value = '無法讀取訂單'
+    }
   }
 })
 </script>
@@ -36,9 +42,7 @@ onMounted(async () => {
               <h1 class="text-2xl md:text-3xl font-bold mb-2">
                 {{ order.hotel_name || order.title }}
               </h1>
-              <!-- Address is not currently saved in backend orders table, hiding or using fallback -->
-              <!-- <p class="text-dark_700 text-sm">000 台北市中山區南京西路???號</p> -->
-              <!-- <p class="text-dark_700 text-sm">(02)XXXX-XXXX</p> -->
+
               <div class="mt-4">
                 <span class="text-xs md:text-sm font-bold">總價</span>
                 <span class="text-xl md:text-2xl font-black ml-2 text-dark"
@@ -93,9 +97,7 @@ onMounted(async () => {
               </div>
               <div class="space-y-1">
                 <p class="text-dark_700 text-xs uppercase">電子郵件</p>
-                <p class="font-bold text-base break-all">
-                  {{ (order as any).contact_email || 'N/A' }}
-                </p>
+                <p class="font-bold text-base break-all">{{ order.contact_email || 'N/A' }}</p>
               </div>
               <div class="space-y-1">
                 <p class="text-dark_700 text-xs uppercase">電話</p>
@@ -113,7 +115,7 @@ onMounted(async () => {
             <!-- Map placeholder or functional map if implemented -->
             <!-- Functional Map -->
             <div
-              v-if="order.latitude && order.longitude"
+              v-if="order.latitude != null && order.longitude != null"
               class="w-full aspect-video rounded-[20px] bg-page flex items-center justify-center border border-gray-300 overflow-hidden"
             >
               <iframe

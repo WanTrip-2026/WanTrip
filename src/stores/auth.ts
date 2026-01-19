@@ -43,6 +43,10 @@ export const useAuthStore = defineStore('auth', () => {
     showLoginModal.value = false
   }
 
+  const setAuth = (sessionUser: User | null) => {
+    user.value = sessionUser
+  }
+
   return {
     user,
     isLoggedIn,
@@ -53,5 +57,6 @@ export const useAuthStore = defineStore('auth', () => {
     showLoginModal,
     openLoginModal,
     closeLoginModal,
+    setAuth,
   }
 })

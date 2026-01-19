@@ -122,6 +122,7 @@ const startAioPayment = async () => {
       orderAmount: product.price,
       address: product.address,
       phone: product.phone,
+      hotel_id: product.hotel_id,
     })
 
     const paymentForm = document.createElement('form')

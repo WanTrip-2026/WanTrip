@@ -196,7 +196,7 @@
 
       <section class="mb-10" id="room-section">
         <div
-          class="bg-white border border-gray-300 rounded-full p-2 hidden md:flex md:gap-[12px] z-60 shadow-sm"
+          class="bg-white border border-gray-300 rounded-full p-2 hidden md:flex md:gap-[12px] z-50 shadow-sm"
         >
           <button
             v-for="tag in ['房型', '服務及設施', '房客評論', '政策']"
@@ -558,25 +558,38 @@ const orderStore = useOrderStore()
 const authStore = useAuthStore()
 
 const handleBook = (room: Room) => {
+  console.log('handleBook called with room:', room)
   if (!authStore.isLoggedIn) {
     alert('請先登入會員以完成結帳')
     return
   }
 
-  orderStore.setOrder({
-    hotel_id: hotel.value?.id,
-    title: hotel.value?.name || '未知名稱',
-    subtitle: room.name,
-    date: '住宿',
-    note: room.features.join(' / '),
-    price: room.price,
-    image: room.image_url,
-    address: hotel.value?.address,
-    phone: hotel.value?.phone,
-    latitude: hotel.value?.latitude,
-    longitude: hotel.value?.longitude,
-  })
-  router.push('/orders/checkout')
+  if (!room) {
+    console.error('Room data is missing')
+    alert('無法取得房型資料，請重新整理頁面')
+    return
+  }
+
+  try {
+    orderStore.setOrder({
+      hotel_id: hotel.value?.id,
+      title: hotel.value?.name || '未知名稱',
+      subtitle: room.name || '未知房型',
+      date: '住宿',
+      note: Array.isArray(room.features) ? room.features.join(' / ') : '',
+      price: room.price || 0,
+      image: room.image_url || '',
+      address: hotel.value?.address,
+      phone: hotel.value?.phone,
+      latitude: hotel.value?.latitude,
+      longitude: hotel.value?.longitude,
+    })
+    console.log('Order set successfully, navigating to checkout...')
+    router.push('/orders/checkout')
+  } catch (err) {
+    console.error('Error setting order:', err)
+    alert('設定訂單資料時發生錯誤，請稍後再試')
+  }
 }
 
 const scrollToRooms = () => {
