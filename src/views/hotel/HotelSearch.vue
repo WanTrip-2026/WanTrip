@@ -369,22 +369,35 @@ function goToMapSearch() {
   <main class="max-w-[1200px] mx-auto pt-24 bg-page px-5 lg:px-0">
     <!-- search-bar -->
     <section
-      class="max-w-[800px] mx-auto p-2 mb-10 bg-white rounded-[20px] md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-2 sticky shadow-sm z-20 search-bar-container"
+      class="max-w-[1200px] mx-auto p-2 mb-10 bg-white rounded-[24px] md:rounded-full border border-gray-300 flex flex-col md:flex-row items-stretch gap-2 sticky top-4 z-20 search-bar-container"
     >
-      <div
-        class="relative w-full rounded-full bg-gray-50 px-6 py-[5px] flex flex-col justify-center border border-gray-300 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all md:h-full flex-1"
-      >
-        <input
-          v-model="keyword"
-          type="text"
-          placeholder="想住哪～"
-          @click.stop="togglePicker('keyword')"
-          class="w-full pl-4 px-6 py-3 text-base text-black bg-transparent border-none bg-gray-50 rounded-full outline-none transition-all"
-        />
+      <div class="relative flex-[1.5] flex">
+        <div
+          class="w-full min-h-[70px] md:min-h-0 rounded-[20px] md:rounded-full px-7 flex flex-col justify-center border transition-all cursor-pointer"
+          :class="[
+            activePicker === 'keyword'
+              ? 'bg-white ring-1 ring-gray-300'
+              : 'bg-gray-50 border-transparent hover:bg-gray-100',
+          ]"
+          @click="togglePicker('keyword')"
+        >
+          <p
+            class="text-[11px] font-bold text-primary/70 uppercase tracking-wider mb-0.5 pointer-events-none"
+          >
+            目的地
+          </p>
+          <input
+            v-model="keyword"
+            type="text"
+            placeholder="想住哪～"
+            @focus="activePicker = 'keyword'"
+            @click.stop="activePicker = 'keyword'"
+            class="w-full text-base text-black bg-transparent border-none outline-none placeholder:text-gray-400"
+          />
+        </div>
       </div>
 
-      <!-- VueDatePicker -->
-      <div class="relative w-full md:h-full flex-1">
+      <div class="relative flex-1 flex">
         <VueDatePicker
           v-model="range"
           range
@@ -395,14 +408,23 @@ function goToMapSearch() {
           auto-apply
           hide-input-icon
           :clearable="false"
+          class="w-full"
           @update:model-value="handleDateChange"
-          @open="activePicker = 'none'"
+          @open="activePicker = 'date'"
+          @closed="activePicker = 'none'"
         >
           <template #dp-input>
             <div
-              class="w-full h-full rounded-full bg-gray-50 px-6 py-3 flex flex-col justify-center border border-gray-300 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all"
+              class="w-full min-h-[70px] h-full rounded-[20px] md:rounded-full px-7 flex flex-col justify-center border transition-all cursor-pointer"
+              :class="[
+                activePicker === 'date'
+                  ? 'bg-white ring-1 ring-gray-300'
+                  : 'bg-gray-50 border-transparent hover:bg-gray-100',
+              ]"
             >
-              <p class="text-[10px] font-bold text-primary/70 uppercase">入住 - 退房日期</p>
+              <p class="text-[11px] font-bold text-primary/70 uppercase tracking-wider mb-0.5">
+                入住 - 退房日期
+              </p>
               <input
                 :value="formatRangeDisplay()"
                 class="w-full bg-transparent text-sm text-black outline-none pointer-events-none"
@@ -414,18 +436,25 @@ function goToMapSearch() {
         </VueDatePicker>
       </div>
 
-      <div class="relative flex-1" ref="peoplePickerRef">
-        <label
+      <div class="relative flex-1 flex" ref="peoplePickerRef">
+        <div
           @click="togglePicker('people')"
-          class="h-full rounded-full bg-gray-50 px-6 py-3 flex flex-col justify-center border border-gray-300 transition-all hover:ring-2 hover:ring-primary/50 cursor-pointer"
+          class="w-full min-h-[70px] md:min-h-0 rounded-[20px] md:rounded-full px-7 flex flex-col justify-center border transition-all cursor-pointer"
+          :class="[
+            activePicker === 'people'
+              ? 'bg-white ring-1 ring-gray-300'
+              : 'bg-gray-50 border-transparent hover:bg-gray-100',
+          ]"
         >
-          <p class="text-[10px] font-bold leading-tight text-primary/70 uppercase tracking-wider">
+          <p
+            class="text-[11px] font-bold text-primary/70 uppercase tracking-wider mb-0.5 pointer-events-none"
+          >
             人數、需求
           </p>
-          <div class="min-h-[24px] flex items-center justify-between">
-            <span class="text-sm font-medium text-black">{{ peopleDisplayText }}</span>
+          <div class="flex items-center justify-between pointer-events-none">
+            <span class="text-sm font-medium text-black truncate">{{ peopleDisplayText }}</span>
             <svg
-              class="h-4 w-4 text-primary/30 transition-transform duration-300"
+              class="h-4 w-4 text-primary/40 transition-transform duration-300"
               :class="{ 'rotate-180': activePicker === 'people' }"
               fill="none"
               stroke="currentColor"
@@ -439,25 +468,24 @@ function goToMapSearch() {
               />
             </svg>
           </div>
-        </label>
+        </div>
 
         <transition name="fade">
           <div
             v-if="activePicker === 'people'"
             @click.stop
-            class="absolute top-[calc(100%+12px)] space-y-5 left-0 z-[100] w-[280px] rounded-[20px] bg-white p-6 shadow-2xl ring-1 ring-black/5"
+            class="absolute top-[calc(100%+12px)] left-0 md:right-0 md:left-auto z-[100] w-full md:w-[300px] rounded-[24px] bg-white p-6 border border-gray-300 space-y-6"
           >
-            <!-- 房間數 -->
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm font-bold text-slate-800">房間</p>
-                <p class="text-[10px] text-slate-400">所需的客房數量</p>
+                <p class="text-[11px] text-slate-400">所需的客房數量</p>
               </div>
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-4">
                 <button
                   @click.stop="peopleConfig.rooms > 1 ? peopleConfig.rooms-- : null"
                   type="button"
-                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 active:scale-95 transition-all"
+                  class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
                 >
                   -
                 </button>
@@ -465,24 +493,22 @@ function goToMapSearch() {
                 <button
                   @click.stop="peopleConfig.rooms++"
                   type="button"
-                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 active:scale-95 transition-all"
+                  class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
                 >
                   +
                 </button>
               </div>
             </div>
-
-            <!-- 旅客數 -->
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-sm font-bold text-slate-800">旅客</p>
-                <p class="text-[10px] text-slate-400">總人數</p>
+                <p class="text-[11px] text-slate-400">總人數</p>
               </div>
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-4">
                 <button
                   @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null"
                   type="button"
-                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 active:scale-95 transition-all"
+                  class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
                 >
                   -
                 </button>
@@ -490,7 +516,7 @@ function goToMapSearch() {
                 <button
                   @click.stop="peopleConfig.people++"
                   type="button"
-                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 active:scale-95 transition-all"
+                  class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
                 >
                   +
                 </button>
@@ -499,12 +525,13 @@ function goToMapSearch() {
           </div>
         </transition>
       </div>
-      <div class="border border-gray-300 rounded-full md:h-full">
+
+      <div class="flex">
         <button
           @click="onSearch"
-          class="bg-primary hover:bg-[#6D8FA3] text-white px-6 py-3 rounded-full transition-colors whitespace-nowrap"
+          class="w-full md:w-auto min-h-[70px] md:h-full md:px-12 rounded-[20px] md:rounded-full bg-primary hover:bg-main_800 text-white transition-all whitespace-nowrap flex items-center justify-center font-bold text-lg"
         >
-          搜尋
+          <font-awesome-icon icon="search" class="mr-2" /> 搜尋
         </button>
       </div>
     </section>
@@ -710,6 +737,35 @@ function goToMapSearch() {
 </template>
 
 <style>
+/* 讓外層容器在桌機版有一個固定高度參考 */
+@media (min-width: 768px) {
+  .search-bar-container {
+    height: 86px;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+:deep(.dp__main) {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+:deep(.dp__input_wrap) {
+  height: 100%;
+  width: 100%;
+}
+
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
