@@ -272,6 +272,7 @@ import LoginModal from '@/views/user/LoginModel.vue'
 import RegisterModal from '@/views/user/RegisterModal.vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import type { SessionUser } from '@/services/authApi'
 
 const router = useRouter()
 const route = useRoute()
@@ -331,7 +332,7 @@ const closeAllAuthModal = () => {
   auth.closeLoginModal()
   isRegisterModalOpen.value = false
 }
-const handleLogin = ({ user }: { user: any }) => {
+const handleLogin = ({ user }: { user: SessionUser }) => {
   auth.setAuth(user)
   auth.closeLoginModal()
 }
@@ -342,8 +343,41 @@ const handleSignup = () => {
 const handleForgotPassword = () => {
   auth.closeLoginModal()
 }
-const handleSocial = (provider: 'google' | 'apple' | 'line') => {
-  console.log('social login:', provider)
+const handleSocial = async (provider: 'google' | 'apple' | 'line') => {
+  try {
+    console.log('social login:', provider)
+
+    // 關閉登入 Modal
+    isLoginModalOpen.value = false
+
+    // 使用 Supabase OAuth 登入
+    const { supabase } = await import('@/utils/supabaseClient')
+
+    // 將 provider 映射到 Supabase 支援的 provider
+    let supabaseProvider: 'google' | 'apple' = 'google'
+    if (provider === 'apple') {
+      supabaseProvider = 'apple'
+    } else if (provider === 'line') {
+      // LINE 需要特殊處理，如果 Supabase 不支援，可以改用其他方式
+      alert('LINE 登入功能開發中')
+      return
+    }
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: supabaseProvider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+
+    if (error) {
+      console.error('[OAuth] error:', error)
+      alert(`${provider} 登入失敗: ${error.message}`)
+    }
+  } catch (err) {
+    console.error('[handleSocial] error:', err)
+    alert('登入過程發生錯誤')
+  }
 }
 
 watch(

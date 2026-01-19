@@ -298,7 +298,6 @@ const onSubmit = async () => {
         errorMessage = err.message
       }
     }
-
     alert(errorMessage)
   }
 }

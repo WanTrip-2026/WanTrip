@@ -13,11 +13,10 @@ import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 
-const auth = useAuthStore()
 const route = useRoute()
 
 onMounted(() => {
-  auth.init()
+  // auth.init() is called in main.ts
 })
 
 const showAppNavbar = computed(() => {
