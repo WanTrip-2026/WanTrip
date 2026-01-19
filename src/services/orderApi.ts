@@ -10,6 +10,9 @@ export interface Order {
   check_in_date?: string
   check_out_date?: string
   order_id?: string
+  hotel_id?: string
+  latitude?: number
+  longitude?: number
   // Legacy/Frontend props (optional now)
   title?: string
   subtitle?: string
@@ -45,4 +48,14 @@ export async function createOrder(orderData: object) {
   if (!r.ok) throw new Error(data?.message || 'create order failed')
 
   return data
+}
+
+export async function getOrderById(orderId: string) {
+  console.log(`[getOrderById] Fetching: ${API}/orders/${orderId}`)
+  const r = await fetch(`${API}/orders/${orderId}`)
+  console.log(`[getOrderById] Status: ${r.status}`)
+  const data = await r.json().catch(() => ({}))
+  console.log(`[getOrderById] Data:`, data)
+  if (!r.ok) throw new Error(data?.message || 'fetch order failed')
+  return data as Order
 }

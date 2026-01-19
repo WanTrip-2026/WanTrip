@@ -10,7 +10,6 @@ import TravelDNAIntro from '@/views/travel-dna/TravelDNAIntro.vue'
 import HotelMapSearch from '@/views/hotel/HotelMapSearch.vue'
 import AuthCallback from '@/views/user/AuthCallback.vue'
 
-
 // Lazy Loading
 const HotelSearch = () => import('@/views/hotel/HotelSearch.vue')
 const HotelDetail = () => import('@/views/hotel/HotelDetail.vue')
@@ -126,7 +125,7 @@ const router = createRouter({
     },
 
     {
-      path: '/orders/confirmation', //RWD-OK
+      path: '/orders/confirmation/:id', //RWD-OK
       name: 'orderConfirmation',
       component: OrderConfirmation,
       meta: { showAppNavbar: true, showFooter: true },

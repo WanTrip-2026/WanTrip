@@ -25,7 +25,6 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabaseClient'
-import { exchangeToCookie, me } from '@/services/authApi'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
@@ -46,29 +45,17 @@ onMounted(async () => {
       throw sessionError
     }
 
-    if (!data.session) {
+    if (!data.session?.user) {
       throw new Error('未能取得登入資訊')
     }
 
-    // 將 Supabase session 轉換為後端 cookie
-    const access_token = data.session.access_token
-    await exchangeToCookie(access_token)
-
-    // 取得使用者資訊
-    const meRes = await me()
-
-    if (!meRes?.user) {
-      throw new Error('登入失敗：無法取得使用者資訊')
-    }
-
-    // 更新 auth store
-    auth.setAuth(meRes.user)
+    // 更新 auth store (已經在 main.ts 初始化監聽了，但這裡可以做個雙重確認或直接導轉)
+    // auth.setAuth(data.session.user) // authStore might catch it automatically via onAuthStateChange
 
     // 登入成功，導向首頁
     setTimeout(() => {
       router.push('/')
     }, 500)
-
   } catch (err: unknown) {
     console.error('[OAuth callback] error:', err)
     error.value = err instanceof Error ? err.message : '登入過程發生錯誤'

@@ -31,6 +31,7 @@ const product = reactive({
   price: orderData.price || 0,
   address: orderData.address || '',
   phone: orderData.phone || '',
+  hotel_id: orderData.hotel_id || '',
 })
 
 const form = reactive({
@@ -189,6 +190,7 @@ const startLinePay = async () => {
       orderAmount: product.price,
       address: product.address,
       phone: product.phone,
+      hotel_id: product.hotel_id,
     })
 
     const paymentPayload = {
