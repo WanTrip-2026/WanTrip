@@ -40,34 +40,67 @@
               </div>
             </label>
 
-            <DatePicker v-model.range="range" :columns="2" color="teal">
-              <template #default="{ inputValue, inputEvents }">
-                <label
-                  class="flex-[0.7] rounded-[20px] bg-white px-5 py-3 flex flex-col gap-1 shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 cursor-pointer transition-all hover:ring-accent/50"
-                  v-on="inputEvents.start"
-                >
-                  <p class="text-xs font-bold leading-tight text-primary/70">入住退房日期</p>
-                  <input
-                    :value="inputValue.start ? `${inputValue.start} - ${inputValue.end}` : ''"
-                    class="w-full bg-transparent text-sm outline-none pointer-events-none placeholder:text-primary/35 font-medium"
-                    placeholder="點選選擇日期"
-                    readonly
-                  />
-                </label>
-              </template>
-            </DatePicker>
-
-            <div class="relative flex-1" ref="peoplePickerRef">
-              <label
-                @click="isPeoplePickerOpen = !isPeoplePickerOpen"
-                class="rounded-[20px] bg-white px-5 py-3 flex flex-col gap-1 shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
+            <div class="relative flex flex-1">
+              <VueDatePicker
+                v-model="range"
+                range
+                :min-range="1"
+                :enable-time-picker="false"
+                format="yyyy-MM-dd"
+                :min-date="new Date()"
+                auto-apply
+                hide-input-icon
+                :clearable="false"
+                class="w-full"
+                @update:model-value="handleDateChange"
+                @open="activePicker = 'date'"
+                @closed="activePicker = 'none'"
               >
-                <p class="text-xs font-bold leading-tight text-primary/70">人數、需求</p>
-                <div class="min-h-[24px] flex items-center justify-between">
-                  <span class="text-sm font-medium text-primary">{{ peopleDisplayText }}</span>
+                <template #dp-input>
+                  <div
+                    class="w-full min-h-[50px] md:min-h-[70px] h-full rounded-[12px] md:rounded-full px-5 md:px-7 flex flex-col justify-center border transition-all cursor-pointer"
+                    :class="[
+                      activePicker === 'date'
+                        ? 'bg-white ring-1 ring-gray-300'
+                        : 'bg-gray-50 border-transparent hover:bg-gray-100',
+                    ]"
+                  >
+                    <p
+                      class="text-[10px] md:text-[12px] font-bold text-primary/70 uppercase tracking-wider mb-0.5"
+                    >
+                      入住 - 退房日期
+                    </p>
+                    <input
+                      :value="formatRangeDisplay()"
+                      class="w-full bg-transparent text-sm md:text-[18px] text-black outline-none pointer-events-none"
+                      placeholder="點選選擇日期"
+                      readonly
+                    />
+                  </div>
+                </template>
+              </VueDatePicker>
+            </div>
+
+            <div class="relative flex-1 flex" ref="peoplePickerRef">
+              <div
+                @click="togglePicker('people')"
+                class="w-full min-h-[70px] md:min-h-0 rounded-[20px] md:rounded-full px-7 flex flex-col justify-center border transition-all cursor-pointer"
+                :class="[
+                  activePicker === 'people'
+                    ? 'bg-white ring-1 ring-gray-300'
+                    : 'bg-gray-50 border-transparent hover:bg-gray-100',
+                ]"
+              >
+                <p
+                  class="text-[12px] font-bold text-primary/70 uppercase tracking-wider mb-0.5 pointer-events-none"
+                >
+                  人數、需求
+                </p>
+                <div class="flex items-center justify-between pointer-events-none">
+                  <span class="text-base text-black truncate">{{ peopleDisplayText }}</span>
                   <svg
-                    class="h-4 w-4 text-primary/30 transition-transform duration-300"
-                    :class="{ 'rotate-180': isPeoplePickerOpen }"
+                    class="h-4 w-4 text-primary/40 transition-transform duration-300"
+                    :class="{ 'rotate-180': activePicker === 'people' }"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -80,68 +113,63 @@
                     />
                   </svg>
                 </div>
-              </label>
+              </div>
 
               <transition name="fade">
                 <div
-                  v-if="isPeoplePickerOpen"
-                  class="absolute top-[calc(100%+8px)] left-0 z-[100] w-full rounded-[30px] bg-white p-6 shadow-2xl ring-1 ring-primary/5"
+                  v-if="activePicker === 'people'"
+                  @click.stop
+                  class="absolute top-[calc(100%+12px)] left-0 md:right-0 md:left-auto z-[100] w-full md:w-[300px] rounded-[24px] bg-white p-6 border border-gray-300 shadow-[0px_8px_24px_rgba(0,0,0,0.08)] space-y-6"
                 >
-                  <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                      <span class="text-sm font-bold text-primary">成人</span>
-                      <div class="flex items-center gap-3">
-                        <button
-                          @click.stop="peopleConfig.adults > 1 ? peopleConfig.adults-- : null"
-                          type="button"
-                          class="w-8 h-8 rounded-full border border-primary/10 flex items-center justify-center hover:bg-primary/5"
-                        >
-                          -
-                        </button>
-                        <span class="text-sm font-medium w-4 text-center">{{
-                          peopleConfig.adults
-                        }}</span>
-                        <button
-                          @click.stop="peopleConfig.adults++"
-                          type="button"
-                          class="w-8 h-8 rounded-full border border-primary/10 flex items-center justify-center hover:bg-primary/5"
-                        >
-                          +
-                        </button>
-                      </div>
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-bold text-primary">房間</p>
+                      <p class="text-[11px] text-gray-400">所需的客房數量</p>
                     </div>
-                    <div class="flex items-center justify-between">
-                      <span class="text-sm font-bold text-primary">孩童</span>
-                      <div class="flex items-center gap-3">
-                        <button
-                          @click.stop="peopleConfig.children > 0 ? peopleConfig.children-- : null"
-                          type="button"
-                          class="w-8 h-8 rounded-full border border-primary/10 flex items-center justify-center hover:bg-primary/5"
-                        >
-                          -
-                        </button>
-                        <span class="text-sm font-medium w-4 text-center">{{
-                          peopleConfig.children
-                        }}</span>
-                        <button
-                          @click.stop="peopleConfig.children++"
-                          type="button"
-                          class="w-8 h-8 rounded-full border border-primary/10 flex items-center justify-center hover:bg-primary/5"
-                        >
-                          +
-                        </button>
-                      </div>
+                    <div class="flex items-center gap-4">
+                      <button
+                        @click.stop="peopleConfig.rooms > 1 ? peopleConfig.rooms-- : null"
+                        type="button"
+                        class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                      >
+                        -
+                      </button>
+                      <span class="text-sm font-bold w-4 text-center">{{
+                        peopleConfig.rooms
+                      }}</span>
+                      <button
+                        @click.stop="peopleConfig.rooms++"
+                        type="button"
+                        class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                      >
+                        +
+                      </button>
                     </div>
-                    <label
-                      class="flex items-center justify-between pt-2 border-t border-gray-50 cursor-pointer"
-                    >
-                      <span class="text-sm font-bold text-primary">可帶寵物</span>
-                      <input
-                        type="checkbox"
-                        v-model="peopleConfig.hasPet"
-                        class="w-5 h-5 accent-accent cursor-pointer"
-                      />
-                    </label>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-bold text-primary">旅客</p>
+                      <p class="text-[11px] text-gray-400">總人數</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                      <button
+                        @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null"
+                        type="button"
+                        class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                      >
+                        -
+                      </button>
+                      <span class="text-sm font-bold w-4 text-center">{{
+                        peopleConfig.people
+                      }}</span>
+                      <button
+                        @click.stop="peopleConfig.people++"
+                        type="button"
+                        class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 </div>
               </transition>
@@ -165,7 +193,7 @@
         @click="goBackToList"
         class="items-center px-8 py-3 rounded-[18px] bg-primary hover:bg-main_800 shadow text-sm font-medium text-white transition"
       >
-        <FontAwesomeIcon :icon="['fas', 'chevron-left']" />
+        <font-awesome-icon icon="chevron-left" />
         返回搜尋結果列表
       </button>
       <button
@@ -202,7 +230,7 @@
             : 'left-[420px] w-12 h-12 rounded-lg',
         ]"
       >
-        <FontAwesomeIcon :icon="isListOpen ? ['fas', 'chevron-left'] : ['fas', 'chevron-right']" />
+        <font-awesome-icon :icon="isListOpen ? 'chevron-left' : 'chevron-right'" />
       </button>
       <div
         v-show="isListOpen"
@@ -213,7 +241,7 @@
           class="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-[20px]"
         >
           <div class="animate-spin">
-            <FontAwesomeIcon :icon="['fas', 'circle-notch']" spin class="text-accent/60 text-5xl" />
+            <font-awesome-icon icon="circle-notch" spin class="text-accent/60 text-5xl" />
           </div>
           <p class="text-primary font-bold mt-4">搜尋中 ···</p>
         </div>
@@ -223,7 +251,7 @@
           class="flex flex-col items-center justify-center h-full py-10 text-center"
         >
           <div class="bg-accent/10 rounded-full p-5 mb-5">
-            <FontAwesomeIcon :icon="['fas', 'magnifying-glass']" class="text-4xl text-accent/60" />
+            <font-awesome-icon icon="search" class="text-4xl text-accent/60" />
           </div>
           <h3 class="text-lg font-bold text-primary">找不到符合的飯店</h3>
           <p class="text-primary/60 text-sm mt-1">請嘗試變更關鍵字或篩選條件</p>
@@ -432,7 +460,8 @@
 <script setup lang="ts">
 /// <reference types="@types/google.maps" />
 import { reactive, ref, shallowRef, watch, computed, onMounted, onUnmounted } from 'vue'
-import { DatePicker } from 'v-calendar'
+import { VueDatePicker } from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -547,17 +576,6 @@ function goBackToList() {
 
 type FacilityName = string
 
-const peopleConfig = reactive({
-  adults: 2,
-  children: 0,
-  hasPet: false,
-})
-
-const range = ref({
-  start: new Date(),
-  end: new Date(new Date().setDate(new Date().getDate() + 1)),
-})
-
 const minPrice = 0
 const maxPrice = 15000
 const step = 500
@@ -566,6 +584,56 @@ const priceRange = ref<PriceRange>({
   min: minPrice,
   max: maxPrice,
 })
+
+const activePicker = ref('none')
+const peoplePickerRef = ref<HTMLElement | null>(null)
+
+const peopleConfig = reactive({
+  rooms: 1,
+  people: 2,
+})
+
+const togglePicker = (name: string) => {
+  activePicker.value = activePicker.value === name ? 'none' : name
+}
+
+const peopleDisplayText = computed(() => {
+  return `${peopleConfig.rooms} 間房 · ${peopleConfig.people} 位旅客`
+})
+
+// 預設日期：今天與明天
+const range = ref<[Date, Date]>([
+  new Date(),
+  new Date(new Date().setDate(new Date().getDate() + 1)),
+])
+
+// 3. 工具函數
+const formatDate = (date: Date | null): string => {
+  if (!date) return ''
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+const formatRangeDisplay = (): string => {
+  if (!range.value || range.value.length !== 2) return ''
+  const [start, end] = range.value
+  return start && end ? `${formatDate(start)} - ${formatDate(end)}` : ''
+}
+
+const handleDateChange = (newRange: Date[] | null) => {
+  if (!newRange || newRange.length !== 2) return
+  const [start, end] = newRange
+  if (start && end) {
+    const diffDays = (end.getTime() - start.getTime()) / 86400000
+    if (diffDays < 1) {
+      const fixedEnd = new Date(start)
+      fixedEnd.setDate(start.getDate() + 1)
+      range.value = [start, fixedEnd]
+    }
+  }
+}
 
 // 確認價錢範圍的最小.最大值
 watch(
@@ -589,16 +657,6 @@ const toggleMapType = () => {
   mapInstance.value.setMapTypeId(newType)
   currentMapType.value = newType
 }
-
-const isPeoplePickerOpen = ref(false)
-const peoplePickerRef = ref<HTMLElement | null>(null)
-
-const peopleDisplayText = computed(() => {
-  let text = `${peopleConfig.adults} 位成人`
-  if (peopleConfig.children > 0) text += `｜${peopleConfig.children} 位孩童`
-  if (peopleConfig.hasPet) text += `｜帶寵物`
-  return text
-})
 
 const isListOpen = ref(true)
 const isFilterOpen = ref(false)
@@ -802,42 +860,72 @@ const fetchHotels = async () => {
     isMapLoading.value = true
     error.value = null
     const apiUrl = import.meta.env.VITE_API_BASE_URL
-    const params = new URLSearchParams()
 
-    // 第一步：先組裝篩選參數
-    params.append('page', '1')
-    params.append('limit', '1000')
+    // 用來儲存所有分次抓回來的飯店
+    let allHotels: Hotel[] = []
+    const batchSize = 200
+    const maxTotal = 1000
+    const pagesNeeded = maxTotal / batchSize
 
-    if (keyword.value.trim()) {
-      params.append('keyword', keyword.value.trim())
+    // 使用迴圈來完成「分批接龍」，抓取 1 到 5 頁
+    for (let i = 1; i <= pagesNeeded; i++) {
+      const params = new URLSearchParams()
+
+      // 組裝參數
+      params.append('adults', peopleConfig.people.toString() || '2')
+      params.append('rooms', peopleConfig.rooms.toString() || '1')
+
+      if (range.value && range.value.length === 2) {
+        params.append('start_date', formatDate(range.value[0]))
+        params.append('end_date', formatDate(range.value[1]))
+      }
+
+      params.append('page', i.toString())
+      params.append('limit', batchSize.toString())
+
+      if (keyword.value.trim()) {
+        params.append('keyword', keyword.value.trim())
+      }
+
+      // 處理星級、設施、類型等篩選
+      const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
+      if (selectedFacilities.length > 0)
+        params.append('facility_names', selectedFacilities.join(','))
+
+      const selectedTypes = HotelFiltered.find((m) => m.key === 'types')?.selected ?? []
+      if (selectedTypes.length > 0) params.append('types', selectedTypes.join(','))
+
+      const selectedStars = HotelFiltered.find((m) => m.key === 'star_rating')?.selected ?? []
+      if (selectedStars.length > 0) {
+        const starNums = selectedStars.map((s) => parseInt(s, 10)).filter((n) => Number.isFinite(n))
+        if (starNums.length > 0) params.append('star_ratings', starNums.join(','))
+      }
+
+      // 去後端拿資料
+      const finalUrl = `${apiUrl}/hotels?${params.toString()}`
+
+      const res = await fetch(finalUrl)
+      if (!res.ok) throw new Error(`第 ${i} 頁取得飯店失敗`)
+
+      const data = await res.json()
+
+      // 將這一頁的飯店加入總清單
+      const pageHotels = data.hotels || []
+      allHotels = [...allHotels, ...pageHotels]
+
+      // 如果這一頁抓到的數量小於 batchSize，代表後面沒資料了，提早結束迴圈
+      if (pageHotels.length < batchSize) break
     }
 
-    // 處理星級、設施、類型等篩選
-    const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
-    if (selectedFacilities.length > 0) params.append('facility_names', selectedFacilities.join(','))
-
-    const selectedTypes = HotelFiltered.find((m) => m.key === 'types')?.selected ?? []
-    if (selectedTypes.length > 0) params.append('types', selectedTypes.join(','))
-
-    const selectedStars = HotelFiltered.find((m) => m.key === 'star_rating')?.selected ?? []
-    if (selectedStars.length > 0) {
-      const starNums = selectedStars.map((s) => parseInt(s, 10)).filter((n) => Number.isFinite(n))
-      if (starNums.length > 0) params.append('star_ratings', starNums.join(','))
-    }
-
-    // 第二步：去後端拿「篩選後」的資料
-    const res = await fetch(`${apiUrl}/hotels?${params.toString()}`)
-    if (!res.ok) throw new Error('取得飯店失敗')
-
-    const data = await res.json()
-    hotels.value = (data.hotels || []).map((h: Hotel) => ({
+    // 將合併後的結果存入 hotels.value，並保留 map 處理
+    hotels.value = allHotels.map((h: Hotel) => ({
       ...h,
       image_url:
         h.image_url ||
         'https://images.trvl-media.com/lodging/1000000/30000/25200/25187/adae54af.jpg',
     }))
 
-    // 第三步：資料拿到了，才開始畫地圖標記
+    // 繪製標記
     await renderMarkers()
 
     if (hotels.value.length === 0) {
@@ -1084,7 +1172,6 @@ function clearOptions(key: string) {
   animation: slide-in-left 0.3s ease-out forwards;
 }
 
-/* 隱藏捲軸但保持滾動功能 */
 .overflow-y-auto::-webkit-scrollbar {
   width: 4px;
 }
@@ -1109,5 +1196,24 @@ function clearOptions(key: string) {
 .price-marker:hover {
   transform: scale(1.2);
   transition: transform 0.2s ease;
+}
+
+:deep(.dp__menu) {
+  border-radius: 20px !important;
+  background-color: #ffffff;
+  padding: 20px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
+  border: 1px solid #d1d5db;
+  z-index: 1000;
+}
+
+:deep(.dp__range_start),
+:deep(.dp__range_end) {
+  background-color: #2f3d4d !important;
+  color: #fff !important;
+}
+
+:deep(.dp__range_between) {
+  background-color: #f1f5f9 !important;
 }
 </style>
