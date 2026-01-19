@@ -516,6 +516,8 @@ interface Hotel {
   rating_score?: number
   rating_text?: string
   rating_count?: number
+  latitude?: number
+  longitude?: number
 }
 
 interface HotelImage {
@@ -562,6 +564,7 @@ const handleBook = (room: Room) => {
   }
 
   orderStore.setOrder({
+    hotel_id: hotel.value?.id,
     title: hotel.value?.name || '未知名稱',
     subtitle: room.name,
     date: '住宿',
@@ -570,6 +573,8 @@ const handleBook = (room: Room) => {
     image: room.image_url,
     address: hotel.value?.address,
     phone: hotel.value?.phone,
+    latitude: hotel.value?.latitude,
+    longitude: hotel.value?.longitude,
   })
   router.push('/orders/checkout')
 }

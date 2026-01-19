@@ -16,6 +16,9 @@ export const useOrderStore = defineStore('order', () => {
           image: '',
           address: '',
           phone: '',
+          hotel_id: '',
+          latitude: 0,
+          longitude: 0,
         },
   )
 
@@ -28,11 +31,17 @@ export const useOrderStore = defineStore('order', () => {
     image: string
     address?: string
     phone?: string
+    hotel_id?: string
+    latitude?: number
+    longitude?: number
   }) {
     const newData = {
       ...data,
       address: data.address || '',
       phone: data.phone || '',
+      hotel_id: data.hotel_id || '',
+      latitude: data.latitude || 0,
+      longitude: data.longitude || 0,
     }
     orderData.value = newData
     localStorage.setItem('orderData', JSON.stringify(newData))
@@ -48,6 +57,9 @@ export const useOrderStore = defineStore('order', () => {
       image: '',
       address: '',
       phone: '',
+      hotel_id: '',
+      latitude: 0,
+      longitude: 0,
     }
     localStorage.removeItem('orderData')
   }

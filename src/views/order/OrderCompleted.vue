@@ -80,7 +80,7 @@ const formattedAmount = computed(() => `NT$ ${order.value.amount.toLocaleString(
           </router-link>
 
           <router-link
-            to="/orders"
+            :to="'/orders/confirmation/' + order.id"
             class="rounded-full bg-main_100 text-dark_700 px-12 py-3 inline-block hover:bg-main_300"
           >
             前往訂單

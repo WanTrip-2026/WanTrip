@@ -1,40 +1,81 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { getOrderById, type Order } from '@/services/orderApi'
+
+const route = useRoute()
+const order = ref<Order | null>(null)
+const errorMsg = ref('')
+
+onMounted(async () => {
+  const id = route.params.id as string
+  console.log('[OrderConfirmation] Mounted with ID:', id)
+  if (id) {
+    try {
+      order.value = await getOrderById(id)
+    } catch (e: any) {
+      console.error('[OrderConfirmation] Error:', e)
+      errorMsg.value = e.message || '無法讀取訂單'
+    }
+  } else {
+    errorMsg.value = '無效的訂單編號'
+  }
+})
+</script>
+
 <template>
   <main class="min-h-screen text-primary max-w-[1240px] mx-auto pt-24 pb-10">
-    <div class="mx-5">
+    <div class="mx-5" v-if="order">
       <section class="bg-white rounded-[20px] shadow-sm border border-gray-300 p-5 lg:p-10 mb-10">
         <div class="flex flex-col md:flex-row justify-between items-start gap-8">
           <div class="flex flex-col sm:flex-row gap-6 items-center text-center sm:text-left">
-            <div class="h-24 md:h-32 rounded-[20px] bg-gray-100 checker shrink-0"></div>
+            <div class="h-24 md:h-32 rounded-[20px] overflow-hidden shrink-0 aspect-[4/3]">
+              <img :src="order.image_url || order.image" class="w-full h-full object-cover" />
+            </div>
             <div>
-              <h1 class="text-2xl md:text-3xl font-bold mb-2">飯店名稱</h1>
-              <p class="text-dark_700 text-sm">000 台北市中山區南京西路???號</p>
-              <p class="text-dark_700 text-sm">(02)XXXX-XXXX</p>
+              <h1 class="text-2xl md:text-3xl font-bold mb-2">
+                {{ order.hotel_name || order.title }}
+              </h1>
+              <!-- Address is not currently saved in backend orders table, hiding or using fallback -->
+              <!-- <p class="text-dark_700 text-sm">000 台北市中山區南京西路???號</p> -->
+              <!-- <p class="text-dark_700 text-sm">(02)XXXX-XXXX</p> -->
               <div class="mt-4">
                 <span class="text-xs md:text-sm font-bold">總價</span>
-                <span class="text-xl md:text-2xl font-black ml-2 text-dark">NT$ 6,000</span>
+                <span class="text-xl md:text-2xl font-black ml-2 text-dark"
+                  >NT$ {{ order.price.toLocaleString() }}</span
+                >
               </div>
             </div>
           </div>
           <div
             class="w-full md:w-auto text-left md:text-right text-xs md:shadow-sm text-dark_700 space-y-1 border-t md:border-t-0 pt-4 md:pt-0"
           >
-            <p>訂單編號 <span class="text-dark_900 font-mono">2025123100001</span></p>
-            <p>訂單日期 <span class="text-dark_900 font-mono">2025年12月28日</span></p>
+            <p>
+              訂單編號 <span class="text-dark_900 font-mono">{{ order.order_id || order.id }}</span>
+            </p>
+            <p>
+              訂單日期
+              <span class="text-dark_900 font-mono">{{
+                new Date(order.created_at).toLocaleDateString()
+              }}</span>
+            </p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-[40px] mt-[40px]">
           <div class="rounded-[20px] border border-gray-300 p-5 md:p-6">
             <p class="text-xs font-bold text-main_800 mb-2">入住</p>
-            <p class="text-lg md:text-xl font-bold">2025年12月28日</p>
+            <p class="text-lg md:text-xl font-bold">
+              {{ order.check_in_date || order.date?.split(' ')[0] }}
+            </p>
           </div>
           <div class="rounded-[20px] border border-gray-300 p-5 md:p-6">
             <p class="text-xs font-bold text-main_800 mb-2">退房</p>
-            <p class="text-lg md:text-xl font-bold">2025年12月29日</p>
+            <p class="text-lg md:text-xl font-bold">{{ order.check_out_date || '-' }}</p>
           </div>
           <div class="rounded-[20px] bg-main_100 p-5 md:p-6 sm:col-span-2 md:col-span-1">
-            <p class="text-xs font-bold text-main_800 mb-2">總共</p>
-            <p class="text-lg md:text-xl font-bold">1 房 1 晚</p>
+            <p class="text-xs font-bold text-main_800 mb-2">房型</p>
+            <p class="text-lg md:text-xl font-bold">{{ order.room_type || order.subtitle }}</p>
           </div>
         </div>
       </section>
@@ -48,40 +89,53 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
               <div class="space-y-1">
                 <p class="text-dark_700 text-xs uppercase">姓名</p>
-                <p class="font-bold text-base">NAME</p>
+                <p class="font-bold text-base">{{ (order as any).contact_name || 'N/A' }}</p>
               </div>
               <div class="space-y-1">
                 <p class="text-dark_700 text-xs uppercase">電子郵件</p>
-                <p class="font-bold text-base break-all">@email.com</p>
+                <p class="font-bold text-base break-all">
+                  {{ (order as any).contact_email || 'N/A' }}
+                </p>
               </div>
               <div class="space-y-1">
-                <p class="text-dark_700 text-xs uppercase">房型</p>
-                <p class="font-bold text-base">雅緻大床房</p>
+                <p class="text-dark_700 text-xs uppercase">電話</p>
+                <p class="font-bold text-base">{{ (order as any).contact_phone || 'N/A' }}</p>
               </div>
               <div class="space-y-1">
-                <p class="text-dark_700 text-xs uppercase">入住人數/房</p>
-                <p class="font-bold text-base">2人/房，每房最多入住2人</p>
-              </div>
-              <div class="sm:col-span-2 space-y-1">
-                <p class="text-dark_700 text-xs uppercase">餐點</p>
-                <p class="font-bold text-base">早餐，早餐時段6:00~9:30</p>
+                <!-- Status -->
+                <p class="text-dark_700 text-xs uppercase">狀態</p>
+                <p class="font-bold text-base">{{ order.status }}</p>
               </div>
             </div>
           </section>
 
           <section>
+            <!-- Map placeholder or functional map if implemented -->
+            <!-- Functional Map -->
             <div
+              v-if="order.latitude && order.longitude"
               class="w-full aspect-video rounded-[20px] bg-page flex items-center justify-center border border-gray-300 overflow-hidden"
             >
-              <span class="text-accent font-bold text-sm md:text-xl uppercase tracking-widest"
-                >google map</span
-              >
-              <!-- 之後google map -->
+              <iframe
+                width="100%"
+                height="100%"
+                style="border: 0"
+                loading="lazy"
+                allowfullscreen
+                :src="`https://maps.google.com/maps?q=${order.latitude},${order.longitude}&z=15&output=embed`"
+              ></iframe>
+            </div>
+            <div
+              v-else
+              class="w-full aspect-video rounded-[20px] bg-gray-100 flex items-center justify-center border border-gray-300 text-gray-400"
+            >
+              暫無地圖資訊
             </div>
           </section>
         </div>
 
         <div class="space-y-5">
+          <!-- Keep facilities static for now as they are not in order object -->
           <section class="rounded-[20px] border border-gray-300 p-5">
             <h3 class="font-bold mb-4 text-dark">房間設施</h3>
             <p class="text-sm leading-relaxed text-dark_700">
@@ -95,12 +149,10 @@
           </section>
 
           <section class="rounded-[20px] border border-gray-300 p-5 bg-white shadow-sm">
+            <!-- Keep Transport links -->
             <div class="flex items-center gap-5 mb-8">
-              <img src="../assets/logoIcon.svg" alt="WanTrip Logo" class="w-20 h-20" />
-              <div>
-                <h3 class="font-bold text-xl text-dark tracking-wide">交通訂票</h3>
-                <p class="text-xs text-dark_700 uppercase tracking-tighter">Quick Booking</p>
-              </div>
+              <!-- <img src="../assets/logoIcon.svg" alt="WanTrip Logo" class="w-20 h-20" />  Use text if img missing -->
+              <h3 class="font-bold text-xl text-dark tracking-wide">交通訂票</h3>
             </div>
 
             <div class="space-y-3">
@@ -111,16 +163,12 @@
                 class="group flex items-center justify-between p-4 rounded-xl border border-primary/5 bg-main_100 hover:bg-white hover:border-main_800/50 hover:shadow-md transition-all duration-300"
               >
                 <div class="flex items-center gap-4">
-                  <span class="text-2xl group-hover:scale-110 transition-transform">🚄</span>
+                  <span class="text-2xl">🚄</span>
                   <div>
                     <p class="font-semibold text-primary/80">台灣高鐵 THSRC</p>
                     <p class="text-xs text-primary/40">Online Booking</p>
                   </div>
                 </div>
-                <span
-                  class="text-primary/30 group-hover:text-main_800 group-hover:translate-x-1 transition-all"
-                  >→</span
-                >
               </a>
 
               <a
@@ -130,16 +178,12 @@
                 class="group flex items-center justify-between p-4 rounded-xl border border-primary/5 bg-main_100 hover:bg-white hover:border-main_800/50 hover:shadow-md transition-all duration-300"
               >
                 <div class="flex items-center gap-4">
-                  <span class="text-2xl group-hover:scale-110 transition-transform">🚇</span>
+                  <span class="text-2xl">🚇</span>
                   <div>
                     <p class="font-semibold text-primary/80">台灣鐵路 TRA</p>
                     <p class="text-xs text-primary/40">Online Booking</p>
                   </div>
                 </div>
-                <span
-                  class="text-primary/30 group-hover:text-main_800 group-hover:translate-x-1 transition-all"
-                  >→</span
-                >
               </a>
             </div>
           </section>
@@ -147,24 +191,23 @@
       </div>
 
       <div class="mt-[60px] flex flex-col sm:flex-row justify-center gap-4">
-        <button
-          class="w-full sm:w-auto bg-primary text-white px-12 py-3 rounded-full font-bold hover:bg-main transition-all active:scale-95 shadow-lg"
+        <router-link
+          to="/profile"
+          class="w-full sm:w-auto bg-primary text-white px-12 py-3 rounded-full font-bold hover:bg-main transition-all active:scale-95 shadow-lg text-center"
         >
           回到訂單列表
-        </button>
+        </router-link>
+        <router-link
+          to="/"
+          class="w-full sm:w-auto bg-white border border-gray-300 text-dark px-12 py-3 rounded-full font-bold hover:bg-gray-50 transition-all active:scale-95 shadow-lg text-center"
+        >
+          回到首頁
+        </router-link>
       </div>
+    </div>
+    <div v-else class="text-center py-20">
+      <p v-if="errorMsg" class="text-red-500 text-xl">{{ errorMsg }}</p>
+      <p v-else>讀取訂單資料中...</p>
     </div>
   </main>
 </template>
-
-<style scoped>
-/* 這裡的 checker 顏色也統一使用 primary 的透明度 */
-.checker {
-  background-image:
-    linear-gradient(45deg, rgba(47, 61, 77, 0.05) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(47, 61, 77, 0.05) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, rgba(47, 61, 77, 0.05) 75%),
-    linear-gradient(-45deg, transparent 75%, rgba(47, 61, 77, 0.05) 75%);
-  background-size: 20px 20px;
-}
-</style>

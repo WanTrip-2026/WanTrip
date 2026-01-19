@@ -226,7 +226,9 @@
                 </div>
                 <!-- 按鈕區可依需求加上功能 -->
                 <div class="flex flex-col justify-center gap-2 px-5">
-                  <button class="text-nowrap hover:text-main_800">訂單詳情</button>
+                  <button class="text-nowrap hover:text-main_800" @click="goToOrder(order)">
+                    訂單詳情
+                  </button>
                   <!-- <button class="text-nowrap hover:text-main_800">取消訂單</button> -->
                 </div>
               </div>
@@ -287,6 +289,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import type { User } from '@supabase/supabase-js'
 import { supabase } from '@/utils/supabaseClient'
 import { useAuthStore } from '@/stores/auth'
@@ -295,6 +298,7 @@ import HomePageCard from '@/components/layout/HomePageCard.vue'
 import { getUserOrders, type Order } from '@/services/orderApi'
 
 const authStore = useAuthStore()
+const router = useRouter()
 
 type ProfileRow = {
   id: string
@@ -305,6 +309,11 @@ type ProfileRow = {
   birthday: string | null // date 會以 'YYYY-MM-DD' 字串回來
   updated_at: string | null
   created_at?: string
+}
+
+const goToOrder = (order: Order) => {
+  const targetId = order.order_id || order.id
+  router.push(`/orders/confirmation/${targetId}`)
 }
 
 const user = ref<User | null>(null)
