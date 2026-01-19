@@ -235,15 +235,20 @@
             </h2>
             <div>
               <span
-                v-if="totalPrice > 0"
+                v-if="displayPrice > 0"
                 class="text-xs lg:text-sm text-dark_500 line-through text-nowrap"
               >
-                TWD {{ (totalPrice * 1.5).toLocaleString() }}
+                TWD {{ (displayPrice * 1.5).toLocaleString() }}
               </span>
               <div class="flex items-end gap-1 lg:gap-2">
                 <span class="text-lg lg:text-2xl font-bold text-red-500 text-nowrap">
-                  TWD {{ totalPrice.toLocaleString() }}
+                  TWD {{ displayPrice.toLocaleString() }}
                 </span>
+                <span
+                  v-if="totalPrice === 0"
+                  class="text-sm text-dark_500 mb-0.5 lg:mb-1 text-nowrap"
+                  >起</span
+                >
               </div>
             </div>
           </div>
@@ -317,9 +322,14 @@ import 'v-calendar/style.css'
 import { supabase } from '@/utils/supabaseClient'
 import type { Attraction, AttractionImage, Ticket } from '@/types/database'
 import { useOrderStore } from '@/stores/orderStore'
+import { useAuthStore } from '@/stores/auth'
 import { format } from 'date-fns'
 
 const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
+const orderStore = useOrderStore()
+
 const attraction = ref<Attraction | null>(null)
 const attractionImages = ref<AttractionImage[]>([])
 const loading = ref<boolean>(true)
@@ -333,6 +343,14 @@ const selectedDate = ref<Date>(new Date())
 
 const totalPrice = computed(() => {
   return tickets.value.reduce((sum, t) => sum + t.price * t.quantity, 0)
+})
+
+const displayPrice = computed(() => {
+  if (totalPrice.value > 0) return totalPrice.value
+  if (tickets.value.length === 0) return 0
+
+  // Find minimum price among all tickets
+  return Math.min(...tickets.value.map((t) => t.price))
 })
 
 const increaseQuantity = (id: string | number) => {
@@ -493,10 +511,13 @@ interface AttractionWithImages extends Attraction {
   attraction_images: { image_url: string }[]
 }
 
-const router = useRouter()
-const orderStore = useOrderStore()
-
 function onSearch() {
+  if (!authStore.isLoggedIn) {
+    alert('請先登入會員')
+    router.push('/login')
+    return
+  }
+
   const selectedTickets = tickets.value.filter((t) => t.quantity > 0)
 
   if (selectedTickets.length === 0 || !attraction.value) {
@@ -523,6 +544,8 @@ function onSearch() {
     category: attraction.value.category || '',
     highlights: ticketIntro.value.highlights,
     address: attraction.value.address || '',
+    attraction_id: attraction.value.id,
+    hotel_id: '', // Ensure hotel_id is empty for attractions to avoid backend confusion
   })
 
   router.push('/orders/checkout')

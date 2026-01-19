@@ -20,6 +20,7 @@ type OrderData = {
 
   // Attraction specific
   type?: 'hotel' | 'attraction'
+  attraction_id?: string | number
   city?: string
   category?: string | string[]
   highlights?: string[]
@@ -40,6 +41,7 @@ const DEFAULT_ORDER: OrderData = {
   latitude: 0,
   longitude: 0,
   type: 'hotel',
+  attraction_id: '',
   city: '',
   category: '',
   highlights: [],
@@ -73,6 +75,7 @@ export const useOrderStore = defineStore('order', () => {
       latitude: data.latitude ?? orderData.value.latitude,
       longitude: data.longitude ?? orderData.value.longitude,
       type: data.type ?? orderData.value.type,
+      attraction_id: data.attraction_id ?? orderData.value.attraction_id,
       city: data.city ?? orderData.value.city,
       category: data.category ?? orderData.value.category,
       highlights: data.highlights ?? orderData.value.highlights,

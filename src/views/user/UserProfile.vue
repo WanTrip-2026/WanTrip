@@ -217,7 +217,12 @@
                     </h3>
                     <p class="text-sm text-gray-600">訂單編號：{{ order.order_id || order.id }}</p>
                     <p class="text-sm text-gray-600">
-                      住宿日期：{{ order.check_in_date }} - {{ order.check_out_date }}
+                      日期：{{ order.check_in_date }}
+                      <span
+                        v-if="!order.attraction_id && order.check_in_date !== order.check_out_date"
+                      >
+                        - {{ order.check_out_date }}
+                      </span>
                     </p>
                     <p class="text-sm font-bold">
                       總價：<span class="text-red-500">NT$ {{ order.price }}</span>

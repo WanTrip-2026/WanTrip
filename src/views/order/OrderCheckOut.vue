@@ -21,6 +21,7 @@ const { orderData } = orderStore
 
 const selectedPayment = ref<PaymentKey | ''>('')
 const isProcessing = ref(false)
+const errorMessage = ref('')
 
 const product = reactive({
   title: orderData.title || 'WanTrip 精選行程',
@@ -37,6 +38,7 @@ const product = reactive({
   category: orderData.category || '',
   highlights: orderData.highlights || [],
   peopleNum: 2, // Default or from store if available
+  attraction_id: orderData.attraction_id || '',
 })
 
 const form = reactive({
@@ -104,8 +106,21 @@ const startAioPayment = async () => {
     const params = response.data.data
     const actionUrl = params.actionUrl
 
-    // 建立訂單
-    await createOrder({
+    // Determine dates based on product type
+    let checkIn = '2025-12-31'
+    let checkOut = '2026-01-01'
+
+    if (product.type === 'attraction' && product.date) {
+      // product.date is formatted as YYYY/MM/DD from TicketDetail
+      checkIn = product.date.replace(/\//g, '-')
+
+      // Add 1 day for checkOut to satisfy DB constraint (check_out > check_in)
+      const d = new Date(checkIn)
+      d.setDate(d.getDate() + 1)
+      checkOut = d.toISOString().split('T')[0]
+    }
+
+    const payload = {
       user_id: authStore.user?.id,
       order_id: orderId,
       title: product.title,
@@ -114,8 +129,8 @@ const startAioPayment = async () => {
       note: product.note,
       price: product.price,
       image: product.image,
-      checkInDate: '2025-12-31', // Mock dates for now
-      checkOutDate: '2026-01-01',
+      checkInDate: checkIn,
+      checkOutDate: checkOut,
       peopleNum: 2,
       roomType: product.subtitle,
       userInfo: {
@@ -127,8 +142,13 @@ const startAioPayment = async () => {
       orderAmount: product.price,
       address: product.address,
       phone: product.phone,
-      hotel_id: product.hotel_id,
-    })
+      hotel_id: product.type === 'attraction' ? null : product.hotel_id,
+      attraction_id: product.type === 'attraction' ? product.attraction_id : null,
+    }
+
+    // 建立訂單
+    console.log('[Frontend] Creating Order Payload:', payload)
+    await createOrder(payload)
 
     const paymentForm = document.createElement('form')
     paymentForm.method = 'POST'
@@ -153,17 +173,22 @@ const startAioPayment = async () => {
         document.body.removeChild(paymentForm)
       }
     })
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error('綠界結帳失敗:', error)
-    if (axios.isAxiosError(error)) {
-      const serverMessage = error.response?.data?.message
-      alert(serverMessage || '伺服器回傳錯誤')
+    if (axios.isAxiosError(error) && error.response?.data?.error) {
+      errorMessage.value = JSON.stringify(error.response.data.error, null, 2)
     } else if (error instanceof Error) {
-      alert(error.message)
+      errorMessage.value = error.message + (error.stack ? '\n' + error.stack : '')
+      if ((error as any).response) {
+        errorMessage.value +=
+          '\nServer Details: ' + JSON.stringify((error as any).response, null, 2)
+      }
     } else {
-      alert('發生未知異常')
+      errorMessage.value = '發生未知異常'
     }
+    // alert(errorMessage.value) // Optional: keep alert or rely on UI
     isProcessing.value = false
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 }
 
@@ -172,6 +197,20 @@ const startLinePay = async () => {
     isProcessing.value = true
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
     const orderId = generateOrderId()
+
+    // Determine dates based on product type
+    let checkIn = '2025-12-31'
+    let checkOut = '2026-01-01'
+
+    if (product.type === 'attraction' && product.date) {
+      // product.date is formatted as YYYY/MM/DD from TicketDetail
+      checkIn = product.date.replace(/\//g, '-')
+
+      // Add 1 day for checkOut to satisfy DB constraint (check_out > check_in)
+      const d = new Date(checkIn)
+      d.setDate(d.getDate() + 1)
+      checkOut = d.toISOString().split('T')[0]
+    }
 
     // 先建立訂單
     await createOrder({
@@ -183,8 +222,8 @@ const startLinePay = async () => {
       note: product.note,
       price: product.price,
       image: product.image,
-      checkInDate: '2025-12-31',
-      checkOutDate: '2026-01-01',
+      checkInDate: checkIn,
+      checkOutDate: checkOut,
       peopleNum: 2,
       roomType: product.subtitle,
       userInfo: {
@@ -196,7 +235,8 @@ const startLinePay = async () => {
       orderAmount: product.price,
       address: product.address,
       phone: product.phone,
-      hotel_id: product.hotel_id,
+      hotel_id: product.type === 'attraction' ? null : product.hotel_id,
+      attraction_id: product.type === 'attraction' ? product.attraction_id : null,
     })
 
     const paymentPayload = {
@@ -274,6 +314,15 @@ function applyCoupon() {
 
   <div class="w-full min-h-screen">
     <div class="mx-auto max-w-[1240px] px-5 pt-[200px] pb-10 lg:pt-24">
+      <!-- Error Display -->
+      <div
+        v-if="errorMessage"
+        class="mb-5 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"
+      >
+        <p class="font-bold">訂單建立失敗 / Order Creation Failed</p>
+        <pre class="mt-2 text-sm whitespace-pre-wrap">{{ errorMessage }}</pre>
+      </div>
+
       <div class="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
         <div class="flex flex-col gap-5">
           <section class="rounded-[20px] border border-gray-300 bg-white p-5 shadow-sm">
@@ -302,7 +351,7 @@ function applyCoupon() {
 
                 <!-- Attraction View -->
                 <div v-else class="mt-1 flex flex-col gap-1">
-                  <div class="text-sm text-dark_500 font-medium">
+                  <div class="text-sm text-dark_500">
                     {{ product.city }} |
                     {{
                       Array.isArray(product.category)
@@ -310,9 +359,9 @@ function applyCoupon() {
                         : product.category
                     }}
                   </div>
-                  <div class="text-sm text-dark_700 font-bold mt-1">{{ product.subtitle }}</div>
+                  <div class="text-sm text-dark_500 mt-1">{{ product.subtitle }}</div>
                   <!-- Ticket Name -->
-                  <div class="text-xs text-dark_500">{{ product.date }}</div>
+                  <div class="text-sm text-dark_500">{{ product.date }}</div>
 
                   <div
                     v-if="product.highlights && product.highlights.length > 0"
@@ -321,7 +370,7 @@ function applyCoupon() {
                     <span
                       v-for="(tag, i) in product.highlights.slice(0, 3)"
                       :key="i"
-                      class="px-2 py-0.5 bg-green-50 text-green-600 text-[10px] rounded-md border border-green-100"
+                      class="px-2 py-0.5 bg-gray-100 text-gray-600 text-sm rounded-md border border-gray-200"
                     >
                       {{ tag }}
                     </span>
