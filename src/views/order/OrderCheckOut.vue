@@ -12,8 +12,10 @@ import iconApplePay from '@/assets/pay_img/apple-pay-svgrepo-com.svg'
 import iconLinePay from '@/assets/pay_img/LINE_Pay_logo_(2019).svg.png'
 import iconJkoPay from '@/assets/pay_img/uBKC2XeyRaWsA2sgjVFxTohcqQi6mmypd0MMWxdI.png'
 import { useOrderStore } from '@/stores/orderStore'
+import { useAuthStore } from '@/stores/auth'
 
 const orderStore = useOrderStore()
+const authStore = useAuthStore()
 const { orderData } = orderStore
 
 const selectedPayment = ref<PaymentKey | ''>('')
@@ -71,6 +73,7 @@ const startAioPayment = async () => {
     const response = await axios.post(`${apiBaseUrl}/payment/get-aio-params`, {
       amount: total.value,
       paymentMethod: selectedPayment.value, // 傳送關鍵字如 'credit', 'atm'
+      userId: authStore.user?.id, // 傳送會員 ID
     })
 
     if (!response.data.success) {
@@ -124,6 +127,7 @@ const startLinePay = async () => {
     const paymentPayload = {
       amount: total.value,
       productName: product.title,
+      userId: authStore.user?.id, // 傳送會員 ID
     }
 
     const response = await axios.post(`${apiBaseUrl}/payment/linepay/request`, paymentPayload)

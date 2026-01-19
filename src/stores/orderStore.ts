@@ -2,14 +2,22 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useOrderStore = defineStore('order', () => {
-  const orderData = ref({
-    title: '',
-    subtitle: '',
-    date: '',
-    note: '',
-    price: 0,
-    image: '',
-  })
+  // Load from localStorage on initialization
+  const storedOrder = localStorage.getItem('orderData')
+  const orderData = ref(
+    storedOrder
+      ? JSON.parse(storedOrder)
+      : {
+          title: '',
+          subtitle: '',
+          date: '',
+          note: '',
+          price: 0,
+          image: '',
+          address: '',
+          phone: '',
+        },
+  )
 
   function setOrder(data: {
     title: string
@@ -18,8 +26,16 @@ export const useOrderStore = defineStore('order', () => {
     note: string
     price: number
     image: string
+    address?: string
+    phone?: string
   }) {
-    orderData.value = data
+    const newData = {
+      ...data,
+      address: data.address || '',
+      phone: data.phone || '',
+    }
+    orderData.value = newData
+    localStorage.setItem('orderData', JSON.stringify(newData))
   }
 
   function clearOrder() {
@@ -30,7 +46,10 @@ export const useOrderStore = defineStore('order', () => {
       note: '',
       price: 0,
       image: '',
+      address: '',
+      phone: '',
     }
+    localStorage.removeItem('orderData')
   }
 
   return {
