@@ -3,6 +3,8 @@ const API = import.meta.env.VITE_API_BASE_URL
 export type Order = {
   id: string
   order_id?: string
+  hotel_id?: string | null
+  attraction_id?: string | null
 
   title?: string
   subtitle?: string
@@ -47,7 +49,11 @@ export async function createOrder(orderData: object) {
   })
 
   const data = await r.json().catch(() => ({}))
-  if (!r.ok) throw new Error(data?.message || 'create order failed')
+  if (!r.ok) {
+    const error = new Error(data?.message || 'create order failed')
+    ;(error as any).response = { data }
+    throw error
+  }
 
   return data
 }

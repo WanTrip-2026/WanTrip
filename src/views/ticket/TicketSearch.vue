@@ -10,6 +10,7 @@ const route = useRoute()
 // Local interface extending DB attraction with UI fields
 interface AttractionWithImages extends Attraction {
   attraction_images: { image_url: string }[]
+  tickets: { price: number }[]
 }
 
 interface AttractionWithUI extends Attraction {
@@ -31,9 +32,7 @@ const fetchAttractions = async (): Promise<void> => {
   const city = (route.query.city as string) || (route.query.destination as string)
   const category = route.query.category as string
 
-  let query = supabase
-    .from('attractions')
-    .select('*, attraction_images(image_url)')
+  let query = supabase.from('attractions').select('*, attraction_images(image_url), tickets(price)')
 
   if (keyword) {
     query = query.ilike('name', `%${keyword}%`)
@@ -53,11 +52,20 @@ const fetchAttractions = async (): Promise<void> => {
     errorMsg.value = error.message
   } else {
     console.log('Raw data from Supabase:', data)
-    const mappedData: AttractionWithUI[] = (data as unknown as AttractionWithImages[] ?? []).map((item: AttractionWithImages) => ({
-      ...item,
-      image_url: item.attraction_images?.[0]?.image_url || 'https://placehold.co/300x200?text=No+Image',
-      comments_count: 0
-    }))
+    const mappedData: AttractionWithUI[] = ((data as unknown as AttractionWithImages[]) ?? []).map(
+      (item: AttractionWithImages) => {
+        const ticketPrices = item.tickets?.map((t) => t.price) || []
+        const minPrice = ticketPrices.length > 0 ? Math.min(...ticketPrices) : item.price || 0
+
+        return {
+          ...item,
+          price: minPrice, // Override with min price
+          image_url:
+            item.attraction_images?.[0]?.image_url || 'https://placehold.co/300x200?text=No+Image',
+          comments_count: 0,
+        }
+      },
+    )
     console.log('Mapped attractions:', mappedData)
     attractions.value = mappedData
 
@@ -118,12 +126,25 @@ function selectCity(city: string): void {
     path: '/tickets/search',
     query: {
       ...route.query,
-      city: city
-    }
+      city: city,
+    },
   })
 }
 const cityAreaMap: Record<string, string[]> = {
-  台北市: ['中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區', '士林區', '北投區', '內湖區', '南港區', '文山區'],
+  台北市: [
+    '中正區',
+    '大同區',
+    '中山區',
+    '松山區',
+    '大安區',
+    '萬華區',
+    '信義區',
+    '士林區',
+    '北投區',
+    '內湖區',
+    '南港區',
+    '文山區',
+  ],
   新北市: ['板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區'],
   台中市: ['中區', '東區', '南區', '西區', '北區'],
   台南市: ['中西區', '東區', '南區', '北區'],
@@ -165,9 +186,7 @@ const ticketFiltered = computed(() => [
 const currentPage = ref<number>(1)
 const itemsPerPage = 9
 
-const totalPages = computed<number>(() =>
-  Math.ceil(attractions.value.length / itemsPerPage),
-)
+const totalPages = computed<number>(() => Math.ceil(attractions.value.length / itemsPerPage))
 
 const pagedattraction = computed<AttractionWithUI[]>(() => {
   const start = (currentPage.value - 1) * itemsPerPage
@@ -187,8 +206,8 @@ function onLocalSearch() {
     path: '/tickets/search',
     query: {
       ...route.query,
-      keyword: searchInput.value || undefined
-    }
+      keyword: searchInput.value || undefined,
+    },
   })
 }
 </script>
@@ -197,28 +216,40 @@ function onLocalSearch() {
   <main class="max-w-[1240px] mx-auto w-full bg-page pt-24 min-h-screen">
     <div class="mx-5">
       <section
-        class="max-w-[800px] border border-gray-300 p-2 mx-auto bg-white rounded-full flex flex-row justify-between gap-2 shadow-sm">
-        <div class="relative flex-auto h-full focus:border focus:border-primary" @mouseenter="isOpen = true"
-          @mouseleave="isOpen = false">
+        class="max-w-[800px] border border-gray-300 p-2 mx-auto bg-white rounded-full flex flex-row justify-between gap-2 shadow-sm"
+      >
+        <div
+          class="relative flex-auto h-full focus:border focus:border-primary"
+          @mouseenter="isOpen = true"
+          @mouseleave="isOpen = false"
+        >
           <div
             class="rounded-full border border-gray-300 px-6 py-3 flex items-center justify-center text-dark_500 hover:text-primary bg-white cursor-pointer"
-            @click="isOpen = !isOpen">
+            @click="isOpen = !isOpen"
+          >
             {{ selectedCity || '選擇城市' }}
           </div>
 
-          <div v-if="isOpen"
-            class="absolute top-full left-0 w-full overflow-hidden px-5 bg-white/80 backdrop-blur-lg border border-white/25 z-10 rounded-[20px] shadow-md">
+          <div
+            v-if="isOpen"
+            class="absolute top-full left-0 w-full overflow-hidden px-5 bg-white/80 backdrop-blur-lg border border-white/25 z-10 rounded-[20px] shadow-md"
+          >
             <template v-for="group in cities" :key="group.label">
               <!-- group 標題 -->
-              <div class="px-6 py-2 text-sm text-primary border-b border-gray-300 font-bold text-center">
+              <div
+                class="px-6 py-2 text-sm text-primary border-b border-gray-300 font-bold text-center"
+              >
                 {{ group.label }}
               </div>
 
               <!-- 城市 grid，每排 3 個 -->
               <div class="grid grid-cols-3 py-2">
-                <div v-for="city in group.cities" :key="city"
+                <div
+                  v-for="city in group.cities"
+                  :key="city"
                   class="px-4 py-2 text-dark hover:bg-main_100 hover:font-bold cursor-pointer whitespace-nowrap text-center rounded-full"
-                  @click="selectCity(city)">
+                  @click="selectCity(city)"
+                >
                   {{ city }}
                 </div>
               </div>
@@ -227,15 +258,20 @@ function onLocalSearch() {
         </div>
         <div class="flex-auto">
           <label class="text-dark_500 rounded-full"></label>
-          <input v-model="searchInput" type="text" placeholder="搜尋目的地/當地體驗"
+          <input
+            v-model="searchInput"
+            type="text"
+            placeholder="搜尋目的地/當地體驗"
             @keyup.enter="onLocalSearch"
-            class="w-full border text-center text-black border-gray-300 rounded-full px-6 py-3 focus:ring-2 focus:ring-primary outline-none" />
+            class="w-full border text-center text-black border-gray-300 rounded-full px-6 py-3 focus:ring-2 focus:ring-primary outline-none"
+          />
         </div>
 
         <div class="text-dark_500 rounded-full flex-none">
           <button
             @click="onLocalSearch"
-            class="text-center bg-primary hover:bg-main text-white font-bold px-6 py-3 rounded-full transition-colors text-nowrap">
+            class="text-center bg-primary hover:bg-main text-white font-bold px-6 py-3 rounded-full transition-colors text-nowrap"
+          >
             搜尋
           </button>
         </div>
@@ -247,20 +283,31 @@ function onLocalSearch() {
             <h3 class="font-bold text-xl text-dark mb-5">篩選條件</h3>
             <div class="flex flex-col gap-5">
               <!-- Option Filter -->
-              <div class="border-b-[1px] pb-5 border-gray-300 border-solid last:border-b-0"
-                v-for="TicketMenu in ticketFiltered" :key="TicketMenu.title">
+              <div
+                class="border-b-[1px] pb-5 border-gray-300 border-solid last:border-b-0"
+                v-for="TicketMenu in ticketFiltered"
+                :key="TicketMenu.title"
+              >
                 <h4 class="font-medium mb-2 text-base text-dark">{{ TicketMenu.title }}</h4>
                 <div class="space-y-2">
-                  <label class="flex cursor-pointer text-dark text-sm items-center" v-for="option in TicketMenu.options.slice(
-                    0,
-                    expandedMenus.includes(TicketMenu.title) ? TicketMenu.options.length : 4,
-                  )" :key="option">
+                  <label
+                    class="flex cursor-pointer text-dark text-sm items-center"
+                    v-for="option in TicketMenu.options.slice(
+                      0,
+                      expandedMenus.includes(TicketMenu.title) ? TicketMenu.options.length : 4,
+                    )"
+                    :key="option"
+                  >
                     <input type="checkbox" class="mr-2 w-5 h-5 cursor-pointer focus:ring-primary" />
                     {{ option }}
                   </label>
-                  <button v-if="
-                    TicketMenu.options.length > 5 && !expandedMenus.includes(TicketMenu.title)
-                  " class="text-dark_500 text-sm mt-1" @click="expandedMenus.push(TicketMenu.title)">
+                  <button
+                    v-if="
+                      TicketMenu.options.length > 5 && !expandedMenus.includes(TicketMenu.title)
+                    "
+                    class="text-dark_500 text-sm mt-1"
+                    @click="expandedMenus.push(TicketMenu.title)"
+                  >
                     查看更多選項
                   </button>
                 </div>
@@ -270,9 +317,9 @@ function onLocalSearch() {
         </aside>
         <div class="flex flex-1 flex-col gap-5">
           <h3 class="text-black text-xl">
-             <span v-if="route.query.category" class="mr-2 text-gray-500">
-                分類: {{ route.query.category }}
-             </span>
+            <span v-if="route.query.category" class="mr-2 text-gray-500">
+              分類: {{ route.query.category }}
+            </span>
             找到 <span class="text-red-500 font-bold">{{ attractions.length }}</span> 項當地體驗
           </h3>
           <div class="flex flex-row flex-nowrap items-center gap-2">
@@ -287,19 +334,30 @@ function onLocalSearch() {
             </button>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-             <div v-if="errorMsg" class="col-span-full p-4 text-red-700 bg-red-100 rounded">
-               {{ errorMsg }}
-             </div>
-             <div v-else-if="!loading && attractions.length === 0" class="col-span-full p-10 text-center text-gray-500 bg-gray-50 rounded">
-               <p class="text-xl font-bold mb-2">沒有找到相關體驗 (No Results)</p>
-               <p>請嘗試調整搜尋條件或是確認資料庫是否有資料。</p>
-             </div>
-            <TicketCard v-for="attraction in pagedattraction" :key="attraction.id" :ticket="attraction" />
+            <div v-if="errorMsg" class="col-span-full p-4 text-red-700 bg-red-100 rounded">
+              {{ errorMsg }}
+            </div>
+            <div
+              v-else-if="!loading && attractions.length === 0"
+              class="col-span-full p-10 text-center text-gray-500 bg-gray-50 rounded"
+            >
+              <p class="text-xl font-bold mb-2">沒有找到相關體驗 (No Results)</p>
+              <p>請嘗試調整搜尋條件或是確認資料庫是否有資料。</p>
+            </div>
+            <TicketCard
+              v-for="attraction in pagedattraction"
+              :key="attraction.id"
+              :ticket="attraction"
+            />
           </div>
           <div class="flex justify-center gap-2 mt-5 mb-10">
-            <button v-for="page in totalPages" :key="page"
+            <button
+              v-for="page in totalPages"
+              :key="page"
               class="w-10 h-10 border rounded-full text-dark_500 bg-main_100 hover:text-primary hover:bg-main-300"
-              :class="{ 'bg-primary text-white': currentPage === page }" @click="goToPage(page)">
+              :class="{ 'bg-primary text-white': currentPage === page }"
+              @click="goToPage(page)"
+            >
               {{ page }}
             </button>
           </div>

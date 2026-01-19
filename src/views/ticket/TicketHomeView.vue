@@ -137,33 +137,39 @@ const fetchTickets = async () => {
   try {
     const { data: popularData, error: popularError } = await supabase
       .from('attractions')
-      .select('*, attraction_images(image_url)')
+      .select('*, attraction_images(image_url), tickets(price)')
       .limit(6)
 
     const { data: topRatedData, error: topRatedError } = await supabase
       .from('attractions')
-      .select('*, attraction_images(image_url)')
+      .select('*, attraction_images(image_url), tickets(price)')
       .order('rating', { ascending: false })
       .limit(6)
 
     if (popularError || topRatedError) {
-       console.error('Supabase error:', popularError || topRatedError)
-       errorMsg.value = `Error fetching tickets: ${(popularError || topRatedError)?.message}`
-       return
+      console.error('Supabase error:', popularError || topRatedError)
+      errorMsg.value = `Error fetching tickets: ${(popularError || topRatedError)?.message}`
+      return
     }
 
-    const mapItem = (item: AttractionWithImages): TicketItem => ({
-      id: item.id,
-      name: item.name || '',
-      imageUrl: item.attraction_images?.[0]?.image_url || 'https://placehold.co/400x300?text=No+Image',
-      price: item.price || 0,
-      venue: item.city || '',
-      category: Array.isArray(item.category) ? (item.category[0] || '') : (item.category || ''),
-      date: item.created_at || '2026-01-01',
-      address: item.address || '',
-      rating: item.rating || 0,
-      description: item.intro || item.description || ''
-    })
+    const mapItem = (item: AttractionWithImages): TicketItem => {
+      const ticketPrices = item.tickets?.map((t) => t.price) || []
+      const minPrice = ticketPrices.length > 0 ? Math.min(...ticketPrices) : item.price || 0
+
+      return {
+        id: item.id,
+        name: item.name || '',
+        imageUrl:
+          item.attraction_images?.[0]?.image_url || 'https://placehold.co/400x300?text=No+Image',
+        price: minPrice,
+        venue: item.city || '',
+        category: Array.isArray(item.category) ? item.category[0] || '' : item.category || '',
+        date: item.created_at || '2026-01-01',
+        address: item.address || '',
+        rating: item.rating || 0,
+        description: item.intro || item.description || '',
+      }
+    }
 
     if (popularData) {
       tickets.value = (popularData as unknown as AttractionWithImages[]).map(mapItem)
@@ -172,10 +178,9 @@ const fetchTickets = async () => {
     if (topRatedData) {
       topRatedTickets.value = (topRatedData as unknown as AttractionWithImages[]).map(mapItem)
     }
-
   } catch (err: unknown) {
-     console.error('Unexpected error:', err)
-     errorMsg.value = `Unexpected Error: ${err instanceof Error ? err.message : String(err)}`
+    console.error('Unexpected error:', err)
+    errorMsg.value = `Unexpected Error: ${err instanceof Error ? err.message : String(err)}`
   } finally {
     isLoading.value = false
   }
@@ -183,6 +188,7 @@ const fetchTickets = async () => {
 
 interface AttractionWithImages extends Attraction {
   attraction_images: { image_url: string }[]
+  tickets: { price: number }[]
 }
 
 onUnmounted(() => {
@@ -239,11 +245,10 @@ function onSearch() {
   router.push({
     path: '/tickets/search',
     query: {
-      destination: form.destination
-    }
+      destination: form.destination,
+    },
   })
 }
-
 
 const ticketClassify = [
   {
@@ -279,12 +284,12 @@ const ticketClassify = [
   },
 ]
 
-const handleWishlist = (id: number | string) => console.log('收藏門票 ID:', id);
-const handleBook = (id: number | string) => console.log('購票 ID:', id);
+const handleWishlist = (id: number | string) => console.log('收藏門票 ID:', id)
+const handleBook = (id: number | string) => console.log('購票 ID:', id)
 
 function onClickRegion(tc: { label: string }) {
-    console.log('Category clicked:', tc);
-    router.push({ path: '/tickets/search', query: { category: tc.label } });
+  console.log('Category clicked:', tc)
+  router.push({ path: '/tickets/search', query: { category: tc.label } })
 }
 </script>
 
@@ -369,35 +374,51 @@ function onClickRegion(tc: { label: string }) {
 
 <template>
   <main class="pb-20 pt-24 max-w-[1240px] px-5 mx-auto">
-    <section class="relative group h-[350px] md:h-[450px] overflow-hidden rounded-[40px] shadow-2xl">
+    <section
+      class="relative group h-[350px] md:h-[450px] overflow-hidden rounded-[40px] shadow-2xl"
+    >
       <div v-for="(img, index) in hotelImages" :key="index">
         <transition name="fade-slide">
           <div v-if="currentSlide === index" class="absolute inset-0">
             <img :src="img.url" class="w-full h-full object-cover" />
             <div
-              class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent flex flex-col justify-end p-10 md:p-14">
+              class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent flex flex-col justify-end p-10 md:p-14"
+            >
               <h3 class="text-white text-3xl font-bold mb-2">{{ img.title }}</h3>
               <p class="text-white/80 text-lg">{{ img.desc }}</p>
             </div>
           </div>
         </transition>
       </div>
-      <button @click="prevSlide"
-        class="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg">
+      <button
+        @click="prevSlide"
+        class="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg"
+      >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"
+          />
         </svg>
       </button>
-      <button @click="nextSlide"
-        class="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg">
+      <button
+        @click="nextSlide"
+        class="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg"
+      >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
       </button>
       <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-        <button v-for="(_, index) in hotelImages" :key="index" @click="currentSlide = index"
+        <button
+          v-for="(_, index) in hotelImages"
+          :key="index"
+          @click="currentSlide = index"
           class="w-2.5 h-2.5 rounded-full transition-all duration-300"
-          :class="currentSlide === index ? 'bg-[#93ACAA] w-8' : 'bg-white/50 hover:bg-white'"></button>
+          :class="currentSlide === index ? 'bg-[#93ACAA] w-8' : 'bg-white/50 hover:bg-white'"
+        ></button>
       </div>
     </section>
     <section class="flex justify-center">
@@ -406,54 +427,83 @@ function onClickRegion(tc: { label: string }) {
           <div class="w-full max-w-4xl">
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label
-                class="relative block rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 group cursor-pointer transition-all hover:border-primary">
+                class="relative block rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 group cursor-pointer transition-all hover:border-primary"
+              >
                 <p class="text-xs font-bold text-dark_500">想去哪裡？</p>
                 <div class="relative mt-2">
-                  <select v-model="form.destination"
-                    class="w-full bg-transparent text-sm outline-none appearance-none cursor-pointer pr-8 font-medium text-primary group-hover:text-main_800  transition-colors">
+                  <select
+                    v-model="form.destination"
+                    class="w-full bg-transparent text-sm outline-none appearance-none cursor-pointer pr-8 font-medium text-primary group-hover:text-main_800 transition-colors"
+                  >
                     <option value="" disabled selected>選擇城市、景點</option>
                     <option v-for="city in taiwanCities" :key="city" :value="city">
                       {{ city }}
                     </option>
                   </select>
-                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-primary/30">
+                  <div
+                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-primary/30"
+                  >
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </div>
                 </div>
               </label>
 
               <div class="relative" ref="peoplePickerRef">
-                <label @click="isPeoplePickerOpen = !isPeoplePickerOpen"
-                  class="block h-full rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 transition-all hover:border-primary cursor-pointer">
+                <label
+                  @click="isPeoplePickerOpen = !isPeoplePickerOpen"
+                  class="block h-full rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 transition-all hover:border-primary cursor-pointer"
+                >
                   <p class="text-xs font-bold text-dark_500">人數、需求</p>
                   <div class="mt-2 flex items-center justify-between">
                     <span class="text-sm font-medium text-black">{{ peopleDisplayText }}</span>
-                    <svg class="h-4 w-4 text-primary/30 transition-transform duration-300"
-                      :class="{ 'rotate-180': isPeoplePickerOpen }" fill="none" stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    <svg
+                      class="h-4 w-4 text-primary/30 transition-transform duration-300"
+                      :class="{ 'rotate-180': isPeoplePickerOpen }"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </div>
                 </label>
 
                 <transition name="fade">
-                  <div v-if="isPeoplePickerOpen"
-                    class="absolute top-[calc(100%+8px)] left-0 z-[100] w-full rounded-[20px] bg-white p-5 shadow-2xl border border-gray-300">
+                  <div
+                    v-if="isPeoplePickerOpen"
+                    class="absolute top-[calc(100%+8px)] left-0 z-[100] w-full rounded-[20px] bg-white p-5 shadow-2xl border border-gray-300"
+                  >
                     <div class="space-y-4">
                       <div class="flex items-center justify-between">
                         <span class="text-sm font-bold text-black">成人</span>
                         <div class="flex items-center gap-3">
-                          <button @click.stop="peopleConfig.adults > 1 ? peopleConfig.adults-- : null" type="button"
-                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white">
+                          <button
+                            @click.stop="peopleConfig.adults > 1 ? peopleConfig.adults-- : null"
+                            type="button"
+                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white"
+                          >
                             -
                           </button>
                           <span class="text-sm font-medium w-4 text-center text-black">{{
                             peopleConfig.adults
-                            }}</span>
-                          <button @click.stop="peopleConfig.adults++" type="button"
-                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white">
+                          }}</span>
+                          <button
+                            @click.stop="peopleConfig.adults++"
+                            type="button"
+                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white"
+                          >
                             +
                           </button>
                         </div>
@@ -461,25 +511,32 @@ function onClickRegion(tc: { label: string }) {
                       <div class="flex items-center justify-between">
                         <span class="text-sm font-bold text-black">孩童</span>
                         <div class="flex items-center gap-3">
-                          <button @click.stop="
-                            peopleConfig.children > 0 ? peopleConfig.children-- : null
-                            " type="button"
-                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white">
+                          <button
+                            @click.stop="peopleConfig.children > 0 ? peopleConfig.children-- : null"
+                            type="button"
+                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white"
+                          >
                             -
                           </button>
                           <span class="text-sm font-medium w-4 text-center text-black">{{
                             peopleConfig.children
-                            }}</span>
-                          <button @click.stop="peopleConfig.children++" type="button"
-                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white">
+                          }}</span>
+                          <button
+                            @click.stop="peopleConfig.children++"
+                            type="button"
+                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white"
+                          >
                             +
                           </button>
                         </div>
                       </div>
                       <label class="flex items-center justify-between pt-2 cursor-pointer">
                         <span class="text-sm font-bold text-black">可帶寵物</span>
-                        <input type="checkbox" v-model="peopleConfig.hasPet"
-                          class="w-5 h-5 accent-primary cursor-pointer" />
+                        <input
+                          type="checkbox"
+                          v-model="peopleConfig.hasPet"
+                          class="w-5 h-5 accent-primary cursor-pointer"
+                        />
                       </label>
                     </div>
                   </div>
@@ -489,8 +546,10 @@ function onClickRegion(tc: { label: string }) {
           </div>
         </div>
         <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
-          <button type="submit"
-            class="h-10 rounded-full bg-primary px-8 text-sm font-semibold text-white transition-all duration-300 hover:bg-main active:scale-[0.98] shadow-sm">
+          <button
+            type="submit"
+            class="h-10 rounded-full bg-primary px-8 text-sm font-semibold text-white transition-all duration-300 hover:bg-main active:scale-[0.98] shadow-sm"
+          >
             搜尋
           </button>
         </div>
@@ -502,7 +561,11 @@ function onClickRegion(tc: { label: string }) {
         <div class="h-6 w-32 bg-gray-200 rounded mb-10 animate-pulse"></div>
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
-          <div v-for="i in 4" :key="i" class="bg-gray-200 rounded-[20px] aspect-[4/3] animate-pulse"></div>
+          <div
+            v-for="i in 4"
+            :key="i"
+            class="bg-gray-200 rounded-[20px] aspect-[4/3] animate-pulse"
+          ></div>
         </div>
 
         <div class="mt-5 flex justify-center">
@@ -514,13 +577,20 @@ function onClickRegion(tc: { label: string }) {
     <section class="mt-10">
       <h2 class="mb-5 text-xl font-bold text-dark">想去哪裡玩？</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
-        <button v-for="tc in ticketClassify" :key="tc.key" type="button"
+        <button
+          v-for="tc in ticketClassify"
+          :key="tc.key"
+          type="button"
           class="relative group overflow-hidden rounded-[20px] bg-white/70 border border-gray-300 transition shadow-sm hover:shadow-lg"
-          @click="onClickRegion(tc)">
-          <div class="h-[110px] w-full aspect-[3/4]" :style="{
-            backgroundImage: `url(${tc.img})`,
-            backgroundSize: 'cover',
-          }"></div>
+          @click="onClickRegion(tc)"
+        >
+          <div
+            class="h-[110px] w-full aspect-[3/4]"
+            :style="{
+              backgroundImage: `url(${tc.img})`,
+              backgroundSize: 'cover',
+            }"
+          ></div>
 
           <div class="absolute inset-0 flex items-center justify-center">
             <span class="text-xl font-black text-white drop-shadow-sm">{{ tc.label }}</span>
@@ -536,24 +606,42 @@ function onClickRegion(tc: { label: string }) {
       <div v-if="errorMsg" class="p-4 mb-4 text-red-700 bg-red-100 rounded-lg">
         {{ errorMsg }}
       </div>
-      <div v-if="!isLoading && tickets.length === 0 && !errorMsg" class="p-4 mb-4 text-gray-500 bg-gray-100 rounded-lg">
+      <div
+        v-if="!isLoading && tickets.length === 0 && !errorMsg"
+        class="p-4 mb-4 text-gray-500 bg-gray-100 rounded-lg"
+      >
         目前沒有熱門景點資料 (No tickets found)
       </div>
 
       <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
-        <HomePageTicketCard v-for="(ticket, index) in tickets" :key="ticket.id" v-bind="ticket"
-          :expand-left="index >= tickets.length - 2" @compare="handleWishlist" @book="handleBook" />
+        <HomePageTicketCard
+          v-for="(ticket, index) in tickets"
+          :key="ticket.id"
+          v-bind="ticket"
+          :expand-left="index >= tickets.length - 2"
+          @compare="handleWishlist"
+          @book="handleBook"
+        />
       </div>
     </section>
 
     <section class="mt-10">
       <h2 class="mb-5 text-xl font-bold text-dark">評價最高</h2>
-      <div v-if="!isLoading && topRatedTickets.length === 0 && !errorMsg" class="p-4 mb-4 text-gray-500 bg-gray-100 rounded-lg">
+      <div
+        v-if="!isLoading && topRatedTickets.length === 0 && !errorMsg"
+        class="p-4 mb-4 text-gray-500 bg-gray-100 rounded-lg"
+      >
         目前沒有評價最高資料 (No tickets found)
       </div>
       <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
-        <HomePageTicketCard v-for="(ticket, index) in topRatedTickets" :key="ticket.id" v-bind="ticket"
-          :expand-left="index >= topRatedTickets.length - 2" @compare="handleWishlist" @book="handleBook" />
+        <HomePageTicketCard
+          v-for="(ticket, index) in topRatedTickets"
+          :key="ticket.id"
+          v-bind="ticket"
+          :expand-left="index >= topRatedTickets.length - 2"
+          @compare="handleWishlist"
+          @book="handleBook"
+        />
       </div>
     </section>
   </main>
