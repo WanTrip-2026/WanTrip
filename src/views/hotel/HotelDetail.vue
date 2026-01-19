@@ -568,6 +568,8 @@ const handleBook = (room: Room) => {
     note: room.features.join(' / '),
     price: room.price,
     image: room.image_url,
+    address: hotel.value?.address,
+    phone: hotel.value?.phone,
   })
   router.push('/orders/checkout')
 }
@@ -671,7 +673,7 @@ onMounted(async () => {
     if (rooms.value.length > 0) {
       reviews.value = reviews.value.map((review) => ({
         ...review,
-        roomType: rooms.value[Math.floor(Math.random() * rooms.value.length)].name,
+        roomType: rooms.value[Math.floor(Math.random() * rooms.value.length)]?.name || '標準房',
       }))
     }
 
