@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TicketCard from '@/components/layout/TicketCard.vue'
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue' // Added reactive
 import { useRouter, useRoute } from 'vue-router'
 import { supabase } from '@/utils/supabaseClient'
 import type { Attraction } from '@/types/database'
@@ -24,6 +24,13 @@ const errorMsg = ref<string>('')
 const searchInput = ref<string>('')
 const router = useRouter()
 
+interface FilterMenu {
+  key: string
+  title: string
+  options: string[]
+  selected: string[]
+}
+
 const fetchAttractions = async (): Promise<void> => {
   loading.value = true
   errorMsg.value = ''
@@ -43,6 +50,25 @@ const fetchAttractions = async (): Promise<void> => {
   if (category) {
     // Try to match category as a string or within an array
     query = query.or(`category.cs.{${category}},category.ilike.%${category}%`)
+  }
+
+  // Apply Sidebar Filters
+  const selectedDistricts =
+    ticketFiltered.find((m: FilterMenu) => m.key === 'districts')?.selected ?? []
+  if (selectedDistricts.length > 0) {
+    // Assuming 'district' column exists or filtering via address
+    // Since district column is in schema example, we try simple eq/in if possible.
+    // Supabase in: .in('district', selectedDistricts)
+    query = query.in('district', selectedDistricts)
+  }
+
+  const selectedCategories =
+    ticketFiltered.find((m: FilterMenu) => m.key === 'categories')?.selected ?? []
+  if (selectedCategories.length > 0) {
+    // 雖然 API 可能比較難處理多重 array contains，這裡嘗試用 ilike 模糊搜尋
+    // 或者用 OR 組合。為求簡化，先假設 category 欄位包含文字
+    const orCondition = selectedCategories.map((c: string) => `category.ilike.%${c}%`).join(',')
+    query = query.or(orCondition)
   }
 
   const { data, error } = await query
@@ -155,8 +181,9 @@ const areaOptions = computed<string[]>(() => {
   return cityAreaMap[selectedCity.value] ?? []
 })
 
-const ticketFiltered = computed(() => [
+const ticketFiltered = reactive<FilterMenu[]>([
   {
+    key: 'categories',
     title: '景點類型',
     options: [
       '觀光導覽',
@@ -167,20 +194,54 @@ const ticketFiltered = computed(() => [
       '公園與樂園',
       '大自然與野生動物',
     ],
+    selected: [],
   },
   {
+    key: 'districts',
     title: '地區',
-    options: areaOptions.value,
+    options: [], // Will be populated by watcher
+    selected: [],
   },
   {
+    key: 'ratings',
     title: '景點評分',
     options: ['4.5 +', '4.0'],
+    selected: [],
   },
   {
+    key: 'availability',
     title: '門票供應情況',
     options: ['即日可用', '明日可用', '免費入場'],
+    selected: [],
   },
 ])
+
+// Watch selectedCity change to update district options
+watch(
+  selectedCity,
+  (newCity) => {
+    const districts = cityAreaMap[newCity] ?? []
+    const districtMenu = ticketFiltered.find((m: FilterMenu) => m.key === 'districts')
+    if (districtMenu) {
+      districtMenu.options = districts
+      districtMenu.selected = [] // Clear selection when city changes
+    }
+  },
+  { immediate: true },
+)
+
+// Watch filters to trigger search (Debounced)
+let filterTimer: ReturnType<typeof setTimeout> | null = null
+watch(
+  ticketFiltered,
+  () => {
+    if (filterTimer) clearTimeout(filterTimer)
+    filterTimer = setTimeout(() => {
+      fetchAttractions()
+    }, 500)
+  },
+  { deep: true },
+)
 
 // 切換頁數
 const currentPage = ref<number>(1)
@@ -298,7 +359,12 @@ function onLocalSearch() {
                     )"
                     :key="option"
                   >
-                    <input type="checkbox" class="mr-2 w-5 h-5 cursor-pointer focus:ring-primary" />
+                    <input
+                      type="checkbox"
+                      class="mr-2 w-5 h-5 cursor-pointer focus:ring-primary"
+                      :value="option"
+                      v-model="TicketMenu.selected"
+                    />
                     {{ option }}
                   </label>
                   <button

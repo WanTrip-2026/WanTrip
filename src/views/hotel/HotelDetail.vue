@@ -130,6 +130,17 @@
                   美味早餐
                 </li>
               </ul>
+              <div v-if="hotel?.facilities?.length" class="mt-4 pt-4 border-t border-gray-300/50">
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    v-for="(fac, i) in hotel.facilities"
+                    :key="i"
+                    class="text-xs text-dark_700 bg-white px-2 py-1 rounded"
+                  >
+                    {{ fac }}
+                  </span>
+                </div>
+              </div>
             </div>
 
             <div class="bg-main_100 rounded-[20px] p-5">
@@ -146,7 +157,7 @@
             </div>
           </div>
 
-          <div class="w-full md:col-span-4 space-y-5">
+          <div class="w-full md:col-span-4 space-y-5 md:space-y-0 md:flex md:flex-col md:gap-5">
             <div class="bg-main_100 rounded-[20px] p-5">
               <div class="flex items-center gap-3 pb-[10px]">
                 <div class="text-3xl font-bold text-primary">9.2</div>
@@ -159,9 +170,29 @@
                 除了飯店地理位置方便，還提供行李寄放以及退房後的洗澡需求，真的很感謝！
               </p>
             </div>
-            <div class="bg-main_100 rounded-2xl p-5">
+            <div class="bg-main_100 rounded-2xl p-5 md:flex-1 md:flex md:flex-col">
               <h3 class="font-bold text-lg mb-[10px] text-dark">地圖 & 周邊景點</h3>
-              <div class="bg-white w-full h-[200px] md:h-[272px] rounded-xl"></div>
+              <div
+                class="bg-white w-full h-[200px] md:h-auto md:flex-1 rounded-xl overflow-hidden border border-gray-300 shadow-sm relative"
+              >
+                <iframe
+                  v-if="hotel?.latitude && hotel?.longitude"
+                  width="100%"
+                  height="100%"
+                  frameborder="0"
+                  style="border: 0"
+                  loading="lazy"
+                  allowfullscreen
+                  referrerpolicy="no-referrer-when-downgrade"
+                  :src="`https://maps.google.com/maps?q=${hotel.latitude},${hotel.longitude}&z=15&output=embed`"
+                ></iframe>
+                <div
+                  v-else
+                  class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm"
+                >
+                  暫無地圖資訊
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -172,7 +203,7 @@
           class="bg-white border border-gray-300 rounded-full p-2 hidden md:flex md:gap-[12px] z-50 shadow-sm"
         >
           <button
-            v-for="tag in ['房型', '服務及設施', '房客評論', '政策']"
+            v-for="tag in ['房型', '服務及設施', '房客評論']"
             :key="tag"
             @click="handleTagClick(tag)"
             class="px-6 py-2 bg-primary text-white rounded-full text-lg hover:bg-main_800 transition-colors"
@@ -778,12 +809,34 @@ const fetchHotelDetail = async () => {
 
     // 5. 解析資料 (直接用 .json() 比較簡潔)
     const hotelData = (await hotelRes.json()) as Hotel
+
     const imgData = (await imagesRes.json()) as HotelImage[]
     const apiRooms = (await roomsRes.json()) as Omit<Room, 'features'>[]
 
     // 6. 更新狀態
     hotel.value = hotelData
     if (hotelData.name) keyword.value = hotelData.name
+
+    // PATCH: 若 detail api 沒回傳 facilities，嘗試從列表 api 補抓
+    if (!hotelData.facilities || hotelData.facilities.length === 0) {
+      if (hotelData.name) {
+        try {
+          const listRes = await fetch(
+            `${apiUrl}/hotels?keyword=${encodeURIComponent(hotelData.name)}`,
+          )
+          if (listRes.ok) {
+            const listData = await listRes.json()
+            const found = (listData.hotels || []).find((h: any) => h.id === hotelData.id)
+            if (found && found.facilities) {
+              hotelData.facilities = found.facilities
+              hotel.value = { ...hotelData } // trigger reactivity
+            }
+          }
+        } catch (e) {
+          console.warn('Fallback fetch facilities failed', e)
+        }
+      }
+    }
 
     // 處理圖片
     images.value = imgData

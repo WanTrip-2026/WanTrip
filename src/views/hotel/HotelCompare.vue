@@ -62,10 +62,12 @@
           <div class="bg-main_100 p-5 rounded-[20px] min-h-[320px] shadow-sm">
             <p class="font-bold mb-2 text-center text-dark_700">設施 & 服務</p>
             <ul class="space-y-1">
-              <li v-for="f in hotel.facilities ?? []" :key="f" class="text-dark_500">- {{ f }}</li>
+              <li v-for="f in getDisplayFacilities(hotel)" :key="f" class="text-dark_500">
+                - {{ f }}
+              </li>
             </ul>
             <li
-              v-if="!hotel.facilities || hotel.facilities.length === 0"
+              v-if="getDisplayFacilities(hotel).length === 0"
               class="text-dark_400 text-center italic"
             >
               尚未提供設施資訊
@@ -251,5 +253,17 @@ function goBackToList() {
 
 const formatPrice = (price: number): string => {
   return Number.isFinite(price) ? price.toLocaleString() : '0'
+}
+const getDisplayFacilities = (hotel: any) => {
+  const defaultFacilities = [
+    '洗衣間',
+    '乾洗',
+    '熨燙服務',
+    '洗衣服務',
+    '煙霧感應器',
+    '公共區域監視器',
+  ]
+  const dynamicFacilities = Array.isArray(hotel.facilities) ? hotel.facilities : []
+  return [...defaultFacilities, ...dynamicFacilities]
 }
 </script>
