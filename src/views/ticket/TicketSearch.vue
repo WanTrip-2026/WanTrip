@@ -2,23 +2,20 @@
 import TicketCard from '@/components/layout/TicketCard.vue'
 import { ref, reactive, computed, onMounted, watch } from 'vue' // Added reactive
 import { useRouter, useRoute } from 'vue-router'
-import { supabase } from '@/utils/supabaseClient'
+import axios from 'axios'
 import type { Attraction } from '@/types/database'
 
-const route = useRoute()
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
 
-// Local interface extending DB attraction with UI fields
-interface AttractionWithImages extends Attraction {
-  attraction_images: { image_url: string }[]
-  tickets: { price: number }[]
-}
+const route = useRoute()
 
 interface AttractionWithUI extends Attraction {
   image_url: string
   comments_count: number
 }
 
-const attractions = ref<AttractionWithUI[]>([])
+const allAttractions = ref<AttractionWithUI[]>([]) // Store all fetched data
+const attractions = ref<AttractionWithUI[]>([]) // Displayed (filtered) data
 const loading = ref<boolean>(true)
 const errorMsg = ref<string>('')
 const searchInput = ref<string>('')
@@ -37,69 +34,90 @@ const fetchAttractions = async (): Promise<void> => {
 
   const keyword = route.query.keyword as string
   const city = (route.query.city as string) || (route.query.destination as string)
+  const cities = route.query.cities as string // Support multiple cities
   const category = route.query.category as string
 
-  let query = supabase.from('attractions').select('*, attraction_images(image_url), tickets(price)')
+  try {
+    const params: any = {}
+    if (keyword) params.keyword = keyword
 
-  if (keyword) {
-    query = query.ilike('name', `%${keyword}%`)
-  }
-  if (city && city !== '選擇城市' && city !== '全部城市') {
-    query = query.eq('city', city)
-  }
-  if (category) {
-    // Try to match category as a string or within an array
-    query = query.or(`category.cs.{${category}},category.ilike.%${category}%`)
-  }
+    // Logic: cities param takes precedence, or falls back to single city
+    if (cities) {
+      params.cities = cities
+    } else if (city && city !== '選擇城市' && city !== '全部城市') {
+      params.city = city
+    }
 
-  // Apply Sidebar Filters
-  const selectedDistricts =
-    ticketFiltered.find((m: FilterMenu) => m.key === 'districts')?.selected ?? []
-  if (selectedDistricts.length > 0) {
-    // Assuming 'district' column exists or filtering via address
-    // Since district column is in schema example, we try simple eq/in if possible.
-    // Supabase in: .in('district', selectedDistricts)
-    query = query.in('district', selectedDistricts)
-  }
+    if (category) params.category = category
 
-  const selectedCategories =
-    ticketFiltered.find((m: FilterMenu) => m.key === 'categories')?.selected ?? []
-  if (selectedCategories.length > 0) {
-    // 雖然 API 可能比較難處理多重 array contains，這裡嘗試用 ilike 模糊搜尋
-    // 或者用 OR 組合。為求簡化，先假設 category 欄位包含文字
-    const orCondition = selectedCategories.map((c: string) => `category.ilike.%${c}%`).join(',')
-    query = query.or(orCondition)
-  }
+    // Note: We do NOT send districts to backend, so we get all data for the city/keyword.
+    // We filter districts client-side to ensure sidebar options reflect available data.
 
-  const { data, error } = await query
+    const response = await axios.get(`${API_BASE_URL}/tickets/search`, { params })
 
-  if (error) {
-    console.error('Fetch attractions error:', error)
-    errorMsg.value = error.message
-  } else {
-    console.log('Raw data from Supabase:', data)
-    const mappedData: AttractionWithUI[] = ((data as unknown as AttractionWithImages[]) ?? []).map(
-      (item: AttractionWithImages) => {
-        const ticketPrices = item.tickets?.map((t) => t.price) || []
-        const minPrice = ticketPrices.length > 0 ? Math.min(...ticketPrices) : item.price || 0
+    const rawData = response.data.map((item: any) => ({
+      ...item,
+      image_url: item.image_url || 'https://placehold.co/300x200?text=No+Image',
+      price: item.price || 0,
+      comments_count: 0,
+    }))
 
-        return {
-          ...item,
-          price: minPrice, // Override with min price
-          image_url:
-            item.attraction_images?.[0]?.image_url || 'https://placehold.co/300x200?text=No+Image',
-          comments_count: 0,
-        }
-      },
-    )
-    console.log('Mapped attractions:', mappedData)
-    attractions.value = mappedData
+    allAttractions.value = rawData
+
+    // 1. Dynamic District Options
+    // Extract unique districts from the fetched data
+    const districtsSet = new Set<string>()
+    rawData.forEach((item: AttractionWithUI) => {
+      if (item.district) districtsSet.add(item.district)
+    })
+    const validDistricts = Array.from(districtsSet).sort()
+
+    const districtMenu = ticketFiltered.find((m) => m.key === 'districts')
+    if (districtMenu) {
+      districtMenu.options = validDistricts
+    }
+
+    // 2. Update Display List
+    applyClientSideFilters()
 
     // Update selectedCity if filtering by city
     if (city && city !== '選擇城市' && city !== '全部城市') {
       selectedCity.value = city
     }
+  } catch (err: unknown) {
+    console.error('Fetch attractions error:', err)
+    errorMsg.value = err instanceof Error ? err.message : String(err)
+  } finally {
+    loading.value = false
   }
+}
+
+const applyClientSideFilters = () => {
+  let result = [...allAttractions.value]
+
+  // District Filter
+  const selectedDistricts = ticketFiltered.find((m) => m.key === 'districts')?.selected ?? []
+  if (selectedDistricts.length > 0) {
+    result = result.filter((item) => selectedDistricts.includes(item.district))
+  }
+
+  // Rating Filter (Placeholder logic for now, as backend doesn't seem to support it yet or it was client side)
+  const selectedRatings = ticketFiltered.find((m) => m.key === 'ratings')?.selected ?? []
+  if (selectedRatings.length > 0) {
+    // Simple logic: if '4.5 +' selected, show > 4.5
+    const minRating = selectedRatings.includes('4.5 +')
+      ? 4.5
+      : selectedRatings.includes('4.0')
+        ? 4.0
+        : 0
+    if (minRating > 0) {
+      result = result.filter((item) => (item.rating || 0) >= minRating)
+    }
+  }
+
+  attractions.value = result
+  // Reset page when filters change
+  currentPage.value = 1
 }
 
 // Watch for route changes to re-fetch
@@ -156,30 +174,6 @@ function selectCity(city: string): void {
     },
   })
 }
-const cityAreaMap: Record<string, string[]> = {
-  台北市: [
-    '中正區',
-    '大同區',
-    '中山區',
-    '松山區',
-    '大安區',
-    '萬華區',
-    '信義區',
-    '士林區',
-    '北投區',
-    '內湖區',
-    '南港區',
-    '文山區',
-  ],
-  新北市: ['板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區'],
-  台中市: ['中區', '東區', '南區', '西區', '北區'],
-  台南市: ['中西區', '東區', '南區', '北區'],
-  高雄市: ['新興區', '前金區', '苓雅區', '鹽埕區'],
-}
-
-const areaOptions = computed<string[]>(() => {
-  return cityAreaMap[selectedCity.value] ?? []
-})
 
 const ticketFiltered = reactive<FilterMenu[]>([
   {
@@ -193,13 +187,14 @@ const ticketFiltered = reactive<FilterMenu[]>([
       '戶外活動',
       '公園與樂園',
       '大自然與野生動物',
+      '餐券',
     ],
     selected: [],
   },
   {
     key: 'districts',
     title: '地區',
-    options: [], // Will be populated by watcher
+    options: [], // Dynamic now
     selected: [],
   },
   {
@@ -216,29 +211,49 @@ const ticketFiltered = reactive<FilterMenu[]>([
   },
 ])
 
-// Watch selectedCity change to update district options
+// Removed watch(selectedCity) for cityAreaMap as it overwrites dynamic options
+
+// Watch route query to update category filter selection
 watch(
-  selectedCity,
-  (newCity) => {
-    const districts = cityAreaMap[newCity] ?? []
-    const districtMenu = ticketFiltered.find((m: FilterMenu) => m.key === 'districts')
-    if (districtMenu) {
-      districtMenu.options = districts
-      districtMenu.selected = [] // Clear selection when city changes
+  () => route.query.category,
+  (newCategory) => {
+    if (newCategory) {
+      const categoryMenu = ticketFiltered.find((m) => m.key === 'categories')
+      if (categoryMenu) {
+        if (!categoryMenu.selected.includes(newCategory as string)) {
+          if (categoryMenu.options.includes(newCategory as string)) {
+            categoryMenu.selected = [newCategory as string]
+          }
+        }
+      }
     }
   },
   { immediate: true },
 )
 
-// Watch filters to trigger search (Debounced)
-let filterTimer: ReturnType<typeof setTimeout> | null = null
+// Watch filters to trigger client-side filtering ONLY (Debounced)
+// Note: If only districts change, we don't need to re-fetch.
+// But we need to distinguish.
+// For MVP simplicity: If filters change, we can just applyClientSideFilters.
+// But some filters might eventually need server support (like complex text search within results?).
+// With current approach, 'districts' and 'ratings' are client side.
+// 'categories' is mixed (sidebar vs route).
+// If user clicks sidebar category, it updates `ticketFiltered`. Should we update Route? Or just filter?
+// Usually sidebar -> update Route.
+// But current implementation of filter watcher called `fetchAttractions`.
+// Let's change the watcher to apply filters client side if possible, or fetch.
+// Actually, `ticketFiltered` changes -> applyClientSideFilters is enough for district/rating.
+// For 'categories', if it's purely client side now? Backend supports it.
+// If I make specific watchers it's cleaner.
+
 watch(
   ticketFiltered,
-  () => {
-    if (filterTimer) clearTimeout(filterTimer)
-    filterTimer = setTimeout(() => {
-      fetchAttractions()
-    }, 500)
+  (newVal) => {
+    // If district or rating changes, just filter client side.
+    // If category changes? Backend supports 'category' param.
+    // If we want to support multiple categories client side over the fetched data?
+    // Let's stick to client-side for everything for now to match 'districts' logic.
+    applyClientSideFilters()
   },
   { deep: true },
 )
@@ -259,8 +274,6 @@ function goToPage(page: number): void {
     currentPage.value = page
   }
 }
-// 從 query 取得搜尋條件（未來可做過濾）
-// searchKeyword and searchCity removed as they were unused
 
 function onLocalSearch() {
   router.push({
@@ -421,7 +434,9 @@ function onLocalSearch() {
               v-for="page in totalPages"
               :key="page"
               class="w-10 h-10 border rounded-full text-dark_500 bg-main_100 hover:text-primary hover:bg-main-300"
-              :class="{ 'bg-primary text-white': currentPage === page }"
+              :class="{
+                'bg-primary text-white hover:bg-main hover:text-white': currentPage === page,
+              }"
               @click="goToPage(page)"
             >
               {{ page }}

@@ -3,8 +3,8 @@ import { reactive, ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
 import HomePageTicketCard from '@/components/layout/HomePageTicketCard.vue'
-import { supabase } from '@/utils/supabaseClient'
-import type { Attraction } from '@/types/database'
+import axios from 'axios'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
 
 const router = useRouter()
 const activeTab = ref<'stay'>('stay')
@@ -84,46 +84,9 @@ const handleOutsideClick = (e: MouseEvent) => {
   }
 }
 
-interface Experience {
-  id: number
-  image: string
-  title: string
-  rating: number
-  reviews: number
-}
-
-interface Section {
-  title: string
-  variant: 'landscape' | 'portrait' | 'region'
-  items: Experience[]
-}
-
-const sections = ref<Section[]>([])
-const isLoading = ref(true)
 // function isticketSection(sectionTitle: string) { return sectionTitle === '人氣地區' } // Unused
 
-onMounted(() => {
-  setTimeout(() => {
-    sections.value = [
-      { title: '門票分類', variant: 'region', items: mockItems(4) },
-      { title: '熱門景點', variant: 'landscape', items: mockItems(8) },
-      { title: '特色體驗', variant: 'portrait', items: mockItems(4) },
-      { title: '推薦門票', variant: 'landscape', items: mockItems(8) },
-    ]
-    isLoading.value = false
-  }, 1000)
-})
-
-function mockItems(count: number): Experience[] {
-  return Array.from({ length: count }).map((_, i) => ({
-    id: i + 1,
-    image:
-      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800',
-    title: `示範景點 ${i + 1}`,
-    rating: 4.7,
-    reviews: 33715,
-  }))
-}
+const isLoading = ref(true)
 
 onMounted(() => {
   startTimer()
@@ -135,49 +98,13 @@ const fetchTickets = async () => {
   errorMsg.value = ''
   isLoading.value = true
   try {
-    const { data: popularData, error: popularError } = await supabase
-      .from('attractions')
-      .select('*, attraction_images(image_url), tickets(price)')
-      .limit(6)
+    const [popularRes, topRatedRes] = await Promise.all([
+      axios.get(`${API_BASE_URL}/tickets/popular`),
+      axios.get(`${API_BASE_URL}/tickets/top-rated`),
+    ])
 
-    const { data: topRatedData, error: topRatedError } = await supabase
-      .from('attractions')
-      .select('*, attraction_images(image_url), tickets(price)')
-      .order('rating', { ascending: false })
-      .limit(6)
-
-    if (popularError || topRatedError) {
-      console.error('Supabase error:', popularError || topRatedError)
-      errorMsg.value = `Error fetching tickets: ${(popularError || topRatedError)?.message}`
-      return
-    }
-
-    const mapItem = (item: AttractionWithImages): TicketItem => {
-      const ticketPrices = item.tickets?.map((t) => t.price) || []
-      const minPrice = ticketPrices.length > 0 ? Math.min(...ticketPrices) : item.price || 0
-
-      return {
-        id: item.id,
-        name: item.name || '',
-        imageUrl:
-          item.attraction_images?.[0]?.image_url || 'https://placehold.co/400x300?text=No+Image',
-        price: minPrice,
-        venue: item.city || '',
-        category: Array.isArray(item.category) ? item.category[0] || '' : item.category || '',
-        date: item.created_at || '2026-01-01',
-        address: item.address || '',
-        rating: item.rating || 0,
-        description: item.intro || item.description || '',
-      }
-    }
-
-    if (popularData) {
-      tickets.value = (popularData as unknown as AttractionWithImages[]).map(mapItem)
-    }
-
-    if (topRatedData) {
-      topRatedTickets.value = (topRatedData as unknown as AttractionWithImages[]).map(mapItem)
-    }
+    tickets.value = popularRes.data
+    topRatedTickets.value = topRatedRes.data
   } catch (err: unknown) {
     console.error('Unexpected error:', err)
     errorMsg.value = `Unexpected Error: ${err instanceof Error ? err.message : String(err)}`
@@ -186,38 +113,45 @@ const fetchTickets = async () => {
   }
 }
 
-interface AttractionWithImages extends Attraction {
-  attraction_images: { image_url: string }[]
-  tickets: { price: number }[]
-}
-
 onUnmounted(() => {
   stopTimer()
   window.removeEventListener('click', handleOutsideClick)
 })
 
-const taiwanCities = [
-  '基隆',
-  '臺北',
-  '新北',
-  '桃園',
-  '新竹',
-  '苗栗',
-  '臺中',
-  '彰化',
-  '南投',
-  '雲林',
-  '嘉義',
-  '臺南',
-  '高雄',
-  '屏東',
-  '宜蘭',
-  '花蓮',
-  '臺東',
-  '澎湖',
-  '金門',
-  '馬祖',
+const isOpen = ref(false)
+const cityGroups = [
+  {
+    label: '熱門城市',
+    cities: ['台北市', '新北市', '台中市', '台南市', '高雄市'],
+  },
+  {
+    label: '其他城市',
+    cities: [
+      '基隆市',
+      '新竹市',
+      '新竹縣',
+      '苗栗縣',
+      '彰化縣',
+      '南投縣',
+      '雲林縣',
+      '嘉義市',
+      '嘉義縣',
+      '屏東縣',
+      '宜蘭縣',
+      '花蓮縣',
+      '台東縣',
+    ],
+  },
+  {
+    label: '離島地區',
+    cities: ['澎湖縣', '金門縣', '連江縣'],
+  },
 ]
+
+function selectCity(city: string) {
+  form.destination = city
+  isOpen.value = false
+}
 
 const form = reactive({
   destination: '',
@@ -279,8 +213,8 @@ const ticketClassify = [
   },
   {
     key: 'exhibition',
-    label: '展覽與文化',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-%E5%B3%B6_qnxq42.jpg',
+    label: '餐券',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/v1768894089/buffet4_qjof1m.png',
   },
 ]
 
@@ -426,24 +360,26 @@ function onClickRegion(tc: { label: string }) {
         <div class="mt-4 flex justify-center">
           <div class="w-full max-w-4xl">
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <label
-                class="relative block rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 group cursor-pointer transition-all hover:border-primary"
-              >
-                <p class="text-xs font-bold text-dark_500">想去哪裡？</p>
-                <div class="relative mt-2">
-                  <select
-                    v-model="form.destination"
-                    class="w-full bg-transparent text-sm outline-none appearance-none cursor-pointer pr-8 font-medium text-primary group-hover:text-main_800 transition-colors"
-                  >
-                    <option value="" disabled selected>選擇城市、景點</option>
-                    <option v-for="city in taiwanCities" :key="city" :value="city">
-                      {{ city }}
-                    </option>
-                  </select>
-                  <div
-                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-primary/30"
-                  >
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="relative">
+                <div
+                  @click="isOpen = !isOpen"
+                  class="relative block rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 group cursor-pointer transition-all hover:border-primary"
+                >
+                  <p class="text-xs font-bold text-dark_500">想去哪裡？</p>
+                  <div class="relative mt-2 flex items-center justify-between">
+                    <span
+                      class="text-sm font-medium transition-colors"
+                      :class="form.destination ? 'text-primary' : 'text-gray-400'"
+                    >
+                      {{ form.destination || '選擇城市、景點' }}
+                    </span>
+                    <svg
+                      class="h-4 w-4 text-primary/30 transition-transform duration-300"
+                      :class="{ 'rotate-180': isOpen }"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
                       <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
@@ -453,7 +389,36 @@ function onClickRegion(tc: { label: string }) {
                     </svg>
                   </div>
                 </div>
-              </label>
+
+                <transition name="fade">
+                  <div
+                    v-if="isOpen"
+                    class="absolute top-[calc(100%+8px)] left-0 z-[100] w-full overflow-hidden rounded-[20px] bg-white p-2 shadow-2xl border border-gray-300"
+                  >
+                    <div class="max-h-[300px] overflow-y-auto no-scrollbar">
+                      <template v-for="group in cityGroups" :key="group.label">
+                        <div class="px-4 py-2 text-xs font-bold text-primary bg-gray-50/50 mb-1">
+                          {{ group.label }}
+                        </div>
+                        <div class="grid grid-cols-2 gap-1 px-2 pb-2">
+                          <button
+                            v-for="city in group.cities"
+                            :key="city"
+                            type="button"
+                            @click="selectCity(city)"
+                            class="px-3 py-2 text-sm text-dark hover:bg-main_100 hover:text-primary hover:font-bold rounded-xl transition-all text-left"
+                            :class="{
+                              'bg-main_100 text-primary font-bold': form.destination === city,
+                            }"
+                          >
+                            {{ city }}
+                          </button>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </transition>
+              </div>
 
               <div class="relative" ref="peoplePickerRef">
                 <label

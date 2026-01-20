@@ -319,7 +319,6 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { ref, onMounted, computed } from 'vue'
 import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
-import { supabase } from '@/utils/supabaseClient'
 import type { Attraction, AttractionImage, Ticket } from '@/types/database'
 import { useOrderStore } from '@/stores/orderStore'
 import { useAuthStore } from '@/stores/auth'
@@ -379,19 +378,27 @@ const fetchAttractionData = async () => {
 
   loading.value = true
   tickets.value = []
-  // selectedTicket.value = null // This line is no longer needed as selectedTicket is removed
 
   try {
-    // Fetch Attraction Details
-    const { data: attractionData, error: attractionError } = await supabase
-      .from('attractions')
-      .select('*')
-      .eq('id', id)
-      .single()
+    const apiUrl = import.meta.env.VITE_API_BASE_URL
+    const res = await fetch(`${apiUrl}/tickets/${id}`)
 
-    if (attractionError) throw attractionError
+    if (!res.ok) {
+      throw new Error('Failed to fetch ticket details')
+    }
+
+    const data = await res.json()
+    const {
+      attraction: attractionData,
+      images,
+      tickets: ticketsData,
+      recommendations: recData,
+    } = data
 
     attraction.value = attractionData
+    attractionImages.value = images || []
+    tickets.value = (ticketsData as Ticket[]).map((t) => ({ ...t, quantity: 0 })) || []
+    recommendations.value = recData || []
 
     // Map to ticketIntro
     if (attractionData) {
@@ -416,25 +423,6 @@ const fetchAttractionData = async () => {
       }
     }
 
-    // Fetch Images
-    const { data: imagesData, error: imagesError } = await supabase
-      .from('attraction_images')
-      .select('*')
-      .eq('attraction_id', id)
-
-    if (imagesError) throw imagesError
-
-    attractionImages.value = imagesData || []
-
-    // Fetch Available Tickets
-    const { data: ticketsData, error: ticketsError } = await supabase
-      .from('tickets')
-      .select('*')
-      .eq('attraction_id', id)
-
-    if (ticketsError) throw ticketsError
-    tickets.value = (ticketsData as Ticket[]).map((t) => ({ ...t, quantity: 0 })) || []
-
     // Update ticketDetail content
     const details = []
     if (attractionData?.description) {
@@ -452,24 +440,8 @@ const fetchAttractionData = async () => {
       })
     }
     ticketDetail.value = details
-
-    // Fetch Recommendations based on category
-    if (attractionData?.category) {
-      const category = Array.isArray(attractionData.category)
-        ? attractionData.category[0]
-        : attractionData.category
-      const { data: recData } = await supabase
-        .from('attractions')
-        .select('*, attraction_images(image_url)')
-        .contains('category', [category])
-        .neq('id', id)
-        .limit(4)
-
-      if (recData) {
-        recommendations.value = recData.map((item) => mapItem(item as AttractionWithImages))
-      }
-    }
   } catch (error: unknown) {
+    console.error(error)
     errorMsg.value = error instanceof Error ? error.message : String(error)
   } finally {
     loading.value = false
@@ -493,20 +465,7 @@ interface TicketItem {
   description: string
 }
 
-const mapItem = (item: AttractionWithImages): TicketItem => ({
-  id: item.id,
-  name: item.name || '',
-  imageUrl: item.attraction_images?.[0]?.image_url || 'https://placehold.co/400x300?text=No+Image',
-  price: item.price || 0,
-  venue: item.city || '',
-  category: Array.isArray(item.category) ? item.category[0] || '' : item.category || '',
-  date: item.created_at || '2026-01-01',
-  address: item.address || '',
-  rating: item.rating || 0,
-  description: item.intro || item.description || '',
-})
-
-// Define AttractionWithImages locally or import if possible
+// Ensure AttractionWithImages interface is available if needed, though backend returns flattened structure for recommendations
 interface AttractionWithImages extends Attraction {
   attraction_images: { image_url: string }[]
 }

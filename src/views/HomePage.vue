@@ -208,6 +208,9 @@
 </template>
 
 <script setup lang="ts">
+import axios from 'axios'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
+
 import { reactive, ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import HomePageCard from '@/components/layout/HomePageCard.vue'
@@ -263,11 +266,26 @@ const recommendedHotels = ref<HomePageCardItem[]>([])
 const hotHotelsB = computed(() => recommendedHotels.value.slice(0, 6))
 
 onMounted(async () => {
-  const { data: featured } = await fetchFeaturedHotels()
-  featuredHotels.value = featured.value
+  try {
+    const { data: featured } = await fetchFeaturedHotels()
+    featuredHotels.value = featured.value
 
-  const { data: recommended } = await fetchRecommendedHotels()
-  recommendedHotels.value = recommended.value
+    const { data: recommended } = await fetchRecommendedHotels()
+    recommendedHotels.value = recommended.value
+  } catch (error) {
+    console.error('Error fetching hotels:', error)
+  }
+
+  // Fetch Popular Tickets
+  try {
+    const res = await axios.get(`${API_BASE_URL}/tickets/popular`)
+    // Map API data to match TicketCard props if necessary, or ensure TicketCard accepts API structure.
+    // TicketHomeView passes the API data directly to HomePageTicketCard.
+    // Let's assume HomePageTicketCard handles it (it takes :v-bind="ticket").
+    recommendations.value = res.data
+  } catch (error) {
+    console.error('Error fetching popular tickets:', error)
+  }
 })
 
 const handleWishlist = (id: string | number) => {
@@ -276,7 +294,7 @@ const handleWishlist = (id: string | number) => {
 }
 
 const handleBook = (id: string | number) => {
-  router.push(`/product/${id}`)
+  router.push(`/tickets/${id}`)
 }
 
 const stayKeywords = [
@@ -346,52 +364,41 @@ function onSearch() {
   }
 }
 
-function onClickRegion(region: { key: string }) {
-  console.log(region.key)
+const regionCities: Record<string, string[]> = {
+  north: ['台北市', '新北市', '基隆市', '桃園市', '新竹市', '新竹縣', '宜蘭縣'],
+  central: ['苗栗縣', '台中市', '彰化縣', '南投縣', '雲林縣'],
+  south: ['嘉義市', '嘉義縣', '台南市', '高雄市', '屏東縣'],
+  east: ['花蓮縣', '台東縣'],
+  islands: ['澎湖縣', '金門縣', '連江縣'],
 }
 
-const recommendations = ref([
-  {
-    id: 1,
-    name: '台北 101 觀景台門票',
-    address: '台北市信義區',
-    imageUrl: 'https://picsum.photos/600/400?random=10',
-    price: 500,
-  },
-  {
-    id: 2,
-    name: '故宮博物院電子門票',
-    address: '台北市士林區',
-    imageUrl: 'https://picsum.photos/600/400?random=11',
-    price: 500,
-  },
-  {
-    id: 3,
-    name: '北投溫泉大眾池體驗',
-    address: '台北市北投區',
-    imageUrl: 'https://picsum.photos/600/400?random=12',
-    price: 500,
-  },
-  {
-    id: 4,
-    name: '九份接駁專車',
-    address: '台北車站出發',
-    imageUrl: 'https://picsum.photos/600/400?random=13',
-    price: 500,
-  },
-  {
-    id: 5,
-    name: '九份接駁專車',
-    address: '松山車站出發',
-    imageUrl: 'https://picsum.photos/600/400?random=14',
-    price: 500,
-  },
-  {
-    id: 6,
-    name: '九份接駁專車',
-    address: '基隆車站出發',
-    imageUrl: 'https://picsum.photos/600/400?random=15',
-    price: 500,
-  },
-])
+function onClickRegion(region: { key: string }) {
+  const cities = regionCities[region.key]
+  if (cities) {
+    router.push({
+      path: '/tickets/search',
+      query: {
+        cities: cities.join(','),
+      },
+    })
+  } else {
+    // Fallback or default behavior
+    console.log('Unknown region:', region.key)
+  }
+}
+
+interface TicketItem {
+  id: number | string
+  name: string
+  imageUrl: string
+  price: number
+  venue: string
+  category: string
+  date: string
+  address: string
+  rating: number
+  description: string
+}
+
+const recommendations = ref<TicketItem[]>([])
 </script>
