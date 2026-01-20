@@ -27,6 +27,7 @@ const props = defineProps<{
     adults: number
     rooms: number
   }
+  isCompact?: boolean
 }>()
 
 const compareStore = useCompareStore()
@@ -89,21 +90,25 @@ const onFavoriteClick = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col w-[894px]">
+  <div class="flex flex-col w-full">
     <div
       class="bg-white h-[180px] rounded-[20px] border border-gray-200 overflow-hidden flex flex-row"
     >
       <!-- 圖片 -->
-      <div class="h-full w-[246px] aspect-[4/3] relative">
+      <div
+        class="h-full relative flex-shrink-0"
+        :class="isCompact ? 'w-[120px] aspect-[2/3]' : 'w-[246px] aspect-[4/3]'"
+      >
         <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
         <button
           @click.stop="toggleCompare"
           class="absolute bottom-5 right-5 rounded-[20px] h-[40px] w-[90px] text-xs p-[2px] opacity-80 hover:opacity-100 text-black transition-colors"
-          :class="
+          :class="[
             isInCompare
               ? 'bg-dark_300 text-black cursor-not-allowed'
-              : 'bg-white/65 text-black opacity-80 hover:bg-white'
-          "
+              : 'bg-white/65 text-black opacity-80 hover:bg-white',
+            isCompact ? 'scale-75 origin-center bottom-2 left-1/2 -translate-x-1/2' : '',
+          ]"
         >
           <template v-if="isInCompare">已加入</template>
           <template v-else>加入比較</template>
@@ -139,12 +144,15 @@ const onFavoriteClick = async () => {
             <p class="text-gray-500 text-base">{{ hotel.city }}{{ hotel.district }}</p>
 
             <p class="text-base text-gray-400">6616 則評論</p>
+            <div v-if="isCompact" class="text-red-500 text-2xl font-bold mt-2">
+              NT${{ hotel.min_price.toLocaleString() }}
+            </div>
           </div>
         </div>
 
         <!-- 底部 -->
         <div class="flex flex-col justify-end items-end gap-2">
-          <div class="text-red-500 text-2xl font-bold">
+          <div v-if="!isCompact" class="text-red-500 text-2xl font-bold">
             NT${{ hotel.min_price.toLocaleString() }}
           </div>
           <div class="flex gap-4">
@@ -169,6 +177,7 @@ const onFavoriteClick = async () => {
               </svg>
             </button>
             <RouterLink
+              v-if="!isCompact"
               target="_blank"
               :to="{
                 path: `/hotels/${hotel.id}`,
@@ -182,7 +191,7 @@ const onFavoriteClick = async () => {
               }"
             >
               <button
-                class="bg-primary text-white px-6 py-2 rounded-[20px] hover:bg-main_800 transition"
+                class="bg-primary text-white px-6 py-2 rounded-[20px] hover:bg-main transition"
               >
                 查看空房情況
               </button>

@@ -164,7 +164,7 @@
               </div>
               <button
                 @click="fetchHotels"
-                class="w-full md:w-36 items-center px-8 py-3 rounded-[20px] bg-primary hover:bg-main_800 shadow text-lg font-medium text-white transition"
+                class="w-full md:w-36 items-center px-8 py-3 rounded-[20px] bg-primary hover:bg-main shadow text-lg font-medium text-white transition"
               >
                 <font-awesome-icon icon="search" class="mr-2" /> 搜尋
               </button>
@@ -180,14 +180,14 @@
     <div class="flex gap-3 fixed top-[100px] ml-5">
       <button
         @click="goBackToList"
-        class="items-center px-8 py-3 rounded-[18px] bg-primary hover:bg-main_800 shadow text-sm font-medium text-white transition"
+        class="items-center px-8 py-3 rounded-[18px] bg-primary hover:bg-main shadow text-sm font-medium text-white transition"
       >
         <font-awesome-icon icon="chevron-left" />
         返回搜尋結果列表
       </button>
       <button
         @click="isFilterOpen = !isFilterOpen"
-        class="items-center px-8 py-3 rounded-[18px] bg-primary hover:bg-main_800 shadow text-sm font-medium text-white transition"
+        class="items-center px-8 py-3 rounded-[18px] bg-primary hover:bg-main shadow text-sm font-medium text-white transition"
       >
         篩選
       </button>
@@ -247,79 +247,23 @@
 
           <button
             @click="resetSearch"
-            class="mt-6 px-6 py-2 bg-primary text-white rounded-full hover:bg-main_800 transition shadow-md"
+            class="mt-6 px-6 py-2 bg-primary text-white rounded-full hover:bg-main transition shadow-md"
           >
             查看所有飯店
           </button>
         </div>
 
-        <div
-          v-for="hotel in hotels"
-          :key="hotel.id"
-          @mouseenter="handleHotelHover(hotel.id, true)"
-          @mouseleave="handleHotelHover(hotel.id, false)"
-          @click="goToHotelDetail(hotel)"
-          class="bg-white w-full h-[180px] rounded-[20px] border border-gray-200 overflow-hidden flex flex-row hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-        >
-          <div class="aspect-[2/3] relative flex-shrink-0">
-            <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
-            <button
-              @click.stop="addToCompare(hotel)"
-              class="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-[20px] h-[32px] w-[80px] text-[10px] bg-primary opacity-80 hover:opacity-100 text-white transition whitespace-nowrap"
-            >
-              <i class="fa-solid fa-plus mr-1"></i>加入比較
-            </button>
-          </div>
-
-          <div class="relative flex-1 flex flex-col justify-between p-4 min-w-0">
-            <p class="absolute top-4 right-4 p-2 rounded-full bg-primary text-white text-xs">
-              {{ hotel.star_rating }}.0
-            </p>
-
-            <div class="flex flex-col gap-1 pr-10">
-              <h3 class="text-lg font-bold text-black truncate">
-                {{ hotel.name }}
-              </h3>
-
-              <div class="flex flex-col">
-                <div class="flex gap-0.5 mb-1">
-                  <svg
-                    v-for="(n, index) in starCount(hotel.star_rating)"
-                    :key="index"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 640 640"
-                    class="w-4 h-4 text-yellow-400"
-                    fill="currentColor"
-                  >
-                    <path
-                      d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z"
-                    />
-                  </svg>
-                </div>
-                <p class="text-gray-500 text-xs">{{ hotel.city }}{{ hotel.district }}</p>
-                <p class="text-[10px] text-gray-400">6616 則評論</p>
-              </div>
-            </div>
-
-            <div class="flex justify-between items-end">
-              <div class="text-[#D14D4D] text-xl font-bold">
-                NT${{ hotel.min_price?.toLocaleString() ?? '0' }}
-              </div>
-              <div class="flex gap-2">
-                <button class="bg-primary text-white p-2 rounded-full hover:bg-main_800 transition">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                    class="w-4 h-4 fill-current"
-                  >
-                    <path
-                      d="M378.9 80c-27.3 0-53 13.1-69 35.2l-34.4 47.6c-4.5 6.2-11.7 9.9-19.4 9.9s-14.9-3.7-19.4-9.9l-34.4-47.6c-16-22.1-41.7-35.2-69-35.2-47 0-85.1 38.1-85.1 85.1 0 49.9 32 98.4 68.1 142.3 41.1 50 91.4 94 125.9 120.3 3.2 2.4 7.9 4.2 14 4.2s10.8-1.8 14-4.2c34.5-26.3 84.8-70.4 125.9-120.3 36.2-43.9 68.1-92.4 68.1-142.3 0-47-38.1-85.1-85.1-85.1zM271 87.1c25-34.6 65.2-55.1 107.9-55.1 73.5 0 133.1 59.6 133.1 133.1 0 68.6-42.9 128.9-79.1 172.8-44.1 53.6-97.3 100.1-133.8 127.9-12.3 9.4-27.5 14.1-43.1 14.1s-30.8-4.7-43.1-14.1C176.4 438 123.2 391.5 79.1 338 42.9 294.1 0 233.7 0 165.1 0 91.6 59.6 32 133.1 32 175.8 32 216 52.5 241 87.1l15 20.7 15-20.7z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
+        <div class="flex flex-col gap-5">
+          <HotelCard
+            v-for="hotel in hotels"
+            :key="hotel.id"
+            :hotel="hotel"
+            :is-compact="true"
+            @mouseenter="handleHotelHover(hotel.id, true)"
+            @mouseleave="handleHotelHover(hotel.id, false)"
+            @click="goToHotelDetail(hotel)"
+            class="cursor-pointer hover:shadow-lg transition-shadow duration-300 bg-white rounded-[20px]"
+          />
         </div>
       </div>
     </aside>
@@ -454,6 +398,7 @@ import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer'
 import type { LocationQueryRaw } from 'vue-router'
+import HotelCard from '../../components/layout/HotelCard.vue'
 
 interface Hotel {
   id: string
@@ -1097,10 +1042,6 @@ const goToHotelDetail = (hotel: Hotel) => {
   window.open(routeData.href, '_blank')
 }
 
-const addToCompare = (hotel: Hotel) => {
-  console.log('加入比較清單:', hotel.name)
-}
-
 onUnmounted(() => {
   window.initMap = null
 })
@@ -1262,5 +1203,42 @@ function clearOptions(key: string) {
 :deep(.dp__input_wrap),
 :deep(.dp__main > div:first-child) {
   height: 100%;
+}
+
+/* HotelCard Font Overrides for Compact Sidebar */
+
+/* Name (原本是 text-2xl) -> 18px */
+:deep(h3.text-2xl) {
+  font-size: 18px !important;
+  line-height: 1.5 !important;
+}
+
+/* Join Compare Button (原本是 text-xs) -> 10px */
+:deep(button.text-xs) {
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+}
+
+/* Stars SVG (原本是 w-5 h-5) -> 16px */
+:deep(svg.w-5.h-5) {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* City + Details (原本是 text-base + text-gray-500) -> 12px */
+:deep(p.text-base.text-gray-500) {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+/* Reviews (原本是 text-base + text-gray-400) -> 10px */
+:deep(p.text-base.text-gray-400) {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+/* Price (原本是 text-2xl + text-red-500) -> 20px */
+:deep(.text-red-500.text-2xl) {
+  font-size: 20px !important;
 }
 </style>

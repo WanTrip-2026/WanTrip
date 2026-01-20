@@ -74,7 +74,7 @@
     <div
       class="max-w-[1200px] mx-auto px-5 lg:px-0 grid grid-cols-1 lg:grid-cols-12 gap-5 relative"
     >
-      <div class="col-span-12 lg:col-span-8 space-y-5">
+      <div class="col-span-12 lg:col-span-8 space-y-5 mb-[300px] lg:mb-0">
         <section class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
           <h2 class="text-xl line-clamp-2 md:text-2xl font-bold text-dark_900 mb-4">
             {{ ticketIntro.title }}

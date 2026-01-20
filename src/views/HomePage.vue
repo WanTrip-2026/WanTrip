@@ -136,7 +136,7 @@
       <!-- 熱門飯店（第一排） -->
       <section class="mt-20">
         <h2 class="mb-5 text-xl font-bold text-dark">熱門飯店</h2>
-        <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar text-nowrap">
+        <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
           <HomePageCard
             v-for="(hotel, index) in hotHotelsA"
             :key="hotel.id"
@@ -151,7 +151,9 @@
       <!-- 熱門飯店（第二排） -->
       <section class="mt-20">
         <h2 class="mb-5 text-xl font-bold text-dark">推薦飯店</h2>
-        <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar text-nowrap">
+        <div
+          class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar text-nowrap"
+        >
           <HomePageCard
             v-for="(hotel, index) in hotHotelsB"
             :key="hotel.id"
@@ -165,7 +167,9 @@
 
       <section class="mt-20">
         <h2 class="font-bold text-xl mb-5 text-dark">熱門體驗</h2>
-        <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar text-nowrap">
+        <div
+          class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar text-nowrap"
+        >
           <HomePageTicketCard
             v-for="(recommend, index) in recommendations"
             :key="recommend.id"
@@ -329,15 +333,15 @@ function onSearch() {
     router.push({
       path: '/tickets/search',
       query: {
-        destination: form.destination
-      }
+        destination: form.destination,
+      },
     })
   } else {
     router.push({
       path: '/hotels/search',
       query: {
-        destination: form.destination
-      }
+        destination: form.destination,
+      },
     })
   }
 }

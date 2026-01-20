@@ -306,7 +306,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
     <div class="flex">
       <button
         @click="onSearch"
-        class="w-full md:w-auto min-h-[70px] md:h-full md:px-10 rounded-[20px] md:rounded-full bg-primary hover:bg-main_800 text-white transition-all whitespace-nowrap flex items-center justify-center font-bold text-lg"
+        class="w-full md:w-auto min-h-[70px] md:h-full md:px-10 rounded-[20px] md:rounded-full bg-primary hover:bg-main text-white transition-all whitespace-nowrap flex items-center justify-center font-bold text-lg"
       >
         <font-awesome-icon icon="search" class="mr-2" /> 搜尋
       </button>
