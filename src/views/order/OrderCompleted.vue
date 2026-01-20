@@ -53,12 +53,12 @@ const formattedAmount = computed(() => `NT$ ${order.value.amount.toLocaleString(
           >
           <div>
             <div class="flex flex-nowrap text-xs">
-              <p class="text-dark_700">訂單編號：</p>
-              <p class="text-dark">{{ order.id }}</p>
+              <dt class="text-dark_700">訂單編號：</dt>
+              <dd class="text-dark">{{ order.id }}</dd>
             </div>
             <div class="flex text-xs">
-              <p class="text-dark_700">訂單建立日期：</p>
-              <p class="text-dark">{{ order.createdAt }}</p>
+              <dt class="text-dark_700">訂單建立日期：</dt>
+              <dd class="text-dark">{{ order.createdAt }}</dd>
             </div>
           </div>
 
