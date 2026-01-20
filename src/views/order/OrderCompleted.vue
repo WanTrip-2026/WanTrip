@@ -36,7 +36,7 @@ const formattedAmount = computed(() => `NT$ ${order.value.amount.toLocaleString(
   <main class="w-full bg-page pt-32">
     <section class="max-w-[1240px] min-h-screen mx-auto px-5">
       <div
-        class="mx-auto max-w-[800px] p-5 lg:p-10 bg-white rounded-[40px] flex flex-col items-center gap-5 lg:gap-10 border border-gray-300 shadow-sm"
+        class="mx-auto max-w-[800px] p-5 lg:p-10 mb-10 lg:mb-0 bg-white rounded-[40px] flex flex-col items-center gap-5 lg:gap-10 border border-gray-300 shadow-sm"
       >
         <h3 class="text-4xl font-bold text-black">訂購完成！</h3>
         <div class="flex flex-col gap-5 items-center lg:flex-row lg:gap-10 justify-center w-full">

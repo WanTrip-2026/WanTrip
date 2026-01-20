@@ -19,7 +19,7 @@
             </a>
           </div>
         </aside>
-        <div class="lg:col-span-3 gap-10 pb-10">
+        <div class="lg:col-span-3 gap-10 pb-10 mb-10 lg:mb-0">
           <!-- 帳號管理區 -->
           <div
             class="scroll-mt-[96px] bg-white w-full rounded-[20px] border border-gray-300 p-5 mb-10"
@@ -207,7 +207,7 @@
               >
                 <div class="flex h-[120px]">
                   <img
-                    class="aspect-[4/3] object-cover min-w-10"
+                    class="aspect-[4/3] object-cover min-w-10 hidden lg:block"
                     :src="
                       (order.attraction_id ? order.image : order.image_url) ||
                       order.image ||
@@ -220,7 +220,9 @@
                     <h3 class="text-md lg:text-xl font-bold">
                       {{ order.hotel_name }}
                     </h3>
-                    <p class="text-sm text-gray-600">訂單編號：{{ order.order_id || order.id }}</p>
+                    <p class="text-sm text-gray-600 hidden lg:block">
+                      訂單編號：{{ order.order_id || order.id }}
+                    </p>
                     <p class="text-sm text-gray-600">
                       <template v-if="order.attraction_id">
                         日期：{{ order.date?.split(' ')[0] || order.check_in_date }}
@@ -287,6 +289,7 @@
                 :date="item.date"
                 :address="item.address"
                 :rating="item.rating"
+                :type="item.type"
                 class="shrink-0"
               />
             </div>

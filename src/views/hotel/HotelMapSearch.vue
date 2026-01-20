@@ -290,8 +290,8 @@
                   <div
                     class="absolute h-2 bg-main_300 rounded-full"
                     :style="{
-                      left: `${(priceRange.min / maxPrice) * 100}%`,
-                      right: `${100 - (priceRange.max / maxPrice) * 100}%`,
+                      left: `${((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100}%`,
+                      right: `${100 - ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100}%`,
                     }"
                   ></div>
 
@@ -473,31 +473,7 @@ const HotelFiltered = reactive<FilterMenu[]>([
     selected: [],
   },
   { key: 'types', title: '住宿類型', options: [], selected: [] },
-  {
-    key: 'policies',
-    title: '付款政策',
-    options: ['免費取消', '立即付款', '延後付款', '到店付款'],
-    selected: [],
-  },
   { key: 'facilities', title: '設施＆服務', options: [], selected: [] },
-  {
-    key: 'districts',
-    title: '地區',
-    options: ['中正區', '中山區', '萬華區', '大同區', '松山區'],
-    selected: [],
-  },
-  {
-    key: 'distance',
-    title: '距離市中心',
-    options: [
-      '位於市中心',
-      '距市中心1.5公里內',
-      '距市中心1.5-3公里內',
-      '距市中心3-5公里內',
-      '距市中心5公里以上',
-    ],
-    selected: [],
-  },
 ])
 
 function starCount(stars: number) {
@@ -522,8 +498,8 @@ const goBackToList = () => {
 
 type FacilityName = string
 
-const minPrice = 0
-const maxPrice = 15000
+const minPrice = 14000
+const maxPrice = 30000
 const step = 500
 
 const priceRange = ref<PriceRange>({
@@ -592,6 +568,18 @@ watch(
       priceRange.value.max = min + step
     }
   },
+)
+
+let timer: ReturnType<typeof setTimeout> | null = null
+watch(
+  priceRange,
+  () => {
+    if (timer) clearTimeout(timer)
+    timer = setTimeout(() => {
+      fetchHotels()
+    }, 500)
+  },
+  { deep: true },
 )
 
 const currentMapType = ref('roadmap')
@@ -821,6 +809,10 @@ const fetchHotels = async () => {
       params.append('adults', peopleConfig.people.toString() || '2')
       params.append('rooms', peopleConfig.rooms.toString() || '1')
 
+      // 價格篩選
+      params.append('min_price', String(priceRange.value.min))
+      params.append('max_price', String(priceRange.value.max))
+
       if (range.value && range.value.length === 2) {
         params.append('start_date', formatDate(range.value[0]))
         params.append('end_date', formatDate(range.value[1]))
@@ -900,6 +892,14 @@ onMounted(async () => {
     }
     if (route.query.rooms) {
       peopleConfig.rooms = parseInt(route.query.rooms as string, 10)
+    }
+
+    // 2.5 價格區間
+    if (route.query.min_price) {
+      priceRange.value.min = parseInt(route.query.min_price as string, 10)
+    }
+    if (route.query.max_price) {
+      priceRange.value.max = parseInt(route.query.max_price as string, 10)
     }
 
     // 3. 日期區間 (start_date & end_date)
@@ -1173,6 +1173,26 @@ function clearOptions(key: string) {
 .price-marker:hover {
   transform: scale(1.2);
   transition: transform 0.2s ease;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background-color: #2f3d4d;
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background-color: #2f3d4d;
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto;
+  border: none;
 }
 
 :deep(.dp__menu) {

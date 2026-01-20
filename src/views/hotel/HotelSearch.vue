@@ -203,6 +203,8 @@ const goToMapSearch = () => {
     keyword: keyword.value || '',
     adults: peopleConfig.people,
     rooms: peopleConfig.rooms,
+    min_price: String(priceRange.min),
+    max_price: String(priceRange.max),
   }
 
   // 2. 處理日期
@@ -335,8 +337,8 @@ watch(
                 <div
                   class="absolute h-2 bg-main_300 rounded-full"
                   :style="{
-                    left: `${(priceRange.min / maxPrice) * 100}%`,
-                    right: `${100 - (priceRange.max / maxPrice) * 100}%`,
+                    left: `${((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100}%`,
+                    right: `${100 - ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100}%`,
                   }"
                 ></div>
                 <input
