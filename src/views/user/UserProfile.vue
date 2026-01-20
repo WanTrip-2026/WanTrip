@@ -208,21 +208,31 @@
                 <div class="flex h-[120px]">
                   <img
                     class="aspect-[4/3] object-cover min-w-10"
-                    :src="order.image_url || order.image || 'https://fakeimg.pl/300x200/'"
+                    :src="
+                      (order.attraction_id ? order.image : order.image_url) ||
+                      order.image ||
+                      order.image_url ||
+                      'https://fakeimg.pl/300x200/'
+                    "
                     alt="產品照片"
                   />
                   <div class="flex flex-col justify-center gap-1 px-5">
                     <h3 class="text-md lg:text-xl font-bold">
-                      {{ order.hotel_name || order.title }}
+                      <template v-if="order.attraction_id">
+                        {{ order.title }}
+                      </template>
+                      <template v-else>
+                        {{ order.hotel_name }}
+                      </template>
                     </h3>
                     <p class="text-sm text-gray-600">訂單編號：{{ order.order_id || order.id }}</p>
                     <p class="text-sm text-gray-600">
-                      日期：{{ order.check_in_date }}
-                      <span
-                        v-if="!order.attraction_id && order.check_in_date !== order.check_out_date"
-                      >
-                        - {{ order.check_out_date }}
-                      </span>
+                      <template v-if="order.attraction_id">
+                        日期：{{ order.date?.split(' ')[0] || order.check_in_date }}
+                      </template>
+                      <template v-else>
+                        日期：{{ order.check_in_date }} - {{ order.check_out_date }}
+                      </template>
                     </p>
                     <p class="text-sm font-bold">
                       總價：<span class="text-red-500">NT$ {{ order.price }}</span>

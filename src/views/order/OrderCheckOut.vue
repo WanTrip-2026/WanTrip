@@ -24,10 +24,10 @@ const isProcessing = ref(false)
 const errorMessage = ref('')
 
 const product = reactive({
-  title: orderData.title || 'WanTrip 精選行程',
-  subtitle: orderData.subtitle || '台北一日遊 - 深入在地文化',
-  date: orderData.date || '2025/01/02 09:00 - 18:00',
-  note: orderData.note || '含免排隊 / 電子憑證',
+  title: orderData.title || '',
+  subtitle: orderData.subtitle || '',
+  date: orderData.date || '',
+  note: orderData.note || '',
   image: orderData.image || '',
   price: orderData.price || 0,
   address: orderData.address || '',
@@ -186,8 +186,7 @@ const startAioPayment = async () => {
       } else {
         errorMessage.value = error.message
         if (error.response) {
-          errorMessage.value +=
-            '\nServer Details: ' + JSON.stringify(error.response.data, null, 2)
+          errorMessage.value += '\nServer Details: ' + JSON.stringify(error.response.data, null, 2)
         }
       }
     } else if (error instanceof Error) {
@@ -318,7 +317,7 @@ function applyCoupon() {
                 <div v-if="product.type === 'hotel'" class="mt-1">
                   <div class="line-clamp-2 text-sm text-dark_500">{{ product.subtitle }}</div>
                   <div class="mt-1 text-sm text-dark_500">{{ product.date }}</div>
-                  <div class="text-sm text-dark_500">{{ product.note }}</div>
+                  <div class="mt-1 text-sm text-dark_500">{{ product.note }}</div>
                 </div>
 
                 <!-- Attraction View -->
