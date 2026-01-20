@@ -559,8 +559,20 @@ function starCount(stars: number) {
   return stars
 }
 
-function goBackToList() {
-  router.push('/hotels/search')
+const goBackToList = () => {
+  const startDate = range.value?.[0] ? formatDate(range.value[0]) : ''
+  const endDate = range.value?.[1] ? formatDate(range.value[1]) : ''
+
+  router.push({
+    path: '/hotels/search',
+    query: {
+      keyword: keyword.value,
+      start_date: startDate,
+      end_date: endDate,
+      adults: peopleConfig.people,
+      rooms: peopleConfig.rooms,
+    },
+  })
 }
 
 type FacilityName = string
