@@ -130,7 +130,7 @@
           </div>
 
           <button type="button"
-            class="absolute right-8 top-8 grid h-10 w-10 place-items-center rounded-full bg-white/80 text-wan-primary shadow hover:bg-black"
+            class="absolute right-8 top-8 grid h-10 w-10 place-items-center rounded-full bg-white/80 text-dark shadow hover:bg-dark_100"
             aria-label="Close modal" @click="close">
             ✕
           </button>
