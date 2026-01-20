@@ -54,35 +54,35 @@ const route = useRoute()
 const roleMap: Record<RoleKey, RoleData> = {
   bear: {
     img: '/src/assets/traveldna_img/Bear.svg',
-    tickets: '六福村一日券、溯溪體驗活動',
+    tickets: '大坑登山步道、合歡山步道',
   },
   lion: {
     img: '/src/assets/traveldna_img/Lion.svg',
-    tickets: '六福村一日券、衝浪活動券',
+    tickets: '六福村主題樂園、義大遊樂世界',
   },
   turtle: {
     img: '/src/assets/traveldna_img/Turtle.svg',
-    tickets: '古蹟漫遊票、博物館票券',
+    tickets: '大安森林公園、高雄市立美術館',
   },
   sheep: {
     img: '/src/assets/traveldna_img/Sheep.svg',
-    tickets: '植物園入場券、河岸咖啡館下午茶券',
+    tickets: '淡水漁人碼頭、日月潭遊湖',
   },
   owl: {
     img: '/src/assets/traveldna_img/Owl.svg',
-    tickets: '博物館門票、文創市集入場券',
+    tickets: '淡水老街導覽、松山文創園區',
   },
   cat: {
     img: '/src/assets/traveldna_img/Cat.svg',
-    tickets: '藝術展門票、城市觀光導覽票',
+    tickets: '淡水紅毛城、打狗英國領事館',
   },
   fox: {
     img: '/src/assets/traveldna_img/Fox.svg',
-    tickets: '夜市美食券、密室逃脫活動',
+    tickets: '羅東夜市、漢來海港自助餐',
   },
   rabbit: {
     img: '/src/assets/traveldna_img/Rabbit.svg',
-    tickets: '自助餐券、特色小吃套票',
+    tickets: '饗 A JOY、漢來海港自助餐',
   },
 }
 
