@@ -37,8 +37,11 @@ const product = reactive({
   city: orderData.city || '台北',
   category: orderData.category || '',
   highlights: orderData.highlights || [],
-  peopleNum: 2, // Default or from store if available
   attraction_id: orderData.attraction_id || '',
+})
+const peopleNum = computed(() => {
+  const n = Number((orderData as any).peopleNum ?? (orderData as any).quantity ?? 1)
+  return Number.isFinite(n) && n > 0 ? n : 1
 })
 
 const form = reactive({
@@ -48,12 +51,9 @@ const form = reactive({
   coupon: '',
 })
 
-const price = reactive({
-  subtotal: orderData.price || 1200,
-  discount: 0,
-})
-
-const total = computed(() => Math.max(price.subtotal - price.discount, 0))
+const discount = ref(0)
+const subtotal = computed(() => Number(product.price || 0) * peopleNum.value)
+const total = computed(() => Math.max(subtotal.value - discount.value, 0))
 
 const handleCheckout = async () => {
   if (!form.name || !form.email || !form.phone) {
@@ -86,6 +86,49 @@ const generateOrderId = () => {
     .padStart(6, '0')}`
 }
 
+const createOrderPayload = (orderId: string) => {
+  // Determine dates based on product type
+  let checkIn = '2025-12-31'
+  let checkOut = '2026-01-01'
+
+  if (product.type === 'attraction' && product.date) {
+    // product.date is formatted as YYYY/MM/DD from TicketDetail
+    checkIn = product.date.replace(/\//g, '-')
+
+    // Add 1 day for checkOut to satisfy DB constraint (check_out > check_in)
+    const d = new Date(checkIn)
+    d.setDate(d.getDate() + 1)
+    checkOut = d.toISOString().slice(0, 10)
+  }
+
+  const payload = {
+    user_id: authStore.user?.id,
+    order_id: orderId,
+    title: product.title,
+    subtitle: product.subtitle,
+    date: product.date,
+    note: product.note,
+    price: product.price,
+    image: product.image,
+    checkInDate: checkIn,
+    checkOutDate: checkOut,
+    roomType: product.subtitle,
+    peopleNum: peopleNum.value,
+    userInfo: {
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+    },
+    hotelName: product.title,
+    orderAmount: total.value, // Use calculated total
+    address: product.address,
+    phone: product.phone,
+    hotel_id: product.type === 'attraction' ? null : product.hotel_id,
+    attraction_id: product.type === 'attraction' ? product.attraction_id : null,
+  }
+  return payload
+}
+
 const startAioPayment = async () => {
   try {
     isProcessing.value = true
@@ -106,45 +149,7 @@ const startAioPayment = async () => {
     const params = response.data.data
     const actionUrl = params.actionUrl
 
-    // Determine dates based on product type
-    let checkIn = '2025-12-31'
-    let checkOut = '2026-01-01'
-
-    if (product.type === 'attraction' && product.date) {
-      // product.date is formatted as YYYY/MM/DD from TicketDetail
-      checkIn = product.date.replace(/\//g, '-')
-
-      // Add 1 day for checkOut to satisfy DB constraint (check_out > check_in)
-      const d = new Date(checkIn)
-      d.setDate(d.getDate() + 1)
-      checkOut = d.toISOString().split('T')[0]
-    }
-
-    const payload = {
-      user_id: authStore.user?.id,
-      order_id: orderId,
-      title: product.title,
-      subtitle: product.subtitle,
-      date: product.date,
-      note: product.note,
-      price: product.price,
-      image: product.image,
-      checkInDate: checkIn,
-      checkOutDate: checkOut,
-      peopleNum: 2,
-      roomType: product.subtitle,
-      userInfo: {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-      },
-      hotelName: product.title,
-      orderAmount: product.price,
-      address: product.address,
-      phone: product.phone,
-      hotel_id: product.type === 'attraction' ? null : product.hotel_id,
-      attraction_id: product.type === 'attraction' ? product.attraction_id : null,
-    }
+    const payload = createOrderPayload(orderId)
 
     // 建立訂單
     console.log('[Frontend] Creating Order Payload:', payload)
@@ -198,46 +203,9 @@ const startLinePay = async () => {
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
     const orderId = generateOrderId()
 
-    // Determine dates based on product type
-    let checkIn = '2025-12-31'
-    let checkOut = '2026-01-01'
-
-    if (product.type === 'attraction' && product.date) {
-      // product.date is formatted as YYYY/MM/DD from TicketDetail
-      checkIn = product.date.replace(/\//g, '-')
-
-      // Add 1 day for checkOut to satisfy DB constraint (check_out > check_in)
-      const d = new Date(checkIn)
-      d.setDate(d.getDate() + 1)
-      checkOut = d.toISOString().split('T')[0]
-    }
-
     // 先建立訂單
-    await createOrder({
-      user_id: authStore.user?.id,
-      order_id: orderId,
-      title: product.title,
-      subtitle: product.subtitle,
-      date: product.date,
-      note: product.note,
-      price: product.price,
-      image: product.image,
-      checkInDate: checkIn,
-      checkOutDate: checkOut,
-      peopleNum: 2,
-      roomType: product.subtitle,
-      userInfo: {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-      },
-      hotelName: product.title,
-      orderAmount: product.price,
-      address: product.address,
-      phone: product.phone,
-      hotel_id: product.type === 'attraction' ? null : product.hotel_id,
-      attraction_id: product.type === 'attraction' ? product.attraction_id : null,
-    })
+    const payload = createOrderPayload(orderId)
+    await createOrder(payload)
 
     const paymentPayload = {
       amount: total.value,
@@ -290,8 +258,8 @@ const paymentOptions: Array<{
 ]
 
 function applyCoupon() {
-  if (form.coupon.trim().toUpperCase() === 'WANTRIP200') price.discount = 200
-  else price.discount = 0
+  if (form.coupon.trim().toUpperCase() === 'WANTRIP200') discount.value = 200
+  else discount.value = 0
 }
 </script>
 
@@ -306,7 +274,7 @@ function applyCoupon() {
         <span class="font-bold text-dark text-xl">總價</span>
       </div>
       <div class="flex flex-col items-end self-end gap-1">
-        <span class="text-red-500 text-sm">- NT$ {{ price.discount }}</span>
+        <span class="text-red-500 text-sm">- NT$ {{ discount }}</span>
         <span class="font-bold text-dark text-xl">總價 NT$ {{ total }}</span>
       </div>
     </div>
@@ -502,11 +470,11 @@ function applyCoupon() {
             <div class="mt-5 flex flex-col gap-5 text-sm">
               <div class="flex items-center justify-between">
                 <span class="text-dark_500">商品費用</span>
-                <span class="font-medium text-dark">NT$ {{ price.subtotal }}</span>
+                <span class="font-medium text-dark">NT$ {{ subtotal }}</span>
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-dark_500">優惠</span>
-                <span class="font-medium text-red-500">- NT$ {{ price.discount }}</span>
+                <span class="font-medium text-red-500">- NT$ {{ discount }}</span>
               </div>
               <div class="my-2 h-px bg-gray-300" />
               <div class="flex items-center justify-between text-2xl">

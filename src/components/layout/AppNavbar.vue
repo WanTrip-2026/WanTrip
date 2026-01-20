@@ -29,9 +29,7 @@
           <div class="hidden md:block">
             <ul class="flex flex-row">
               <li>
-                <RouterLink
-                  to="/hotels"
-                  class="text-black font-medium px-4 py-2 hover:text-primary"
+                <RouterLink to="/hotels" class="text-black font-medium px-4 py-2 hover:text-primary"
                   >住宿</RouterLink
                 >
               </li>
@@ -69,9 +67,7 @@
             >
           </li>
 
-
           <li>
-
             <button
               v-if="!auth.isLoggedIn"
               type="button"
@@ -89,7 +85,7 @@
                 @click="toggleUserMenu"
               >
                 <span class="max-w-[160px] truncate">
-                  {{ auth.user?.full_name || auth.user?.email || '會員' }}
+                  {{ auth.user?.user_metadata?.full_name || auth.user?.email || '會員' }}
                 </span>
 
                 <svg
@@ -129,7 +125,6 @@
                 </button>
               </div>
             </div>
-
           </li>
         </ul>
       </div>
@@ -150,7 +145,13 @@
                 : 'text-gray-500 hover:bg-gray-100 active:bg-gray-200',
             ]"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" :viewBox="item.viewBox" width="22" height="22" fill="currentColor">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              :viewBox="item.viewBox"
+              width="22"
+              height="22"
+              fill="currentColor"
+            >
               <path :d="item.icon" />
             </svg>
             <span class="text-xs">{{ item.name }}</span>
@@ -161,7 +162,13 @@
           @click="isOpen = true"
           class="flex-1 flex flex-col gap-1 items-center justify-center py-2 rounded-full transition-all duration-200 cursor-pointer text-gray-500 active:bg-gray-200 active:text-primary"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" :viewBox="item.viewBox" width="22" height="22" fill="currentColor">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            :viewBox="item.viewBox"
+            width="22"
+            height="22"
+            fill="currentColor"
+          >
             <path :d="item.icon" />
           </svg>
           <span class="text-xs">{{ item.name }}</span>
@@ -178,7 +185,11 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="isOpen" @click="isOpen = false" class="fixed inset-0 bg-black/25 backdrop-blur-sm"></div>
+      <div
+        v-if="isOpen"
+        @click="isOpen = false"
+        class="fixed inset-0 bg-black/25 backdrop-blur-sm"
+      ></div>
     </Transition>
     <Transition
       enter-active-class="transition-transform ease-in-out duration-300"
@@ -197,7 +208,6 @@
           <button @click="isOpen = false" class="text-gray-500 text-2xl">&times;</button>
         </div>
 
-
         <nav class="flex flex-col gap-4">
           <button
             v-if="!auth.isLoggedIn"
@@ -212,9 +222,9 @@
             <button
               type="button"
               class="text-black font-medium hover:text-primary"
-              @click="goProfile(); isOpen = false"
+              @click="(goProfile(), (isOpen = false))"
             >
-            {{ auth.user?.full_name || auth.user?.email || '會員' }}
+              {{ auth.user?.user_metadata?.full_name || auth.user?.email || '會員' }}
             </button>
 
             <button
@@ -226,19 +236,39 @@
             </button>
           </div>
 
-          <RouterLink to="/support" class="text-black font-medium border-b border-primary/25 pb-2" @click="isOpen = false">
+          <RouterLink
+            to="/support"
+            class="text-black font-medium border-b border-primary/25 pb-2"
+            @click="isOpen = false"
+          >
             常見問題
           </RouterLink>
-          <RouterLink to="/about" class="text-black font-medium border-b border-primary/25 pb-2" @click="isOpen = false">
+          <RouterLink
+            to="/about"
+            class="text-black font-medium border-b border-primary/25 pb-2"
+            @click="isOpen = false"
+          >
             關於Wantrip
           </RouterLink>
-          <RouterLink to="/support" class="text-black font-medium border-b border-primary/25 pb-2" @click="isOpen = false">
+          <RouterLink
+            to="/support"
+            class="text-black font-medium border-b border-primary/25 pb-2"
+            @click="isOpen = false"
+          >
             服務條款
           </RouterLink>
-          <RouterLink to="/support" class="text-black font-medium border-b border-primary/25 pb-2" @click="isOpen = false">
+          <RouterLink
+            to="/support"
+            class="text-black font-medium border-b border-primary/25 pb-2"
+            @click="isOpen = false"
+          >
             隱私權聲明
           </RouterLink>
-          <RouterLink to="/profile" class="text-black font-medium border-b border-primary/25 pb-2" @click="isOpen = false">
+          <RouterLink
+            to="/profile"
+            class="text-black font-medium border-b border-primary/25 pb-2"
+            @click="isOpen = false"
+          >
             會員中心
           </RouterLink>
           <RouterLink
@@ -268,11 +298,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
-import LoginModal from '@/views/user/LoginModel.vue'
+import LoginModal from '@/views/user/LoginModal.vue'
 import RegisterModal from '@/views/user/RegisterModal.vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import type { SessionUser } from '@/services/authApi'
+import type { User } from '@supabase/supabase-js'
 
 const router = useRouter()
 const route = useRoute()
@@ -332,7 +362,7 @@ const closeAllAuthModal = () => {
   auth.closeLoginModal()
   isRegisterModalOpen.value = false
 }
-const handleLogin = ({ user }: { user: SessionUser }) => {
+const handleLogin = ({ user }: { user: User }) => {
   auth.setAuth(user)
   auth.closeLoginModal()
 }
