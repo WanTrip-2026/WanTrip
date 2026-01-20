@@ -34,12 +34,12 @@ const formattedAmount = computed(() => `NT$ ${order.value.amount.toLocaleString(
 
 <template>
   <main class="w-full bg-page pt-32">
-    <section class="max-w-[1200px] min-h-screen mx-auto px-10 pb-10">
+    <section class="max-w-[1240px] min-h-screen mx-auto px-5">
       <div
-        class="mx-auto w-[600px] lg:w-[800px] p-5 lg:p-10 bg-white rounded-[40px] flex flex-col items-center gap-5 lg:gap-10 border border-gray-300 shadow-sm"
+        class="mx-auto max-w-[800px] p-5 lg:p-10 bg-white rounded-[40px] flex flex-col items-center gap-5 lg:gap-10 border border-gray-300 shadow-sm"
       >
-        <h3 class="text-4xl font-bold text-black">訂購完成✅</h3>
-        <div class="flex flex-col gap-2 items-center lg:flex-row lg:gap-6 lg:justify-start w-full">
+        <h3 class="text-4xl font-bold text-black">訂購完成！</h3>
+        <div class="flex flex-col gap-2 items-center lg:flex-row lg:gap-5 lg:justify-start w-full">
           <div class="w-[200px] aspect-[1/1] overflow-hidden">
             <img
               :src="order.image"
@@ -49,7 +49,7 @@ const formattedAmount = computed(() => `NT$ ${order.value.amount.toLocaleString(
           </div>
 
           <div
-            class="flex flex-col items-center lg:items-stretch flex-nowrap gap-2 text-base text-nowrap"
+            class="flex flex-col items-center lg:items-stretch flex-nowrap gap-1 text-base text-nowrap"
           >
             <div class="flex flex-nowrap">
               <p class="text-dark_700">訂單編號：</p>
@@ -61,13 +61,13 @@ const formattedAmount = computed(() => `NT$ ${order.value.amount.toLocaleString(
               <dd class="text-dark">{{ order.createdAt }}</dd>
             </div>
             <div class="flex flex-col items-center lg:items-stretch gap-1">
-              <p class="text-dark text-2xl font-bold">{{ order.name }}</p>
+              <p class="text-dark text-xl font-bold">{{ order.name }}</p>
               <p class="text-dark_700 text-base text-wrap">{{ order.address }}</p>
               <p class="text-dark_700 text-base">{{ order.telephone }}</p>
             </div>
             <div class="flex flex-col items-center lg:items-stretch">
               <p class="text-dark_700">總價</p>
-              <p class="text-dark font-bold text-xl">{{ formattedAmount }}</p>
+              <p class="text-dark font-bold text-lg">{{ formattedAmount }}</p>
             </div>
           </div>
         </div>
