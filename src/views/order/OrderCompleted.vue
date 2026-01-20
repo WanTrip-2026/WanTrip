@@ -39,7 +39,7 @@ const formattedAmount = computed(() => `NT$ ${order.value.amount.toLocaleString(
         class="mx-auto max-w-[800px] p-5 lg:p-10 bg-white rounded-[40px] flex flex-col items-center gap-5 lg:gap-10 border border-gray-300 shadow-sm"
       >
         <h3 class="text-4xl font-bold text-black">訂購完成！</h3>
-        <div class="flex flex-col gap-2 items-center lg:flex-row lg:gap-5 lg:justify-start w-full">
+        <div class="flex flex-col gap-5 items-center lg:flex-row lg:gap-10 justify-center w-full">
           <div class="w-[200px] aspect-[1/1] overflow-hidden">
             <img
               :src="order.image"
@@ -49,25 +49,27 @@ const formattedAmount = computed(() => `NT$ ${order.value.amount.toLocaleString(
           </div>
 
           <div
-            class="flex flex-col items-center lg:items-stretch flex-nowrap gap-1 text-base text-nowrap"
+            class="flex flex-col items-center lg:items-stretch flex-nowrap gap-2 text-nowrap"
           >
-            <div class="flex flex-nowrap">
+          <div>
+            <div class="flex flex-nowrap text-xs">
               <p class="text-dark_700">訂單編號：</p>
               <p class="text-dark">{{ order.id }}</p>
             </div>
-
-            <div class="flex">
-              <dt class="text-dark_700">訂單建立日期：</dt>
-              <dd class="text-dark">{{ order.createdAt }}</dd>
+            <div class="flex text-xs">
+              <p class="text-dark_700">訂單建立日期：</p>
+              <p class="text-dark">{{ order.createdAt }}</p>
             </div>
-            <div class="flex flex-col items-center lg:items-stretch gap-1">
+          </div>
+
+            <div class="flex flex-col items-center lg:items-stretch">
               <p class="text-dark text-xl font-bold">{{ order.name }}</p>
               <p class="text-dark_700 text-base text-wrap">{{ order.address }}</p>
               <p class="text-dark_700 text-base">{{ order.telephone }}</p>
             </div>
             <div class="flex flex-col items-center lg:items-stretch">
-              <p class="text-dark_700">總價</p>
-              <p class="text-dark font-bold text-lg">{{ formattedAmount }}</p>
+              <p class="text-dark_700 font-bold text-base">總價</p>
+              <p class="text-dark font-bold text-xl">{{ formattedAmount }}</p>
             </div>
           </div>
         </div>
