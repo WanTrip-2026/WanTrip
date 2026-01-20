@@ -1,56 +1,72 @@
 <template>
-  <div class="w-full min-h-screen relative">
-    <img
-      src="/src/assets/traveldna_img/IntroBg.png"
-      alt="Background"
-      class="absolute inset-0 w-full h-full object-cover z-0"
-    />
-    <div class="absolute inset-0 w-full h-full bg-primary/50 backdrop-blur-sm"></div>
-    <div class="relative z-10 max-w-[1200px] mx-auto pt-24">
-      <div class="relative max-w-[800px] h-4 mt-5 mb-12 mx-auto">
-        <div class="w-full h-4 bg-[#EEF2F7] rounded-full"></div>
+  <div class="w-full min-h-[100dvh] relative overflow-x-hidden flex flex-col">
+    <div
+      class="fixed inset-0 w-full h-full bg-cover bg-center z-0"
+      style="background-image: url('/src/assets/traveldna_img/IntroBg.png')"
+    ></div>
+    <div class="fixed inset-0 w-full h-full bg-primary/50 backdrop-blur-sm z-0"></div>
+
+    <div
+      class="relative z-10 w-full max-w-[1200px] mx-auto px-4 pt-16 md:pt-28 pb-24 md:pb-10 flex-1 flex flex-col"
+    >
+      <div
+        class="relative w-full max-w-[800px] h-2.5 md:h-4 mt-12 md:mt-0 mb-10 md:mb-0 mx-auto px-2"
+      >
+        <div class="w-full h-full bg-[#EEF2F7] rounded-full"></div>
         <div
-          class="absolute top-0 left-0 h-full bg-primary rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-primary via-white/30 to-primary bg-[length:200%_100%] animate-progress-flow"
-          :style="{ width: `${(currentStep / totalSteps) * 100}%` }"
+          class="absolute top-0 left-2 right-2 h-full bg-primary rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-primary via-white/30 to-primary bg-[length:200%_100%] animate-progress-flow"
+          :style="{ width: `calc(${(currentStep / totalSteps) * 100}% - 16px)` }"
         ></div>
+
         <div
-          class="absolute -top-10 transition-all duration-500 ease-out"
+          class="absolute -top-7 md:-top-10 transition-all duration-500 ease-out"
           :style="{ left: `${(currentStep / totalSteps) * 100}%`, transform: 'translateX(-50%)' }"
         >
-          <img src="/src/assets/logoIcon.svg" class="w-24 h-24 object-contain" alt="WanTrip Logo" />
+          <img
+            src="/src/assets/logoIcon.svg"
+            class="w-14 h-14 md:w-24 md:h-24 object-contain"
+            alt="WanTrip Logo"
+          />
         </div>
       </div>
 
-      <main class="max-w-[800px] mx-auto text-center">
-        <div class="pb-10 { 'animate-progress-bounce': animateProgress }">
-          <h2 class="text-5xl font-bold text-primary pb-4">Q{{ currentStep }}</h2>
-          <h3 class="text-2xl font-semibold text-primary pb-5">{{ currentQuestion.title }}</h3>
-          <p class="text-white tracking-wider font-semibold drop-shadow-lg text-lg">
+      <main class="max-w-[800px] w-full mx-auto text-center my-auto">
+        <div class="pb-5 md:pb-10 px-2">
+          <h2 class="text-3xl md:text-5xl font-bold text-primary pb-1 md:pb-4 leading-none">
+            Q{{ currentStep }}
+          </h2>
+          <h3 class="text-xl md:text-2xl font-semibold text-primary pb-3 md:pb-5 leading-tight">
+            {{ currentQuestion.title }}
+          </h3>
+          <p
+            class="text-white tracking-wider font-semibold drop-shadow-lg text-base md:text-lg opacity-95"
+          >
             {{ currentQuestion.subTitle }}
           </p>
         </div>
 
-        <div class="grid grid-cols-1 gap-5">
+        <div class="grid grid-cols-1 gap-3 md:gap-5 px-2">
           <button
             v-for="(option, index) in currentQuestion.options"
             :key="index"
             @click="handleAnswer(option, index)"
+            class="p-4 md:p-5 rounded-[20px] text-lg md:text-xl font-medium border-2 transition-all duration-200 active:scale-[0.98] shadow-md w-full"
             :class="
               selectedOptionIndex === index
-                ? 'bg-white/80 border-black/30 p-5 rounded-[20px] text-xl font-medium border-2 '
-                : 'bg-[#EEF2F7] hover:bg-white/80 hover:border-black/30 p-5 rounded-[20px] text-xl font-medium border-2 '
+                ? 'bg-white/90 border-black/30'
+                : 'bg-[#EEF2F7] border-transparent'
             "
           >
             {{ option.text }}
           </button>
         </div>
 
-        <div v-if="showResultButton" class="mt-12 flex flex-col items-center gap-4 animate-bounce">
+        <div v-if="showResultButton" class="mt-8 md:mt-12 flex flex-col items-center">
           <button
             @click="goToResult"
-            class="bg-primary text-white px-10 py-4 rounded-full text-xl font-bold hover:bg-primary_hover transition shadow-lg"
+            class="bg-primary text-white px-8 py-3 md:py-4 rounded-full text-lg md:text-xl font-bold hover:bg-primary_hover transition shadow-lg w-full max-w-[280px]"
           >
-            ✨ 解鎖我的旅行角色 ✨
+            ✨ 解鎖角色 ✨
           </button>
         </div>
       </main>
