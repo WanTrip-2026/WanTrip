@@ -10,10 +10,11 @@
         tabindex="-1"
       >
 
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="close" />
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="close">
+        </div>
 
         <div
-          class="relative mx-5 p-4 w-full max-w-[920px] overflow-hidden rounded-[20px] bg-white shadow-2xl"
+          class="relative mx-5 p-4 w-full max-w-[920px] overflow-hidden rounded-[40px] bg-white shadow-2xl"
           @click.stop
         >
           <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -98,10 +99,10 @@
                   </button>
                 </div>
 
-                <div class="pt-4 text-center">
+                <div class="text-center">
                   <button
                     type="button"
-                    class="text-sm text-dark_500 hover:text-dark_900"
+                    class="text-sm text-dark hover:text-dark_700 hover:underline hover:cursor-pointer"
                     @click="close"
                   >
                     Close
