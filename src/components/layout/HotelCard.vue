@@ -97,7 +97,7 @@ const onFavoriteClick = async () => {
       <div class="h-full w-[246px] aspect-[4/3] relative">
         <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
         <button
-          @click="toggleCompare"
+          @click.stop="toggleCompare"
           class="absolute bottom-5 right-5 rounded-[20px] h-[40px] w-[90px] text-xs p-[2px] opacity-80 hover:opacity-100 text-black transition-colors"
           :class="
             isInCompare

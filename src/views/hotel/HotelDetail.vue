@@ -554,11 +554,15 @@ const handleBook = (room: Room) => {
   }
 
   try {
+    const sDate = range.value[0] ? formatDate(range.value[0]) : ''
+    const eDate = range.value[1] ? formatDate(range.value[1]) : ''
+    const dateStr = sDate && eDate ? `${sDate} - ${eDate}` : ''
+
     orderStore.setOrder({
       hotel_id: hotel.value?.id,
       title: hotel.value?.name || '未知名稱',
       subtitle: room.name || '未知房型',
-      date: '住宿',
+      date: dateStr,
       note: Array.isArray(room.features) ? room.features.join(' / ') : '',
       price: room.price || 0,
       image: room.image_url || '',
@@ -566,6 +570,9 @@ const handleBook = (room: Room) => {
       phone: hotel.value?.phone,
       latitude: hotel.value?.latitude,
       longitude: hotel.value?.longitude,
+      type: 'hotel',
+      peopleNum: peopleConfig.rooms, // Hotel usually counts rooms or people? Adjust as needed. Using rooms from requirement context or just generic.
+      quantity: peopleConfig.people,
     })
     console.log('Order set successfully, navigating to checkout...')
     router.push('/orders/checkout')
