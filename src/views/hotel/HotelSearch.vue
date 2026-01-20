@@ -47,11 +47,12 @@ const facilities = ref<string[]>([]) // 存放 API 抓回的設施清單
 // --- 3. 篩選與分頁狀態 ---
 const currentPage = ref(1)
 const totalPages = ref(1)
+const totalHotels = ref(0)
 const itemsPerPage = 8
 const expandedMenus = ref<string[]>([])
-const priceRange = reactive({ min: 0, max: 15000 })
-const minPrice = 0,
-  maxPrice = 15000,
+const priceRange = reactive({ min: 14000, max: 30000 })
+const minPrice = 14000,
+  maxPrice = 30000,
   step = 500
 
 const HotelFiltered = reactive<FilterMenu[]>([
@@ -63,9 +64,7 @@ const HotelFiltered = reactive<FilterMenu[]>([
   },
   { key: 'reviews', title: '評價', options: ['9分以上', '8分以上', '7分以上'], selected: [] },
   { key: 'types', title: '住宿類型', options: [], selected: [] },
-  { key: 'policies', title: '付款政策', options: ['免費取消', '到店付款'], selected: [] },
   { key: 'facilities', title: '設施＆服務', options: [], selected: [] },
-  { key: 'districts', title: '地區', options: ['中正區', '中山區', '萬華區'], selected: [] },
 ])
 
 // --- 4. 輔助工具函數 ---
@@ -108,6 +107,9 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
     if (range.value?.[1]) params.append('end_date', formatDate(range.value[1]))
     params.append('adults', String(peopleConfig.people))
     params.append('rooms', String(peopleConfig.rooms))
+    // 價格篩選
+    params.append('min_price', String(priceRange.min))
+    params.append('max_price', String(priceRange.max))
 
     // 側邊欄篩選參數
     const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
@@ -139,6 +141,7 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
       }),
     )
     currentPage.value = data.page
+    totalHotels.value = data.total || 0
     totalPages.value = Math.max(1, Math.ceil((data.total || 0) / limit))
     error.value = null
   } catch (err) {
@@ -283,6 +286,19 @@ watch(
   () => fetchHotels(1),
   { deep: true },
 )
+
+// 監聽價格變動
+let timer: ReturnType<typeof setTimeout> | null = null
+watch(
+  priceRange,
+  () => {
+    if (timer) clearTimeout(timer)
+    timer = setTimeout(() => {
+      fetchHotels(1)
+    }, 500)
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -391,6 +407,11 @@ watch(
       </aside>
 
       <div class="flex flex-1 flex-col gap-5">
+        <h3 class="text-black text-xl">
+          <span v-if="keyword" class="mr-2 text-gray-500"> 搜尋: {{ keyword }} </span>
+          找到 <span class="text-red-500 font-bold">{{ totalHotels }}</span> 間飯店
+        </h3>
+
         <div class="flex flex-row items-center gap-2">
           <button
             class="rounded-[20px] bg-primary hover:bg-main_800 text-white px-6 py-2 shadow-sm transition"
@@ -484,5 +505,15 @@ input[type='range']::-webkit-slider-thumb {
   border-radius: 50%;
   cursor: pointer;
   pointer-events: auto;
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background-color: #2f3d4d;
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto;
+  border: none;
 }
 </style>

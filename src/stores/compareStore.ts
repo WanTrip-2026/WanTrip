@@ -109,6 +109,32 @@ export const useCompareStore = defineStore('compare', {
           distance: hotelData.distance,
         }
 
+        // PATCH: 若 detail api 缺少資料 (types, facilities, image_url)，嘗試從列表 api 補抓
+        if (!normalized.types.length || !normalized.facilities.length || !normalized.image_url) {
+          try {
+            const listRes = await fetch(
+              `${apiUrl}/hotels?keyword=${encodeURIComponent(hotelData.name)}`,
+            )
+            if (listRes.ok) {
+              const listData = await listRes.json()
+              const found = (listData.hotels || []).find((h: any) => h.id === hotelData.id)
+              if (found) {
+                if (!normalized.types.length && found.types) {
+                  normalized.types = found.types
+                }
+                if (!normalized.facilities.length && found.facilities) {
+                  normalized.facilities = found.facilities
+                }
+                if (!normalized.image_url && found.image_url) {
+                  normalized.image_url = found.image_url
+                }
+              }
+            }
+          } catch (e) {
+            console.warn('Fallback fetch details failed', e)
+          }
+        }
+
         this.hotels.push(normalized)
         saveToStorage(this.hotels)
         return { ok: true }
