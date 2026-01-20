@@ -1,85 +1,105 @@
 <template>
   <div
-    class="w-full min-h-screen relative bg-page bg-cover bg-center"
+    class="w-full min-h-[100dvh] relative bg-page bg-cover bg-center flex items-center justify-center overflow-x-hidden"
     style="background-image: url('/src/assets/traveldna_img/IntroBg.png')"
   >
     <div class="absolute inset-0 w-full h-full bg-primary/50 backdrop-blur-sm"></div>
-    <div class="relative z-10 flex flex-col items-center justify-center min-h-screen p-5">
-      <div
-        class="bg-white/20 backdrop-blur-md rounded-[20px] border border-white/30 p-5 m-24 shadow-xl max-w-md w-full"
-      >
-        <img :src="roleMap[role].img" alt="Result" ref="roleImgRef" class="w-full mb-5 mx-auto" />
-        <p
-          class="text-white text-lg font-bold tracking-wider text-center mb-10 drop-shadow-lg flex flex-wrap justify-center items-center gap-3"
-        >
-          <span class="w-full mb-1 opacity-90 text-lx">🎫 推薦票券 🎫</span>
 
-          <template v-for="ticket in roleMap[role].tickets" :key="ticket.id">
-            <router-link
-              :to="`/tickets/${ticket.id}`"
-              target="_blank"
-              class="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-base hover:bg-white/30 hover:scale-105 transition-all duration-300 backdrop-blur-sm shadow-sm"
-            >
-              {{ ticket.name }}
-            </router-link>
-          </template>
-        </p>
-        <div class="flex gap-5 justify-center flex-wrap">
+    <div
+      class="relative z-10 w-full max-w-2xl px-4 pt-20 md:pt-28 pb-28 md:pb-20 flex flex-col items-center"
+    >
+      <div
+        class="bg-white/20 backdrop-blur-md rounded-[20px] border border-white/30 p-6 md:p-10 shadow-xl w-full"
+      >
+        <img
+          :src="roleMap[role].img"
+          alt="Result"
+          ref="roleImgRef"
+          class="w-full max-w-[280px] md:max-w-[380px] mb-6 mx-auto drop-shadow-2xl"
+        />
+
+        <div class="mb-10 text-center">
+          <p
+            class="text-white text-base md:text-lg font-bold tracking-wider mb-4 drop-shadow-lg opacity-90"
+          >
+            🎫 推薦票券 🎫
+          </p>
+
+          <div class="flex flex-wrap justify-center items-center gap-3">
+            <template v-for="ticket in roleMap[role].tickets" :key="ticket.id">
+              <router-link
+                :to="`/tickets/${ticket.id}`"
+                target="_blank"
+                class="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white text-sm md:text-base hover:bg-white/30 hover:scale-105 transition-all duration-300 backdrop-blur-sm shadow-sm select-none"
+              >
+                {{ ticket.name }}
+              </router-link>
+            </template>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
           <button
             @click="saveRoleImage"
-            class="bg-primary hover:bg-primary_hover text-white px-8 py-3 rounded-full text-lg font-bold shadow-lg transition"
+            class="bg-primary hover:bg-primary_hover text-white px-4 py-3 rounded-full text-base md:text-lg font-bold shadow-lg transition active:scale-95"
           >
             儲存結果
           </button>
           <button
             @click="goToIntro"
-            class="bg-primary hover:bg-primary_hover text-white px-8 py-3 rounded-full text-lg font-bold shadow-lg transition"
+            class="bg-primary hover:bg-primary_hover text-white px-4 py-3 rounded-full text-base md:text-lg font-bold shadow-lg transition active:scale-95"
           >
             再測一次
           </button>
           <button
             @click="showShareMenu = true"
-            class="bg-primary hover:bg-primary_hover text-white px-8 py-3 rounded-full text-lg font-bold shadow-lg transition"
+            class="bg-primary hover:bg-primary_hover text-white px-4 py-3 rounded-full text-base md:text-lg font-bold shadow-lg transition active:scale-95"
           >
-            邀請朋友測驗
+            邀請朋友
           </button>
-          <div
-            v-if="showShareMenu"
-            class="fixed inset-0 z-50 flex items-center justify-center p-5 bg-gray-300/30 backdrop-blur-sm rounded-[20px]"
-            @click.self="showShareMenu = false"
-          >
-            <div class="bg-white rounded-2xl p-6 w-full max-w-xs text-gray-800 shadow-2xl">
-              <h3 class="text-xl font-bold mb-4 text-center">分享我的測驗結果</h3>
-
-              <div class="grid grid-cols-1 gap-3">
-                <button
-                  @click="copyLink"
-                  class="flex items-center justify-center gap-2 bg-gray-700 text-white p-3 rounded-xl hover:bg-gray-800 transition"
-                >
-                  🔗 複製連結
-                </button>
-                <button
-                  @click="shareToLine"
-                  class="flex items-center justify-center gap-2 bg-[#06C755] text-white p-3 rounded-xl hover:opacity-90 transition font-bold"
-                >
-                  LINE 分享
-                </button>
-                <button
-                  v-if="canNativeShare"
-                  @click="handleNativeShare"
-                  class="flex items-center justify-center gap-2 bg-gray-100 p-3 rounded-xl hover:bg-gray-200 transition"
-                >
-                  📲 更多分享方式
-                </button>
-              </div>
-
-              <button @click="showShareMenu = false" class="mt-4 w-full text-gray-500 text-sm">
-                取消
-              </button>
-            </div>
-          </div>
         </div>
       </div>
+
+      <transition name="fade">
+        <div
+          v-if="showShareMenu"
+          class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black/50 backdrop-blur-md"
+          @click.self="showShareMenu = false"
+        >
+          <div
+            class="bg-white rounded-[24px] p-8 w-full max-w-sm text-gray-800 shadow-2xl scale-in"
+          >
+            <h3 class="text-xl font-extrabold mb-6 text-center">分享我的測驗結果</h3>
+            <div class="flex flex-col gap-4">
+              <button
+                @click="copyLink"
+                class="flex items-center justify-center gap-3 bg-gray-100 p-4 rounded-2xl hover:bg-gray-200 transition font-medium"
+              >
+                🔗 複製連結
+              </button>
+              <button
+                @click="shareToLine"
+                class="flex items-center justify-center gap-3 bg-[#06C755] text-white p-4 rounded-2xl hover:opacity-90 transition font-bold"
+              >
+                LINE 分享
+              </button>
+              <button
+                v-if="canNativeShare"
+                @click="handleNativeShare"
+                class="flex items-center justify-center gap-3 bg-blue-50 text-blue-600 p-4 rounded-2xl hover:bg-blue-100 transition font-medium"
+              >
+                📲 其他分享方式
+              </button>
+            </div>
+            <button
+              @click="showShareMenu = false"
+              class="mt-6 w-full py-2 text-gray-400 text-sm font-medium hover:text-gray-600 transition"
+            >
+              取消
+            </button>
+          </div>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -264,3 +284,29 @@ const copyLink = async () => {
   }
 }
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+</style>
