@@ -40,7 +40,7 @@ const product = reactive({
   attraction_id: orderData.attraction_id || '',
 })
 const peopleNum = computed(() => {
-  const n = Number((orderData as any).peopleNum ?? (orderData as any).quantity ?? 1)
+  const n = Number(orderData.peopleNum ?? orderData.quantity ?? 1)
   return Number.isFinite(n) && n > 0 ? n : 1
 })
 
@@ -178,16 +178,20 @@ const startAioPayment = async () => {
         document.body.removeChild(paymentForm)
       }
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('綠界結帳失敗:', error)
-    if (axios.isAxiosError(error) && error.response?.data?.error) {
-      errorMessage.value = JSON.stringify(error.response.data.error, null, 2)
+    if (axios.isAxiosError(error)) {
+      if (error.response?.data?.error) {
+        errorMessage.value = JSON.stringify(error.response.data.error, null, 2)
+      } else {
+        errorMessage.value = error.message
+        if (error.response) {
+          errorMessage.value +=
+            '\nServer Details: ' + JSON.stringify(error.response.data, null, 2)
+        }
+      }
     } else if (error instanceof Error) {
       errorMessage.value = error.message + (error.stack ? '\n' + error.stack : '')
-      if ((error as any).response) {
-        errorMessage.value +=
-          '\nServer Details: ' + JSON.stringify((error as any).response, null, 2)
-      }
     } else {
       errorMessage.value = '發生未知異常'
     }
