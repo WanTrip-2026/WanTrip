@@ -436,13 +436,13 @@
             <div
               class="bg-white/90 rounded-[20px] md:rounded-[20px] p-5 flex flex-wrap gap-y-2 gap-x-6 items-center"
             >
-              <div class="flex items-center gap-2 text-xs text-dark_500">
+              <div class="flex items-center gap-2 text-sm text-dark_500">
                 <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
-                <span class="text-xs font-medium text-dark_700">房型：</span>{{ review.roomType }}
+                <span class="text-sm font-medium text-dark_700">房型：</span>{{ review.roomType }}
               </div>
-              <div class="flex items-center gap-2 text-xs text-dark_500">
+              <div class="flex items-center gap-2 text-sm text-dark_500">
                 <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
-                <span class="text-xs font-medium text-dark_700">入住：</span>{{ review.nights }} 晚
+                <span class="text-sm font-medium text-dark_700">入住：</span>{{ review.nights }} 晚
                 ({{ review.stayDate }})
               </div>
             </div>
@@ -635,7 +635,10 @@ const reviews = ref<Review[]>([
     stayDate: '2024年12月',
     title: '非常棒的住宿體驗！',
     comment: '房間舒適整潔，員工服務親切，交通便利，下次還會再來！',
-    photos: ['photo1.jpg', 'photo2.jpg'],
+    photos: [
+      'https://res.cloudinary.com/wantrip/image/upload/v1768879258/review_qm2vxb.jpg',
+      'https://res.cloudinary.com/wantrip/image/upload/v1768879794/review3_snzhxx.png',
+    ],
     date: '2024/12/05',
   },
   {
@@ -649,7 +652,7 @@ const reviews = ref<Review[]>([
     stayDate: '2024年11月',
     title: '位置優越，早餐豐富',
     comment: '飯店位置很好，走路就能到捷運站，早餐種類多樣且美味，房間有陽台景觀佳。',
-    photos: ['photo3.jpg'],
+    photos: ['https://res.cloudinary.com/wantrip/image/upload/v1768879485/reviews1_iautz4.png'],
     date: '2024/11/18',
   },
   {
@@ -663,7 +666,7 @@ const reviews = ref<Review[]>([
     stayDate: '2024年10月',
     title: '適合帶小孩入住',
     comment: '房間寬敞，床鋪舒適，帶孩子入住很方便，附近有商場和公園。',
-    photos: [],
+    photos: ['https://res.cloudinary.com/wantrip/image/upload/v1768879937/reviews5_m1c6no.png'],
     date: '2024/10/12',
   },
   {
@@ -677,7 +680,11 @@ const reviews = ref<Review[]>([
     stayDate: '2024年09月',
     title: '非常浪漫的住宿體驗',
     comment: '房間布置浪漫，浴室有按摩浴缸，適合慶祝紀念日，服務也非常周到。',
-    photos: ['photo4.jpg', 'photo5.jpg', 'photo6.jpg'],
+    photos: [
+      'https://res.cloudinary.com/wantrip/image/upload/v1768879395/review1_bc0zlx.jpg',
+      'https://res.cloudinary.com/wantrip/image/upload/v1768879885/review4_kkq4f0.jpg',
+      'https://res.cloudinary.com/wantrip/image/upload/v1768880008/review6_zjglqp.png',
+    ],
     date: '2024/09/22',
   },
   {
