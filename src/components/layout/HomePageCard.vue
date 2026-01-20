@@ -20,7 +20,7 @@
           :class="
             isInCompare
               ? 'bg-dark_300 text-black cursor-not-allowed'
-              : 'bg-white/45 backdrop-blur-sm hover:bg-white text-black'
+              : 'bg-white/65 backdrop-blur-sm hover:bg-white text-black'
           "
         >
           <template v-if="isLoading">處理中...</template>

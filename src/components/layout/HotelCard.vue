@@ -94,7 +94,7 @@ const onFavoriteClick = async () => {
           :class="
             isInCompare
               ? 'bg-dark_300 text-black cursor-not-allowed'
-              : 'bg-white/45 text-black opacity-80 hover:bg-white'
+              : 'bg-white/65 text-black opacity-80 hover:bg-white'
           "
         >
           <template v-if="isInCompare">已加入</template>
@@ -108,7 +108,7 @@ const onFavoriteClick = async () => {
           {{ hotel.star_rating }}.0
         </p>
         <div class="flex flex-col gap-2">
-          <h3 class="text-2xl font-bold text-black">
+          <h3 class="text-2xl font-bold text-black line-clamp-1">
             {{ hotel.name }}
           </h3>
 

@@ -166,7 +166,7 @@
       <section class="mt-20">
         <h2 class="font-bold text-xl mb-5 text-dark">熱門體驗</h2>
         <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar text-nowrap">
-          <HomePageCard
+          <HomePageTicketCard
             v-for="(recommend, index) in recommendations"
             :key="recommend.id"
             v-bind="recommend"
@@ -207,6 +207,7 @@
 import { reactive, ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import HomePageCard from '@/components/layout/HomePageCard.vue'
+import HomePageTicketCard from '@/components/layout/HomePageTicketCard.vue'
 import { useHotelApi } from '@/composables/useHotelApi'
 import type { HomePageCardItem } from '@/types/hotel'
 
@@ -349,7 +350,7 @@ const recommendations = ref([
   {
     id: 1,
     name: '台北 101 觀景台門票',
-    address: '信義區，近台北 101／世貿',
+    address: '台北市信義區',
     imageUrl: 'https://picsum.photos/600/400?random=10',
     price: 500,
   },
