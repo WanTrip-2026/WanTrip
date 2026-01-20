@@ -5,7 +5,9 @@
     >
       <div class="flex justify-center">
         <div class="w-full max-w-6xl">
-          <div class="flex flex-col gap-4 md:flex-row">
+          <div
+            class="flex flex-col gap-4 md:flex-row md:items-stretch flex-grow md:flex-[5] w-full max-w-4xl md:max-w-6xl"
+          >
             <a href="/">
               <svg
                 width="168"
@@ -25,161 +27,148 @@
                 />
               </svg>
             </a>
-
-            <label
-              class="flex-[1.2] relative rounded-[20px] bg-white px-5 py-3 flex flex-col gap-1 shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 group cursor-pointer transition-all hover:ring-accent/50"
+            <div
+              class="flex flex-col gap-4 md:flex-row md:items-stretch flex-grow md:flex-[5] max-w-4xl"
             >
-              <p class="text-xs font-bold leading-tight text-primary/70">想去哪</p>
-              <div class="relative">
-                <input
-                  v-model="keyword"
-                  class="w-full bg-transparent text-sm outline-none appearance-none cursor-pointer pr-8 font-medium text-primary group-hover:text-main_800 transition-colors"
-                  type="text"
-                  placeholder="想住哪～"
-                />
-              </div>
-            </label>
-
-            <div class="relative flex flex-1">
-              <VueDatePicker
-                v-model="range"
-                range
-                :min-range="1"
-                :enable-time-picker="false"
-                format="yyyy-MM-dd"
-                :min-date="new Date()"
-                auto-apply
-                hide-input-icon
-                :clearable="false"
-                class="w-full"
-                @update:model-value="handleDateChange"
-                @open="activePicker = 'date'"
-                @closed="activePicker = 'none'"
+              <label
+                class="md:flex-[1.7] relative rounded-[20px] bg-white px-5 py-3 flex flex-col justify-centergap-1 shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 group cursor-pointer transition-all hover:ring-accent/50"
               >
-                <template #dp-input>
-                  <div
-                    class="w-full min-h-[50px] md:min-h-[70px] h-full rounded-[12px] md:rounded-full px-5 md:px-7 flex flex-col justify-center border transition-all cursor-pointer"
-                    :class="[
-                      activePicker === 'date'
-                        ? 'bg-white ring-1 ring-gray-300'
-                        : 'bg-gray-50 border-transparent hover:bg-gray-100',
-                    ]"
-                  >
-                    <p
-                      class="text-[10px] md:text-[12px] font-bold text-primary/70 uppercase tracking-wider mb-0.5"
+                <p class="text-xs font-bold leading-tight text-primary/70">目的地</p>
+                <div class="relative">
+                  <input
+                    v-model="keyword"
+                    class="w-full bg-transparent outline-none appearance-none cursor-pointer pr-8 text-base text-black truncate transition-colors"
+                    type="text"
+                    placeholder="想住哪～"
+                  />
+                </div>
+              </label>
+
+              <div class="relative flex md:flex-[1.8]">
+                <VueDatePicker
+                  v-model="range"
+                  range
+                  :min-range="1"
+                  :enable-time-picker="false"
+                  format="yyyy-MM-dd"
+                  :min-date="new Date()"
+                  auto-apply
+                  hide-input-icon
+                  :clearable="false"
+                  class="w-full"
+                  @update:model-value="handleDateChange"
+                  @open="activePicker = 'date'"
+                  @closed="activePicker = 'none'"
+                >
+                  <template #dp-input>
+                    <div
+                      class="w-full h-full rounded-[20px] bg-white px-5 py-3 flex flex-col gap-1 shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
+                      :class="{ 'ring-accent/50': activePicker === 'date' }"
                     >
-                      入住 - 退房日期
-                    </p>
-                    <input
-                      :value="formatRangeDisplay()"
-                      class="w-full bg-transparent text-sm md:text-[18px] text-black outline-none pointer-events-none"
-                      placeholder="點選選擇日期"
-                      readonly
-                    />
-                  </div>
-                </template>
-              </VueDatePicker>
-            </div>
-
-            <div class="relative flex-1 flex" ref="peoplePickerRef">
-              <div
-                @click="togglePicker('people')"
-                class="w-full min-h-[70px] md:min-h-0 rounded-[20px] md:rounded-full px-7 flex flex-col justify-center border transition-all cursor-pointer"
-                :class="[
-                  activePicker === 'people'
-                    ? 'bg-white ring-1 ring-gray-300'
-                    : 'bg-gray-50 border-transparent hover:bg-gray-100',
-                ]"
-              >
-                <p
-                  class="text-[12px] font-bold text-primary/70 uppercase tracking-wider mb-0.5 pointer-events-none"
-                >
-                  人數、需求
-                </p>
-                <div class="flex items-center justify-between pointer-events-none">
-                  <span class="text-base text-black truncate">{{ peopleDisplayText }}</span>
-                  <svg
-                    class="h-4 w-4 text-primary/40 transition-transform duration-300"
-                    :class="{ 'rotate-180': activePicker === 'people' }"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </div>
+                      <p class="text-xs font-bold leading-tight text-primary/70">入住 - 退房日期</p>
+                      <input
+                        :value="formatRangeDisplay()"
+                        class="w-full bg-transparent text-sm md:text-[18px] text-black outline-none pointer-events-none"
+                        placeholder="點選選擇日期"
+                        readonly
+                      />
+                    </div>
+                  </template>
+                </VueDatePicker>
               </div>
 
-              <transition name="fade">
+              <div class="relative flex-1 flex" ref="peoplePickerRef">
                 <div
-                  v-if="activePicker === 'people'"
-                  @click.stop
-                  class="absolute top-[calc(100%+12px)] left-0 md:right-0 md:left-auto z-[100] w-full md:w-[300px] rounded-[24px] bg-white p-6 border border-gray-300 shadow-[0px_8px_24px_rgba(0,0,0,0.08)] space-y-6"
+                  @click="togglePicker('people')"
+                  class="w-full rounded-[20px] bg-white px-5 py-3 flex flex-col gap-1 shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
+                  :class="{ 'ring-accent/50': activePicker === 'people' }"
                 >
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <p class="text-sm font-bold text-primary">房間</p>
-                      <p class="text-[11px] text-gray-400">所需的客房數量</p>
-                    </div>
-                    <div class="flex items-center gap-4">
-                      <button
-                        @click.stop="peopleConfig.rooms > 1 ? peopleConfig.rooms-- : null"
-                        type="button"
-                        class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
-                      >
-                        -
-                      </button>
-                      <span class="text-sm font-bold w-4 text-center">{{
-                        peopleConfig.rooms
-                      }}</span>
-                      <button
-                        @click.stop="peopleConfig.rooms++"
-                        type="button"
-                        class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <p class="text-sm font-bold text-primary">旅客</p>
-                      <p class="text-[11px] text-gray-400">總人數</p>
-                    </div>
-                    <div class="flex items-center gap-4">
-                      <button
-                        @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null"
-                        type="button"
-                        class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
-                      >
-                        -
-                      </button>
-                      <span class="text-sm font-bold w-4 text-center">{{
-                        peopleConfig.people
-                      }}</span>
-                      <button
-                        @click.stop="peopleConfig.people++"
-                        type="button"
-                        class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
-                      >
-                        +
-                      </button>
-                    </div>
+                  <p class="text-xs font-bold leading-tight text-primary/70">人數、需求</p>
+                  <div class="flex items-center justify-between pointer-events-none">
+                    <span class="text-base text-black truncate">{{ peopleDisplayText }}</span>
+                    <svg
+                      class="h-4 w-4 text-primary/40 transition-transform duration-300"
+                      :class="{ 'rotate-180': activePicker === 'people' }"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
                   </div>
                 </div>
-              </transition>
+
+                <transition name="fade">
+                  <div
+                    v-if="activePicker === 'people'"
+                    @click.stop
+                    class="absolute top-[calc(100%+12px)] left-0 md:right-0 md:left-auto z-[100] w-full md:w-[300px] rounded-[24px] bg-white p-6 border border-gray-300 shadow-[0px_8px_24px_rgba(0,0,0,0.08)] space-y-6"
+                  >
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm font-bold text-primary">房間</p>
+                        <p class="text-[11px] text-gray-400">所需的客房數量</p>
+                      </div>
+                      <div class="flex items-center gap-4">
+                        <button
+                          @click.stop="peopleConfig.rooms > 1 ? peopleConfig.rooms-- : null"
+                          type="button"
+                          class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                        >
+                          -
+                        </button>
+                        <span class="text-sm font-bold w-4 text-center">{{
+                          peopleConfig.rooms
+                        }}</span>
+                        <button
+                          @click.stop="peopleConfig.rooms++"
+                          type="button"
+                          class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm font-bold text-primary">旅客</p>
+                        <p class="text-[11px] text-gray-400">總人數</p>
+                      </div>
+                      <div class="flex items-center gap-4">
+                        <button
+                          @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null"
+                          type="button"
+                          class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                        >
+                          -
+                        </button>
+                        <span class="text-sm font-bold w-4 text-center">{{
+                          peopleConfig.people
+                        }}</span>
+                        <button
+                          @click.stop="peopleConfig.people++"
+                          type="button"
+                          class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+              <button
+                @click="fetchHotels"
+                class="w-full md:w-36 items-center px-8 py-3 rounded-[20px] bg-primary hover:bg-main_800 shadow text-lg font-medium text-white transition"
+              >
+                <font-awesome-icon icon="search" class="mr-2" /> 搜尋
+              </button>
             </div>
-            <button
-              @click="fetchHotels"
-              class="w-32 items-center px-8 py-3 rounded-[20px] bg-primary hover:bg-main_800 shadow text-lg font-medium text-white transition"
-            >
-              搜尋
-            </button>
           </div>
         </div>
       </div>
@@ -1250,5 +1239,16 @@ function clearOptions(key: string) {
 
 :deep(.dp__range_between) {
   background-color: #f1f5f9 !important;
+}
+
+:deep(.dp__main) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+:deep(.dp__input_wrap),
+:deep(.dp__main > div:first-child) {
+  height: 100%;
 }
 </style>
