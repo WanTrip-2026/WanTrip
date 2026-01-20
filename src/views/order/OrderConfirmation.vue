@@ -35,7 +35,7 @@ const isTicket = computed(() => {
 })
 </script>
 <template>
-  <main class="min-h-screen text-primary max-w-[1240px] mx-auto pt-24 pb-10">
+  <main class="min-h-screen text-primary max-w-[1240px] mx-auto pt-24 pb-24">
     <div class="mx-5" v-if="order">
       <section class="bg-white rounded-[20px] shadow-sm border border-gray-300 p-5 lg:p-10 mb-10">
         <div class="flex flex-col md:flex-row justify-between items-start gap-8">
@@ -215,13 +215,13 @@ const isTicket = computed(() => {
       <div class="mt-[60px] flex flex-col sm:flex-row justify-center gap-4">
         <router-link
           to="/profile"
-          class="w-full sm:w-auto bg-primary text-white px-12 py-3 rounded-full font-bold hover:bg-main transition-all active:scale-95 shadow-lg text-center"
+          class="w-full sm:w-auto bg-primary text-white px-12 py-3 rounded-full font-bold hover:bg-main transition-all active:scale-95 shadow-sm text-center"
         >
           回到訂單列表
         </router-link>
         <router-link
           to="/"
-          class="w-full sm:w-auto bg-white border border-gray-300 text-dark px-12 py-3 rounded-full font-bold hover:bg-gray-50 transition-all active:scale-95 shadow-lg text-center"
+          class="w-full sm:w-auto bg-white border border-gray-300 text-dark px-12 py-3 rounded-full font-bold hover:bg-gray-50 transition-all active:scale-95 shadow-sm text-center"
         >
           回到首頁
         </router-link>

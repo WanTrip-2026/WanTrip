@@ -206,7 +206,7 @@
             v-for="tag in ['房型', '服務及設施', '房客評論']"
             :key="tag"
             @click="handleTagClick(tag)"
-            class="px-6 py-2 bg-primary text-white rounded-full text-lg hover:bg-main_800 transition-colors"
+            class="px-6 py-2 bg-primary text-white rounded-full text-lg hover:bg-main transition-colors"
           >
             {{ tag }}
           </button>
@@ -263,7 +263,7 @@
               >
               <button
                 @click="handleBook(room)"
-                class="bg-primary w-full text-white px-[40px] py-[10px] rounded-full mt-4 font-bold hover:bg-main_800"
+                class="bg-primary w-full text-white px-[40px] py-[10px] rounded-full mt-4 font-bold hover:bg-main"
               >
                 立即預定
               </button>
@@ -486,8 +486,7 @@
             @click="currentPage = page"
             class="border hover:bg-main_100"
             :class="{
-              'bg-primary text-white px-3 py-1 rounded-[20px] hover:bg-main_800':
-                currentPage === page,
+              'bg-primary text-white px-3 py-1 rounded-[20px] hover:bg-main': currentPage === page,
               'text-primary hover:text-black px-3 py-1 rounded-[20px]': currentPage !== page,
             }"
           >

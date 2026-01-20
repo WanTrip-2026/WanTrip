@@ -183,7 +183,7 @@
               <button
                 type="submit"
                 v-if="isEditing"
-                class="self-end rounded-full bg-primary hover:bg-main_800 px-4 py-2 text-white"
+                class="self-end rounded-full bg-primary hover:bg-main px-4 py-2 text-white"
               >
                 修改資料
               </button>
@@ -218,12 +218,7 @@
                   />
                   <div class="flex flex-col justify-center gap-1 px-5">
                     <h3 class="text-md lg:text-xl font-bold">
-                      <template v-if="order.attraction_id">
-                        {{ order.title }}
-                      </template>
-                      <template v-else>
-                        {{ order.hotel_name }}
-                      </template>
+                      {{ order.hotel_name }}
                     </h3>
                     <p class="text-sm text-gray-600">訂單編號：{{ order.order_id || order.id }}</p>
                     <p class="text-sm text-gray-600">

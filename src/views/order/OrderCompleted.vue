@@ -48,19 +48,17 @@ const formattedAmount = computed(() => `NT$ ${order.value.amount.toLocaleString(
             />
           </div>
 
-          <div
-            class="flex flex-col items-center lg:items-stretch flex-nowrap gap-2 text-nowrap"
-          >
-          <div>
-            <div class="flex flex-nowrap text-xs">
-              <dt class="text-dark_700">訂單編號：</dt>
-              <dd class="text-dark">{{ order.id }}</dd>
+          <div class="flex flex-col items-center lg:items-stretch flex-nowrap gap-2 text-nowrap">
+            <div class="flex flex-col items-center lg:items-stretch">
+              <div class="flex flex-nowrap text-xs">
+                <dt class="text-dark_700">訂單編號：</dt>
+                <dd class="text-dark">{{ order.id }}</dd>
+              </div>
+              <div class="flex flex-nowrap text-xs">
+                <dt class="text-dark_700">訂單建立日期：</dt>
+                <dd class="text-dark">{{ order.createdAt }}</dd>
+              </div>
             </div>
-            <div class="flex text-xs">
-              <dt class="text-dark_700">訂單建立日期：</dt>
-              <dd class="text-dark">{{ order.createdAt }}</dd>
-            </div>
-          </div>
 
             <div class="flex flex-col items-center lg:items-stretch">
               <p class="text-dark text-xl font-bold">{{ order.name }}</p>
@@ -76,14 +74,14 @@ const formattedAmount = computed(() => `NT$ ${order.value.amount.toLocaleString(
         <div class="flex gap-2">
           <router-link
             to="/"
-            class="rounded-full bg-primary text-white px-12 py-3 inline-block hover:bg-main"
+            class="rounded-full text-nowrap bg-primary text-white px-6 md:px-12 py-3 inline-block hover:bg-main"
           >
             回到首頁
           </router-link>
 
           <router-link
             :to="'/orders/confirmation/' + order.id"
-            class="rounded-full bg-main_100 text-dark_700 px-12 py-3 inline-block hover:bg-main_300"
+            class="rounded-full text-nowrap bg-main_100 text-dark_700 px-6 md:px-12 py-3 inline-block hover:bg-main_300"
           >
             前往訂單
           </router-link>

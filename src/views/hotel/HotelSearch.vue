@@ -319,7 +319,7 @@ watch(
           <div class="absolute inset-0 bg-white/30"></div>
           <button
             @click="goToMapSearch"
-            class="relative z-10 rounded-full bg-primary hover:bg-main_800 text-white px-6 py-2 shadow-sm transition"
+            class="relative z-10 rounded-full bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition"
           >
             地圖找房
           </button>
@@ -414,23 +414,21 @@ watch(
 
         <div class="flex flex-row items-center gap-2">
           <button
-            class="rounded-[20px] bg-primary hover:bg-main_800 text-white px-6 py-2 shadow-sm transition"
+            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition"
           >
             價格高到低
           </button>
           <button
-            class="rounded-[20px] bg-primary hover:bg-main_800 text-white px-6 py-2 shadow-sm transition"
+            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition"
           >
             價格低到高
           </button>
           <button
-            class="rounded-[20px] bg-primary hover:bg-main_800 text-white px-6 py-2 shadow-sm transition"
+            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition"
           >
             熱門高到低
           </button>
-          <button
-            class="rounded-[20px] bg-primary hover:bg-main_800 text-white px-6 py-2 shadow-sm"
-          >
+          <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm">
             評價高到低
           </button>
         </div>
