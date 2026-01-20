@@ -154,7 +154,7 @@ const handleGoToDetail = (hotelId: string) => {
   const startDate = range.value?.[0] ? formatDate(range.value[0]) : ''
   const endDate = range.value?.[1] ? formatDate(range.value[1]) : ''
 
-  router.push({
+  const routeData = router.resolve({
     path: `/hotels/${hotelId}`,
     query: {
       keyword: keyword.value,
@@ -164,6 +164,8 @@ const handleGoToDetail = (hotelId: string) => {
       rooms: peopleConfig.rooms,
     },
   })
+
+  window.open(routeData.href, '_blank')
 }
 
 const handleSearchUpdate = (data: SearchPayload) => {

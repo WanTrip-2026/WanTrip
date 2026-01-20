@@ -169,6 +169,7 @@ const onFavoriteClick = async () => {
               </svg>
             </button>
             <RouterLink
+              target="_blank"
               :to="{
                 path: `/hotels/${hotel.id}`,
                 query: {
