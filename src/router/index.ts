@@ -4,8 +4,8 @@ import HomePage from '@/views/HomePage.vue'
 import HotelHomeView from '@/views/hotel/HotelHomeView.vue'
 import TicketHomeView from '@/views/ticket/TicketHomeView.vue'
 import UserProfile from '@/views/user/UserProfile.vue'
-import Support from '@/views/Support.vue'
-import LoginModel from '@/views/user/LoginModel.vue'
+import Support from '@/views/SupportPage.vue'
+import LoginModal from '@/views/user/LoginModal.vue'
 import TravelDNAIntro from '@/views/travel-dna/TravelDNAIntro.vue'
 import HotelMapSearch from '@/views/hotel/HotelMapSearch.vue'
 import AuthCallback from '@/views/user/AuthCallback.vue'
@@ -48,7 +48,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: LoginModel,
+      component: LoginModal,
       meta: { showAppNavbar: true, showFooter: true },
     },
     {
