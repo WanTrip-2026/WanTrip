@@ -9,8 +9,20 @@
         class="bg-white/20 backdrop-blur-md rounded-[20px] border border-white/30 p-5 m-24 shadow-xl max-w-md w-full"
       >
         <img :src="roleMap[role].img" alt="Result" ref="roleImgRef" class="w-full mb-5 mx-auto" />
-        <p class="text-white text-lg font-bold tracking-wider text-center mb-10 drop-shadow-lg">
-          🎫 推薦票券：{{ roleMap[role].tickets }}
+        <p
+          class="text-white text-lg font-bold tracking-wider text-center mb-10 drop-shadow-lg flex flex-wrap justify-center items-center gap-3"
+        >
+          <span class="w-full mb-1 opacity-90 text-lx">🎫 推薦票券 🎫</span>
+
+          <template v-for="ticket in roleMap[role].tickets" :key="ticket.id">
+            <router-link
+              :to="`/tickets/${ticket.id}`"
+              target="_blank"
+              class="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-base hover:bg-white/30 hover:scale-105 transition-all duration-300 backdrop-blur-sm shadow-sm"
+            >
+              {{ ticket.name }}
+            </router-link>
+          </template>
         </p>
         <div class="flex gap-5 justify-center flex-wrap">
           <button
@@ -78,10 +90,15 @@ import { ref, onMounted, computed } from 'vue'
 
 type RoleKey = 'bear' | 'lion' | 'turtle' | 'sheep' | 'owl' | 'cat' | 'fox' | 'rabbit'
 
+interface Ticket {
+  name: string
+  id: string
+}
+
 interface RoleData {
   name: string
   img: string
-  tickets: string
+  tickets: Ticket[] // 改為 Ticket 陣列
 }
 
 const router = useRouter()
@@ -91,42 +108,66 @@ const roleMap: Record<RoleKey, RoleData> = {
   bear: {
     name: '探險熊',
     img: '/src/assets/traveldna_img/Bear.svg',
-    tickets: '大坑登山步道、合歡山步道',
+    tickets: [
+      { name: '大坑登山步道', id: '8415e430-db48-4b54-ade3-ec1884104384' },
+      { name: '合歡山步道', id: '8dda1f46-390c-4524-81d7-d7fc911f0ea2' },
+    ],
   },
   lion: {
     name: '刺激獅',
     img: '/src/assets/traveldna_img/Lion.svg',
-    tickets: '六福村主題樂園、義大遊樂世界',
+    tickets: [
+      { name: '六福村主題樂園', id: '34e1de2e-a7fd-48be-868d-51df067e3854' },
+      { name: '義大遊樂世界', id: '4113d661-777c-41ef-84b9-907aaa32da42' },
+    ],
   },
   turtle: {
     name: '漫遊龜',
     img: '/src/assets/traveldna_img/Turtle.svg',
-    tickets: '大安森林公園、高雄市立美術館',
+    tickets: [
+      { name: '大安森林公園', id: '204ec8b3-1065-46e8-8496-6c3c1793945d' },
+      { name: '高雄市立美術館', id: 'b818940a-2d61-462b-9b29-19b2ca53957f' },
+    ],
   },
   sheep: {
     name: '放空羊',
     img: '/src/assets/traveldna_img/Sheep.svg',
-    tickets: '淡水漁人碼頭、日月潭遊湖',
+    tickets: [
+      { name: '淡水漁人碼頭', id: 'ccdb9755-2f55-45a6-a719-73e0c9ff2c8e' },
+      { name: '日月潭遊湖', id: 'cb423c81-45a0-468d-9561-5031b9f8f5eb' },
+    ],
   },
   owl: {
     name: '知旅鴞',
     img: '/src/assets/traveldna_img/Owl.svg',
-    tickets: '淡水老街導覽、松山文創園區',
+    tickets: [
+      { name: '淡水老街導覽', id: '89f201ab-2f3d-481f-8312-5cb79f00e20f' },
+      { name: '華山文創園區', id: '871f316b-9555-4449-adab-bbb70c327aa1' },
+    ],
   },
   cat: {
     name: '城市貓',
     img: '/src/assets/traveldna_img/Cat.svg',
-    tickets: '淡水紅毛城、打狗英國領事館',
+    tickets: [
+      { name: '淡水紅毛城', id: '31343d56-4be0-44d8-8e61-207ed6597678' },
+      { name: '打狗英國領事館', id: '62051de7-c3f0-4a57-90b7-b0e30f79f9da' },
+    ],
   },
   fox: {
     name: '社交狐',
     img: '/src/assets/traveldna_img/Fox.svg',
-    tickets: '羅東夜市、漢來海港自助餐',
+    tickets: [
+      { name: '羅東夜市', id: '978d6790-bda3-4b5c-9783-86f3ffe8b4a2' },
+      { name: '漢來海港自助餐', id: '41d977c8-16f3-4356-bc44-62b4d59af6e1' },
+    ],
   },
   rabbit: {
     name: '美食兔',
     img: '/src/assets/traveldna_img/Rabbit.svg',
-    tickets: '饗 A JOY、漢來海港自助餐',
+    tickets: [
+      { name: '饗 A JOY', id: 'c17cb3f8-69ce-43a2-8250-4feb9d396e3f' },
+      { name: '漢來海港自助餐', id: '41d977c8-16f3-4356-bc44-62b4d59af6e1' },
+    ],
   },
 }
 
@@ -183,11 +224,12 @@ onMounted(() => {
 
 // 設定分享的基礎資料
 const getShareData = () => {
-  const roleName = roleMap[role.value].name
-  const url = window.location.href
-  const title = 'WanTrip 旅遊 DNA 測驗'
-  const text = `我的旅遊靈魂動物是【${roleName}】，快來測測看你的旅遊 DNA！`
-  return { url, title, text }
+  const currentRole = roleMap[role.value]
+  return {
+    url: window.location.href,
+    title: 'WanTrip 旅遊 DNA 測驗',
+    text: `我的旅遊靈魂動物是【${currentRole.name}】，快來測測看你的旅遊 DNA！`,
+  }
 }
 
 // 1. 原生分享
@@ -215,7 +257,7 @@ const copyLink = async () => {
   const { url } = getShareData()
   try {
     await navigator.clipboard.writeText(url)
-    alert('連結已複製！可以貼給朋友囉！') // 建議之後改用 Toast 元件
+    alert('連結已複製！快點分享給朋友吧～')
     showShareMenu.value = false
   } catch (err) {
     console.error('複製失敗', err)
