@@ -1,16 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref, nextTick } from 'vue'
 import axios from 'axios'
-
-type PaymentKey = 'credit' | 'linepay'
-
-import iconVisa from '@/assets/pay_img/visa-classic-svgrepo-com.svg'
-import iconMastercard from '@/assets/pay_img/mastercard-svgrepo-com.svg'
-import iconJcb from '@/assets/pay_img/jcb-svgrepo-com.svg'
-// import iconAmex from '@/assets/pay_img/amex-svgrepo-com.svg'
-import iconApplePay from '@/assets/pay_img/apple-pay-svgrepo-com.svg'
-import iconLinePay from '@/assets/pay_img/LINE_Pay_logo_(2019).svg.png'
-import iconJkoPay from '@/assets/pay_img/uBKC2XeyRaWsA2sgjVFxTohcqQi6mmypd0MMWxdI.png'
+import { PAYMENT_OPTIONS, ECPAY_METHODS, type PaymentKey } from '@/constants/payment'
 import { useOrderStore } from '@/stores/orderStore'
 import { useAuthStore } from '@/stores/auth'
 import { createOrder } from '@/services/orderApi'
@@ -65,7 +56,7 @@ const handleCheckout = async () => {
   isProcessing.value = true
 
   // 綠界 AIO 支援多種付款方式
-  const ecpayMethods = ['credit', 'atm', 'applepay', 'jkopay', '711', 'familymart', 'ipass money']
+  const ecpayMethods = ECPAY_METHODS
 
   if (ecpayMethods.includes(selectedPayment.value)) {
     await startAioPayment()
@@ -240,25 +231,7 @@ const startLinePay = async () => {
   }
 }
 
-const paymentOptions: Array<{
-  key: PaymentKey
-  label: string
-  icons: Array<{ src: string; alt: string; large?: boolean }>
-}> = [
-  {
-    key: 'credit',
-    label: '信用卡 | ATM轉帳 | Apple Pay | 街口支付',
-    icons: [
-      { src: iconVisa, alt: 'VISA', large: true },
-      { src: iconMastercard, alt: 'Mastercard', large: true },
-      { src: iconJcb, alt: 'JCB', large: true },
-      // { src: iconAmex, alt: 'AMEX', large: true },
-      { src: iconApplePay, alt: 'Apple Pay', large: true },
-      { src: iconJkoPay, alt: '街口支付' },
-    ],
-  },
-  { key: 'linepay', label: 'Line Pay', icons: [{ src: iconLinePay, alt: 'LINE Pay' }] },
-]
+const paymentOptions = PAYMENT_OPTIONS
 
 function applyCoupon() {
   if (form.coupon.trim().toUpperCase() === 'WANTRIP200') discount.value = 200
