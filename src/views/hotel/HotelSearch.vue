@@ -43,6 +43,7 @@ const peopleConfig = reactive({ people: 2, rooms: 1 })
 const hotels = ref<Hotel[]>([])
 const error = ref<string | null>(null)
 const facilities = ref<string[]>([]) // 存放 API 抓回的設施清單
+const isFilterDrawerOpen = ref(false)
 
 // --- 3. 篩選與分頁狀態 ---
 const currentPage = ref(1)
@@ -304,7 +305,7 @@ watch(
 </script>
 
 <template>
-  <main class="max-w-[1200px] mx-auto pt-24 bg-page px-5 lg:px-0">
+  <main class="max-w-[1240px] mx-auto pt-24 bg-page px-5">
     <SearchBar
       mode="emit"
       :initial-keyword="keyword"
@@ -313,8 +314,9 @@ watch(
       @search="handleSearchUpdate"
     />
 
-    <section class="gap-5 m-10 mx-auto flex">
-      <aside class="flex flex-col gap-5 w-[285px]">
+    <section class="gap-5 mx-auto flex flex-col lg:flex-row">
+      <!-- 桌面版側邊欄 -->
+      <aside class="hidden lg:flex flex-col gap-5 w-[285px]">
         <div
           class="relative flex h-[120px] items-center justify-center rounded-[20px] border border-gray-300 overflow-hidden bg-center bg-cover bg-[url('https://res.cloudinary.com/wantrip/image/upload/v1768379566/MapSearch_cezz0b.png')]"
         >
@@ -414,23 +416,30 @@ watch(
           找到 <span class="text-red-500 font-bold">{{ totalHotels }}</span> 間飯店
         </h3>
 
-        <div class="flex flex-row items-center gap-2">
+        <div class="flex flex-row items-center gap-2 overflow-x-auto scrollbar-hide">
           <button
-            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition"
+            @click="isFilterDrawerOpen = true"
+            class="lg:hidden flex items-center gap-2 rounded-[20px] bg-white border border-gray-300 text-dark px-4 py-2 shadow-sm transition whitespace-nowrap"
+          >
+            <font-awesome-icon icon="sliders" />
+            篩選
+          </button>
+          <button
+            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition whitespace-nowrap"
           >
             價格高到低
           </button>
           <button
-            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition"
+            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition whitespace-nowrap"
           >
             價格低到高
           </button>
           <button
-            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition"
+            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition whitespace-nowrap"
           >
             熱門高到低
           </button>
-          <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm">
+          <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm whitespace-nowrap">
             評價高到低
           </button>
         </div>
@@ -494,6 +503,123 @@ watch(
         </div>
       </div>
     </section>
+
+    <!-- 行動版篩選 Drawer -->
+    <Teleport to="body">
+      <div v-if="isFilterDrawerOpen" class="fixed inset-0 z-[100] md:hidden">
+        <!-- Backdrop -->
+        <Transition
+          enter-active-class="transition-opacity ease-out duration-300"
+          enter-from-class="opacity-0"
+          enter-to-class="opacity-100"
+          leave-active-class="transition-opacity ease-in duration-200"
+          leave-from-class="opacity-100"
+          leave-to-class="opacity-0"
+        >
+          <div
+            v-if="isFilterDrawerOpen"
+            @click="isFilterDrawerOpen = false"
+            class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+          ></div>
+        </Transition>
+
+        <!-- Drawer Content -->
+        <Transition
+          enter-active-class="transition-transform ease-out duration-300"
+          enter-from-class="-translate-x-full"
+          enter-to-class="translate-x-0"
+          leave-active-class="transition-transform ease-in duration-200"
+          leave-from-class="translate-x-0"
+          leave-to-class="-translate-x-full"
+        >
+          <div
+            v-if="isFilterDrawerOpen"
+            class="absolute top-0 left-0 h-[calc(100%-40px)] w-[80%] m-5 rounded-[20px] bg-white/65 backdrop-blur-sm shadow-xl flex flex-col p-5 overflow-y-auto scrollbar-hide"
+          >
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-bold text-xl text-dark">篩選條件</h3>
+              <button @click="isFilterDrawerOpen = false" class="text-dark_500 text-2xl">&times;</button>
+            </div>
+
+            <div class="flex flex-col gap-6">
+              <!-- Price Filter -->
+              <div class="text-dark">
+                <h4 class="font-medium text-dark mb-4">每晚預算</h4>
+                <div class="flex flex-col gap-2">
+                  <div class="relative h-2 w-full bg-main_100 rounded-full">
+                    <div
+                      class="absolute h-2 bg-main_300 rounded-full"
+                      :style="{
+                        left: `${((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100}%`,
+                        right: `${100 - ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100}%`,
+                      }"
+                    ></div>
+                    <input
+                      type="range"
+                      :min="minPrice"
+                      :max="maxPrice"
+                      :step="step"
+                      v-model.number="priceRange.min"
+                      class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
+                    />
+                    <input
+                      type="range"
+                      :min="minPrice"
+                      :max="maxPrice"
+                      :step="step"
+                      v-model.number="priceRange.max"
+                      class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
+                    />
+                  </div>
+                  <div class="flex justify-between mt-2">
+                    <span class="text-xs text-dark">${{ priceRange.min }}</span>
+                    <span class="text-xs text-dark">${{ priceRange.max }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                v-for="menu in HotelFiltered"
+                :key="menu.key"
+                class="border-t pt-6 border-gray-300"
+              >
+                <div class="flex justify-between items-center mb-4">
+                  <h4 class="font-medium text-dark">{{ menu.title }}</h4>
+                  <button
+                    @click="clearOptions(menu.key)"
+                    class="text-xs text-dark hover:text-primary"
+                  >
+                    清除
+                  </button>
+                </div>
+                <div class="space-y-3">
+                  <label
+                    v-for="option in menu.options"
+                    :key="option"
+                    class="flex items-center text-sm text-dark cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      :value="option"
+                      v-model="menu.selected"
+                      class="mr-2 rounded border-gray-300 text-dark focus:ring-dark h-4 w-4"
+                    />
+                    {{ option }}
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <button
+              @click="isFilterDrawerOpen = false"
+              class="mt-8 mb-4 w-full bg-primary text-white py-3 rounded-full font-bold shadow-md hover:bg-main transition"
+            >
+              完成
+            </button>
+          </div>
+        </Transition>
+      </div>
+    </Teleport>
   </main>
 </template>
 
@@ -516,5 +642,13 @@ input[type='range']::-moz-range-thumb {
   cursor: pointer;
   pointer-events: auto;
   border: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>
