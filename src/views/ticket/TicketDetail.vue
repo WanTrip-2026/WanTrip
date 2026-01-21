@@ -10,59 +10,108 @@
     <div class="mx-5 mb-8">
       <div class="grid grid-cols-[2fr_1fr] lg:grid-cols-[2fr_1fr_1fr_1fr] gap-2.5 mb-10">
         <div class="relative h-[400px] rounded-[20px] overflow-hidden">
+          <div
+            v-show="!imageLoadStatus[0]"
+            class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
+          ></div>
           <img
-            :src="attractionImages[0]?.image_url || '/src/assets/hoteldetail_img/Wanhao.jpg'"
-            class="absolute inset-0 w-full h-full object-cover"
+            v-if="attractionImages[0]?.image_url || loading"
+            :src="attractionImages[0]?.image_url"
+            fetchpriority="high"
+            @load="onImageLoad(0)"
+            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+            :class="{ 'opacity-0': !imageLoadStatus[0], 'opacity-100': imageLoadStatus[0] }"
           />
         </div>
 
         <div class="grid grid-rows-2 gap-2.5 h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
+            <div
+              v-show="!imageLoadStatus[1]"
+              class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
+            ></div>
             <img
-              :src="attractionImages[1]?.image_url || '/src/assets/hoteldetail_img/Wanhao2.jpg'"
-              class="absolute inset-0 w-full h-full object-cover"
+              v-if="attractionImages[1]?.image_url || loading"
+              :src="attractionImages[1]?.image_url"
+              @load="onImageLoad(1)"
+              class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+              :class="{ 'opacity-0': !imageLoadStatus[1], 'opacity-100': imageLoadStatus[1] }"
             />
           </div>
 
           <div class="relative rounded-[20px] overflow-hidden">
+            <div
+              v-show="!imageLoadStatus[2]"
+              class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
+            ></div>
             <img
-              :src="attractionImages[2]?.image_url || '/src/assets/hoteldetail_img/Wanhao3.jpg'"
-              class="absolute inset-0 w-full h-full object-cover"
+              v-if="attractionImages[2]?.image_url || loading"
+              :src="attractionImages[2]?.image_url"
+              @load="onImageLoad(2)"
+              class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+              :class="{ 'opacity-0': !imageLoadStatus[2], 'opacity-100': imageLoadStatus[2] }"
             />
           </div>
         </div>
 
         <div class="grid grid-rows-2 gap-2.5 h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
+            <div
+              v-show="!imageLoadStatus[3]"
+              class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
+            ></div>
             <img
-              :src="attractionImages[3]?.image_url || '/src/assets/hoteldetail_img/Wanhao4.jpg'"
-              class="absolute inset-0 w-full h-full object-cover"
+              v-if="attractionImages[3]?.image_url || loading"
+              :src="attractionImages[3]?.image_url"
+              @load="onImageLoad(3)"
+              class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+              :class="{ 'opacity-0': !imageLoadStatus[3], 'opacity-100': imageLoadStatus[3] }"
             />
           </div>
 
           <div class="relative rounded-[20px] overflow-hidden">
+            <div
+              v-show="!imageLoadStatus[4]"
+              class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
+            ></div>
             <img
-              :src="attractionImages[4]?.image_url || '/src/assets/hoteldetail_img/Wanhao5.jpg'"
-              class="absolute inset-0 w-full h-full object-cover"
+              v-if="attractionImages[4]?.image_url || loading"
+              :src="attractionImages[4]?.image_url"
+              @load="onImageLoad(4)"
+              class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+              :class="{ 'opacity-0': !imageLoadStatus[4], 'opacity-100': imageLoadStatus[4] }"
             />
           </div>
         </div>
 
         <div class="grid grid-rows-2 gap-2.5 h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
+            <div
+              v-show="!imageLoadStatus[5]"
+              class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
+            ></div>
             <img
               :src="attractionImages[5]?.image_url || '/src/assets/hoteldetail_img/Wanhao6.jpg'"
-              class="absolute inset-0 w-full h-full object-cover"
+              @load="onImageLoad(5)"
+              class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+              :class="{ 'opacity-0': !imageLoadStatus[5], 'opacity-100': imageLoadStatus[5] }"
             />
           </div>
 
           <div class="relative rounded-[20px] overflow-hidden">
+            <div
+              v-show="!imageLoadStatus[6]"
+              class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
+            ></div>
             <img
               :src="attractionImages[6]?.image_url || '/src/assets/hoteldetail_img/Wanhao7.jpg'"
-              class="absolute inset-0 w-full h-full object-cover"
+              @load="onImageLoad(6)"
+              class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+              :class="{ 'opacity-0': !imageLoadStatus[6], 'opacity-100': imageLoadStatus[6] }"
             />
             <div
-              class="absolute inset-0 bg-black/30 flex items-center justify-center text-white font-bold cursor-pointer transition-all hover:bg-black/40"
+              v-if="!loading"
+              class="absolute inset-0 bg-black/30 flex items-center justify-center text-white font-bold cursor-pointer transition-all hover:bg-black/40 z-20"
             >
               查看全部照片
             </div>
@@ -316,7 +365,7 @@
 
 <script setup lang="ts">
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue' // Added watch
 import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 import type { Attraction, AttractionImage, Ticket } from '@/types/database'
@@ -339,6 +388,23 @@ interface TicketWithQuantity extends Ticket {
 
 const tickets = ref<TicketWithQuantity[]>([])
 const selectedDate = ref<Date>(new Date())
+
+// Image loading tracking
+const imageLoadStatus = ref<boolean[]>(new Array(7).fill(false))
+
+const onImageLoad = (index: number) => {
+  imageLoadStatus.value[index] = true
+}
+
+// Reset image status when ID changes
+watch(
+  () => route.params.id,
+  () => {
+    imageLoadStatus.value = new Array(7).fill(false)
+    fetchAttractionData()
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  },
+)
 
 const totalPrice = computed(() => {
   return tickets.value.reduce((sum, t) => sum + t.price * t.quantity, 0)
@@ -378,6 +444,7 @@ const fetchAttractionData = async () => {
 
   loading.value = true
   tickets.value = []
+  imageLoadStatus.value = new Array(7).fill(false) // Reset on fetch
 
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
