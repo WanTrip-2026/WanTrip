@@ -52,39 +52,35 @@
                 </div>
 
                 <!-- Fields -->
-                <div class="grid flex-1 grid-cols-1 gap-2 md:grid-cols-3">
-                  <label
-                    class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1"
-                  >
-                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80"
-                      >想去哪裡</span
-                    >
+                <!-- 動態調整 grid-cols -->
+                <div
+                  class="grid flex-1 grid-cols-1 gap-2"
+                  :class="activeTab === 'stay' ? 'md:grid-cols-3' : 'md:grid-cols-2'"
+                >
+                  <!-- 1. 想去哪裡 (兩者皆有) -->
+                  <label class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1">
+                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80">想去哪裡</span>
                     <input
                       v-model="form.destination"
                       class="w-full h-full px-4 bg-transparent text-sm text-nowrap outline-none rounded-full transition text-black focus:bg-dark_100 placeholder:text-dark_500"
                       placeholder="輸入城市、景點"
                     />
                   </label>
-
+                  <!-- 2. 入住/退房日期 (只有住宿需要) -->
                   <label
+                    v-if="activeTab === 'stay'"
                     class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1"
                   >
-                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80"
-                      >入住/退房日期</span
-                    >
+                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80">入住/退房日期</span>
                     <input
                       v-model="form.dateRange"
                       class="w-full h-full px-4 bg-transparent text-sm text-nowrap outline-none rounded-full transition text-black focus:bg-dark_100 placeholder:text-dark_500"
                       placeholder="選擇日期"
                     />
                   </label>
-
-                  <label
-                    class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1"
-                  >
-                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80"
-                      >人數/需求</span
-                    >
+                  <!-- 3. 人數/需求 (兩者皆有) -->
+                  <label class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1">
+                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80">人數/需求</span>
                     <input
                       v-model="form.people"
                       class="w-full h-full px-4 bg-transparent text-sm text-nowrap outline-none rounded-full transition text-black focus:bg-dark_100 placeholder:text-dark_500"
