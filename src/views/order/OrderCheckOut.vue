@@ -5,6 +5,7 @@ import { PAYMENT_OPTIONS, ECPAY_METHODS, type PaymentKey } from '@/constants/pay
 import { useOrderStore } from '@/stores/orderStore'
 import { useAuthStore } from '@/stores/auth'
 import { createOrder } from '@/services/orderApi'
+import { supabase } from '@/utils/supabaseClient'
 
 const orderStore = useOrderStore()
 const authStore = useAuthStore()
@@ -144,7 +145,11 @@ const startAioPayment = async () => {
 
     // 建立訂單
     console.log('[Frontend] Creating Order Payload:', payload)
-    await createOrder(payload)
+    const { data: sessionData } = await supabase.auth.getSession()
+    const token = sessionData.session?.access_token
+    if (!token) throw new Error('請先登入')
+
+    await createOrder(payload, token)
 
     const paymentForm = document.createElement('form')
     paymentForm.method = 'POST'
@@ -199,7 +204,11 @@ const startLinePay = async () => {
 
     // 先建立訂單
     const payload = createOrderPayload(orderId)
-    await createOrder(payload)
+    const { data: sessionData } = await supabase.auth.getSession()
+    const token = sessionData.session?.access_token
+    if (!token) throw new Error('請先登入')
+
+    await createOrder(payload, token)
 
     const paymentPayload = {
       amount: total.value,

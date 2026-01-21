@@ -33,10 +33,13 @@ export type Order = {
   address?: string | null
 }
 
-export async function getUserOrders(userId: string) {
-  const r = await fetch(`${API}/orders/user/${userId}`, {
+export async function getUserOrders(token: string) {
+  const r = await fetch(`${API}/orders/me`, {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
   })
 
   const data = await r.json().catch(() => [])
@@ -45,10 +48,13 @@ export async function getUserOrders(userId: string) {
   return data as Order[]
 }
 
-export async function createOrder(orderData: object) {
+export async function createOrder(orderData: object, token: string) {
   const r = await fetch(`${API}/orders`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(orderData),
   })
 
@@ -62,8 +68,13 @@ export async function createOrder(orderData: object) {
   return data
 }
 
-export async function getOrderById(orderId: string) {
-  const r = await fetch(`${API}/orders/${orderId}`)
+export async function getOrderById(orderId: string, token?: string) {
+  const headers: HeadersInit = {}
+  if (token) headers.Authorization = `Bearer ${token}`
+
+  const r = await fetch(`${API}/orders/${orderId}`, {
+    headers,
+  })
   const data = await r.json().catch(() => ({}))
   if (!r.ok) throw new Error(data?.message || 'fetch order failed')
   return data as Order

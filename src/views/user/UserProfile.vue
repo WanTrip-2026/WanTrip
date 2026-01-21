@@ -426,7 +426,11 @@ watch(
 
 const loadOrders = async (userId: string) => {
   try {
-    orders.value = await getUserOrders(userId)
+    const { data } = await supabase.auth.getSession()
+    const token = data.session?.access_token
+    if (!token) throw new Error('No auth token')
+
+    orders.value = await getUserOrders(token)
   } catch (error) {
     console.error('Failed to load orders:', error)
   }
