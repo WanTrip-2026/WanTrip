@@ -57,7 +57,7 @@ const isTicket = computed(() => {
             </div>
           </div>
           <div
-            class="w-full md:w-auto text-left md:text-right text-xs md:shadow-sm text-dark_700 space-y-1 border-t md:border-t-0 pt-4 md:pt-0"
+            class="w-full md:w-auto text-left md:text-right text-xs text-dark_700 space-y-1 border-t md:border-t-0 pt-4 md:pt-0"
           >
             <p>
               訂單編號 <span class="text-dark_900 font-mono">{{ order.order_id || order.id }}</span>

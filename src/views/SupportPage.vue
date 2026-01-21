@@ -74,7 +74,7 @@ const faqs = ref([
   {
     question: '找不到訂單怎麼辦？',
     answer: `別擔心，您可以在登入後：<br/>
-    1. 前往<a href="/profile" class="text-primary underline font-bold hover:text-main_800">我的訂單</a>頁面查詢已付款的訂單。<br/>
+    1. 前往<a href="/profile#order-section" class="text-primary underline font-bold hover:text-main_800">我的訂單</a>查看您的訂單。<br/>
     2. 確認訂單是否使用其他帳號或電子郵件下單。<br/>
     3. 若訂單仍未找到，請準備訂單號或付款憑證聯絡客服。<br/>
     <br/>
@@ -83,7 +83,7 @@ const faqs = ref([
   {
     question: '信箱/郵件沒有收到訂單資訊怎麼辦？',
     answer: `建議：<br/>
-    1.檢查垃圾信夾與容量<br/>
+    1.檢查垃圾信箱與信箱容量<br/>
     2.確認訂單郵箱正確<br/>
     3.將 Wantrip 郵件加入白名單<br/>
     <br/>
