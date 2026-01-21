@@ -51,7 +51,7 @@
                 <RouterLink
                   to="/travel-dna/intro"
                   class="text-black font-medium px-4 py-2 hover:text-primary"
-                  >旅行DNA</RouterLink
+                  >旅遊DNA</RouterLink
                 >
               </li>
             </ul>

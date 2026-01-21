@@ -601,7 +601,7 @@ const handleBook = (room: Room) => {
       latitude: hotel.value?.latitude,
       longitude: hotel.value?.longitude,
       type: 'hotel',
-      peopleNum: peopleConfig.rooms, // Hotel usually counts rooms or people? Adjust as needed. Using rooms from requirement context or just generic.
+      peopleNum: peopleConfig.rooms,
       quantity: peopleConfig.people,
     })
     console.log('Order set successfully, navigating to checkout...')
