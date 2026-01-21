@@ -101,6 +101,20 @@ const applyClientSideFilters = () => {
     result = result.filter((item) => selectedDistricts.includes(item.district))
   }
 
+  // Category Filter
+  const selectedCategories = ticketFiltered.find((m) => m.key === 'categories')?.selected ?? []
+  if (selectedCategories.length > 0) {
+    result = result.filter((item) => {
+      const cat = item.category
+      if (Array.isArray(cat)) {
+        return cat.some((c) => selectedCategories.includes(c))
+      } else if (typeof cat === 'string') {
+        return selectedCategories.includes(cat) || selectedCategories.some((c) => cat.includes(c))
+      }
+      return false
+    })
+  }
+
   // Rating Filter (Placeholder logic for now, as backend doesn't seem to support it yet or it was client side)
   const selectedRatings = ticketFiltered.find((m) => m.key === 'ratings')?.selected ?? []
   if (selectedRatings.length > 0) {
@@ -113,6 +127,15 @@ const applyClientSideFilters = () => {
     if (minRating > 0) {
       result = result.filter((item) => (item.rating || 0) >= minRating)
     }
+  }
+
+  // Availability Filter
+  const selectedAvailability = ticketFiltered.find((m) => m.key === 'availability')?.selected ?? []
+  if (selectedAvailability.length > 0) {
+    if (selectedAvailability.includes('免費入場')) {
+      result = result.filter((item) => item.price === 0)
+    }
+    // Note: '即日可用' and '明日可用' would require real-time schedule data availability, which is likely not available in this simple UI object
   }
 
   attractions.value = result
@@ -362,7 +385,16 @@ function onLocalSearch() {
                 v-for="TicketMenu in ticketFiltered"
                 :key="TicketMenu.title"
               >
-                <h4 class="font-medium mb-2 text-base text-dark">{{ TicketMenu.title }}</h4>
+                <div class="flex justify-between items-center mb-2">
+                  <h4 class="font-medium text-base text-dark">{{ TicketMenu.title }}</h4>
+                  <button
+                    @click="TicketMenu.selected = []"
+                    :disabled="TicketMenu.selected.length === 0"
+                    class="text-xs text-gray-400 hover:text-primary transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    清除
+                  </button>
+                </div>
                 <div class="space-y-2">
                   <label
                     class="flex cursor-pointer text-dark text-sm items-center"
@@ -420,8 +452,8 @@ function onLocalSearch() {
               v-else-if="!loading && attractions.length === 0"
               class="col-span-full p-10 text-center text-gray-500 bg-gray-50 rounded"
             >
-              <p class="text-xl font-bold mb-2">沒有找到相關體驗 (No Results)</p>
-              <p>請嘗試調整搜尋條件或是確認資料庫是否有資料。</p>
+              <p class="text-xl font-bold mb-2">沒有找到相關體驗</p>
+              <p>我們會繼續努力開發的(๑•́ ₃ •̀๑)</p>
             </div>
             <TicketCard
               v-for="attraction in pagedattraction"

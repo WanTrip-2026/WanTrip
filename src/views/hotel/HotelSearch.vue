@@ -457,7 +457,8 @@ watch(
             />
           </div>
           <div v-if="hotels.length === 0 && !error" class="text-center py-20 text-gray-400">
-            沒有符合條件的飯店，試著調整篩選條件吧！
+            沒有符合條件的飯店，試著調整篩選條件吧！<br />
+            我們會繼續努力開發的(๑•́ ₃ •̀๑)
           </div>
         </div>
 

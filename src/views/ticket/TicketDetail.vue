@@ -372,6 +372,7 @@ import type { Attraction, AttractionImage, Ticket } from '@/types/database'
 import { useOrderStore } from '@/stores/orderStore'
 import { useAuthStore } from '@/stores/auth'
 import { format } from 'date-fns'
+import { POLICIES, DINING_FAQS, DEFAULT_FAQS, type Policy } from '@/constants/ticket'
 
 const route = useRoute()
 const router = useRouter()
@@ -463,6 +464,18 @@ const fetchAttractionData = async () => {
     } = data
 
     attraction.value = attractionData
+
+    // Set FAQs based on category
+    const category = Array.isArray(attractionData.category)
+      ? attractionData.category.join('')
+      : attractionData.category || ''
+
+    if (category.includes('餐券')) {
+      faqs.value = DINING_FAQS
+    } else {
+      faqs.value = DEFAULT_FAQS
+    }
+
     attractionImages.value = images || []
     tickets.value = (ticketsData as Ticket[]).map((t) => ({ ...t, quantity: 0 })) || []
     recommendations.value = recData || []
@@ -579,53 +592,13 @@ function onSearch() {
 
 // ticketIntro is defined above
 
-interface Policy {
-  title: string
-  content?: string
-  items?: string[]
-  type: 'text' | 'list'
-  highlight: boolean
-}
-
 const ticketDetail = ref<
   { id: number; type: string; content?: string; url?: string; caption?: string }[]
 >([])
 
-const policies = ref<Policy[]>([
-  {
-    title: '【兌換方式】',
-    content: '請出示訂單編號至1樓櫃檯更換正式門票。',
-    type: 'text',
-    highlight: false,
-  },
-  {
-    title: '【退改政策】',
-    items: [
-      '如需更改日期，請於出發前 3 天聯繫客服。',
-      '出發前 24 小時內取消，將收取 100% 手續費。',
-      '若因不可抗力因素（如颱風）導致活動取消，將全額退款。',
-    ],
-    type: 'list',
-    highlight: true,
-  },
-  {
-    title: '【注意事項】',
-    items: [
-      '禁止攜帶危險物品及外食入場。',
-      '場內禁止吸菸，違者將依相關法規處罰。',
-      '若患有心臟病、高血壓等疾病，請自行斟酌身體狀況。',
-      '兒童需由成人全程陪同。',
-    ],
-    type: 'list',
-    highlight: false,
-  },
-])
+const policies = ref<Policy[]>(POLICIES)
 
-const faqs = ref([
-  { question: '問題一', answer: '回答...' },
-  { question: '問題二', answer: '回答...' },
-  { question: '問題三', answer: '回答...' },
-])
+const faqs = ref<{ question: string; answer: string }[]>([])
 
 const activeIndex = ref<number | null>(null)
 

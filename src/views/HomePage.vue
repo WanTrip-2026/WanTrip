@@ -216,6 +216,7 @@ import { useRouter } from 'vue-router'
 import HomePageCard from '@/components/layout/HomePageCard.vue'
 import HomePageTicketCard from '@/components/layout/HomePageTicketCard.vue'
 import { useHotelApi } from '@/composables/useHotelApi'
+import { REGIONS, STAY_KEYWORDS, REGION_CITIES } from '@/constants/home'
 import type { HomePageCardItem } from '@/types/hotel'
 
 const activeTab = ref('stay')
@@ -228,34 +229,7 @@ const form = reactive({
   people: '',
 })
 
-const regions = [
-  {
-    key: 'north',
-    label: '北部',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-tp_zyi27w.jpg',
-  },
-  {
-    key: 'central',
-    label: '中部',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445157/640x480_image636446327579990356_qeu0ii.jpg',
-  },
-  {
-    key: 'south',
-    label: '南部',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445160/%E7%86%B1%E9%96%80%E5%9F%8E%E5%B8%821_ybmlyx.jpg',
-  },
-
-  {
-    key: 'east',
-    label: '東部',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1767445159/%E5%9F%8E%E5%B8%821_bl2w6i.jpg',
-  },
-  {
-    key: 'islands',
-    label: '離島',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1767452852/%E5%9F%8E%E5%B8%82-%E5%B3%B6_qnxq42.jpg',
-  },
-]
+const regions = REGIONS
 
 const { fetchFeaturedHotels, fetchRecommendedHotels } = useHotelApi()
 
@@ -297,44 +271,7 @@ const handleBook = (id: string | number) => {
   router.push(`/tickets/${id}`)
 }
 
-const stayKeywords = [
-  '台北住宿',
-  '新北住宿',
-  '基隆住宿',
-  '桃園住宿',
-  '新竹住宿',
-  '苗栗住宿',
-  '台中住宿',
-  '彰化住宿',
-  '南投住宿',
-  '雲林住宿',
-  '嘉義住宿',
-  '台南住宿',
-  '高雄住宿',
-  '屏東住宿',
-  '宜蘭住宿',
-  '花蓮住宿',
-  '台東住宿',
-  '澎湖住宿',
-  '金門住宿',
-  '馬祖住宿',
-  '綠島住宿',
-  '蘭嶼住宿',
-  '小琉球住宿',
-  '溫泉飯店',
-  '親子飯店',
-  '海景民宿',
-  '包棟民宿',
-  '度假村',
-  '遊樂園',
-  '水族館',
-  '博物館',
-  '美術館',
-  '觀光工廠',
-  '觀光套票',
-  '農場',
-  '牧場',
-] as const
+const stayKeywords = STAY_KEYWORDS
 
 const selectedKeywords = reactive(new Set<string>())
 
@@ -364,13 +301,7 @@ function onSearch() {
   }
 }
 
-const regionCities: Record<string, string[]> = {
-  north: ['台北市', '新北市', '基隆市', '桃園市', '新竹市', '新竹縣', '宜蘭縣'],
-  central: ['苗栗縣', '台中市', '彰化縣', '南投縣', '雲林縣'],
-  south: ['嘉義市', '嘉義縣', '台南市', '高雄市', '屏東縣'],
-  east: ['花蓮縣', '台東縣'],
-  islands: ['澎湖縣', '金門縣', '連江縣'],
-}
+const regionCities = REGION_CITIES
 
 function onClickRegion(region: { key: string }) {
   const cities = regionCities[region.key]

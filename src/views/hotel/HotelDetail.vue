@@ -160,10 +160,10 @@
           <div class="w-full md:col-span-4 space-y-5 md:space-y-0 md:flex md:flex-col md:gap-5">
             <div class="bg-main_100 rounded-[20px] p-5">
               <div class="flex items-center gap-3 pb-[10px]">
-                <div class="text-3xl font-bold text-primary">9.2</div>
+                <div class="text-3xl font-bold text-primary">8.8</div>
                 <div>
                   <p class="text-sm font-bold text-primary">好極了</p>
-                  <p class="text-xs text-gray-400">1,245 則評論</p>
+                  <p class="text-xs text-gray-400">5 則評論</p>
                 </div>
               </div>
               <p class="text-sm text-dark">
@@ -352,7 +352,7 @@
         </div>
       </section>
 
-      <section class="p-5 rounded-[20px] border border-gray-300 bg-white">
+      <section class="p-5 rounded-[20px] border border-gray-300 bg-white" id="reviews-section">
         <h3 class="text-2xl font-bold mb-6 text-dark">房客評論</h3>
 
         <div class="flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-8 mb-5">
@@ -506,6 +506,8 @@ import { useAuthStore } from '@/stores/auth'
 import SearchBar from '../../components/layout/SearchBar.vue'
 
 // --- 1. 型別定義 ---
+import { REVIEWS, type Review } from '@/constants/hotel'
+
 interface Hotel {
   id: string
   name: string
@@ -540,21 +542,6 @@ interface Room {
   image_url: string
   details: string[]
   features: string[]
-}
-
-interface Review {
-  id: number
-  memberName: string
-  memberLocation: string
-  memberType: string
-  rating: number
-  roomType: string
-  nights: number
-  stayDate: string
-  title: string
-  comment: string
-  photos?: string[]
-  date: string
 }
 
 interface SearchPayload {
@@ -612,26 +599,34 @@ const handleBook = (room: Room) => {
   }
 }
 
-const scrollToRooms = () => {
-  const element = document.getElementById('room-section')
+const scrollToTarget = (id: string) => {
+  const element = document.getElementById(id)
   if (element) {
-    element.scrollIntoView({ behavior: 'smooth' })
+    const headerOffset = 96
+    const elementPosition = element.getBoundingClientRect().top
+    const offsetPosition = elementPosition + window.scrollY - headerOffset
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth',
+    })
   }
+}
+
+const scrollToRooms = () => {
+  scrollToTarget('room-section')
 }
 
 const handleTagClick = (tag: string) => {
   const map: Record<string, string> = {
     房型: 'room-section',
     服務及設施: 'facilities-section',
-    // 其他標籤暫時無對應 ID
+    房客評論: 'reviews-section',
   }
 
   const id = map[tag]
   if (id) {
-    const element = document.getElementById(id)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-    }
+    scrollToTarget(id)
   }
 }
 
@@ -660,85 +655,7 @@ const currentIndex = ref(0)
 const startX = ref(0)
 const endX = ref(0)
 
-const reviews = ref<Review[]>([
-  {
-    id: 1,
-    memberName: 'Christin',
-    memberLocation: '台灣',
-    memberType: '商務旅客',
-    rating: 10,
-    roomType: '經典特大床間',
-    nights: 1,
-    stayDate: '2024年12月',
-    title: '非常棒的住宿體驗！',
-    comment: '房間舒適整潔，員工服務親切，交通便利，下次還會再來！',
-    photos: [
-      'https://res.cloudinary.com/wantrip/image/upload/v1768879258/review_qm2vxb.jpg',
-      'https://res.cloudinary.com/wantrip/image/upload/v1768879794/review3_snzhxx.png',
-    ],
-    date: '2024/12/05',
-  },
-  {
-    id: 2,
-    memberName: 'Jason',
-    memberLocation: '香港',
-    memberType: '休閒旅客',
-    rating: 9,
-    roomType: '豪華雙人房- 含陽台',
-    nights: 2,
-    stayDate: '2024年11月',
-    title: '位置優越，早餐豐富',
-    comment: '飯店位置很好，走路就能到捷運站，早餐種類多樣且美味，房間有陽台景觀佳。',
-    photos: ['https://res.cloudinary.com/wantrip/image/upload/v1768879485/reviews1_iautz4.png'],
-    date: '2024/11/18',
-  },
-  {
-    id: 3,
-    memberName: 'Sophia',
-    memberLocation: '新加坡',
-    memberType: '家庭旅客',
-    rating: 8,
-    roomType: '家庭套房- 帶兩張雙人床',
-    nights: 3,
-    stayDate: '2024年10月',
-    title: '適合帶小孩入住',
-    comment: '房間寬敞，床鋪舒適，帶孩子入住很方便，附近有商場和公園。',
-    photos: ['https://res.cloudinary.com/wantrip/image/upload/v1768879937/reviews5_m1c6no.png'],
-    date: '2024/10/12',
-  },
-  {
-    id: 4,
-    memberName: 'Emily',
-    memberLocation: '日本',
-    memberType: '情侶旅客',
-    rating: 10,
-    roomType: '浪漫套房- 含按摩浴缸',
-    nights: 1,
-    stayDate: '2024年09月',
-    title: '非常浪漫的住宿體驗',
-    comment: '房間布置浪漫，浴室有按摩浴缸，適合慶祝紀念日，服務也非常周到。',
-    photos: [
-      'https://res.cloudinary.com/wantrip/image/upload/v1768879395/review1_bc0zlx.jpg',
-      'https://res.cloudinary.com/wantrip/image/upload/v1768879885/review4_kkq4f0.jpg',
-      'https://res.cloudinary.com/wantrip/image/upload/v1768880008/review6_zjglqp.png',
-    ],
-    date: '2024/09/22',
-  },
-  {
-    id: 5,
-    memberName: 'Michael',
-    memberLocation: '台灣',
-    memberType: '商務旅客',
-    rating: 7,
-    roomType: '單人商務房',
-    nights: 2,
-    stayDate: '2024年08月',
-    title: '房間整潔，但空調有點吵',
-    comment: '整體住宿還不錯，房間乾淨，唯獨空調運作聲音稍大，影響睡眠。',
-    photos: [],
-    date: '2024/08/30',
-  },
-])
+const reviews = ref<Review[]>(REVIEWS)
 
 // --- 3. 核心邏輯 ---
 

@@ -69,7 +69,7 @@ const mapUrl = computed(() => {
 
               <div class="mt-4">
                 <span class="text-xs md:text-sm font-bold">總價</span>
-                <span class="text-xl md:text-2xl font-black ml-2 text-dark"
+                <span class="text-xl md:text-2xl font-black ml-2 text-dark text-red-500"
                   >NT$ {{ order.price.toLocaleString() }}</span
                 >
               </div>
