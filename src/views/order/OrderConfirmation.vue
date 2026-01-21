@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { getOrderById, type Order } from '@/services/orderApi'
+import { supabase } from '@/utils/supabaseClient'
 
 const route = useRoute()
 const order = ref<Order | null>(null)
@@ -16,7 +17,10 @@ onMounted(async () => {
   }
 
   try {
-    order.value = await getOrderById(id)
+    const { data: sessionData } = await supabase.auth.getSession()
+    const token = sessionData.session?.access_token
+    // token is optional for getOrderById but recommended for protected routes
+    order.value = await getOrderById(id, token)
   } catch (e: unknown) {
     console.error('[OrderConfirmation] Error:', e)
 
