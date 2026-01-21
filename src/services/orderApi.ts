@@ -27,6 +27,10 @@ export type Order = {
 
   latitude?: number | null
   longitude?: number | null
+
+  city?: string | null
+  district?: string | null
+  address?: string | null
 }
 
 export async function getUserOrders(userId: string) {
