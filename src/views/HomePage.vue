@@ -16,18 +16,14 @@
 
           <!-- Search Bar (floating on banner) -->
           <div class="absolute inset-x-0 bottom-0 z-20 flex justify-center translate-y-1/2">
-            <form
-              class="w-full lg:max-w-[1024px] rounded-[28px] md:rounded-full border border-gray-300 bg-white shadow-sm p-2"
-              @submit.prevent="onSearch"
-            >
-              <div class="flex flex-col gap-2 md:flex-row md:items-center">
-                <!-- Tabs -->
-                <div
-                  class="h-11 flex items-center rounded-full border border-gray-300 bg-dark_100 p-0.5"
+             <div class="w-full lg:max-w-[1024px]">
+                 <!-- Tabs -->
+                 <div
+                  class="w-fit h-11 flex items-center rounded-full border border-gray-300 bg-white p-0.5 mb-2 mx-auto md:mx-0"
                 >
                   <button
                     type="button"
-                    class="h-full rounded-full text-nowrap w-full text-sm font-semibold transition px-4"
+                    class="h-full rounded-full text-nowrap w-24 text-sm font-semibold transition px-4"
                     :class="
                       activeTab === 'package'
                         ? 'bg-primary text-white shadow-sm'
@@ -39,7 +35,7 @@
                   </button>
                   <button
                     type="button"
-                    class="h-full rounded-full text-nowrap w-full text-sm font-semibold transition px-4"
+                    class="h-full rounded-full text-nowrap w-24 text-sm font-semibold transition px-4"
                     :class="
                       activeTab === 'stay'
                         ? 'bg-primary text-white shadow-sm'
@@ -51,53 +47,17 @@
                   </button>
                 </div>
 
-                <!-- Fields -->
-                <!-- 動態調整 grid-cols -->
-                <div
-                  class="grid flex-1 grid-cols-1 gap-2"
-                  :class="activeTab === 'stay' ? 'md:grid-cols-3' : 'md:grid-cols-2'"
-                >
-                  <!-- 1. 想去哪裡 (兩者皆有) -->
-                  <label class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1">
-                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80">想去哪裡</span>
-                    <input
-                      v-model="form.destination"
-                      class="w-full h-full px-4 bg-transparent text-sm text-nowrap outline-none rounded-full transition text-black focus:bg-dark_100 placeholder:text-dark_500"
-                      placeholder="輸入城市、景點"
-                    />
-                  </label>
-                  <!-- 2. 入住/退房日期 (只有住宿需要) -->
-                  <label
-                    v-if="activeTab === 'stay'"
-                    class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1"
-                  >
-                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80">入住/退房日期</span>
-                    <input
-                      v-model="form.dateRange"
-                      class="w-full h-full px-4 bg-transparent text-sm text-nowrap outline-none rounded-full transition text-black focus:bg-dark_100 placeholder:text-dark_500"
-                      placeholder="選擇日期"
-                    />
-                  </label>
-                  <!-- 3. 人數/需求 (兩者皆有) -->
-                  <label class="h-11 flex items-center rounded-full border border-gray-300 bg-white p-1">
-                    <span class="ml-2 mr-1 text-sm text-nowrap font-semibold text-primary/80">人數/需求</span>
-                    <input
-                      v-model="form.people"
-                      class="w-full h-full px-4 bg-transparent text-sm text-nowrap outline-none rounded-full transition text-black focus:bg-dark_100 placeholder:text-dark_500"
-                      placeholder="2 人｜1 間｜可帶寵物"
-                    />
-                  </label>
-                </div>
-
-                <!-- Submit -->
-                <button
-                  type="submit"
-                  class="h-11 rounded-full bg-primary px-6 text-md font-semibold text-white transition hover:bg-main"
-                >
-                  搜尋
-                </button>
-              </div>
-            </form>
+                <SearchBar
+                    mode="redirect"
+                    :search-type="activeTab"
+                    :initial-keyword="hotelConfig.destination"
+                    :initial-range="hotelConfig.dateRange"
+                    :initial-people="hotelConfig.guests"
+                    :initial-destination="ticketConfig.destination"
+                    :initial-ticket-guests="ticketConfig.guests"
+                    @search="handleSearch"
+                />
+             </div>
           </div>
         </div>
       </section>
@@ -211,6 +171,7 @@ import { reactive, ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import HomePageCard from '@/components/layout/HomePageCard.vue'
 import HomePageTicketCard from '@/components/layout/HomePageTicketCard.vue'
+import SearchBar from '@/components/layout/SearchBar.vue'
 import { useHotelApi } from '@/composables/useHotelApi'
 import type { HomePageCardItem } from '@/types/hotel'
 
@@ -218,10 +179,17 @@ const activeTab = ref('stay')
 
 const router = useRouter()
 
-const form = reactive({
+// Hotel Config
+const hotelConfig = reactive({
   destination: '',
-  dateRange: '',
-  people: '',
+  dateRange: [new Date(), new Date(new Date().setDate(new Date().getDate() + 1))],
+  guests: { rooms: 1, people: 2 },
+})
+
+// Ticket Config
+const ticketConfig = reactive({
+  destination: '',
+  guests: { adults: 2, children: 0, hasPet: false },
 })
 
 const regions = [
@@ -278,7 +246,10 @@ onMounted(async () => {
     // Map API data to match TicketCard props if necessary, or ensure TicketCard accepts API structure.
     // TicketHomeView passes the API data directly to HomePageTicketCard.
     // Let's assume HomePageTicketCard handles it (it takes :v-bind="ticket").
-    recommendations.value = res.data
+    recommendations.value = res.data.map((item: Omit<TicketItem, 'rating'> & { rating: string | number }) => ({
+        ...item,
+        rating: Number(item.rating)
+    }))
   } catch (error) {
     console.error('Error fetching popular tickets:', error)
   }
@@ -341,22 +312,31 @@ function toggleKeyword(k: string) {
 }
 
 // Methods
-function onSearch() {
-  console.log('[Home Search]', { tab: activeTab.value, ...form })
+interface SearchPayload {
+  destination?: string
+  keyword?: string
+  range?: Date[]
+  guests?: {
+    adults: number
+    children: number
+    hasPet: boolean
+  }
+  rooms?: number
+  people?: number
+}
+
+function handleSearch(payload: SearchPayload) {
+  // Search logic is handled by SearchBar's redirect mode
   if (activeTab.value === 'package') {
-    router.push({
-      path: '/tickets/search',
-      query: {
-        destination: form.destination,
-      },
-    })
+     ticketConfig.destination = payload.destination || ''
+     if (payload.guests) {
+        Object.assign(ticketConfig.guests, payload.guests)
+     }
   } else {
-    router.push({
-      path: '/hotels/search',
-      query: {
-        destination: form.destination,
-      },
-    })
+     hotelConfig.destination = payload.keyword || ''
+     if(payload.range) hotelConfig.dateRange = payload.range
+     hotelConfig.guests.rooms = payload.rooms || 1
+     hotelConfig.guests.people = payload.people || 2
   }
 }
 
