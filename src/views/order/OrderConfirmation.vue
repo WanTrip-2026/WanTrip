@@ -33,6 +33,25 @@ const isTicket = computed(() => {
   // Detect if it's a ticket by presence of attraction_id OR if hotel_id is null
   return !!order.value.attraction_id || !order.value.hotel_id
 })
+
+const mapUrl = computed(() => {
+  if (!order.value) return ''
+
+  if (order.value.latitude != null && order.value.longitude != null) {
+    return `https://maps.google.com/maps?q=${order.value.latitude},${order.value.longitude}&z=15&output=embed`
+  }
+
+  // Fallback to address
+  const fullAddress = [order.value.city, order.value.district, order.value.address]
+    .filter(Boolean)
+    .join('')
+
+  if (fullAddress) {
+    return `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&z=15&output=embed`
+  }
+
+  return ''
+})
 </script>
 <template>
   <main class="min-h-screen text-primary max-w-[1240px] mx-auto pt-24 pb-24">
@@ -133,7 +152,7 @@ const isTicket = computed(() => {
             <!-- Map placeholder or functional map if implemented -->
             <!-- Functional Map -->
             <div
-              v-if="order.latitude != null && order.longitude != null"
+              v-if="mapUrl"
               class="w-full aspect-video rounded-[20px] bg-page flex items-center justify-center border border-gray-300 overflow-hidden"
             >
               <iframe
@@ -142,7 +161,7 @@ const isTicket = computed(() => {
                 style="border: 0"
                 loading="lazy"
                 allowfullscreen
-                :src="`https://maps.google.com/maps?q=${order.latitude},${order.longitude}&z=15&output=embed`"
+                :src="mapUrl"
               ></iframe>
             </div>
             <div
