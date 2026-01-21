@@ -218,7 +218,7 @@
                   />
                   <div class="flex flex-col justify-center gap-1 px-5">
                     <h3 class="text-md lg:text-xl font-bold">
-                      {{ order.hotel_name }}
+                      {{ order.hotel_name || order.title }}
                     </h3>
                     <p class="text-sm text-gray-600 hidden lg:block">
                       訂單編號：{{ order.order_id || order.id }}
