@@ -186,6 +186,7 @@ const onSubmit = async () => {
       options: {
         data: {
           username: username.value,
+          full_name: username.value,
           birthday: birthday.value,
         },
       },
@@ -198,9 +199,11 @@ const onSubmit = async () => {
 
     const userId = data?.user?.id
     console.log('[signup] userId =', userId)
+    console.log('[signup] session =', data.session)
 
-    // ✅ 將使用者資料寫入 profiles 表 (使用 upsert 避免重複插入)
-    if (userId) {
+    // ✅ if session exists, create profile immediately (Auto Confirm enabled)
+    // ❌ if session is null, user must verify email first (Email Confirm enabled)
+    if (data.session && userId) {
       const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
@@ -210,15 +213,16 @@ const onSubmit = async () => {
           birthday: birthday.value,
           updated_at: new Date().toISOString(),
         }, {
-          onConflict: 'id', // 如果 id 已存在,則更新
+          onConflict: 'id',
         })
 
       if (profileError) {
         console.error('[profile upsert] error:', profileError)
-        // 即使 profile 寫入失敗,註冊還是成功了,所以只記錄錯誤
       } else {
         console.log('[profile upsert] success')
       }
+    } else {
+       console.log('[signup] Verification required. Profile creation deferred to first login.')
     }
 
     alert('註冊成功!請到信箱完成驗證(若有開啟信箱驗證)。')

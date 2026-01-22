@@ -85,7 +85,7 @@
                 @click="toggleUserMenu"
               >
                 <span class="max-w-[160px] truncate">
-                  {{ auth.user?.user_metadata?.full_name || auth.user?.email || '會員' }}
+                  {{ auth.user?.user_metadata?.full_name || auth.user?.user_metadata?.username || auth.user?.email || '會員' }}
                 </span>
 
                 <svg
@@ -362,7 +362,8 @@ const closeAllAuthModal = () => {
   auth.closeLoginModal()
   isRegisterModalOpen.value = false
 }
-const handleLogin = ({ user }: { user: User }) => {
+const handleLogin = (payload: { user: unknown }) => {
+  const user = payload.user as User
   auth.setAuth(user)
   auth.closeLoginModal()
 }
