@@ -216,12 +216,12 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
 <template>
   <section
-    class="max-w-[1240px] mx-auto p-2 mb-10 bg-white rounded-[20px] md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-2 z-20 search-bar-container"
+    class="max-w-[1240px] mx-auto p-1 mb-10 bg-white rounded-[24px] md:rounded-full border border-gray-200 shadow-lg flex flex-col md:flex-row items-stretch md:items-center gap-1 z-20 search-bar-container"
   >
     <!-- Ticket Mode Template -->
     <template v-if="searchType === 'package'">
         <!-- City Picker -->
-        <div class="relative flex-1 flex">
+        <div class="relative flex-1">
              <div
                 class="w-full h-[64px] rounded-[20px] md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
                 :class="[
@@ -234,7 +234,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                 <p class="text-xs font-bold text-primary/70 uppercase tracking-wider pointer-events-none">
                 目的地
                 </p>
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between min-h-[24px]">
                      <input
                         v-if="activePicker === 'ticketCity'"
                         v-model="ticketSearchKeyword"
@@ -250,7 +250,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
                     <!-- Chevron Icon for City -->
                     <svg
-                        class="h-5 w-5 text-primary/40 transition-transform duration-300 ml-2"
+                        class="h-5 w-5 text-primary/40 transition-transform duration-300 ml-2 flex-shrink-0"
                         :class="{ 'rotate-180': activePicker === 'ticketCity' }"
                         fill="none"
                         stroke="currentColor"
@@ -264,7 +264,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
             <transition name="fade">
                 <div
                     v-if="activePicker === 'ticketCity'"
-                    class="city-picker-content absolute top-[calc(100%+12px)] left-0 z-[100] w-full md:w-[400px] max-h-[400px] overflow-y-auto rounded-[24px] bg-white p-5 border border-gray-300 shadow-[0px_8px_24px_rgba(0,0,0,0.08)]"
+                    class="city-picker-content absolute top-[calc(100%+12px)] left-0 z-[100] w-full md:w-[480px] max-h-[80vh] md:max-h-[400px] overflow-y-auto rounded-[24px] bg-white p-5 border border-gray-200 shadow-[0px_8px_32px_rgba(0,0,0,0.12)]"
                     style="scrollbar-width: thin;"
                     @click.stop
                 >
@@ -285,12 +285,12 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                     <!-- Region List -->
                     <div v-for="group in filteredCities" :key="group.region" class="mb-4 last:mb-0">
                         <p class="text-xs font-bold text-gray-400 mb-2">{{ group.region }}</p>
-                        <div class="grid grid-cols-4 gap-2">
+                        <div class="grid grid-cols-6 gap-1">
                             <button
                                 v-for="city in group.cities"
                                 :key="city"
                                 @click="selectCity(city)"
-                                class="text-left text-sm py-1 hover:text-primary transition"
+                                class="text-sm text-nowrap py-1.5 px-3 rounded-full text-dark_700 hover:bg-primary hover:text-white transition-all"
                             >
                                 {{ city }}
                             </button>
@@ -304,7 +304,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
         </div>
 
         <!-- Ticket Guest Picker -->
-        <div class="relative flex-[1.5] w-full">
+        <div class="relative flex-[1.5]">
              <div
                 class="h-[64px] rounded-[20px] md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
                 :class="[
@@ -335,7 +335,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                 <div
                     v-if="activePicker === 'ticketGuest'"
                     @click.stop
-                    class="absolute top-[calc(100%+12px)] left-0 md:right-0 md:left-auto z-[100] w-full md:w-[320px] rounded-[24px] bg-white p-6 border border-gray-300 shadow-[0px_8px_24px_rgba(0,0,0,0.08)] space-y-6"
+                    class="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 md:translate-x-0 md:right-0 md:left-auto z-[100] w-[calc(100vw-32px)] md:w-[320px] rounded-[24px] bg-white p-6 border border-gray-200 shadow-[0px_8px_32px_rgba(0,0,0,0.12)] space-y-6"
                 >
                     <!-- Adults -->
                     <div class="flex items-center justify-between">
@@ -346,14 +346,14 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                         <div class="flex items-center gap-3">
                             <button
                                 type="button"
-                                class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50"
+                                class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50"
                                 :disabled="ticketGuests.adults <= 1"
                                 @click="ticketGuests.adults--"
                             > - </button>
                             <span class="text-sm font-bold w-4 text-center">{{ ticketGuests.adults }}</span>
                             <button
                                 type="button"
-                                class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"
+                                class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"
                                 @click="ticketGuests.adults++"
                             > + </button>
                         </div>
@@ -403,7 +403,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
     <template v-else>
         <!-- Stay Mode Template (Existing) -->
-        <div class="relative flex-1 flex">
+        <div class="relative flex-1">
         <div
             class="w-full h-[64px] rounded-[20px] md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
             :class="[
@@ -429,7 +429,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
         </div>
         </div>
 
-        <div class="relative flex flex-[1.5]">
+        <div class="relative flex-[1.5]">
         <VueDatePicker
             v-model="range"
             range
@@ -468,7 +468,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
         </VueDatePicker>
         </div>
 
-        <div class="relative flex-1 flex" ref="peoplePickerRef">
+        <div class="relative flex-1" ref="peoplePickerRef">
         <div
             @click="togglePicker('people')"
             class="w-full h-[64px] rounded-[20px] md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
@@ -483,10 +483,10 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
             >
             人數、需求
             </p>
-            <div class="flex items-center justify-between pointer-events-none">
+            <div class="flex items-center justify-between pointer-events-none min-h-[24px]">
             <span class="text-base text-black truncate">{{ peopleDisplayText }}</span>
             <svg
-                class="h-4 w-4 text-primary/40 transition-transform duration-300"
+                class="h-4 w-4 text-primary/40 transition-transform duration-300 ml-2 flex-shrink-0"
                 :class="{ 'rotate-180': activePicker === 'people' }"
                 fill="none"
                 stroke="currentColor"
@@ -506,7 +506,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
             <div
             v-if="activePicker === 'people'"
             @click.stop
-            class="absolute top-[calc(100%+12px)] left-0 md:right-0 md:left-auto z-[100] w-full md:w-[300px] rounded-[24px] bg-white p-6 border border-gray-300 shadow-[0px_8px_24px_rgba(0,0,0,0.08)] space-y-6"
+            class="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 md:translate-x-0 md:right-0 md:left-auto z-[100] w-[calc(100vw-32px)] md:w-[300px] rounded-[24px] bg-white p-6 border border-gray-200 shadow-[0px_8px_32px_rgba(0,0,0,0.12)] space-y-6"
             >
             <div class="flex items-center justify-between">
                 <div>
@@ -559,12 +559,12 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
         </div>
     </template>
 
-    <div class="flex">
+    <div class="flex items-center justify-center">
       <button
         @click="onSearch"
-        class="w-[64px] h-[64px] rounded-full bg-primary hover:bg-main text-white transition-all text-center"
+        class="w-[64px] h-[64px] rounded-full bg-primary hover:bg-main text-white transition-all shadow-lg hover:shadow-primary/30 flex items-center justify-center group"
       >
-        <font-awesome-icon icon="search" class="text-lg"/>
+        <font-awesome-icon icon="search" class="text-xl group-hover:scale-110 transition-transform"/>
       </button>
     </div>
   </section>
