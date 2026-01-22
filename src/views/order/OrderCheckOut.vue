@@ -6,7 +6,7 @@ import { useOrderStore } from '@/stores/orderStore'
 import { useAuthStore } from '@/stores/auth'
 
 import { supabase } from '@/utils/supabaseClient'
-import { isValidEmail, isValidPhone } from '@/utils/validators'
+import { isValidEmail } from '@/utils/validators'
 
 const orderStore = useOrderStore()
 const authStore = useAuthStore()
@@ -56,11 +56,6 @@ const handleCheckout = async () => {
 
   if (!isValidEmail(form.email)) {
     alert('請輸入有效的 Email 格式')
-    return
-  }
-
-  if (!isValidPhone(form.phone)) {
-    alert('請輸入有效的電話號碼格式 (例如: 0912-345-678 或 0912345678)')
     return
   }
 
