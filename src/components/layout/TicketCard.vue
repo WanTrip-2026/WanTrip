@@ -42,7 +42,7 @@ const onFavoriteClick = async () => {
 <template>
   <div>
     <div
-      class="w-[280px] rounded-[20px] border bg-white border-gray-300 transition-all shadow-sm hover:shadow-lg overflow-hidden">
+      class="min-w-[280px] rounded-[20px] border bg-white border-gray-300 transition-all shadow-sm hover:shadow-lg overflow-hidden">
       <RouterLink :to="`/tickets/${props.ticket.id}`" class="w-full h-full flex flex-col">
         <div class="w-full">
           <img :src="props.ticket.image_url" :alt="props.ticket.name" class="w-full h-40 object-cover" />

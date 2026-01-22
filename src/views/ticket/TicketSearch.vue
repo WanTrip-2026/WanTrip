@@ -157,6 +157,7 @@ onMounted(() => {
 const selectedCity = ref<string>('選擇城市')
 const isOpen = ref<boolean>(false)
 const expandedMenus = ref<string[]>([])
+const isFilterDrawerOpen = ref(false)
 
 const cities = [
   {
@@ -234,9 +235,6 @@ const ticketFiltered = reactive<FilterMenu[]>([
   },
 ])
 
-// Removed watch(selectedCity) for cityAreaMap as it overwrites dynamic options
-
-// Watch route query to update category filter selection
 watch(
   () => route.query.category,
   (newCategory) => {
@@ -254,28 +252,9 @@ watch(
   { immediate: true },
 )
 
-// Watch filters to trigger client-side filtering ONLY (Debounced)
-// Note: If only districts change, we don't need to re-fetch.
-// But we need to distinguish.
-// For MVP simplicity: If filters change, we can just applyClientSideFilters.
-// But some filters might eventually need server support (like complex text search within results?).
-// With current approach, 'districts' and 'ratings' are client side.
-// 'categories' is mixed (sidebar vs route).
-// If user clicks sidebar category, it updates `ticketFiltered`. Should we update Route? Or just filter?
-// Usually sidebar -> update Route.
-// But current implementation of filter watcher called `fetchAttractions`.
-// Let's change the watcher to apply filters client side if possible, or fetch.
-// Actually, `ticketFiltered` changes -> applyClientSideFilters is enough for district/rating.
-// For 'categories', if it's purely client side now? Backend supports it.
-// If I make specific watchers it's cleaner.
-
 watch(
   ticketFiltered,
   (newVal) => {
-    // If district or rating changes, just filter client side.
-    // If category changes? Backend supports 'category' param.
-    // If we want to support multiple categories client side over the fetched data?
-    // Let's stick to client-side for everything for now to match 'districts' logic.
     applyClientSideFilters()
   },
   { deep: true },
@@ -307,13 +286,27 @@ function onLocalSearch() {
     },
   })
 }
+
+function clearOptions(key: string) {
+  const menu = ticketFiltered.find((m) => m.key === key)
+  if (menu) menu.selected = []
+}
+
+function toggleExpandMenu(title: string) {
+  const index = expandedMenus.value.indexOf(title)
+  if (index > -1) {
+    expandedMenus.value.splice(index, 1)
+  } else {
+    expandedMenus.value.push(title)
+  }
+}
 </script>
 
 <template>
   <main class="max-w-[1240px] mx-auto w-full bg-page pt-24 min-h-screen">
     <div class="mx-5">
       <section
-        class="max-w-[800px] border border-gray-300 p-2 mx-auto bg-white rounded-full flex flex-row justify-between gap-2 shadow-sm"
+        class="max-w-[800px] border border-gray-300 p-2 mx-auto bg-white rounded-[20px] md:rounded-full flex flex-col md:flex-row justify-between gap-2 shadow-sm text-nowrap"
       >
         <div
           class="relative flex-auto h-full focus:border focus:border-primary"
@@ -367,7 +360,7 @@ function onLocalSearch() {
         <div class="text-dark_500 rounded-full flex-none">
           <button
             @click="onLocalSearch"
-            class="text-center bg-primary hover:bg-main text-white font-bold px-6 py-3 rounded-full transition-colors text-nowrap"
+            class="text-center bg-primary hover:bg-main text-white font-bold w-full px-6 py-3 rounded-full transition-colors text-nowrap"
           >
             搜尋
           </button>
@@ -375,7 +368,7 @@ function onLocalSearch() {
       </section>
 
       <section class="gap-5 mt-10 mx-auto flex">
-        <aside class="hidden shadow-sm lg:flex flex-col gap-5 w-[285px]">
+        <aside class="hidden shadow-sm md:flex flex-col gap-5 w-[285px]">
           <div class="rounded-[20px] p-10 bg-white border">
             <h3 class="font-bold text-xl text-dark mb-5">篩選條件</h3>
             <div class="flex flex-col gap-5">
@@ -433,7 +426,14 @@ function onLocalSearch() {
             </span>
             找到 <span class="text-red-500 font-bold">{{ attractions.length }}</span> 項當地體驗
           </h3>
-          <div class="flex flex-row flex-nowrap items-center gap-2">
+          <div class="flex flex-row items-center gap-2 overflow-x-auto scrollbar-hide">
+            <button
+              @click="isFilterDrawerOpen = true"
+              class="md:hidden flex items-center gap-2 rounded-[20px] bg-white border border-gray-300 text-dark px-4 py-2 shadow-sm transition whitespace-nowrap"
+            >
+              <font-awesome-icon icon="sliders" />
+              篩選
+            </button>
             <button class="rounded-[20px] bg-primary hover:bg-main text-white h-10 px-4 font-bold">
               最多人推薦
             </button>
@@ -444,7 +444,7 @@ function onLocalSearch() {
               最低價
             </button>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div class="xl:grid xl:grid-cols-3 flex flex-col w-full gap-5">
             <div v-if="errorMsg" class="col-span-full p-4 text-red-700 bg-red-100 rounded">
               {{ errorMsg }}
             </div>
@@ -456,6 +456,7 @@ function onLocalSearch() {
               <p>我們會繼續努力開發的(๑•́ ₃ •̀๑)</p>
             </div>
             <TicketCard
+              class="w-full"
               v-for="attraction in pagedattraction"
               :key="attraction.id"
               :ticket="attraction"
@@ -476,6 +477,98 @@ function onLocalSearch() {
           </div>
         </div>
       </section>
+
+      <!-- Mobile Filter Drawer -->
+      <Teleport to="body">
+        <div v-if="isFilterDrawerOpen" class="fixed inset-0 z-[100] lg:hidden">
+          <!-- Backdrop -->
+          <Transition
+            enter-active-class="transition-opacity ease-out duration-300"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition-opacity ease-in duration-200"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+          >
+            <div
+              v-if="isFilterDrawerOpen"
+              @click="isFilterDrawerOpen = false"
+              class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            ></div>
+          </Transition>
+
+          <!-- Drawer Content -->
+          <Transition
+            enter-active-class="transition-transform ease-out duration-300"
+            enter-from-class="-translate-x-full"
+            enter-to-class="translate-x-0"
+            leave-active-class="transition-transform ease-in duration-200"
+            leave-from-class="translate-x-0"
+            leave-to-class="-translate-x-full"
+          >
+            <div
+              v-if="isFilterDrawerOpen"
+              class="absolute top-0 left-0 h-[calc(100%-40px)] w-[80%] m-5 rounded-[20px] bg-white/65 backdrop-blur-sm shadow-xl flex flex-col p-5 overflow-y-auto scrollbar-hide"
+            >
+              <div class="flex items-center justify-between mb-6">
+                <h3 class="font-bold text-xl text-dark">篩選條件</h3>
+                <button @click="isFilterDrawerOpen = false" class="text-dark_500 text-2xl">&times;</button>
+              </div>
+
+              <div class="flex flex-col gap-6">
+                <div
+                  v-for="TicketMenu in ticketFiltered"
+                  :key="TicketMenu.key"
+                  class="border-t pt-6 border-gray-300 first:border-t-0 first:pt-0"
+                >
+                  <div class="flex justify-between items-center mb-4">
+                    <h4 class="font-medium text-dark">{{ TicketMenu.title }}</h4>
+                    <button
+                      @click="clearOptions(TicketMenu.key)"
+                      :disabled="TicketMenu.selected.length === 0"
+                      class="text-xs text-dark hover:text-primary disabled:opacity-50"
+                    >
+                      清除
+                    </button>
+                  </div>
+                  <div class="space-y-3">
+                    <label
+                      v-for="option in TicketMenu.options"
+                      :key="option"
+                      class="flex items-center text-sm text-dark cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        :value="option"
+                        v-model="TicketMenu.selected"
+                        class="mr-2 rounded border-gray-300 text-dark focus:ring-dark h-4 w-4"
+                      />
+                      {{ option }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                @click="isFilterDrawerOpen = false"
+                class="mt-8 mb-4 w-full bg-primary text-white py-3 rounded-full font-bold shadow-md hover:bg-main transition"
+              >
+                完成
+              </button>
+            </div>
+          </Transition>
+        </div>
+      </Teleport>
     </div>
   </main>
 </template>
+
+<style scoped>
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>
