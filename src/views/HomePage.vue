@@ -18,34 +18,32 @@
           <div class="absolute inset-x-0 bottom-0 z-20 flex justify-center translate-y-1/2">
              <div class="w-full lg:max-w-[1024px]">
                  <!-- Tabs -->
-                 <div
-                  class="w-fit h-11 flex items-center rounded-full border border-gray-300 bg-white p-0.5 mb-2 mx-auto md:mx-0"
-                >
-                  <button
-                    type="button"
-                    class="h-full rounded-full text-nowrap w-24 text-sm font-semibold transition px-4"
-                    :class="
-                      activeTab === 'package'
-                        ? 'bg-primary text-white shadow-sm'
-                        : 'text-dark hover:bg-main_100'
-                    "
-                    @click="activeTab = 'package'"
+                  <div
+                    class="relative w-fit h-11 flex items-center rounded-full border border-gray-300 bg-white p-0.5 mb-2 mx-auto md:mx-0 overflow-hidden"
                   >
-                    找門票
-                  </button>
-                  <button
-                    type="button"
-                    class="h-full rounded-full text-nowrap w-24 text-sm font-semibold transition px-4"
-                    :class="
-                      activeTab === 'stay'
-                        ? 'bg-primary text-white shadow-sm'
-                        : 'text-dark hover:bg-main_100'
-                    "
-                    @click="activeTab = 'stay'"
-                  >
-                    找住宿
-                  </button>
-                </div>
+                    <!-- Sliding Background Indicator -->
+                    <div
+                      class="absolute top-0.5 bottom-0.5 left-0.5 w-[96px] rounded-full bg-primary shadow-sm transition-all duration-300 ease-in-out z-0"
+                      :style="{ transform: `translateX(${activeTab === 'stay' ? '96px' : '0px'})` }"
+                    ></div>
+
+                    <button
+                      type="button"
+                      class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
+                      :class="activeTab === 'package' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
+                      @click="activeTab = 'package'"
+                    >
+                      找門票
+                    </button>
+                    <button
+                      type="button"
+                      class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
+                      :class="activeTab === 'stay' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
+                      @click="activeTab = 'stay'"
+                    >
+                      找住宿
+                    </button>
+                  </div>
 
                 <SearchBar
                     mode="redirect"
@@ -66,12 +64,13 @@
       <section class="mt-10">
         <h2 class="mb-5 text-xl font-bold text-dark">想去哪裡玩？</h2>
 
-        <div class="grid grid-cols-5 gap-5">
+        <div class="grid grid-cols-6 sm:grid-cols-5 gap-5">
           <button
-            v-for="r in regions"
+            v-for="(r, index) in regions"
             :key="r.key"
             type="button"
             class="relative group overflow-hidden rounded-[20px] bg-white/70 border border-gray-300 transition shadow-sm hover:shadow-xl"
+            :class="[index < 3 ? 'col-span-2 sm:col-span-1' : 'col-span-3 sm:col-span-1']"
             @click="onClickRegion(r)"
           >
             <div
