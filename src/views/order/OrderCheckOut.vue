@@ -4,8 +4,9 @@ import axios from 'axios'
 import { PAYMENT_OPTIONS, ECPAY_METHODS, type PaymentKey } from '@/constants/payment'
 import { useOrderStore } from '@/stores/orderStore'
 import { useAuthStore } from '@/stores/auth'
-import { createOrder } from '@/services/orderApi'
+
 import { supabase } from '@/utils/supabaseClient'
+import { isValidEmail, isValidPhone } from '@/utils/validators'
 
 const orderStore = useOrderStore()
 const authStore = useAuthStore()
@@ -52,6 +53,17 @@ const handleCheckout = async () => {
     alert('請完整填寫訂購人資料')
     return
   }
+
+  if (!isValidEmail(form.email)) {
+    alert('請輸入有效的 Email 格式')
+    return
+  }
+
+  if (!isValidPhone(form.phone)) {
+    alert('請輸入有效的電話號碼格式 (例如: 0912-345-678 或 0912345678)')
+    return
+  }
+
   if (!selectedPayment.value || isProcessing.value) return
 
   isProcessing.value = true
@@ -127,11 +139,17 @@ const startAioPayment = async () => {
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
     const orderId = generateOrderId()
 
+    // Payload generation (moved here)
+    const orderPayload = createOrderPayload(orderId)
+
+    // Note: Removed createOrder call here. Order will be created by backend after payment.
+
     const response = await axios.post(`${apiBaseUrl}/payment/get-aio-params`, {
       amount: total.value,
       paymentMethod: selectedPayment.value, // 傳送關鍵字如 'credit', 'atm'
       userId: authStore.user?.id, // 傳送會員 ID
       orderId: orderId,
+      ...orderPayload, // Pass the full payload to backend for temp storage
     })
 
     if (!response.data.success) {
@@ -140,16 +158,6 @@ const startAioPayment = async () => {
 
     const params = response.data.data
     const actionUrl = params.actionUrl
-
-    const payload = createOrderPayload(orderId)
-
-    // 建立訂單
-    console.log('[Frontend] Creating Order Payload:', payload)
-    const { data: sessionData } = await supabase.auth.getSession()
-    const token = sessionData.session?.access_token
-    if (!token) throw new Error('請先登入')
-
-    await createOrder(payload, token)
 
     const paymentForm = document.createElement('form')
     paymentForm.method = 'POST'
@@ -202,19 +210,17 @@ const startLinePay = async () => {
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
     const orderId = generateOrderId()
 
-    // 先建立訂單
-    const payload = createOrderPayload(orderId)
-    const { data: sessionData } = await supabase.auth.getSession()
-    const token = sessionData.session?.access_token
-    if (!token) throw new Error('請先登入')
+    // Payload generation
+    const orderPayload = createOrderPayload(orderId)
 
-    await createOrder(payload, token)
+    // Note: Removed createOrder call.
 
     const paymentPayload = {
       amount: total.value,
       productName: product.title,
-      userId: authStore.user?.id, // 傳送會員 ID
+      userId: authStore.user?.id,
       orderId: orderId,
+      ...orderPayload, // Pass payload to backend
     }
 
     const response = await axios.post(`${apiBaseUrl}/payment/linepay/request`, paymentPayload)
@@ -243,8 +249,15 @@ const startLinePay = async () => {
 const paymentOptions = PAYMENT_OPTIONS
 
 function applyCoupon() {
-  if (form.coupon.trim().toUpperCase() === 'WANTRIP200') discount.value = 200
-  else discount.value = 0
+  const code = form.coupon.trim().toUpperCase()
+  if (code === '') return
+
+  if (code === 'WANTRIP200') {
+    discount.value = 200
+  } else {
+    discount.value = 0
+    alert('無效的折扣碼，請重新確認')
+  }
 }
 </script>
 
