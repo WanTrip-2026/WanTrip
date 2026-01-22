@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen max-w-[1240px] mx-auto pt-24 pb-20">
+  <div class="min-h-screen max-w-[1240px] mx-auto pt-24 pb-5">
     <!-- <div class="mx-5 text-sm text-dark_500 space-x-1 py-2">
       <RouterLink to="/" class="hover:underline underline-offset-2">首頁</RouterLink> >
       <RouterLink to="/" class="hover:underline underline-offset-2">體驗</RouterLink> >

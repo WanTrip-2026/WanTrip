@@ -8,8 +8,9 @@ import {
   faUser,
   faEnvelope,
   faStar,
+  faTimes,
 } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faCircleNotch, faChevronRight, faChevronLeft, faSearch, faUser, faEnvelope, faStar)
+library.add(faCircleNotch, faChevronRight, faChevronLeft, faSearch, faUser, faEnvelope, faStar, faTimes)
 
 export { FontAwesomeIcon }

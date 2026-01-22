@@ -1,6 +1,6 @@
 <template>
   <main class="max-w-[1200px] mx-auto min-h-screen lg:px-0 px-5">
-    <div class="pt-24 pb-[60px]">
+    <div class="pt-24 pb-24">
       <SearchBar
         mode="emit"
         :initial-keyword="keyword"

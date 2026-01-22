@@ -517,7 +517,7 @@ watch(
 
     <!-- 行動版篩選 Drawer -->
     <Teleport to="body">
-      <div v-if="isFilterDrawerOpen" class="fixed inset-0 z-[100] md:hidden">
+      <div v-if="isFilterDrawerOpen" class="fixed inset-0 z-[100] lg:hidden">
         <!-- Backdrop -->
         <Transition
           enter-active-class="transition-opacity ease-out duration-300"
