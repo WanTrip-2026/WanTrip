@@ -1,14 +1,14 @@
 <template>
   <main class="relative w-full h-screen overflow-hidden">
     <header
-      class="fixed top-0 left-0 min-h-[90px] w-full bg-white/45 backdrop-blur-md p-2.5 border border-white/50 shadow-md z-50"
+      class="fixed top-[20px] left-0 w-full z-50 transition-all duration-300"
+      :class="[isMobileSearchOpen ? 'py-2' : 'h-[64px] flex items-center']"
     >
-      <div class="flex justify-center">
-        <div class="w-full max-w-6xl">
-          <div
-            class="flex flex-col gap-4 md:flex-row md:items-stretch flex-grow md:flex-[5] w-full max-w-4xl md:max-w-6xl"
-          >
-            <a href="/">
+      <div class="w-full xl:max-w-[1240px] mx-auto px-5">
+        <div class="w-full flex flex-col md:flex-row md:items-center gap-2">
+          <!-- Logo and Mobile Toggle Group -->
+          <div class="flex items-center justify-between">
+            <a href="/" class="flex-shrink-0">
               <svg
                 width="168"
                 height="44"
@@ -27,11 +27,23 @@
                 />
               </svg>
             </a>
-            <div
-              class="flex flex-col gap-4 md:flex-row md:items-stretch flex-grow md:flex-[5] max-w-4xl"
+
+            <!-- Mobile Search Toggle Button -->
+            <button
+              @click="isMobileSearchOpen = !isMobileSearchOpen"
+              class="md:hidden w-12 h-12 flex items-center justify-center rounded-full bg-white/65 backdrop-blur-sm text-dark text-lg"
             >
+              <font-awesome-icon :icon="isMobileSearchOpen ? 'times' : 'search'" />
+            </button>
+          </div>
+
+          <!-- Search Inputs Container -->
+          <div
+            v-show="isMobileSearchOpen"
+            class="flex flex-col md:flex-row md:flex-grow gap-2 md:items-center md:!flex p-4 md:p-0 bg-white/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-0 rounded-[24px] md:rounded-none shadow-lg md:shadow-none border border-white/20 md:border-none"
+          >
               <label
-                class="md:flex-[1.7] relative rounded-[20px] bg-white px-5 py-3 flex flex-col justify-centergap-1 shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 group cursor-pointer transition-all hover:ring-accent/50"
+                class="md:flex-1 relative rounded-[20px] bg-white px-5 h-[60px] flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 group cursor-pointer transition-all hover:ring-primary/50"
               >
                 <p class="text-xs font-bold leading-tight text-primary/70">目的地</p>
                 <div class="relative">
@@ -44,7 +56,7 @@
                 </div>
               </label>
 
-              <div class="relative flex md:flex-[1.8]">
+              <div class="relative flex h-[60px] md:flex-[1.2]">
                 <VueDatePicker
                   v-model="range"
                   range
@@ -55,20 +67,20 @@
                   auto-apply
                   hide-input-icon
                   :clearable="false"
-                  class="w-full"
+                  class="w-full h-full"
                   @update:model-value="handleDateChange"
                   @open="activePicker = 'date'"
                   @closed="activePicker = 'none'"
                 >
                   <template #dp-input>
                     <div
-                      class="w-full h-full rounded-[20px] bg-white px-5 py-3 flex flex-col gap-1 shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
+                      class="w-full h-full rounded-[20px] bg-white px-5 flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
                       :class="{ 'ring-accent/50': activePicker === 'date' }"
                     >
                       <p class="text-xs font-bold leading-tight text-primary/70">入住 - 退房日期</p>
                       <input
                         :value="formatRangeDisplay()"
-                        class="w-full bg-transparent text-sm md:text-[18px] text-black outline-none pointer-events-none"
+                        class="w-full bg-transparent text-sm md:text-base text-black outline-none pointer-events-none"
                         placeholder="點選選擇日期"
                         readonly
                       />
@@ -80,7 +92,7 @@
               <div class="relative flex-1 flex" ref="peoplePickerRef">
                 <div
                   @click="togglePicker('people')"
-                  class="w-full rounded-[20px] bg-white px-5 py-3 flex flex-col gap-1 shadow-[0_10px_25px_rgba(47,61,77,0.08)] ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
+                  class="w-full h-[60px] rounded-[20px] bg-white px-5 flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
                   :class="{ 'ring-accent/50': activePicker === 'people' }"
                 >
                   <p class="text-xs font-bold leading-tight text-primary/70">人數、需求</p>
@@ -112,13 +124,13 @@
                     <div class="flex items-center justify-between">
                       <div>
                         <p class="text-sm font-bold text-primary">房間</p>
-                        <p class="text-[11px] text-gray-400">所需的客房數量</p>
+                        <p class="text-sm text-gray-400">所需的客房數量</p>
                       </div>
                       <div class="flex items-center gap-4">
                         <button
                           @click.stop="peopleConfig.rooms > 1 ? peopleConfig.rooms-- : null"
                           type="button"
-                          class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                          class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
                         >
                           -
                         </button>
@@ -128,7 +140,7 @@
                         <button
                           @click.stop="peopleConfig.rooms++"
                           type="button"
-                          class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                          class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
                         >
                           +
                         </button>
@@ -137,13 +149,13 @@
                     <div class="flex items-center justify-between">
                       <div>
                         <p class="text-sm font-bold text-primary">旅客</p>
-                        <p class="text-[11px] text-gray-400">總人數</p>
+                        <p class="text-sm text-gray-400">總人數</p>
                       </div>
                       <div class="flex items-center gap-4">
                         <button
                           @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null"
                           type="button"
-                          class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                          class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
                         >
                           -
                         </button>
@@ -153,7 +165,7 @@
                         <button
                           @click.stop="peopleConfig.people++"
                           type="button"
-                          class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                          class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
                         >
                           +
                         </button>
@@ -164,20 +176,22 @@
               </div>
               <button
                 @click="fetchHotels"
-                class="w-full md:w-36 items-center px-8 py-3 rounded-[20px] bg-primary hover:bg-main shadow text-lg font-medium text-white transition"
+                class="w-full md:w-[60px] h-[60px] flex items-center justify-center rounded-full bg-primary hover:bg-main border border-white/20 shadow-md text-white transition-all"
               >
-                <font-awesome-icon icon="search" class="mr-2" /> 搜尋
+                <font-awesome-icon icon="search" class="text-xl"/>
               </button>
             </div>
           </div>
         </div>
-      </div>
     </header>
     <!-- 地圖 -->
     <div class="absolute inset-0 bg-[#e5e3df] z-0 overflow-hidden">
       <div id="map" class="w-full h-full"></div>
     </div>
-    <div class="flex gap-3 fixed top-[100px] ml-5">
+    <div
+      class="flex gap-3 fixed ml-5 z-40 transition-all duration-300"
+      :class="[isMobileSearchOpen ? 'top-[440px] md:top-[120px]' : 'top-[100px] md:top-[120px]']"
+    >
       <button
         @click="goBackToList"
         class="items-center px-8 py-3 rounded-[18px] bg-primary hover:bg-main shadow text-sm font-medium text-white transition"
@@ -205,10 +219,11 @@
     <!-- 飯店列表 -->
     <aside
       :class="[
-        'fixed top-[145px] bg-white  z-20 shadow-xl transition-transform duration-500 ease-in-out flex flex-col self-start h-[calc(100vh-170px)] my-2.5 ml-5 rounded-[20px] rounded-tr-none',
+        'fixed bg-white z-20 shadow-xl transition-all duration-500 ease-in-out flex flex-col self-start my-2.5 ml-5 rounded-[20px] rounded-tr-none',
         isListOpen ? 'translate-x-0' : '-translate-x-[420px]',
+        isMobileSearchOpen ? 'top-[490px] h-[calc(100vh-510px)] md:top-[165px] md:h-[calc(100vh-190px)]' : 'top-[145px] h-[calc(100vh-170px)] md:top-[165px] md:h-[calc(100vh-190px)]'
       ]"
-      class="w-[400px]"
+      class="w-[calc(100vw-40px)] md:w-[400px]"
     >
       <button
         @click="isListOpen = !isListOpen"
@@ -448,6 +463,9 @@ const hotels = ref<Hotel[]>([])
 const keyword = ref('')
 const error = ref<string | null>(null)
 const facilities = ref<FacilityName[]>([])
+const isMobileSearchOpen = ref(window.innerWidth >= 768)
+const isListOpen = ref(window.innerWidth >= 768)
+const isFilterOpen = ref(false)
 
 const generateStarHtml = (rating: number) => {
   const starSvg = `<svg
@@ -476,9 +494,9 @@ const HotelFiltered = reactive<FilterMenu[]>([
   { key: 'facilities', title: '設施＆服務', options: [], selected: [] },
 ])
 
-function starCount(stars: number) {
-  return stars
-}
+// starCount was removed as it was unused
+// Remove or comment out to fix lint if not needed, but it seems harmless.
+// Let's keep it for now as it's not hurting anyone.
 
 const goBackToList = () => {
   const startDate = range.value?.[0] ? formatDate(range.value[0]) : ''
@@ -592,8 +610,7 @@ const toggleMapType = () => {
   currentMapType.value = newType
 }
 
-const isListOpen = ref(true)
-const isFilterOpen = ref(false)
+
 
 const expandedMenus = ref<string[]>([]) // 儲存哪些 option 已展開
 
@@ -672,11 +689,11 @@ const renderMarkers = async () => {
           <div class="bg-white rounded-[20px] p-2 w-[340px] box-border">
             <div class="flex bg-white rounded-[12px] border border-gray-200 overflow-hidden h-[132px]">
               <div class="w-[100px] flex-shrink-0">
-                <img 
-                    src="${hotel.image_url}" 
-                    class="w-full h-full object-cover" 
+                <img
+                    src="${hotel.image_url}"
+                    class="w-full h-full object-cover"
                     onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=No+Image';"
-                 />              
+                 />
               </div>
               <div class="relative flex-1 p-3 flex flex-col justify-between min-w-0">
                 <div class="min-w-0">
@@ -879,6 +896,11 @@ const fetchHotels = async () => {
 }
 
 onMounted(async () => {
+  // 根據螢幕寬度初始化狀態
+  const isDesktop = window.innerWidth >= 768
+  isMobileSearchOpen.value = isDesktop
+  isListOpen.value = isDesktop
+
   isMapLoading.value = true
   try {
     // 1. 關鍵字
