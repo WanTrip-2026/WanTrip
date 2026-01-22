@@ -48,25 +48,7 @@ export async function getUserOrders(token: string) {
   return data as Order[]
 }
 
-export async function createOrder(orderData: object, token: string) {
-  const r = await fetch(`${API}/orders`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(orderData),
-  })
-
-  const data = await r.json().catch(() => ({}))
-  if (!r.ok) {
-    const error = new Error(data?.message || 'create order failed')
-    ;(error as any).response = { data }
-    throw error
-  }
-
-  return data
-}
+// createOrder function removed as it is no longer used. Orders are created via payment flow.
 
 export async function getOrderById(orderId: string, token?: string) {
   const headers: HeadersInit = {}
