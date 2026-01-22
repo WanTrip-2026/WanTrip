@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full min-h-[100dvh] relative overflow-x-hidden flex flex-col">
+  <div class="w-full h-[100dvh] relative overflow-x-hidden flex flex-col">
     <div
       class="fixed inset-0 w-full h-full bg-cover bg-center z-0"
       style="background-image: url('/src/assets/traveldna_img/IntroBg.png')"
@@ -7,12 +7,12 @@
     <div class="fixed inset-0 w-full h-full bg-primary/50 backdrop-blur-sm z-0"></div>
 
     <div
-      class="relative z-10 w-full max-w-[1200px] mx-auto px-4 pt-16 md:pt-28 pb-24 md:pb-10 flex-1 flex flex-col"
+      class="relative z-10 w-full max-w-[1200px] mx-auto px-4 pt-16 md:pt-[160px] pb-24 md:pb-10 flex-1 flex flex-col"
     >
       <div
         class="relative w-full max-w-[800px] h-2.5 md:h-4 mt-12 md:mt-0 mb-10 md:mb-0 mx-auto px-2"
       >
-        <div class="w-full h-full bg-[#EEF2F7] rounded-full"></div>
+        <div class="w-full h-full bg-main_100 rounded-full"></div>
         <div
           class="absolute top-0 left-2 right-2 h-full bg-primary rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-primary via-white/30 to-primary bg-[length:200%_100%] animate-progress-flow"
           :style="{ width: `calc(${(currentStep / totalSteps) * 100}% - 16px)` }"
