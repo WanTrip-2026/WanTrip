@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen max-w-[1240px] mx-auto mt-24 mb-20">
+  <main class="min-h-screen max-w-[1240px] mx-auto mt-24 mb-24">
     <div class="mx-5">
       <!-- 上方操作：只出現一次 -->
       <button
