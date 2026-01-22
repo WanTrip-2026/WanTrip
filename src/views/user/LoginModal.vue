@@ -180,10 +180,6 @@ const onSubmit = async () => {
     const user = signInData.session?.user
     if (!user) throw new Error('No user data')
 
-    // No need to call old APIs
-    // await exchangeToCookie(access_token)
-    // const meRes = await me()
-
     emit('login', { user })
     emit('update:modelValue', false)
   } catch (err: unknown) {

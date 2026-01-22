@@ -399,10 +399,10 @@ const loadMe = async () => {
     form.value.fullName = data?.full_name ?? currentUser.user_metadata?.full_name ?? ''
     form.value.phone = data?.phone ?? currentUser.user_metadata?.phone ?? ''
     form.value.gender = data?.gender ?? 'male'
-    form.value.birthday = data?.birthday ?? ''
+    form.value.birthday = data?.birthday ?? currentUser.user_metadata?.birthday ?? ''
 
     // 3. Load Orders
-    await loadOrders(currentUser.id)
+    await loadOrders()
   } catch (e: unknown) {
     console.error(e)
     errorMsg.value = '載入會員資料失敗'
@@ -424,7 +424,7 @@ watch(
   },
 )
 
-const loadOrders = async (userId: string) => {
+const loadOrders = async () => {
   try {
     const { data } = await supabase.auth.getSession()
     const token = data.session?.access_token
