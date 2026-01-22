@@ -13,21 +13,40 @@ export const useAuthStore = defineStore('auth', () => {
   // ✅ 確保 Profile 存在 (適用於 Email 驗證後首次登入)
   const ensureUserProfile = async (currentUser: User) => {
     try {
-      // 1. 檢查 Profile 是否已存在
+      // 1. 檢查 Profile 是否已存在 (包含生日欄位)
       const { data: profile } = await supabase
         .from('profiles')
-        .select('id')
+        .select('id, birthday')
         .eq('id', currentUser.id)
         .single()
 
-      if (profile) return // 已存在，不需處理
+      // 若資料完整則直接返回
+      if (profile?.birthday) return
 
-      // 2. 若不存在，根據 user_metadata 建立
+      // 準備使用者資料
       const user_metadata = currentUser.user_metadata || {}
       const username = user_metadata.full_name || user_metadata.username || currentUser.email?.split('@')[0] || 'Member'
       const birthday = user_metadata.birthday || null
 
-      console.log('[Auth] Profile missing, creating now...', { username, birthday })
+      console.log('[Auth] ensureUserProfile:', { exists: !!profile, hasBirthday: !!profile?.birthday, metaBirthday: birthday })
+
+      if (profile) {
+        // Profile 存在但缺少生日，且 Metadata 中有生日 -> 嘗試補齊
+        if (!profile.birthday && birthday) {
+          console.log('[Auth] Profile exists but birthday missing. Updating now...')
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ birthday })
+            .eq('id', currentUser.id)
+
+          if (updateError) console.error('[Auth] Update birthday error:', updateError)
+        }
+        return
+      }
+
+      console.log('[Auth] Profile missing, creating now...')
+      console.log('[Auth] user_metadata:', user_metadata)
+      console.log('[Auth] extracted birthday:', birthday)
 
       const { error: insertError } = await supabase
         .from('profiles')

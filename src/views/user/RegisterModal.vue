@@ -192,6 +192,15 @@ const onSubmit = async () => {
       },
     })
 
+    console.log('[Register] Payload sent to Supabase:', {
+      email: email.value,
+      data: {
+        username: username.value,
+        full_name: username.value,
+        birthday: birthday.value,
+      }
+    })
+
     console.log('[signup] data =', data)
     console.log('[signup] error =', error)
 
