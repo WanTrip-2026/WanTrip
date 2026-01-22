@@ -67,7 +67,7 @@ const formattedAmount = computed(() => `NT$ ${order.value.amount.toLocaleString(
             </div>
             <div class="flex flex-col items-center lg:items-stretch">
               <p class="text-dark_700 font-bold text-base">總價</p>
-              <p class="text-dark font-bold text-xl text-red-500">{{ formattedAmount }}</p>
+              <p class="font-bold text-xl text-red-500">{{ formattedAmount }}</p>
             </div>
           </div>
         </div>
