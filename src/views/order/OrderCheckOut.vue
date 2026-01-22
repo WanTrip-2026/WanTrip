@@ -370,15 +370,15 @@ function applyCoupon() {
                   class="h-[44px] rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary"
                 />
               </div>
-              <div class="flex flex-col gap-3 md:col-span-2">
-                <label class="text-sm text-black/60"
-                  >電話 <span class="text-red-500">*</span></label
-                >
+              <div class="flex flex-col gap-3">
+                <label class="text-sm text-black/60">
+                  電話 <span class="text-red-500">*</span>
+                </label>
                 <input
                   v-model="form.phone"
                   type="tel"
                   placeholder="09xx-xxx-xxx"
-                  class="h-[44px] rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary md:max-w-[420px]"
+                  class="h-[44px] w-full rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary"
                 />
               </div>
             </div>
