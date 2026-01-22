@@ -209,21 +209,20 @@
     <div class="fixed bottom-[200px] right-[10px] z-10">
       <button
         @click="toggleMapType"
-        class="w-[40px] h-[40px] bg-white rounded-[20px] shadow-[0_1px_4px_-1px_rgba(0,0,0,0.3)] hover:bg-[#ebebeb] transition-colors flex items-center justify-center"
+        class="w-[40px] h-[40px] bg-white rounded-[20px] shadow-md hover:bg-main_100 transition-colors flex items-center justify-center"
       >
         <div class="text-base">
           {{ currentMapType === 'roadmap' ? '🛰️' : '🗺️' }}
         </div>
       </button>
     </div>
-    <!-- 飯店列表 -->
     <aside
       :class="[
         'fixed bg-white z-20 shadow-xl transition-all duration-500 ease-in-out flex flex-col self-start my-2.5 ml-5 rounded-[20px] rounded-tr-none',
-        isListOpen ? 'translate-x-0' : '-translate-x-[420px]',
+        isListOpen ? 'translate-x-0' : '-translate-x-[calc(100%+20px)]',
         isMobileSearchOpen ? 'top-[490px] h-[calc(100vh-510px)] md:top-[165px] md:h-[calc(100vh-190px)]' : 'top-[145px] h-[calc(100vh-170px)] md:top-[165px] md:h-[calc(100vh-190px)]'
       ]"
-      class="w-[calc(100vw-40px)] md:w-[400px]"
+      class="w-[60vw] md:w-[400px]"
     >
       <button
         @click="isListOpen = !isListOpen"
@@ -231,7 +230,7 @@
           'absolute top-0 z-20 bg-white border shadow-md flex items-center justify-center text-primary hover:text-main_800 transition-all duration-500 ease-in-out',
           isListOpen
             ? 'left-full w-8 h-12 rounded-r-lg border-l-0'
-            : 'left-[420px] w-12 h-12 rounded-lg',
+            : 'left-[calc(100%+20px)] w-12 h-12 rounded-lg',
         ]"
       >
         <font-awesome-icon :icon="isListOpen ? 'chevron-left' : 'chevron-right'" />

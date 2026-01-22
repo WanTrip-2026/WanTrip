@@ -102,12 +102,12 @@ const onFavoriteClick = async () => {
         <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
         <button
           @click.stop="toggleCompare"
-          class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 rounded-full sm:rounded-[20px] h-[36px] sm:h-[40px] px-4 sm:w-[90px] text-xs transition-all shadow-lg"
+          class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 rounded-full sm:rounded-[20px] h-[40px] w-[110px] text-sm transition-all shadow-lg"
           :class="[
             isInCompare
               ? 'bg-white backdrop-blur-sm text-red-600 hover:bg-white/65'
               : 'bg-white/90 backdrop-blur-sm text-primary hover:bg-white',
-            isCompact ? 'sm:scale-75 sm:origin-center sm:bottom-2 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto' : '',
+            isCompact ? 'sm:scale-75 sm:origin-center sm:bottom-1.5 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto' : '',
           ]"
         >
           <template v-if="isInCompare">取消比較</template>
@@ -116,8 +116,8 @@ const onFavoriteClick = async () => {
       </div>
 
       <!-- 內容 -->
-      <div class="relative flex-1 flex flex-col sm:flex-row justify-between p-4 sm:p-5 w-full gap-4 sm:gap-0">
-        <div class="flex flex-col gap-1 sm:gap-2">
+      <div class="relative flex-1 flex flex-col sm:flex-row justify-between p-5 w-full">
+        <div class="flex flex-col gap-1">
           <h3 class="text-base sm:text-lg font-bold text-black line-clamp-1">
             {{ hotel.name }}
           </h3>
@@ -130,7 +130,7 @@ const onFavoriteClick = async () => {
                   :key="index"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 640 640"
-                  class="w-4 h-4 sm:w-5 sm:h-5"
+                  class="w-5 h-5"
                   fill="currentColor"
                 >
                   <path
@@ -146,7 +146,7 @@ const onFavoriteClick = async () => {
             <p class="text-gray-500 text-xs sm:text-sm">{{ hotel.city }}{{ hotel.district }}</p>
 
             <p class="text-[10px] sm:text-sm text-gray-400">6616 則評論</p>
-            <div v-if="isCompact" class="text-red-500 text-base sm:text-lg font-bold mt-1 sm:mt-2">
+            <div v-if="isCompact" class="text-red-500 text-base sm:text-lg font-bold mt-1">
               NT${{ hotel.min_price.toLocaleString() }}
             </div>
           </div>
