@@ -105,8 +105,8 @@ const onFavoriteClick = async () => {
           class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 rounded-full sm:rounded-[20px] h-[40px] w-[110px] text-sm transition-all shadow-lg"
           :class="[
             isInCompare
-              ? 'bg-white backdrop-blur-sm text-red-600 hover:bg-white/65'
-              : 'bg-white/90 backdrop-blur-sm text-primary hover:bg-white',
+              ? 'bg-white backdrop-blur-sm text-red-500 hover:bg-white/65 cursor-pointer'
+              : 'bg-white/90 backdrop-blur-sm text-primary hover:bg-white cursor-pointer',
             isCompact ? 'sm:scale-75 sm:origin-center sm:bottom-1.5 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto' : '',
           ]"
         >
