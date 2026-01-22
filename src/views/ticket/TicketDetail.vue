@@ -281,37 +281,39 @@
           <!-- Header: Title and Price -->
           <div class="mb-4 flex flex-col gap-2 lg:gap-5">
             <!-- Toggle Button (Mobile/Tablet Only) -->
-            <button
-              @click="isBookingExpanded = !isBookingExpanded"
-              class="lg:hidden absolute -top-3 right-3 w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-main transition-all"
-            >
-              <svg
-                class="w-4 h-4 transition-transform duration-300"
-                :class="{ 'rotate-180': isBookingExpanded }"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div class="flex flex-row justify-between items-center">
+              <h2 class="w-full line-clamp-1 lg:line-clamp-2 text-xl font-bold text-dark">
+                {{ ticketIntro.title }}
+              </h2>
+              <button
+                @click="isBookingExpanded = !isBookingExpanded"
+                class="lg:hidden w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-main transition-all"
+              >
+                <svg
+                  class="w-4 h-4 transition-transform rotate-180 duration-300"
+                  :class="{ 'rotate-0': isBookingExpanded }"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
               >
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            <h2 class="w-full text-lg line-clamp-1 lg:line-clamp-2 md:text-xl font-bold text-dark">
-              {{ ticketIntro.title }}
-            </h2>
-            <div>
+            </div>
+            <div class="flex flex-col items-start">
               <span
                 v-if="displayPrice > 0"
-                class="text-xs lg:text-sm text-dark_500 line-through"
+                class="text-base text-dark_500 line-through"
               >
                 TWD {{ (displayPrice * 1.5).toLocaleString() }}
               </span>
               <div class="flex items-end gap-2">
-                <span class="text-lg lg:text-xl font-bold text-red-500">
+                <span class="text-2xl font-bold text-red-500">
                   TWD {{ displayPrice.toLocaleString() }}
                 </span>
                 <span
                   v-if="totalPrice === 0"
-                  class="text-sm text-dark_500 mb-0.5 lg:mb-1"
+                  class="text-base text-dark_500 mb-0.5"
                   >起</span
                 >
               </div>
