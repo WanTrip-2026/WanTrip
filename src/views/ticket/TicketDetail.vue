@@ -273,71 +273,97 @@
       </div>
 
       <div
-        class="fixed bottom-[84px] left-0 right-0 bg-white rounded-[20px] z-50 p-5 mx-5 border border-white-300 lg:relative lg:bottom-auto lg:left-auto lg:w-full lg:right-auto lg:z-0 lg:p-0 lg:mr-5 lg:ml-0 lg:col-span-4 lg:border-0 lg:bg-transparent"
+        class="fixed bottom-[94px] left-0 right-0 bg-white rounded-[40px] z-50 p-5 mx-5 border border-gray-300 lg:relative lg:bottom-auto lg:left-auto lg:w-full lg:right-auto lg:z-0 lg:p-0 lg:mr-5 lg:ml-0 lg:col-span-4 lg:border-0 lg:bg-transparent"
       >
         <div
           class="lg:sticky lg:top-[96px] bg-white lg:rounded-[20px] lg:shadow-sm lg:border lg:border-gray-300 lg:p-5"
         >
-          <div class="mb-4 flex flex-row gap-2 lg:gap-5 lg:flex-col">
+          <!-- Header: Title and Price -->
+          <div class="mb-4 flex flex-col gap-2 lg:gap-5">
+            <!-- Toggle Button (Mobile/Tablet Only) -->
+            <button
+              @click="isBookingExpanded = !isBookingExpanded"
+              class="lg:hidden absolute -top-3 right-3 w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-main transition-all"
+            >
+              <svg
+                class="w-4 h-4 transition-transform duration-300"
+                :class="{ 'rotate-180': isBookingExpanded }"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
             <h2 class="w-full text-lg line-clamp-1 lg:line-clamp-2 md:text-xl font-bold text-dark">
               {{ ticketIntro.title }}
             </h2>
             <div>
               <span
                 v-if="displayPrice > 0"
-                class="text-xs lg:text-sm text-dark_500 line-through text-nowrap"
+                class="text-xs lg:text-sm text-dark_500 line-through"
               >
                 TWD {{ (displayPrice * 1.5).toLocaleString() }}
               </span>
-              <div class="flex items-end gap-1 lg:gap-2">
-                <span class="text-lg lg:text-2xl font-bold text-red-500 text-nowrap">
+              <div class="flex items-end gap-2">
+                <span class="text-lg lg:text-xl font-bold text-red-500">
                   TWD {{ displayPrice.toLocaleString() }}
                 </span>
                 <span
                   v-if="totalPrice === 0"
-                  class="text-sm text-dark_500 mb-0.5 lg:mb-1 text-nowrap"
+                  class="text-sm text-dark_500 mb-0.5 lg:mb-1"
                   >起</span
                 >
               </div>
             </div>
           </div>
-          <div class="flex flex-row items-stretch gap-5 text-nowrap lg:gap-2.5 lg:flex-col">
+
+          <!-- Controls: Date, Plans, and Button -->
+          <Transition
+            enter-active-class="transition-all duration-1000 ease-out"
+            leave-active-class="transition-all duration-800 ease-in"
+            enter-from-class="opacity-0 max-h-0 overflow-hidden"
+            enter-to-class="opacity-100 max-h-[600px]"
+            leave-from-class="opacity-100 max-h-[600px]"
+            leave-to-class="opacity-0 max-h-0 overflow-hidden"
+          >
+            <div v-show="isBookingExpanded" class="flex flex-col gap-3 lg:!gap-5 lg:!block">
             <DatePicker v-model="selectedDate" color="teal" :masks="{ input: 'YYYY-MM-DD' }">
               <template #default="{ inputValue, inputEvents }">
                 <div
-                  class="p-3 w-full border rounded-[10px] hover:border-primary cursor-pointer transition"
+                  class="p-3 w-full border rounded-[10px] hover:border-primary cursor-pointer transition flex flex-col justify-center"
                   v-on="inputEvents"
                 >
-                  <div class="text-xs text-dark_700 mb-1">選擇日期</div>
-                  <div class="font-medium text-dark">{{ inputValue || '請選擇日期' }}</div>
+                  <div class="text-xs text-dark_700 mb-1 font-bold">選擇日期</div>
+                  <div class="font-medium text-dark text-sm">{{ inputValue || '請選擇日期' }}</div>
                 </div>
               </template>
             </DatePicker>
 
-            <div class="relative group">
-              <div class="p-3 w-full border rounded-[10px] transition hover:border-primary">
-                <div class="text-xs text-dark_700 mb-2">選擇方案</div>
+            <div class="relative group mt-0 lg:mt-2">
+              <div class="w-full border rounded-[10px] transition hover:border-primary p-4">
+                <div class="text-xs text-dark_700 mb-3 font-bold">選擇方案</div>
 
                 <div v-if="tickets.length === 0" class="text-sm text-dark_500">目前無可用方案</div>
 
-                <div v-else class="space-y-3">
-                  <div v-for="t in tickets" :key="t.id" class="flex items-center justify-between">
-                    <div class="flex flex-col">
-                      <span class="font-medium text-dark text-sm">{{ t.name }}</span>
-                      <span class="text-xs text-dark_500">NT$ {{ t.price }}</span>
+                <div v-else class="space-y-4">
+                  <div v-for="t in tickets" :key="t.id" class="flex items-center justify-between gap-4">
+                    <div class="flex flex-col min-w-0">
+                      <span class="font-bold text-dark text-sm truncate">{{ t.name }}</span>
+                      <span class="text-xs text-dark_500 font-medium">NT$ {{ t.price }}</span>
                     </div>
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 shrink-0">
                       <button
                         @click="decreaseQuantity(t.id)"
-                        class="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100 disabled:opacity-50"
+                        class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100 disabled:opacity-50 transition"
                         :disabled="t.quantity <= 0"
                       >
                         -
                       </button>
-                      <span class="w-4 text-center text-sm font-medium">{{ t.quantity }}</span>
+                      <span class="w-4 text-center text-sm font-bold">{{ t.quantity }}</span>
                       <button
                         @click="increaseQuantity(t.id)"
-                        class="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100"
+                        class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100 transition"
                       >
                         +
                       </button>
@@ -346,16 +372,18 @@
                 </div>
               </div>
             </div>
-            <div class="flex-shrink-0">
-              <button
-                type="submit"
-                @click="onSearch"
-                class="h-full flex items-center justify-center lg:w-full bg-primary hover:bg-main text-white font-bold py-3 px-6 rounded-[10px] transition duration-200 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
-                :disabled="totalPrice === 0"
-              >
-                立即預訂
-              </button>
             </div>
+          </Transition>
+
+          <div class="pt-2">
+            <button
+              type="submit"
+              @click="handleBooking"
+              class="w-full h-12 flex items-center justify-center bg-primary hover:bg-main text-white font-bold rounded-full md:rounded-[10px] transition duration-200 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
+              :disabled="totalPrice === 0"
+            >
+              立即預訂
+            </button>
           </div>
         </div>
       </div>
@@ -389,6 +417,7 @@ interface TicketWithQuantity extends Ticket {
 
 const tickets = ref<TicketWithQuantity[]>([])
 const selectedDate = ref<Date>(new Date())
+const isBookingExpanded = ref<boolean>(false)
 
 // Image loading tracking
 const imageLoadStatus = ref<boolean[]>(new Array(7).fill(false))
@@ -548,6 +577,15 @@ interface TicketItem {
 // Ensure AttractionWithImages interface is available if needed, though backend returns flattened structure for recommendations
 interface AttractionWithImages extends Attraction {
   attraction_images: { image_url: string }[]
+}
+
+function handleBooking() {
+  // Auto-expand if collapsed on mobile/tablet
+  if (!isBookingExpanded.value && window.innerWidth < 1024) {
+    isBookingExpanded.value = true
+    return
+  }
+  onSearch()
 }
 
 function onSearch() {
