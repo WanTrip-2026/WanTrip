@@ -5,8 +5,7 @@ import { PAYMENT_OPTIONS, ECPAY_METHODS, type PaymentKey } from '@/constants/pay
 import { useOrderStore } from '@/stores/orderStore'
 import { useAuthStore } from '@/stores/auth'
 
-import { supabase } from '@/utils/supabaseClient'
-import { isValidEmail } from '@/utils/validators'
+import { isValidEmail, isValidPhone } from '@/utils/validators'
 
 const orderStore = useOrderStore()
 const authStore = useAuthStore()
@@ -56,6 +55,11 @@ const handleCheckout = async () => {
 
   if (!isValidEmail(form.email)) {
     alert('請輸入有效的 Email 格式')
+    return
+  }
+
+  if (!isValidPhone(form.phone)) {
+    alert('請輸入有效的電話號碼格式 (例如: 0912-345-678 或 0912345678)')
     return
   }
 
@@ -420,7 +424,9 @@ function applyCoupon() {
                     class="h-5 w-5 rounded-full accent-primary active:scale-[0.99]"
                   />
                   <div class="flex flex-col gap-0">
-                    <span class="text-base font-medium text-dark_900 line-clamp-1">{{ option.label }}</span>
+                    <span class="text-base font-medium text-dark_900 line-clamp-1">{{
+                      option.label
+                    }}</span>
                     <p
                       v-if="['credit', 'atm', 'applepay', 'jkopay'].includes(option.key)"
                       class="text-xs text-dark_500 mt-1"
