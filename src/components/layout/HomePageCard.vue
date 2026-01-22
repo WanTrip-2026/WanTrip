@@ -24,12 +24,12 @@
           class="flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-sm"
           :class="
             isInCompare
-              ? 'bg-dark_300 text-black cursor-not-allowed'
-              : 'bg-white/65 backdrop-blur-sm hover:bg-white text-black'
+              ? 'bg-white text-red-500 hover:bg-white/65 cursor-pointer'
+              : 'bg-white/65 backdrop-blur-sm hover:bg-white text-black cursor-pointer'
           "
         >
           <template v-if="isLoading">處理中...</template>
-          <template v-else-if="isInCompare">已加入</template>
+          <template v-else-if="isInCompare">取消比較</template>
           <template v-else>加入比較</template>
         </button>
       </div>
