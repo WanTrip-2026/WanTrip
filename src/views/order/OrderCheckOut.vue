@@ -266,7 +266,7 @@ function applyCoupon() {
   </div>
 
   <div class="w-full min-h-screen">
-    <div class="mx-auto max-w-[1240px] px-5 pt-[200px] pb-10 lg:pt-24">
+    <div class="mx-auto max-w-[1240px] px-5 pt-[200px] pb-24 lg:pt-24">
       <!-- Error Display -->
       <div
         v-if="errorMessage"
@@ -392,9 +392,6 @@ function applyCoupon() {
                 套用
               </button>
             </div>
-            <div class="mt-4 text-sm text-dark_500">
-              範例：輸入 <span class="font-semibold">WANTRIP200</span> 折 200
-            </div>
           </section>
 
           <section class="rounded-[20px] border border-gray-300 bg-white p-5 shadow-sm">
@@ -415,7 +412,7 @@ function applyCoupon() {
                     class="h-5 w-5 rounded-full accent-primary active:scale-[0.99]"
                   />
                   <div class="flex flex-col gap-0">
-                    <span class="text-base font-medium text-dark_900">{{ option.label }}</span>
+                    <span class="text-base font-medium text-dark_900 line-clamp-1">{{ option.label }}</span>
                     <p
                       v-if="['credit', 'atm', 'applepay', 'jkopay'].includes(option.key)"
                       class="text-xs text-dark_500 mt-1"
@@ -430,8 +427,8 @@ function applyCoupon() {
                     :key="icon.src"
                     :src="icon.src"
                     :alt="icon.alt"
-                    class="block w-auto shrink-0 object-contain"
-                    :class="icon.large ? 'h-9' : 'h-4'"
+                    class="block w-auto object-contain"
+                    :class="icon.large ? 'h-7 sm:h-9' : 'h-3 sm:h-4'"
                   />
                 </div>
               </label>
@@ -461,7 +458,7 @@ function applyCoupon() {
                 <span class="text-dark_500">優惠</span>
                 <span class="font-medium text-red-500">- NT$ {{ discount }}</span>
               </div>
-              <div class="my-2 h-px bg-gray-300" />
+              <div class="my-2 h-px bg-gray-300"></div>
               <div class="flex items-center justify-between text-2xl">
                 <span class="font-semibold text-primary">總計</span>
                 <span class="font-bold text-dark">NT$ {{ total }}</span>
