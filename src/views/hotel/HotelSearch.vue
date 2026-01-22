@@ -411,6 +411,17 @@ watch(
       </aside>
 
       <div class="flex flex-1 flex-col gap-5">
+        <div
+          class="lg:hidden relative flex h-[120px] items-center justify-center rounded-[20px] border border-gray-300 overflow-hidden bg-center bg-cover bg-[url('https://res.cloudinary.com/wantrip/image/upload/v1768379566/MapSearch_cezz0b.png')]"
+        >
+          <div class="absolute inset-0 bg-white/30"></div>
+          <button
+            @click="goToMapSearch"
+            class="relative z-10 rounded-full bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition"
+          >
+            地圖找房
+          </button>
+        </div>
         <h3 class="text-black text-xl">
           <span v-if="keyword" class="mr-2 text-gray-500"> 搜尋: {{ keyword }} </span>
           找到 <span class="text-red-500 font-bold">{{ totalHotels }}</span> 間飯店
