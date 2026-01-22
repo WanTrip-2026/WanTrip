@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getOrderById, type Order } from '@/services/orderApi'
 import { supabase } from '@/utils/supabaseClient'
 
 const route = useRoute()
+const router = useRouter()
 const order = ref<Order | null>(null)
 const errorMsg = ref('')
 
@@ -56,13 +57,25 @@ const mapUrl = computed(() => {
 
   return ''
 })
+
+const goToProduct = () => {
+  if (!order.value) return
+  if (isTicket.value && order.value.attraction_id) {
+    router.push(`/tickets/${order.value.attraction_id}`)
+  } else if (order.value.hotel_id) {
+    router.push(`/hotels/${order.value.hotel_id}`)
+  }
+}
 </script>
 <template>
   <main class="min-h-screen text-primary max-w-[1240px] mx-auto pt-24 pb-24">
     <div class="mx-5" v-if="order">
       <section class="bg-white rounded-[20px] shadow-sm border border-gray-300 p-5 lg:p-10 mb-10">
         <div class="flex flex-col md:flex-row justify-between items-start gap-8">
-          <div class="flex flex-col sm:flex-row gap-6 items-center text-center sm:text-left">
+          <div
+            class="flex flex-col sm:flex-row gap-6 items-center text-center sm:text-left cursor-pointer hover:opacity-80 transition-opacity"
+            @click="goToProduct"
+          >
             <div class="h-24 md:h-32 rounded-[20px] overflow-hidden shrink-0 aspect-[4/3]">
               <img :src="order.image_url || order.image" class="w-full h-full object-cover" />
             </div>
@@ -147,7 +160,9 @@ const mapUrl = computed(() => {
               <div class="space-y-1">
                 <!-- Status -->
                 <p class="text-dark_700 text-xs uppercase">狀態</p>
-                <p class="font-bold text-base">{{ order.status }}</p>
+                <p class="font-bold text-base">
+                  {{ order.status === 'completed' ? '完成訂購' : order.status }}
+                </p>
               </div>
             </div>
           </section>

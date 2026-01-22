@@ -430,7 +430,9 @@ const loadOrders = async () => {
     const token = data.session?.access_token
     if (!token) throw new Error('No auth token')
 
-    orders.value = await getUserOrders(token)
+    const allOrders = await getUserOrders(token)
+    console.log('All Orders:', allOrders)
+    orders.value = allOrders
   } catch (error) {
     console.error('Failed to load orders:', error)
   }

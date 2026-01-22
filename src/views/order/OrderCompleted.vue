@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useOrderStore } from '@/stores/orderStore'
-
+import { useAuthStore } from '@/stores/auth'
 import { useRoute } from 'vue-router'
+import axios from 'axios'
+import { supabase } from '@/utils/supabaseClient'
+import { getOrderById } from '@/services/orderApi'
 
 const route = useRoute()
 const orderStore = useOrderStore()
+const authStore = useAuthStore()
 
 const now = new Date()
 const formattedDate = `${now.getFullYear()}年${String(now.getMonth() + 1).padStart(2, '0')}月${String(now.getDate()).padStart(2, '0')}日 ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
 
+// Get Order ID from query
 const queryOrderId = route.query.orderId || route.query.MerchantTradeNo || route.query.order_id
 const orderId = queryOrderId
   ? String(queryOrderId)
@@ -19,17 +24,83 @@ const orderId = queryOrderId
       .toString()
       .padStart(6, '0')}`
 
-const order = computed(() => ({
-  id: orderId,
-  name: orderStore.orderData.title || '高雄洲際酒店',
-  amount: orderStore.orderData.price || 50000,
-  createdAt: formattedDate,
-  telephone: orderStore.orderData.phone || '(07)339-1888',
-  address: orderStore.orderData.address || '高雄市前鎮區新光路33號',
-  image: orderStore.orderData.image || '/src/assets/hoteldetail_img/Wanhao.jpg',
-}))
+const isVerifying = ref(false)
+const verificationError = ref('')
+const fetchedOrder = ref<any>(null)
 
-const formattedAmount = computed(() => `NT$ ${order.value.amount.toLocaleString()}`)
+const order = computed(() => {
+  // Priority: 1. Fetched from API (Real) 2. Store (Just paid) 3. Mock (Fallback)
+  if (fetchedOrder.value) {
+    const d = new Date(fetchedOrder.value.created_at)
+    return {
+      id: fetchedOrder.value.order_id || fetchedOrder.value.id,
+      name: fetchedOrder.value.hotel_name || fetchedOrder.value.title || '旅宿行程',
+      amount: fetchedOrder.value.price,
+      createdAt: `${d.getFullYear()}年${String(d.getMonth() + 1).padStart(2, '0')}月${String(d.getDate()).padStart(2, '0')}日`,
+      telephone: fetchedOrder.value.contact_phone || fetchedOrder.value.phone,
+      address: fetchedOrder.value.address || fetchedOrder.value.city + fetchedOrder.value.district,
+      image: fetchedOrder.value.image_url || fetchedOrder.value.image,
+    }
+  }
+
+  return {
+    id: orderId,
+    name: orderStore.orderData.title || '高雄洲際酒店',
+    amount: orderStore.orderData.price || 50000,
+    createdAt: formattedDate,
+    telephone: orderStore.orderData.phone || '(07)339-1888',
+    address: orderStore.orderData.address || '高雄市前鎮區新光路33號',
+    image: orderStore.orderData.image || '/src/assets/hoteldetail_img/Wanhao.jpg',
+  }
+})
+
+const formattedAmount = computed(() => `NT$ ${Number(order.value.amount || 0).toLocaleString()}`)
+
+onMounted(async () => {
+  const transactionId = route.query.transactionId
+
+  // 1. If Line Pay callback (transactionId present), confirm payment
+  if (transactionId) {
+    isVerifying.value = true
+    try {
+      console.log('Confirming Line Pay...', transactionId)
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+      const res = await axios.post(`${apiBaseUrl}/payment/linepay/confirm`, {
+        transactionId,
+        orderId: orderId,
+        // amount is inferred by backend from temp storage
+      })
+
+      if (res.data.returnCode === '0000') {
+        console.log('Line Pay Confirmed!')
+      } else {
+        throw new Error(res.data.returnMessage || 'Line Pay Confirmation Failed')
+      }
+    } catch (err: any) {
+      console.error('Payment Confirmation Error:', err)
+      verificationError.value = err.message || '付款確認失敗，請聯繫客服'
+    } finally {
+      isVerifying.value = false
+    }
+  }
+
+  // 2. Fetch Order Data to ensure we display real data
+  try {
+    const { data: sessionData } = await supabase.auth.getSession()
+    const token = sessionData.session?.access_token
+    if (token && orderId) {
+      // Wait a bit if we just confirmed, to ensure DB propagation
+      if (transactionId) await new Promise((r) => setTimeout(r, 1000))
+
+      const data = await getOrderById(orderId, token)
+      if (data && data.id) {
+        fetchedOrder.value = data
+      }
+    }
+  } catch (e) {
+    console.warn('Failed to fetch order details:', e)
+  }
+})
 </script>
 
 <template>

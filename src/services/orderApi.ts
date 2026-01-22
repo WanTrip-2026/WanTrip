@@ -79,3 +79,15 @@ export async function getOrderById(orderId: string, token?: string) {
   if (!r.ok) throw new Error(data?.message || 'fetch order failed')
   return data as Order
 }
+
+export async function cancelOrder(orderId: string, token: string) {
+  const r = await fetch(`${API}/orders/${orderId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  const data = await r.json().catch(() => ({}))
+  if (!r.ok) throw new Error(data?.message || 'cancel order failed')
+  return data
+}
