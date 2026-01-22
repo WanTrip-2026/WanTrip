@@ -102,11 +102,11 @@ const onFavoriteClick = async () => {
         <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
         <button
           @click.stop="toggleCompare"
-          class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 rounded-full sm:rounded-[20px] h-[40px] w-[110px] text-sm transition-all shadow-lg"
+          class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 rounded-full border border-white/80 sm:rounded-[20px] h-[40px] w-[110px] text-sm transition-all shadow-lg"
           :class="[
             isInCompare
               ? 'bg-white backdrop-blur-sm text-red-500 hover:bg-white/65 cursor-pointer'
-              : 'bg-white/90 backdrop-blur-sm text-primary hover:bg-white cursor-pointer',
+              : 'bg-white/65 backdrop-blur-sm text-primary hover:bg-white cursor-pointer',
             isCompact ? 'sm:scale-75 sm:origin-center sm:bottom-1.5 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto' : '',
           ]"
         >
@@ -138,9 +138,6 @@ const onFavoriteClick = async () => {
                   />
                 </svg>
               </div>
-              <p class="ml-1 text-[10px] sm:text-xs text-dark_700">
-                {{ hotel.star_rating }} 顆星
-              </p>
             </div>
 
             <p class="text-gray-500 text-xs sm:text-sm">{{ hotel.city }}{{ hotel.district }}</p>
