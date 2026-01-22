@@ -216,14 +216,14 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
 <template>
   <section
-    class="max-w-[1200px] mx-auto p-2 mb-10 bg-white rounded-[24px] md:rounded-full border border-gray-300 flex flex-col md:flex-row items-stretch gap-2 z-20 search-bar-container"
+    class="max-w-[1240px] mx-auto p-2 mb-10 bg-white rounded-[20px] md:rounded-full border border-gray-300 flex flex-col md:flex-row items-center gap-2 z-20 search-bar-container"
   >
     <!-- Ticket Mode Template -->
     <template v-if="searchType === 'package'">
         <!-- City Picker -->
-        <div class="relative flex-[2] flex">
+        <div class="relative flex-1 flex">
              <div
-                class="w-full min-h-[70px] md:min-h-0 rounded-[20px] md:rounded-full px-7 flex flex-col justify-center border transition-all cursor-pointer"
+                class="w-full h-[64px] rounded-[20px] md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
                 :class="[
                 activePicker === 'ticketCity'
                     ? 'bg-white ring-1 ring-gray-300'
@@ -231,7 +231,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                 ]"
                 @click="togglePicker('ticketCity')"
             >
-                <p class="text-[12px] font-bold text-primary/70 uppercase tracking-wider mb-0.5 pointer-events-none">
+                <p class="text-xs font-bold text-primary/70 uppercase tracking-wider pointer-events-none">
                 目的地
                 </p>
                 <div class="flex items-center justify-between">
@@ -250,7 +250,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
                     <!-- Chevron Icon for City -->
                     <svg
-                        class="h-4 w-4 text-primary/40 transition-transform duration-300 ml-2"
+                        class="h-5 w-5 text-primary/40 transition-transform duration-300 ml-2"
                         :class="{ 'rotate-180': activePicker === 'ticketCity' }"
                         fill="none"
                         stroke="currentColor"
@@ -304,9 +304,9 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
         </div>
 
         <!-- Ticket Guest Picker -->
-        <div class="relative flex-[1.5] min-w-0">
+        <div class="relative flex-[1.5] w-full">
              <div
-                class="w-full h-full min-h-[70px] md:min-h-0 rounded-[20px] md:rounded-full px-7 flex flex-col justify-center border transition-all cursor-pointer"
+                class="h-[64px] rounded-[20px] md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
                 :class="[
                     activePicker === 'ticketGuest'
                     ? 'bg-white ring-1 ring-gray-300'
@@ -314,7 +314,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                 ]"
                 @click="togglePicker('ticketGuest')"
             >
-                <p class="text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-0.5 pointer-events-none">
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-0.5 pointer-events-none">
                     人數、需求
                 </p>
                 <div class="flex items-center justify-between pointer-events-none">
@@ -341,7 +341,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-bold text-primary">成人</p>
-                            <p class="text-[11px] text-gray-400">18 歲以上</p>
+                            <p class="text-sm text-gray-400">18 歲以上</p>
                         </div>
                         <div class="flex items-center gap-3">
                             <button
@@ -362,19 +362,19 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-bold text-primary">孩童</p>
-                            <p class="text-[11px] text-gray-400">0 - 17 歲</p>
+                            <p class="text-sm text-gray-400">0 - 17 歲</p>
                         </div>
                         <div class="flex items-center gap-3">
                             <button
                                 type="button"
-                                class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50"
+                                class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50"
                                 :disabled="ticketGuests.children <= 0"
                                 @click="ticketGuests.children--"
                             > - </button>
                             <span class="text-sm font-bold w-4 text-center">{{ ticketGuests.children }}</span>
                             <button
                                 type="button"
-                                class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"
+                                class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"
                                 @click="ticketGuests.children++"
                             > + </button>
                         </div>
@@ -403,9 +403,9 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
     <template v-else>
         <!-- Stay Mode Template (Existing) -->
-        <div class="relative flex-[2] flex">
+        <div class="relative flex-1 flex">
         <div
-            class="w-full min-h-[70px] md:min-h-0 rounded-[20px] md:rounded-full px-7 flex flex-col justify-center border transition-all cursor-pointer"
+            class="w-full h-[64px] rounded-[20px] md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
             :class="[
             activePicker === 'keyword'
                 ? 'bg-white ring-1 ring-gray-300'
@@ -414,7 +414,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
             @click="togglePicker('keyword')"
         >
             <p
-            class="text-[12px] font-bold text-primary/70 uppercase tracking-wider mb-0.5 pointer-events-none"
+            class="text-xs font-bold text-primary/70 uppercase tracking-wider mb-0.5 pointer-events-none"
             >
             目的地
             </p>
@@ -447,19 +447,19 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
         >
             <template #dp-input>
             <div
-                class="w-full min-h-[70px] h-full rounded-[20px] md:rounded-full px-7 flex flex-col justify-center border transition-all cursor-pointer"
+                class="w-full h-[64px] rounded-[20px] md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
                 :class="[
                 activePicker === 'date'
                     ? 'bg-white ring-1 ring-gray-300'
                     : 'bg-gray-50 border-transparent hover:bg-gray-100',
                 ]"
             >
-                <p class="text-[12px] font-bold text-primary/70 uppercase tracking-wider mb-0.5">
+                <p class="text-xs font-bold text-primary/70 uppercase tracking-wider">
                 入住 - 退房日期
                 </p>
                 <input
                 :value="formatRangeDisplay()"
-                class="w-full bg-transparent text-[18px] text-black outline-none pointer-events-none"
+                class="w-full bg-transparent text-base text-black outline-none pointer-events-none"
                 placeholder="點選選擇日期"
                 readonly
                 />
@@ -471,7 +471,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
         <div class="relative flex-1 flex" ref="peoplePickerRef">
         <div
             @click="togglePicker('people')"
-            class="w-full min-h-[70px] md:min-h-0 rounded-[20px] md:rounded-full px-7 flex flex-col justify-center border transition-all cursor-pointer"
+            class="w-full h-[64px] rounded-[20px] md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
             :class="[
             activePicker === 'people'
                 ? 'bg-white ring-1 ring-gray-300'
@@ -479,7 +479,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
             ]"
         >
             <p
-            class="text-[12px] font-bold text-primary/70 uppercase tracking-wider mb-0.5 pointer-events-none"
+            class="text-xs font-bold text-primary/70 uppercase tracking-wider pointer-events-none"
             >
             人數、需求
             </p>
@@ -511,13 +511,13 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
             <div class="flex items-center justify-between">
                 <div>
                 <p class="text-sm font-bold text-primary">房間</p>
-                <p class="text-[11px] text-gray-400">所需的客房數量</p>
+                <p class="text-sm text-gray-400">所需的客房數量</p>
                 </div>
                 <div class="flex items-center gap-4">
                 <button
                     @click.stop="peopleConfig.rooms > 1 ? peopleConfig.rooms-- : null"
                     type="button"
-                    class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                    class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
                 >
                     -
                 </button>
@@ -525,7 +525,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                 <button
                     @click.stop="peopleConfig.rooms++"
                     type="button"
-                    class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                    class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
                 >
                     +
                 </button>
@@ -534,13 +534,13 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
             <div class="flex items-center justify-between">
                 <div>
                 <p class="text-sm font-bold text-primary">旅客</p>
-                <p class="text-[11px] text-gray-400">總人數</p>
+                <p class="text-xs text-gray-400">總人數</p>
                 </div>
                 <div class="flex items-center gap-4">
                 <button
                     @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null"
                     type="button"
-                    class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                    class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
                 >
                     -
                 </button>
@@ -548,7 +548,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                 <button
                     @click.stop="peopleConfig.people++"
                     type="button"
-                    class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                    class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
                 >
                     +
                 </button>
@@ -562,9 +562,9 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
     <div class="flex">
       <button
         @click="onSearch"
-        class="w-full md:w-auto min-h-[70px] md:h-full md:px-10 rounded-[20px] md:rounded-full bg-primary hover:bg-main text-white transition-all whitespace-nowrap flex items-center justify-center font-bold text-lg"
+        class="w-[64px] h-[64px] rounded-full bg-primary hover:bg-main text-white transition-all text-center"
       >
-        <font-awesome-icon icon="search" class="mr-2" /> 搜尋
+        <font-awesome-icon icon="search" class="text-lg"/>
       </button>
     </div>
   </section>
@@ -584,12 +584,6 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 :deep(.dp__range_end) {
   background-color: #2f3d4d !important;
   color: #fff !important;
-}
-
-@media (min-width: 768px) {
-  .search-bar-container {
-    height: 86px;
-  }
 }
 
 .fade-enter-active {
