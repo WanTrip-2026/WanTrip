@@ -218,8 +218,10 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
   <section
     class="max-w-[1240px] mx-auto p-1 mb-10 bg-white rounded-[24px] md:rounded-full border border-gray-200 shadow-lg flex flex-col md:flex-row items-stretch md:items-center gap-1 z-20 search-bar-container"
   >
-    <!-- Ticket Mode Template -->
-    <template v-if="searchType === 'package'">
+    <!-- Mode Transition Wrapper -->
+    <Transition name="mode-slide" mode="out-in">
+      <div :key="searchType" class="flex flex-col md:flex-row items-stretch md:items-center gap-1 flex-grow">
+        <template v-if="searchType === 'package'">
         <!-- City Picker -->
         <div class="relative flex-1">
              <div
@@ -558,6 +560,8 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
         </transition>
         </div>
     </template>
+      </div>
+    </Transition>
 
     <div class="flex items-center justify-center">
       <button
@@ -598,5 +602,20 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 .fade-leave-to {
   opacity: 0;
   transform: translateY(-12px) scale(0.95);
+}
+
+.mode-slide-enter-active,
+.mode-slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mode-slide-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.mode-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
 }
 </style>
