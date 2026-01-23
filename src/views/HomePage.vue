@@ -232,7 +232,6 @@ onMounted(async () => {
 
 const handleWishlist = (id: string | number) => {
   const product = hotHotelsA.value.find((t) => t.id === id)
-  console.log(`用戶收藏了: ${product?.name}`)
 }
 
 const handleBook = (id: string | number) => {
@@ -246,7 +245,6 @@ const selectedKeywords = reactive(new Set<string>())
 function toggleKeyword(k: string) {
   if (selectedKeywords.has(k)) selectedKeywords.delete(k)
   else selectedKeywords.add(k)
-  console.log('[Stay Keyword Toggle]', Array.from(selectedKeywords))
 }
 
 // Methods
@@ -291,7 +289,6 @@ function onClickRegion(region: { key: string }) {
     })
   } else {
     // Fallback or default behavior
-    console.log('Unknown region:', region.key)
   }
 }
 

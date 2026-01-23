@@ -316,9 +316,9 @@ function onLocalSearch() {
 }
 
 function clearOptions(key: string) {
-  const index = ticketFiltered.findIndex((m) => m.key === key)
-  if (index !== -1) {
-    ticketFiltered[index].selected = []
+  const item = ticketFiltered.find((m) => m.key === key)
+  if (item) {
+    item.selected = []
   }
 
   // Sync URL for categories

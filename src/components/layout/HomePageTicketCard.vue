@@ -1,18 +1,23 @@
 <template>
-  <RouterLink :to="`/tickets/${id}`" :class="[
-    'group relative flex h-[270px] w-[183px] hover:w-[408px] z-[1] hover:z-[20] bg-white rounded-[20px] hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
-    expandLeft ? 'hover:-translate-x-[225px]' : ''
-  ]">
+  <RouterLink
+    :to="`/tickets/${id}`"
+    :class="[
+      'group relative flex h-[270px] w-[183px] hover:w-[408px] z-[1] hover:z-[20] bg-white rounded-[20px] hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
+      expandLeft ? 'hover:-translate-x-[225px]' : '',
+    ]"
+  >
     <div class="relative h-full w-[183px] flex-shrink-0">
-      <img :src="imageUrl" :alt="name" class="h-full w-full object-cover" />
+      <img :src="image_url" :alt="name" class="h-full w-full object-cover" />
       <div
-        class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent group-hover:opacity-0 transition-opacity duration-300">
+        class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent group-hover:opacity-0 transition-opacity duration-300"
+      >
         <h3 class="text-white font-bold text-base line-clamp-1 lg:text-lg">{{ name }}</h3>
         <p class="text-white/90 text-sm">NT$ {{ (price || 0).toLocaleString() }} /起</p>
       </div>
     </div>
     <div
-      class="flex flex-col flex-1 p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150 w-full">
+      class="flex flex-col flex-1 p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150 w-full"
+    >
       <div class="flex-1">
         <h3 class="text-lg lg:text-xl font-bold text-black">{{ name }}</h3>
         <div class="flex text-dark_300">
@@ -21,26 +26,40 @@
         <p class="text-dark_500 text-sm leading-relaxed">
           {{ category }}
         </p>
-        <p class="text-dark_500 text-sm leading-relaxed">
-          {{ venue || address }}{{ address }}
-        </p>
+        <p class="text-dark_500 text-sm leading-relaxed">{{ city || address }}{{ address }}</p>
       </div>
       <div class="mt-auto text-nowrap">
         <div class="text-right mb-1 text-xs text-dark_500">
-          <span class="text-red-500 font-bold text-lg">NT$ {{ (price || 0).toLocaleString() }}</span> /起
+          <span class="text-red-500 font-bold text-lg"
+            >NT$ {{ (price || 0).toLocaleString() }}</span
+          >
+          /起
         </div>
         <div class="flex justify-end gap-3">
-          <button @click.stop.prevent="onFavoriteClick"
-            class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors"
-              :class="isFav ? 'text-red-500 fill-red-500' : 'text-dark_500'" :fill="isFav ? 'currentColor' : 'none'"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          <button
+            @click.stop.prevent="onFavoriteClick"
+            class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 transition-colors"
+              :class="isFav ? 'text-red-500 fill-red-500' : 'text-dark_500'"
+              :fill="isFav ? 'currentColor' : 'none'"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
             </svg>
           </button>
-          <button @click.stop="$emit('details', id)"
-            class="h-10 bg-primary hover:bg-main text-white px-6 rounded-full font-medium transition-colors">
+          <button
+            @click.stop="$emit('details', id)"
+            class="h-10 bg-primary hover:bg-main text-white px-6 rounded-full font-medium transition-colors"
+          >
             了解更多
           </button>
         </div>
@@ -50,37 +69,37 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
-import { useFavoriteStore } from '@/stores/favoriteStore';
+import { RouterLink } from 'vue-router'
+import { useFavoriteStore } from '@/stores/favoriteStore'
 import { useAuthStore } from '@/stores/auth'
-import { computed } from 'vue';
+import { computed } from 'vue'
 
 // 統一命名規範與預設值
 interface Props {
-  id?: number | string;
-  name?: string;
-  imageUrl?: string;
-  price?: number;
-  venue?: string;
-  category?: string;
-  date?: string;
-  address?: string;
-  rating?: number;
-  expandLeft?: boolean;
+  id?: number | string
+  name?: string
+  image_url?: string
+  price?: number
+  city?: string
+  category?: string
+  date?: string
+  address?: string
+  rating?: number
+  expandLeft?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   id: 0,
   name: '卡片名稱',
-  imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
+  image_url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400',
   price: 0,
-  venue: '',
+  city: '',
   category: '',
   date: 'YYYY-MM-DD',
   address: '',
   rating: 5,
-  expandLeft: false
-});
+  expandLeft: false,
+})
 
 const favoriteStore = useFavoriteStore()
 const authStore = useAuthStore()
@@ -91,30 +110,30 @@ const isFav = computed(() => {
 
 const onFavoriteClick = async () => {
   if (!authStore.isLoggedIn) {
-     alert('請先登入會員以加入收藏')
-     return
+    alert('請先登入會員以加入收藏')
+    return
   }
   if (!props.id) {
-    console.warn('Cannot add item with invalid ID to favorites.');
-    return;
+    console.warn('Cannot add item with invalid ID to favorites.')
+    return
   }
   try {
     await favoriteStore.toggleFavorite({
-        id: props.id!,
-        name: props.name!,
-        imageUrl: props.imageUrl!,
-        price: props.price!,
-        venue: props.venue,
-        category: props.category,
-        date: props.date,
-        address: props.address,
-        rating: props.rating,
-        type: 'ticket'
+      id: props.id!,
+      name: props.name!,
+      imageUrl: props.image_url!,
+      price: props.price!,
+      city: props.city,
+      category: props.category,
+      date: props.date,
+      address: props.address,
+      rating: props.rating,
+      type: 'ticket',
     })
   } catch {
     // Error handled in store
   }
 }
 
-defineEmits(['compare', 'favorite', 'details']);
+defineEmits(['compare', 'favorite', 'details'])
 </script>

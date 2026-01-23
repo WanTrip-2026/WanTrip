@@ -252,7 +252,7 @@
             >
               <div class="h-32 bg-dark_100 overflow-hidden">
                 <img
-                  :src="recommend.imageUrl"
+                  :src="recommend.image_url"
                   :alt="recommend.name"
                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
@@ -263,7 +263,9 @@
                 >
                   {{ recommend.name }}
                 </div>
-                <div class="text-xs text-dark_700 font-medium">TWD {{ recommend.price }} 起</div>
+                <div class="text-xs text-dark_700 font-medium">
+                  TWD {{ Math.floor(recommend.price).toLocaleString() }} 起
+                </div>
               </div>
             </RouterLink>
           </div>
@@ -305,11 +307,11 @@
             </div>
             <div class="flex flex-col items-start">
               <span v-if="displayPrice > 0" class="text-base text-dark_500 line-through">
-                TWD {{ (displayPrice * 1.5).toLocaleString() }}
+                TWD {{ Math.floor(displayPrice * 1.5).toLocaleString() }}
               </span>
               <div class="flex items-end gap-2">
                 <span class="text-2xl font-bold text-red-500">
-                  TWD {{ displayPrice.toLocaleString() }}
+                  TWD {{ Math.floor(displayPrice).toLocaleString() }}
                 </span>
                 <span v-if="totalPrice === 0" class="text-base text-dark_500 mb-0.5">起</span>
               </div>
@@ -317,7 +319,7 @@
           </div>
 
           <!-- Controls: Date, Plans, and Button -->
-          <div v-if="totalPrice === 0" class="mt-3">
+          <div v-if="displayPrice === 0 && tickets.length > 0" class="mt-3">
             <div class="w-full rounded-[10px] border border-gray-300 bg-main_100 p-4 text-dark">
               <div class="font-bold text-sm">此地點為免費入場</div>
               <div class="text-sm text-dark_600 mt-2">無需選擇日期與方案，可直接前往。</div>
@@ -368,7 +370,9 @@
                     >
                       <div class="flex flex-col min-w-0">
                         <span class="font-bold text-dark text-sm truncate">{{ t.name }}</span>
-                        <span class="text-xs text-dark_500 font-medium">NT$ {{ t.price }}</span>
+                        <span class="text-xs text-dark_500 font-medium"
+                          >NT$ {{ Math.floor(t.price).toLocaleString() }}</span
+                        >
                       </div>
                       <div class="flex items-center gap-3 shrink-0">
                         <button
@@ -584,9 +588,9 @@ onMounted(() => {
 interface TicketItem {
   id: number | string
   name: string
-  imageUrl: string
+  image_url: string
   price: number
-  venue: string
+  city: string
   category: string
   date: string
   address: string
