@@ -28,7 +28,14 @@ interface FilterMenu {
   selected: string[]
 }
 
+const isAutoCleaningUrl = ref(false)
+
 const fetchAttractions = async (): Promise<void> => {
+  if (isAutoCleaningUrl.value) {
+    isAutoCleaningUrl.value = false
+    return
+  }
+
   loading.value = true
   errorMsg.value = ''
 
@@ -48,7 +55,29 @@ const fetchAttractions = async (): Promise<void> => {
       params.city = city
     }
 
-    if (category) params.category = category
+    if (category) {
+      params.category = category
+      // Sync UI state with URL param if not already synced
+      const categoryMenu = ticketFiltered.find((m) => m.key === 'categories')
+      if (categoryMenu && !categoryMenu.selected.includes(category)) {
+        categoryMenu.selected = [category]
+      }
+    }
+
+    // Auto-clean URL logic for filters (category, cities, city/destination)
+    if (category || cities || (city && city !== '選擇城市' && city !== '全部城市')) {
+      const newQuery = { ...route.query }
+      if (category) delete newQuery.category
+      if (cities) delete newQuery.cities
+      if (city) {
+        delete newQuery.city
+        delete newQuery.destination
+      }
+
+      isAutoCleaningUrl.value = true
+      router.replace({ path: '/tickets/search', query: newQuery })
+    }
+    // Removed else block that forced clearing UI, allowing state to persist during auto-clean
 
     // Note: We do NOT send districts to backend, so we get all data for the city/keyword.
     // We filter districts client-side to ensure sidebar options reflect available data.
@@ -235,22 +264,13 @@ const ticketFiltered = reactive<FilterMenu[]>([
   },
 ])
 
+// Removed redundant watcher for route.query.category as it is handled in fetchAttractions
+/*
 watch(
   () => route.query.category,
-  (newCategory) => {
-    if (newCategory) {
-      const categoryMenu = ticketFiltered.find((m) => m.key === 'categories')
-      if (categoryMenu) {
-        if (!categoryMenu.selected.includes(newCategory as string)) {
-          if (categoryMenu.options.includes(newCategory as string)) {
-            categoryMenu.selected = [newCategory as string]
-          }
-        }
-      }
-    }
-  },
-  { immediate: true },
+  ...
 )
+*/
 
 watch(
   ticketFiltered,
@@ -288,8 +308,17 @@ function onLocalSearch() {
 }
 
 function clearOptions(key: string) {
-  const menu = ticketFiltered.find((m) => m.key === key)
-  if (menu) menu.selected = []
+  const index = ticketFiltered.findIndex((m) => m.key === key)
+  if (index !== -1) {
+    ticketFiltered[index].selected = []
+  }
+
+  // Sync URL for categories
+  if (key === 'categories') {
+    const newQuery = { ...route.query }
+    delete newQuery.category
+    router.push({ path: '/tickets/search', query: newQuery })
+  }
 }
 
 function toggleExpandMenu(title: string) {
@@ -381,7 +410,7 @@ function toggleExpandMenu(title: string) {
                 <div class="flex justify-between items-center mb-2">
                   <h4 class="font-medium text-base text-dark">{{ TicketMenu.title }}</h4>
                   <button
-                    @click="TicketMenu.selected = []"
+                    @click="clearOptions(TicketMenu.key)"
                     :disabled="TicketMenu.selected.length === 0"
                     class="text-xs text-gray-400 hover:text-primary transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -512,7 +541,9 @@ function toggleExpandMenu(title: string) {
             >
               <div class="flex items-center justify-between mb-6">
                 <h3 class="font-bold text-xl text-dark">篩選條件</h3>
-                <button @click="isFilterDrawerOpen = false" class="text-dark_500 text-2xl">&times;</button>
+                <button @click="isFilterDrawerOpen = false" class="text-dark_500 text-2xl">
+                  &times;
+                </button>
               </div>
 
               <div class="flex flex-col gap-6">
