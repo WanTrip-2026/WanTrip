@@ -350,6 +350,10 @@ const handleLogout = async () => {
   isOpen.value = false
   await auth.logout()
   router.push('/')
+  // 等待路由跳轉完成後刷新頁面
+  setTimeout(() => {
+    window.location.reload()
+  }, 100)
 }
 const onDocClick = (e: MouseEvent) => {
   if (!isUserMenuOpen.value) return
