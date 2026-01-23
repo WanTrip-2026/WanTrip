@@ -7,7 +7,7 @@
         <div class="relative">
           <div class="relative w-full overflow-hidden rounded-[40px] bg-gray-200 shadow-sm">
             <img
-              src="https://res.cloudinary.com/wantrip/image/upload/v1767445158/%E5%9F%8E%E5%B8%82_luoarw.jpg"
+              src="https://res.cloudinary.com/wantrip/image/upload/v1768481888/IMG_7318_dizpjn.jpg"
               class="aspect-[3/4] absolute inset-0 w-full h-full object-fill"
               alt="banner"
             />
@@ -16,46 +16,46 @@
 
           <!-- Search Bar (floating on banner) -->
           <div class="absolute inset-x-0 bottom-0 z-20 flex justify-center translate-y-1/2">
-             <div class="w-full lg:max-w-[1024px]">
-                 <!-- Tabs -->
-                  <div
-                    class="relative w-fit h-11 flex items-center rounded-full border border-gray-300 bg-white p-0.5 mb-2 mx-auto md:mx-0 overflow-hidden"
-                  >
-                    <!-- Sliding Background Indicator -->
-                    <div
-                      class="absolute top-0.5 bottom-0.5 left-0.5 w-[96px] rounded-full bg-primary shadow-sm transition-all duration-300 ease-in-out z-0"
-                      :style="{ transform: `translateX(${activeTab === 'stay' ? '96px' : '0px'})` }"
-                    ></div>
+            <div class="w-full lg:max-w-[1024px]">
+              <!-- Tabs -->
+              <div
+                class="relative w-fit h-11 flex items-center rounded-full border border-gray-300 bg-white p-0.5 mb-2 mx-auto md:mx-0 overflow-hidden"
+              >
+                <!-- Sliding Background Indicator -->
+                <div
+                  class="absolute top-0.5 bottom-0.5 left-0.5 w-[96px] rounded-full bg-primary shadow-sm transition-all duration-300 ease-in-out z-0"
+                  :style="{ transform: `translateX(${activeTab === 'stay' ? '96px' : '0px'})` }"
+                ></div>
 
-                    <button
-                      type="button"
-                      class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
-                      :class="activeTab === 'package' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
-                      @click="activeTab = 'package'"
-                    >
-                      找門票
-                    </button>
-                    <button
-                      type="button"
-                      class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
-                      :class="activeTab === 'stay' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
-                      @click="activeTab = 'stay'"
-                    >
-                      找住宿
-                    </button>
-                  </div>
+                <button
+                  type="button"
+                  class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
+                  :class="activeTab === 'package' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
+                  @click="activeTab = 'package'"
+                >
+                  找門票
+                </button>
+                <button
+                  type="button"
+                  class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
+                  :class="activeTab === 'stay' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
+                  @click="activeTab = 'stay'"
+                >
+                  找住宿
+                </button>
+              </div>
 
-                <SearchBar
-                    mode="redirect"
-                    :search-type="activeTab"
-                    :initial-keyword="hotelConfig.destination"
-                    :initial-range="hotelConfig.dateRange"
-                    :initial-people="hotelConfig.guests"
-                    :initial-destination="ticketConfig.destination"
-                    :initial-ticket-guests="ticketConfig.guests"
-                    @search="handleSearch"
-                />
-             </div>
+              <SearchBar
+                mode="redirect"
+                :search-type="activeTab"
+                :initial-keyword="hotelConfig.destination"
+                :initial-range="hotelConfig.dateRange"
+                :initial-people="hotelConfig.guests"
+                :initial-destination="ticketConfig.destination"
+                :initial-ticket-guests="ticketConfig.guests"
+                @search="handleSearch"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -219,10 +219,12 @@ onMounted(async () => {
     // Map API data to match TicketCard props if necessary, or ensure TicketCard accepts API structure.
     // TicketHomeView passes the API data directly to HomePageTicketCard.
     // Let's assume HomePageTicketCard handles it (it takes :v-bind="ticket").
-    recommendations.value = res.data.map((item: Omit<TicketItem, 'rating'> & { rating: string | number }) => ({
+    recommendations.value = res.data.map(
+      (item: Omit<TicketItem, 'rating'> & { rating: string | number }) => ({
         ...item,
-        rating: Number(item.rating)
-    }))
+        rating: Number(item.rating),
+      }),
+    )
   } catch (error) {
     console.error('Error fetching popular tickets:', error)
   }
@@ -264,15 +266,15 @@ interface SearchPayload {
 function handleSearch(payload: SearchPayload) {
   // Search logic is handled by SearchBar's redirect mode
   if (activeTab.value === 'package') {
-     ticketConfig.destination = payload.destination || ''
-     if (payload.guests) {
-        Object.assign(ticketConfig.guests, payload.guests)
-     }
+    ticketConfig.destination = payload.destination || ''
+    if (payload.guests) {
+      Object.assign(ticketConfig.guests, payload.guests)
+    }
   } else {
-     hotelConfig.destination = payload.keyword || ''
-     if(payload.range) hotelConfig.dateRange = payload.range
-     hotelConfig.guests.rooms = payload.rooms || 1
-     hotelConfig.guests.people = payload.people || 2
+    hotelConfig.destination = payload.keyword || ''
+    if (payload.range) hotelConfig.dateRange = payload.range
+    hotelConfig.guests.rooms = payload.rooms || 1
+    hotelConfig.guests.people = payload.people || 2
   }
 }
 

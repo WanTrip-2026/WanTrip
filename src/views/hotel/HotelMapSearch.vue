@@ -42,147 +42,147 @@
             v-show="isMobileSearchOpen"
             class="flex flex-col md:flex-row md:flex-grow gap-2 md:items-center md:!flex p-4 md:p-0 bg-white/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-0 rounded-[24px] md:rounded-none shadow-lg md:shadow-none border border-white/20 md:border-none"
           >
-              <label
-                class="md:flex-1 relative rounded-[20px] bg-white px-5 h-[60px] flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 group cursor-pointer transition-all hover:ring-primary/50"
-              >
-                <p class="text-xs font-bold leading-tight text-primary/70">目的地</p>
-                <div class="relative">
-                  <input
-                    v-model="keyword"
-                    class="w-full bg-transparent outline-none appearance-none cursor-pointer pr-8 text-base text-black truncate transition-colors"
-                    type="text"
-                    placeholder="想住哪～"
-                  />
-                </div>
-              </label>
-
-              <div class="relative flex h-[60px] md:flex-[1.2]">
-                <VueDatePicker
-                  v-model="range"
-                  range
-                  :min-range="1"
-                  :enable-time-picker="false"
-                  format="yyyy-MM-dd"
-                  :min-date="new Date()"
-                  auto-apply
-                  hide-input-icon
-                  :clearable="false"
-                  class="w-full h-full"
-                  @update:model-value="handleDateChange"
-                  @open="activePicker = 'date'"
-                  @closed="activePicker = 'none'"
-                >
-                  <template #dp-input>
-                    <div
-                      class="w-full h-full rounded-[20px] bg-white px-5 flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
-                      :class="{ 'ring-accent/50': activePicker === 'date' }"
-                    >
-                      <p class="text-xs font-bold leading-tight text-primary/70">入住 - 退房日期</p>
-                      <input
-                        :value="formatRangeDisplay()"
-                        class="w-full bg-transparent text-sm md:text-base text-black outline-none pointer-events-none"
-                        placeholder="點選選擇日期"
-                        readonly
-                      />
-                    </div>
-                  </template>
-                </VueDatePicker>
+            <label
+              class="md:flex-1 relative rounded-[20px] bg-white px-5 h-[60px] flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 group cursor-pointer transition-all hover:ring-primary/50"
+            >
+              <p class="text-xs font-bold leading-tight text-primary/70">目的地</p>
+              <div class="relative">
+                <input
+                  v-model="keyword"
+                  class="w-full bg-transparent outline-none appearance-none cursor-pointer pr-8 text-base text-black truncate transition-colors"
+                  type="text"
+                  placeholder="想住哪～"
+                />
               </div>
+            </label>
 
-              <div class="relative flex-1 flex" ref="peoplePickerRef">
-                <div
-                  @click="togglePicker('people')"
-                  class="w-full h-[60px] rounded-[20px] bg-white px-5 flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
-                  :class="{ 'ring-accent/50': activePicker === 'people' }"
-                >
-                  <p class="text-xs font-bold leading-tight text-primary/70">人數、需求</p>
-                  <div class="flex items-center justify-between pointer-events-none">
-                    <span class="text-base text-black truncate">{{ peopleDisplayText }}</span>
-                    <svg
-                      class="h-4 w-4 text-primary/40 transition-transform duration-300"
-                      :class="{ 'rotate-180': activePicker === 'people' }"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                <transition name="fade">
+            <div class="relative flex h-[60px] md:flex-[1.2]">
+              <VueDatePicker
+                v-model="range"
+                range
+                :min-range="1"
+                :enable-time-picker="false"
+                format="yyyy-MM-dd"
+                :min-date="new Date()"
+                auto-apply
+                hide-input-icon
+                :clearable="false"
+                class="w-full h-full"
+                @update:model-value="handleDateChange"
+                @open="activePicker = 'date'"
+                @closed="activePicker = 'none'"
+              >
+                <template #dp-input>
                   <div
-                    v-if="activePicker === 'people'"
-                    @click.stop
-                    class="absolute top-[calc(100%+12px)] left-0 md:right-0 md:left-auto z-[100] w-full md:w-[300px] rounded-[24px] bg-white p-6 border border-gray-300 shadow-[0px_8px_24px_rgba(0,0,0,0.08)] space-y-6"
+                    class="w-full h-full rounded-[20px] bg-white px-5 flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
+                    :class="{ 'ring-accent/50': activePicker === 'date' }"
                   >
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <p class="text-sm font-bold text-primary">房間</p>
-                        <p class="text-sm text-gray-400">所需的客房數量</p>
-                      </div>
-                      <div class="flex items-center gap-4">
-                        <button
-                          @click.stop="peopleConfig.rooms > 1 ? peopleConfig.rooms-- : null"
-                          type="button"
-                          class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
-                        >
-                          -
-                        </button>
-                        <span class="text-sm font-bold w-4 text-center">{{
-                          peopleConfig.rooms
-                        }}</span>
-                        <button
-                          @click.stop="peopleConfig.rooms++"
-                          type="button"
-                          class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
-                        >
-                          +
-                        </button>
-                      </div>
+                    <p class="text-xs font-bold leading-tight text-primary/70">入住 - 退房日期</p>
+                    <input
+                      :value="formatRangeDisplay()"
+                      class="w-full bg-transparent text-sm md:text-base text-black outline-none pointer-events-none"
+                      placeholder="點選選擇日期"
+                      readonly
+                    />
+                  </div>
+                </template>
+              </VueDatePicker>
+            </div>
+
+            <div class="relative flex-1 flex" ref="peoplePickerRef">
+              <div
+                @click="togglePicker('people')"
+                class="w-full h-[60px] rounded-[20px] bg-white px-5 flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
+                :class="{ 'ring-accent/50': activePicker === 'people' }"
+              >
+                <p class="text-xs font-bold leading-tight text-primary/70">人數、需求</p>
+                <div class="flex items-center justify-between pointer-events-none">
+                  <span class="text-base text-black truncate">{{ peopleDisplayText }}</span>
+                  <svg
+                    class="h-4 w-4 text-primary/40 transition-transform duration-300"
+                    :class="{ 'rotate-180': activePicker === 'people' }"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <transition name="fade">
+                <div
+                  v-if="activePicker === 'people'"
+                  @click.stop
+                  class="absolute top-[calc(100%+12px)] left-0 md:right-0 md:left-auto z-[100] w-full md:w-[300px] rounded-[24px] bg-white p-6 border border-gray-300 shadow-[0px_8px_24px_rgba(0,0,0,0.08)] space-y-6"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-bold text-primary">房間</p>
+                      <p class="text-sm text-gray-400">所需的客房數量</p>
                     </div>
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <p class="text-sm font-bold text-primary">旅客</p>
-                        <p class="text-sm text-gray-400">總人數</p>
-                      </div>
-                      <div class="flex items-center gap-4">
-                        <button
-                          @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null"
-                          type="button"
-                          class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
-                        >
-                          -
-                        </button>
-                        <span class="text-sm font-bold w-4 text-center">{{
-                          peopleConfig.people
-                        }}</span>
-                        <button
-                          @click.stop="peopleConfig.people++"
-                          type="button"
-                          class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
-                        >
-                          +
-                        </button>
-                      </div>
+                    <div class="flex items-center gap-4">
+                      <button
+                        @click.stop="peopleConfig.rooms > 1 ? peopleConfig.rooms-- : null"
+                        type="button"
+                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                      >
+                        -
+                      </button>
+                      <span class="text-sm font-bold w-4 text-center">{{
+                        peopleConfig.rooms
+                      }}</span>
+                      <button
+                        @click.stop="peopleConfig.rooms++"
+                        type="button"
+                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
-                </transition>
-              </div>
-              <button
-                @click="fetchHotels"
-                class="w-full md:w-[60px] h-[60px] flex items-center justify-center rounded-full bg-primary hover:bg-main border border-white/20 shadow-md text-white transition-all"
-              >
-                <font-awesome-icon icon="search" class="text-xl"/>
-              </button>
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-bold text-primary">旅客</p>
+                      <p class="text-sm text-gray-400">總人數</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                      <button
+                        @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null"
+                        type="button"
+                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                      >
+                        -
+                      </button>
+                      <span class="text-sm font-bold w-4 text-center">{{
+                        peopleConfig.people
+                      }}</span>
+                      <button
+                        @click.stop="peopleConfig.people++"
+                        type="button"
+                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </transition>
             </div>
+            <button
+              @click="fetchHotels"
+              class="w-full md:w-[60px] h-[60px] flex items-center justify-center rounded-full bg-primary hover:bg-main border border-white/20 shadow-md text-white transition-all"
+            >
+              <font-awesome-icon icon="search" class="text-xl" />
+            </button>
           </div>
         </div>
+      </div>
     </header>
     <!-- 地圖 -->
     <div class="absolute inset-0 bg-[#e5e3df] z-0 overflow-hidden">
@@ -220,7 +220,9 @@
       :class="[
         'fixed bg-white z-20 shadow-xl transition-all duration-500 ease-in-out flex flex-col self-start my-2.5 ml-5 rounded-[20px] rounded-tr-none',
         isListOpen ? 'translate-x-0' : '-translate-x-[calc(100%+20px)]',
-        isMobileSearchOpen ? 'top-[490px] h-[calc(100vh-510px)] md:top-[165px] md:h-[calc(100vh-190px)]' : 'top-[145px] h-[calc(100vh-170px)] md:top-[165px] md:h-[calc(100vh-190px)]'
+        isMobileSearchOpen
+          ? 'top-[490px] h-[calc(100vh-510px)] md:top-[165px] md:h-[calc(100vh-190px)]'
+          : 'top-[145px] h-[calc(100vh-170px)] md:top-[165px] md:h-[calc(100vh-190px)]',
       ]"
       class="w-[60vw] md:w-[400px]"
     >
@@ -406,7 +408,6 @@
 import { reactive, ref, shallowRef, watch, computed, onMounted, onUnmounted } from 'vue'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
@@ -608,8 +609,6 @@ const toggleMapType = () => {
   mapInstance.value.setMapTypeId(newType)
   currentMapType.value = newType
 }
-
-
 
 const expandedMenus = ref<string[]>([]) // 儲存哪些 option 已展開
 
