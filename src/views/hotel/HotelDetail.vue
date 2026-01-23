@@ -577,6 +577,7 @@ const handleBook = (room: Room) => {
 
     orderStore.setOrder({
       hotel_id: hotel.value?.id,
+      room_id: room.id, // [NEW] Pass room_id
       title: hotel.value?.name || '未知名稱',
       subtitle: room.name || '未知房型',
       date: dateStr,
@@ -721,7 +722,13 @@ const fetchHotelDetail = async () => {
     // 4. 檢查狀態
     if (!hotelRes.ok) throw new Error(`取得飯店資料失敗：${hotelRes.status}`)
     if (!imagesRes.ok) throw new Error(`取得飯店圖片失敗：${imagesRes.status}`)
-    if (!roomsRes.ok) throw new Error(`取得房型資料失敗：${roomsRes.status}`)
+    if (!roomsRes.ok) {
+      const errData = await roomsRes.json().catch(() => ({}))
+      console.error('Room fetch error details:', errData)
+      throw new Error(
+        `取得房型資料失敗：${roomsRes.status} ${errData.message || (errData.supabase_error ? errData.supabase_error.message : '')}`,
+      )
+    }
 
     // 5. 解析資料 (直接用 .json() 比較簡潔)
     const hotelData = (await hotelRes.json()) as Hotel

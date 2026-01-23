@@ -25,6 +25,7 @@ const product = reactive({
   address: orderData.address || '',
   phone: orderData.phone || '',
   hotel_id: orderData.hotel_id || '',
+  room_id: orderData.room_id || '', // [NEW] Read room_id from store
   type: orderData.type || 'hotel',
   city: orderData.city || '台北',
   category: orderData.category || '',
@@ -91,14 +92,36 @@ const generateOrderId = () => {
 
 const createOrderPayload = (orderId: string) => {
   // Determine dates based on product type
-  let checkIn = '2025-12-31'
-  let checkOut = '2026-01-01'
+  let checkIn = ''
+  let checkOut = ''
 
-  if (product.type === 'attraction' && product.date) {
+  if (product.type === 'hotel' && product.date) {
+    // Hotel date format: "YYYY-MM-DD - YYYY-MM-DD"
+    const parts = product.date.split(' - ')
+    if (parts.length === 2) {
+      checkIn = parts[0] || ''
+      checkOut = parts[1] || ''
+    } else {
+      // Fallback
+      const today = new Date()
+      checkIn = today.toISOString().slice(0, 10)
+      const tomorrow = new Date(today)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      checkOut = tomorrow.toISOString().slice(0, 10)
+    }
+  } else if (product.type === 'attraction' && product.date) {
     // product.date is formatted as YYYY/MM/DD from TicketDetail
     checkIn = product.date.replace(/\//g, '-')
 
     // Add 1 day for checkOut to satisfy DB constraint (check_out > check_in)
+    const d = new Date(checkIn)
+    d.setDate(d.getDate() + 1)
+    checkOut = d.toISOString().slice(0, 10)
+  }
+
+  // Ensure valid fallbacks if parsing failed entirely
+  if (!checkIn) checkIn = new Date().toISOString().slice(0, 10)
+  if (!checkOut) {
     const d = new Date(checkIn)
     d.setDate(d.getDate() + 1)
     checkOut = d.toISOString().slice(0, 10)
@@ -115,6 +138,7 @@ const createOrderPayload = (orderId: string) => {
     image: product.image,
     checkInDate: checkIn,
     checkOutDate: checkOut,
+    room_id: product.type === 'hotel' ? product.room_id : null, // [NEW] Pass room_id
     roomType: product.subtitle,
     peopleNum: peopleNum.value,
     userInfo: {
