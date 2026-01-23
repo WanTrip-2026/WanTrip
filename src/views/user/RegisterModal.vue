@@ -147,6 +147,7 @@
 <script setup lang="ts">
 import { onUnmounted, watch, ref } from 'vue'
 import { supabase } from '@/utils/supabaseClient'
+import { useToast } from 'vue-toastification'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
@@ -161,13 +162,27 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'registered', 'go-login'])
 
+const toast = useToast()
+
 const username = ref('')
 const email = ref('')
 const password = ref('')
 const password2 = ref('')
 const birthday = ref('')
 
-const close = () => emit('update:modelValue', false)
+// 清空表單
+const resetForm = () => {
+  username.value = ''
+  email.value = ''
+  password.value = ''
+  password2.value = ''
+  birthday.value = ''
+}
+
+const close = () => {
+  resetForm()
+  emit('update:modelValue', false)
+}
 
 const onSubmit = async () => {
   try {
@@ -234,12 +249,12 @@ const onSubmit = async () => {
        console.log('[signup] Verification required. Profile creation deferred to first login.')
     }
 
-    alert('註冊成功!請到信箱完成驗證(若有開啟信箱驗證)。')
+    toast.success('註冊成功！請到信箱完成驗證（若有開啟信箱驗證）')
     emit('registered', data)
     close()
   } catch (err: unknown) {
     console.error('[register] error:', err)
-    alert((err instanceof Error ? err.message : String(err)) || '註冊失敗')
+    toast.error((err instanceof Error ? err.message : String(err)) || '註冊失敗')
   }
 }
 
@@ -249,7 +264,13 @@ const toggleBodyLock = (locked: boolean) => {
 
 watch(
   () => props.modelValue,
-  (v) => toggleBodyLock(v),
+  (v) => {
+    toggleBodyLock(v)
+    // 當 modal 打開時，清空表單
+    if (v) {
+      resetForm()
+    }
+  },
   { immediate: true },
 )
 

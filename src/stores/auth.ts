@@ -95,11 +95,27 @@ export const useAuthStore = defineStore('auth', () => {
   // ✅ 登出
   const logout = async () => {
     try {
-      await supabase.auth.signOut()
+      console.log("start")
+
+      // 使用 Promise.race 加入 3 秒超時
+      const signOutPromise = supabase.auth.signOut()
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('SignOut timeout')), 1000)
+      )
+      await Promise.race([signOutPromise, timeoutPromise])
+      console.log("here")
     } catch (error) {
       console.error('Logout error:', error)
+      // 即使 signOut 失敗，也強制清除本地狀態
     } finally {
+      console.log("end")
       user.value = null
+      // 強制清除 localStorage 中的 session
+      try {
+        localStorage.removeItem('supabase.auth.token')
+      } catch (e) {
+        console.warn('Failed to clear localStorage:', e)
+      }
     }
   }
 
