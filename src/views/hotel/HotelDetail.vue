@@ -270,10 +270,24 @@
               >
               <button
                 @click="handleBook(room)"
-                class="bg-primary w-full text-white px-[40px] py-[10px] rounded-full mt-4 font-bold hover:bg-main"
+                :disabled="room.status !== 'available'"
+                :class="[
+                  'w-full px-[40px] py-[10px] rounded-full mt-4 font-bold transition-colors',
+                  room.status === 'available'
+                    ? 'bg-primary text-white hover:bg-main'
+                    : 'bg-gray-300 text-white cursor-not-allowed',
+                ]"
               >
-                立即預定
+                <span v-if="room.status === 'sold_out'">已售完</span>
+                <span v-else-if="room.status === 'capacity_exceeded'">超過人數上限</span>
+                <span v-else>立即預定</span>
               </button>
+              <span
+                v-if="room.status === 'available' && room.maxAvailable && room.maxAvailable <= 3"
+                class="text-xs text-red-500 text-center mt-2"
+              >
+                僅剩 {{ room.maxAvailable }} 間
+              </span>
             </div>
           </div>
         </div>
@@ -549,6 +563,8 @@ interface Room {
   image_url: string
   details: string[]
   features: string[]
+  status?: 'available' | 'sold_out' | 'capacity_exceeded'
+  maxAvailable?: number
 }
 
 interface SearchPayload {
@@ -715,9 +731,20 @@ const fetchHotelDetail = async () => {
 
   try {
     // 2. 設定 URL
+    // 2. 設定 URL
     const hotelUrl = `${apiUrl}/hotels/${id}`
     const imagesUrl = `${apiUrl}/hotel_images/${id}`
-    const roomsUrl = `${apiUrl}/hotels/${id}/rooms`
+
+    // Construct rooms URL with query params
+    const roomsUrl = new URL(`${apiUrl}/hotels/${id}/rooms`)
+    if (range.value[0] && range.value[1]) {
+      const sDate = formatDate(range.value[0])
+      const eDate = formatDate(range.value[1])
+      roomsUrl.searchParams.append('start_date', sDate)
+      roomsUrl.searchParams.append('end_date', eDate)
+    }
+    roomsUrl.searchParams.append('adults', String(peopleConfig.people))
+    roomsUrl.searchParams.append('rooms', String(peopleConfig.rooms))
 
     // 3. 同時發送請求
     const [hotelRes, imagesRes, roomsRes] = await Promise.all([
@@ -776,7 +803,13 @@ const fetchHotelDetail = async () => {
     // 處理房型 (加入預設特徵)
     rooms.value = apiRooms.map((r) => ({
       ...r,
-      features: ['豐盛早餐付費 TWD935 (選購)', '可免費取消', '即時確認', '線上預付'],
+      features: [
+        '可免費取消',
+        '即時確認',
+        '線上預付',
+        '豐盛早餐付費 TWD935 (現場選購)',
+        '12歲以下兒童免費加床',
+      ],
     }))
 
     // 7. 隨機分配評論的房型 (讓 UI 看起來比較真實)
@@ -793,6 +826,15 @@ const fetchHotelDetail = async () => {
     error.value = err instanceof Error ? err.message : '取得飯店資料時發生錯誤'
   }
 }
+
+// Watch for changes and refetch
+watch(
+  [range, () => peopleConfig.people, () => peopleConfig.rooms],
+  () => {
+    fetchHotelDetail()
+  },
+  { deep: true },
+)
 
 // --- 4. 計算屬性 ---
 const desktopGallery = computed(() => [
