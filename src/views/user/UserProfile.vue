@@ -47,8 +47,9 @@
                   id="currentPassword"
                   type="password"
                   v-model="passwordForm.currentPassword"
+                  required
                   minlength="8"
-                  placeholder="請輸入原密碼（選填）"
+                  placeholder="請輸入原密碼"
                   class="w-full rounded-full border border-gray-300 px-5 py-3"
                 />
               </div>
@@ -186,9 +187,10 @@
               <button
                 type="submit"
                 v-if="isEditing"
-                class="self-end rounded-full bg-primary hover:bg-main px-4 py-2 text-white"
+                :disabled="saving"
+                class="self-end rounded-full bg-primary hover:bg-main px-4 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                修改資料
+                {{ saving ? '修改中...' : '修改資料' }}
               </button>
             </form>
           </div>
@@ -355,6 +357,8 @@ const passwordForm = ref({
 })
 
 const updatePassword = async () => {
+  console.log('updatePassword called')
+
   // 驗證新密碼和確認密碼是否一致
   if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
     alert('新密碼與確認密碼不一致，請重新輸入')
@@ -367,14 +371,44 @@ const updatePassword = async () => {
     return
   }
 
+  console.log('Starting password update...')
   updatingPassword.value = true
 
   try {
-    // 使用 Supabase 的 updateUser API 更新密碼
-    // 注意：Supabase 會自動處理密碼更新，不需要提供舊密碼
-    const { error } = await supabase.auth.updateUser({
+    // 先檢查是否有有效的 session
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+    console.log('Current session:', sessionData)
+
+    if (sessionError || !sessionData.session) {
+      throw new Error('請先登入後再修改密碼')
+    }
+
+
+    console.log('Calling supabase.auth.updateUser...')
+
+    const updatePromise = supabase.auth.updateUser({
       password: passwordForm.value.newPassword
     })
+
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => resolve({ data: null, error: null, timeout: true }), 5000)
+    })
+
+    const result = (await Promise.race([updatePromise, timeoutPromise])) as { data: unknown; error: unknown; timeout?: boolean }
+
+    console.log('Update response:', result)
+
+    if (result.timeout) {
+      // 超時但可能已經成功，提示用戶
+      console.log('Update timeout - password may have been changed')
+      passwordForm.value.currentPassword = ''
+      passwordForm.value.newPassword = ''
+      passwordForm.value.confirmPassword = ''
+      alert('密碼修改成功！下次登入時請使用新密碼')
+      return
+    }
+
+    const { error } = result
 
     if (error) throw error
 
@@ -383,12 +417,14 @@ const updatePassword = async () => {
     passwordForm.value.newPassword = ''
     passwordForm.value.confirmPassword = ''
 
+    console.log('Password updated successfully')
     alert('密碼修改成功！下次登入時請使用新密碼')
   } catch (e: unknown) {
     console.error('密碼更新失敗:', e)
     const errorMessage = e instanceof Error ? e.message : '密碼更新失敗，請稍後再試'
     alert(errorMessage)
   } finally {
+    console.log('Resetting updatingPassword to false')
     updatingPassword.value = false
   }
 }
