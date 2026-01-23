@@ -79,7 +79,6 @@
 
 <script setup lang="ts">
 import { reactive, ref, watch, onMounted, onUnmounted, computed } from 'vue'
-import 'v-calendar/style.css'
 import { useRouter } from 'vue-router'
 import HomePageCard from '@/components/layout/HomePageCard.vue'
 import { useHotelApi } from '@/composables/useHotelApi'
