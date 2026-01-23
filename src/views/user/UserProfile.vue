@@ -49,7 +49,7 @@
                   v-model="passwordForm.currentPassword"
                   required
                   minlength="8"
-                  placeholder="請輸入原密碼"
+                  placeholder="請輸入原密碼（選填）"
                   class="w-full rounded-full border border-gray-300 px-5 py-3"
                 />
               </div>
@@ -352,78 +352,6 @@ const form = ref({
   phone: '',
 })
 
-const passwordForm = ref({
-  currentPassword: '',
-  newPassword: '',
-  confirmPassword: '',
-})
-
-const updatePassword = async () => {
-  console.log('updatePassword called')
-
-  // 驗證新密碼和確認密碼是否一致
-  if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
-    toast.error('新密碼與確認密碼不一致，請重新輸入')
-    return
-  }
-
-  if (passwordForm.value.newPassword.length < 8) {
-    toast.error('密碼長度至少需要 8 碼')
-    return
-  }
-
-  console.log('Starting password update...')
-  updatingPassword.value = true
-
-  try {
-    console.log('Calling supabase.auth.updateUser...')
-
-    const updatePromise = supabase.auth.updateUser({
-      password: passwordForm.value.newPassword
-    })
-
-    const timeoutPromise = new Promise((resolve) => {
-      setTimeout(() => resolve({ data: null, error: null, timeout: true }), 5000)
-    })
-
-    const result = (await Promise.race([updatePromise, timeoutPromise])) as { data: unknown; error: unknown; timeout?: boolean }
-
-    console.log('Update response:', result)
-
-    if (result.timeout) {
-      // 超時但可能已經成功，提示用戶
-      console.log('Update timeout - password may have been changed')
-
-      passwordForm.value.currentPassword = ''
-      passwordForm.value.newPassword = ''
-      passwordForm.value.confirmPassword = ''
-      toast.success('密碼修改成功！下次登入時請使用新密碼')
-      return
-    }
-
-    const { error } = result
-
-    if (error) throw error
-
-    // 成功後清空表單
-    passwordForm.value.currentPassword = ''
-    passwordForm.value.newPassword = ''
-    passwordForm.value.confirmPassword = ''
-
-    console.log('Password updated successfully')
-    toast.success('密碼修改成功！下次登入時請使用新密碼')
-  } catch (e: unknown) {
-    console.error('密碼更新失敗:', e)
-    const errorMessage = e instanceof Error ? e.message : '密碼更新失敗，請稍後再試'
-    toast.error(errorMessage)
-  } finally {
-    console.log('Resetting updatingPassword to false')
-    updatingPassword.value = false
-  }
-}
-
-
-const updatingPassword = ref(false)
 const isEditing = ref(false)
 const toggleEdit = () => {
   isEditing.value = !isEditing.value
