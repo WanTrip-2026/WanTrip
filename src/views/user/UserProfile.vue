@@ -352,6 +352,38 @@ const form = ref({
   phone: '',
 })
 
+const passwordForm = ref({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+})
+const updatingPassword = ref(false)
+
+const updatePassword = async () => {
+  if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
+    toast.error('兩次輸入的密碼不一致')
+    return
+  }
+
+  updatingPassword.value = true
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password: passwordForm.value.newPassword,
+    })
+    if (error) throw error
+
+    toast.success('密碼修改成功')
+    passwordForm.value.currentPassword = ''
+    passwordForm.value.newPassword = ''
+    passwordForm.value.confirmPassword = ''
+  } catch (err: unknown) {
+    console.error(err)
+    toast.error((err instanceof Error ? err.message : String(err)) || '修改失敗')
+  } finally {
+    updatingPassword.value = false
+  }
+}
+
 const isEditing = ref(false)
 const toggleEdit = () => {
   isEditing.value = !isEditing.value
