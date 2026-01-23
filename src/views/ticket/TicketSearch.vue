@@ -146,16 +146,24 @@ const applyClientSideFilters = () => {
 
   // Rating Filter (Placeholder logic for now, as backend doesn't seem to support it yet or it was client side)
   const selectedRatings = ticketFiltered.find((m) => m.key === 'ratings')?.selected ?? []
+
   if (selectedRatings.length > 0) {
-    // Simple logic: if '4.5 +' selected, show > 4.5
-    const minRating = selectedRatings.includes('4.5 +')
-      ? 4.5
-      : selectedRatings.includes('4.0')
-        ? 4.0
-        : 0
-    if (minRating > 0) {
-      result = result.filter((item) => (item.rating || 0) >= minRating)
-    }
+    result = result.filter((item) => {
+      const rating = item.rating ?? 0
+
+      return selectedRatings.some((range) => {
+        switch (range) {
+          case '4.5+':
+            return rating >= 4.5
+          case '4.0-4.5':
+            return rating >= 4.0 && rating < 4.5
+          case '3.5-4.0':
+            return rating >= 3.5 && rating < 4.0
+          default:
+            return true
+        }
+      })
+    })
   }
 
   // Availability Filter
@@ -253,7 +261,7 @@ const ticketFiltered = reactive<FilterMenu[]>([
   {
     key: 'ratings',
     title: '景點評分',
-    options: ['4.5 +', '4.0'],
+    options: ['4.5+', '4.0-4.5', '3.5-4.0'],
     selected: [],
   },
   {
