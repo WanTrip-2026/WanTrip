@@ -174,7 +174,6 @@ watch(
 )
 
 function onSearch() {
-  console.log('[Ticket Search Submit]', { tab: activeTab.value, ...form, ...peopleConfig })
   router.push({
     path: '/tickets/search',
     query: {
@@ -217,11 +216,10 @@ const ticketClassify = [
   },
 ]
 
-const handleWishlist = (id: number | string) => console.log('收藏門票 ID:', id)
-const handleBook = (id: number | string) => console.log('購票 ID:', id)
+const handleWishlist = (id: number | string) => {}
+const handleBook = (id: number | string) => {}
 
 function onClickRegion(tc: { label: string }) {
-  console.log('Category clicked:', tc)
   router.push({ path: '/tickets/search', query: { category: tc.label } })
 }
 </script>
