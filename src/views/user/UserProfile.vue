@@ -26,7 +26,7 @@
             id="account-section"
           >
             <h3 class="font-bold text-2xl border-b-gray-300 border-b pb-2">我的帳號</h3>
-            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2">
+            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2" @submit.prevent="updatePassword">
               <!-- Email -->
               <div>
                 <label for="email" class="block mb-1 font-medium">帳號</label>
@@ -46,9 +46,9 @@
                 <input
                   id="currentPassword"
                   type="password"
-                  required
+                  v-model="passwordForm.currentPassword"
                   minlength="8"
-                  placeholder="請輸入原密碼"
+                  placeholder="請輸入原密碼（選填）"
                   class="w-full rounded-full border border-gray-300 px-5 py-3"
                 />
               </div>
@@ -59,6 +59,7 @@
                   id="newPassword"
                   name="password"
                   type="password"
+                  v-model="passwordForm.newPassword"
                   required
                   minlength="8"
                   placeholder="至少 8 碼"
@@ -72,6 +73,7 @@
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
+                  v-model="passwordForm.confirmPassword"
                   required
                   minlength="8"
                   placeholder="請再次輸入密碼"
@@ -81,9 +83,10 @@
 
               <button
                 type="submit"
-                class="self-end rounded-full bg-primary hover:bg-main px-4 py-2 text-white"
+                :disabled="updatingPassword"
+                class="self-end rounded-full bg-primary hover:bg-main px-4 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                修改密碼
+                {{ updatingPassword ? '修改中...' : '修改密碼' }}
               </button>
             </form>
           </div>
@@ -345,6 +348,53 @@ const form = ref({
   phone: '',
 })
 
+const passwordForm = ref({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+})
+
+const updatePassword = async () => {
+  // 驗證新密碼和確認密碼是否一致
+  if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
+    alert('新密碼與確認密碼不一致，請重新輸入')
+    return
+  }
+
+  // 驗證密碼長度
+  if (passwordForm.value.newPassword.length < 8) {
+    alert('密碼長度至少需要 8 碼')
+    return
+  }
+
+  updatingPassword.value = true
+
+  try {
+    // 使用 Supabase 的 updateUser API 更新密碼
+    // 注意：Supabase 會自動處理密碼更新，不需要提供舊密碼
+    const { error } = await supabase.auth.updateUser({
+      password: passwordForm.value.newPassword
+    })
+
+    if (error) throw error
+
+    // 成功後清空表單
+    passwordForm.value.currentPassword = ''
+    passwordForm.value.newPassword = ''
+    passwordForm.value.confirmPassword = ''
+
+    alert('密碼修改成功！下次登入時請使用新密碼')
+  } catch (e: unknown) {
+    console.error('密碼更新失敗:', e)
+    const errorMessage = e instanceof Error ? e.message : '密碼更新失敗，請稍後再試'
+    alert(errorMessage)
+  } finally {
+    updatingPassword.value = false
+  }
+}
+
+
+const updatingPassword = ref(false)
 const isEditing = ref(false)
 const toggleEdit = () => {
   isEditing.value = !isEditing.value
