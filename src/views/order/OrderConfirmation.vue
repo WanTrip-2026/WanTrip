@@ -117,7 +117,12 @@ const goToProduct = () => {
             </div>
             <div class="rounded-[20px] border border-gray-300 p-5 md:p-6">
               <p class="text-xs font-bold text-main_800 mb-2">退房</p>
-              <p class="text-lg md:text-xl font-bold">{{ order.check_out_date || '-' }}</p>
+              <p class="text-lg md:text-xl font-bold">
+                {{
+                  order.check_out_date ||
+                  (order.date?.includes(' - ') ? order.date.split(' - ')[1] : '-')
+                }}
+              </p>
             </div>
           </template>
           <template v-else>
