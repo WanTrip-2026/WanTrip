@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full min-h-[100dvh] relative bg-page bg-cover bg-center flex items-center justify-center overflow-x-hidden"
+    class="w-full h-[100dvh] relative bg-page bg-cover bg-center flex items-center justify-center overflow-x-hidden"
     style="background-image: url('/src/assets/traveldna_img/IntroBg.png')"
   >
     <div class="absolute inset-0 w-full h-full bg-primary/50 backdrop-blur-sm"></div>
