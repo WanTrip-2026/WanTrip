@@ -44,9 +44,40 @@ const form = reactive({
   coupon: '',
 })
 
-const discount = ref(0)
-const subtotal = computed(() => Number(product.price || 0) * peopleNum.value)
-const total = computed(() => Math.max(subtotal.value - discount.value, 0))
+const discount = ref(0) // Coupon discount
+
+const nights = computed(() => {
+  if (product.type !== 'hotel' || !product.date) return 1
+  const parts = product.date.split(' - ')
+  if (parts.length !== 2) return 1
+  const start = new Date(parts[0] || '')
+  const end = new Date(parts[1] || '')
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return 1
+  const diffTime = Math.abs(end.getTime() - start.getTime())
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  return diffDays > 0 ? diffDays : 1
+})
+
+const subtotal = computed(() => {
+  const price = Number(product.price || 0)
+  const count = peopleNum.value
+  if (product.type === 'hotel') {
+    return price * count * nights.value
+  }
+  return price * count
+})
+
+const longStayDiscount = computed(() => {
+  if (product.type !== 'hotel') return 0
+  const n = nights.value
+  const basePrice = subtotal.value
+  if (n >= 6) return Math.round(basePrice * 0.2) // 20% off for 6+ nights
+  if (n >= 4) return Math.round(basePrice * 0.15) // 15% off for 4-5 nights
+  if (n >= 2) return Math.round(basePrice * 0.1) // 10% off for 2-3 nights
+  return 0
+})
+
+const total = computed(() => Math.max(subtotal.value - discount.value - longStayDiscount.value, 0))
 
 const handleCheckout = async () => {
   if (!form.name || !form.email || !form.phone) {
@@ -78,6 +109,15 @@ const handleCheckout = async () => {
   } else {
     alert('尚不支援此付款方式')
     isProcessing.value = false
+  }
+}
+const copyCoupon = async () => {
+  try {
+    await navigator.clipboard.writeText('WANTRIP200')
+    // 你可以換成 toast / alert
+    alert('優惠碼已複製！')
+  } catch (err) {
+    console.error('複製失敗', err)
   }
 }
 
@@ -289,20 +329,34 @@ function applyCoupon() {
     class="fixed top-20 left-0 right-0 z-50 mx-5 rounded-[20px] border border-gray-300 bg-white px-4 py-3 shadow-sm lg:hidden"
   >
     <div class="mx-auto flex max-w-[1200px] justify-between items-start text-sm">
-      <div class="flex flex-col gap-1">
-        <span class="font-bold text-xl">{{ product.title }}</span>
-        <span class="text-dark_700 text-sm">優惠</span>
-        <span class="font-bold text-dark text-xl">總價</span>
+      <div class="flex flex-col gap-2">
+        <span class="font-bold text-xl">{{ product.title }} </span>
+
+        <span class="text-dark_700 text-sm"
+          >原價
+          <span class="text-sm text-dark_500">
+            / {{ peopleNum }} 間 x {{ nights }} 晚 x NT$ {{ product.price.toLocaleString() }}
+          </span></span
+        >
+        <span class="text-dark_700 text-sm">續住優惠</span>
+        <span class="text-dark_700 text-sm">折扣碼優惠</span>
+        <span class="font-bold text-dark text-xl">總計</span>
       </div>
-      <div class="flex flex-col items-end self-end gap-1">
-        <span class="text-red-500 text-sm">- NT$ {{ discount }}</span>
-        <span class="font-bold text-dark text-xl">總價 NT$ {{ total }}</span>
+      <div class="flex flex-col items-end self-end gap-2">
+        <span class="font-bold text-dark text-sm"> NT$ {{ subtotal.toLocaleString() }}</span>
+        <span class="font-bold text-red-500 text-sm"
+          >- NT$ {{ longStayDiscount.toLocaleString() }}</span
+        >
+        <span class="font-bold text-red-500 text-sm">- NT$ {{ discount.toLocaleString() }}</span>
+        <span class="font-bold text-dark text-xl border-t pt-1">
+          NT$ {{ total.toLocaleString() }}</span
+        >
       </div>
     </div>
   </div>
 
   <div class="w-full min-h-screen">
-    <div class="mx-auto max-w-[1240px] px-5 pt-[200px] pb-24 lg:pt-24">
+    <div class="mx-auto max-w-[1240px] px-5 pt-[200px] pb-24 pt-[260px] lg:pt-24">
       <!-- Error Display -->
       <div
         v-if="errorMessage"
@@ -428,6 +482,17 @@ function applyCoupon() {
                 套用
               </button>
             </div>
+            <div>
+              <p class="w-full m-2 text-sm text-dark_500">
+                輸入優惠碼
+                <span
+                  class="cursor-pointer select-all font-semibold text-primary underline underline-offset-2 hover:opacity-80"
+                  @click="copyCoupon"
+                >
+                  WANTRIP200</span
+                >，立即折扣200元
+              </p>
+            </div>
           </section>
 
           <section class="rounded-[20px] border border-gray-300 bg-white p-5 shadow-sm">
@@ -459,7 +524,8 @@ function applyCoupon() {
                     </p>
                   </div>
                 </div>
-                <div class="flex h-full items-center gap-3">
+
+                <div class="flex h-full items-center lg:justify-end gap-3">
                   <img
                     v-for="icon in option.icons"
                     :key="icon.src"
@@ -488,18 +554,32 @@ function applyCoupon() {
           <section class="rounded-[20px] border border-gray-300 bg-white p-5 shadow-sm">
             <h2 class="text-xl font-semibold text-primary">費用明細</h2>
             <div class="mt-5 flex flex-col gap-5 text-sm">
-              <div class="flex items-center justify-between">
-                <span class="text-dark_500">商品費用</span>
-                <span class="font-medium text-dark">NT$ {{ subtotal }}</span>
+              <div
+                v-if="product.type === 'hotel'"
+                class="text-sm text-black/40 mb-1 flex items-center justify-end"
+              >
+                {{ peopleNum }} 間 x {{ nights }} 晚 x NT$ {{ product.price.toLocaleString() }}
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-dark_500">優惠</span>
-                <span class="font-medium text-red-500">- NT$ {{ discount }}</span>
+                <span class="text-dark_500">原價</span>
+                <span class="font-medium text-dark text-right">
+                  NT$ {{ subtotal.toLocaleString() }}
+                </span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-dark_500">續住優惠</span>
+                <span class="font-medium text-red-500"
+                  >- NT$ {{ longStayDiscount.toLocaleString() }}</span
+                >
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-dark_500">折扣碼優惠</span>
+                <span class="font-medium text-red-500">- NT$ {{ discount.toLocaleString() }}</span>
               </div>
               <div class="my-2 h-px bg-gray-300"></div>
               <div class="flex items-center justify-between text-2xl">
                 <span class="font-semibold text-primary">總計</span>
-                <span class="font-bold text-dark">NT$ {{ total }}</span>
+                <span class="font-bold text-dark">NT$ {{ total.toLocaleString() }}</span>
               </div>
               <div class="text-sm text-black/50">
                 訂單總額包含（如適用）稅金 / 服務費 / 平台費等。
