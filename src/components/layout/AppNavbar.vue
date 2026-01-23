@@ -365,7 +365,7 @@ const closeAllAuthModal = () => {
 const handleLogin = (payload: { user: unknown }) => {
   const user = payload.user as User
   auth.setAuth(user)
-  auth.closeLoginModal()
+  isLoginModalOpen.value = false
 }
 const handleSignup = () => {
   auth.closeLoginModal()

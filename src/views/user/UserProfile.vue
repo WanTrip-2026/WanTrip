@@ -376,15 +376,6 @@ const updatePassword = async () => {
   updatingPassword.value = true
 
   try {
-    // 先檢查是否有有效的 session
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
-    console.log('Current session:', sessionData)
-
-    if (sessionError || !sessionData.session) {
-      throw new Error('請先登入後再修改密碼')
-    }
-
-
     console.log('Calling supabase.auth.updateUser...')
 
     const updatePromise = supabase.auth.updateUser({
@@ -403,16 +394,6 @@ const updatePassword = async () => {
       // 超時但可能已經成功，提示用戶
       console.log('Update timeout - password may have been changed')
 
-      // 重新載入 session 以確保狀態同步（非阻塞）
-      try {
-        await Promise.race([
-          supabase.auth.refreshSession(),
-          new Promise((resolve) => setTimeout(resolve, 2000))
-        ])
-      } catch (err) {
-        console.warn('Session refresh failed:', err)
-      }
-
       passwordForm.value.currentPassword = ''
       passwordForm.value.newPassword = ''
       passwordForm.value.confirmPassword = ''
@@ -423,16 +404,6 @@ const updatePassword = async () => {
     const { error } = result
 
     if (error) throw error
-
-    // 重新載入 session 以確保狀態同步（非阻塞）
-    try {
-      await Promise.race([
-        supabase.auth.refreshSession(),
-        new Promise((resolve) => setTimeout(resolve, 2000))
-      ])
-    } catch (err) {
-      console.warn('Session refresh failed:', err)
-    }
 
     // 成功後清空表單
     passwordForm.value.currentPassword = ''
