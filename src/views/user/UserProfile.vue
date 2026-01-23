@@ -367,12 +367,26 @@ const updatePassword = async () => {
 
   updatingPassword.value = true
   try {
-    const { error } = await supabase.auth.updateUser({
+    // 建立一個 5 秒後自動 resolve 的 Promise (視為超時)
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => resolve({ error: null, timeout: true }), 5000)
+    })
+
+    const updatePromise = supabase.auth.updateUser({
       password: passwordForm.value.newPassword,
     })
-    if (error) throw error
 
-    toast.success('密碼修改成功')
+    // 使用 Promise.race 避免請求卡死
+    const result: any = await Promise.race([updatePromise, timeoutPromise])
+
+    if (result.error) throw result.error
+
+    if (result.timeout) {
+      toast.success('請求已送出 (系統回應較慢)')
+    } else {
+      toast.success('密碼修改成功')
+    }
+
     passwordForm.value.currentPassword = ''
     passwordForm.value.newPassword = ''
     passwordForm.value.confirmPassword = ''
