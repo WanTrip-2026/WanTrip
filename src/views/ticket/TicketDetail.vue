@@ -317,7 +317,14 @@
           </div>
 
           <!-- Controls: Date, Plans, and Button -->
+          <div v-if="totalPrice === 0" class="mt-3">
+            <div class="w-full rounded-[10px] border border-gray-300 bg-main_100 p-4 text-dark">
+              <div class="font-bold text-sm">此地點為免費入場</div>
+              <div class="text-sm text-dark_600 mt-2">無需選擇日期與方案，可直接前往。</div>
+            </div>
+          </div>
           <Transition
+            v-else
             enter-active-class="transition-all duration-1000 ease-out"
             leave-active-class="transition-all duration-800 ease-in"
             enter-from-class="opacity-0 max-h-0 overflow-hidden"
@@ -386,7 +393,7 @@
             </div>
           </Transition>
 
-          <div class="pt-2">
+          <div v-if="totalPrice > 0" class="pt-2">
             <button
               type="submit"
               @click="handleBooking"
