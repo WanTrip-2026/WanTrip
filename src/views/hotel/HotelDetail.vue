@@ -7,6 +7,13 @@
         :initial-range="range"
         :initial-people="{ rooms: peopleConfig.rooms, people: peopleConfig.people }"
         @search="handleSearchUpdate"
+        @update:range="(val) => (range = val)"
+        @update:people="
+          (val) => {
+            peopleConfig.people = val.people
+            peopleConfig.rooms = val.rooms
+          }
+        "
       />
       <div v-if="error" class="text-red-600 p-4 bg-red-100 rounded mb-4">
         {{ error }}
