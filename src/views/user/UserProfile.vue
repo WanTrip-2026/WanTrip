@@ -49,7 +49,7 @@
                   v-model="passwordForm.currentPassword"
                   required
                   minlength="8"
-                  placeholder="請輸入原密碼（選填）"
+                  placeholder="請輸入原密碼"
                   class="w-full rounded-full border border-gray-300 px-5 py-3"
                 />
               </div>
