@@ -877,7 +877,6 @@ const handleSearchUpdate = (data: SearchPayload) => {
   peopleConfig.rooms = data.rooms
 
   // 2. 如果關鍵字變了，通常代表 user 想找別家店，這時才跳轉回搜尋頁
-  // 如果只是改日期，我們可以留在本頁重新 fetch 資料
   if (hotel.value && data.keyword !== hotel.value.name) {
     router.push({
       path: '/hotels/search',
@@ -891,7 +890,21 @@ const handleSearchUpdate = (data: SearchPayload) => {
     })
   } else {
     // 只是改日期或人數，留在本頁重新抓取該飯店的最新房價/空房
-    fetchHotelDetail()
+    // [NEW] 使用 router.replace 更新網址參數，保持狀態同步且不增加多餘的 history 堆疊
+    router.replace({
+      query: {
+        ...route.query,
+        start_date: formatDate(data.range[0]),
+        end_date: formatDate(data.range[1]),
+        adults: data.people,
+        rooms: data.rooms,
+      },
+    })
+
+    // fetchHotelDetail 會由 watch(route.query) 或 watch(range/people) 觸發
+    // 原本有 watch [range, peopleConfig...] -> fetchHotelDetail
+    // 但如果有雙向綁定可能會重複觸發，這裡更新 range/people 已經會觸發 watch
+    // fetchHotelDetail()
   }
 }
 

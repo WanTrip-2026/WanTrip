@@ -39,8 +39,9 @@
     >
       <div class="flex-1">
         <h3 class="text-lg lg:text-xl font-bold text-black">{{ name }}</h3>
-        <div class="flex text-dark_300">
-          <span v-for="i in 5" :key="i" :class="{ 'text-amber-400': i <= (rating || 5) }">★</span>
+
+        <div class="flex">
+          <span v-for="i in starCount" :key="i" class="text-amber-400">★</span>
         </div>
         <p class="text-dark_500 text-sm leading-relaxed">
           {{ venue || address }}
@@ -121,6 +122,12 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 import { useAuthStore } from '@/stores/auth'
+
+const starCount = computed(() => {
+  const r = Number(props.rating ?? 0)
+  if (!Number.isFinite(r)) return 0
+  return Math.max(0, Math.min(5, Math.floor(r)))
+})
 
 const favoriteStore = useFavoriteStore()
 const authStore = useAuthStore()
