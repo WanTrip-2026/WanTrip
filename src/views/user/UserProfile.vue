@@ -314,9 +314,11 @@ import { useAuthStore } from '@/stores/auth'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 import HomePageCard from '@/components/layout/HomePageCard.vue'
 import { getUserOrders, type Order } from '@/services/orderApi'
+import { useToast } from 'vue-toastification'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const toast = useToast()
 
 type ProfileRow = {
   id: string
@@ -361,13 +363,12 @@ const updatePassword = async () => {
 
   // 驗證新密碼和確認密碼是否一致
   if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
-    alert('新密碼與確認密碼不一致，請重新輸入')
+    toast.error('新密碼與確認密碼不一致，請重新輸入')
     return
   }
 
-  // 驗證密碼長度
   if (passwordForm.value.newPassword.length < 8) {
-    alert('密碼長度至少需要 8 碼')
+    toast.error('密碼長度至少需要 8 碼')
     return
   }
 
@@ -401,10 +402,21 @@ const updatePassword = async () => {
     if (result.timeout) {
       // 超時但可能已經成功，提示用戶
       console.log('Update timeout - password may have been changed')
+
+      // 重新載入 session 以確保狀態同步（非阻塞）
+      try {
+        await Promise.race([
+          supabase.auth.refreshSession(),
+          new Promise((resolve) => setTimeout(resolve, 2000))
+        ])
+      } catch (err) {
+        console.warn('Session refresh failed:', err)
+      }
+
       passwordForm.value.currentPassword = ''
       passwordForm.value.newPassword = ''
       passwordForm.value.confirmPassword = ''
-      alert('密碼修改成功！下次登入時請使用新密碼')
+      toast.success('密碼修改成功！下次登入時請使用新密碼')
       return
     }
 
@@ -412,17 +424,27 @@ const updatePassword = async () => {
 
     if (error) throw error
 
+    // 重新載入 session 以確保狀態同步（非阻塞）
+    try {
+      await Promise.race([
+        supabase.auth.refreshSession(),
+        new Promise((resolve) => setTimeout(resolve, 2000))
+      ])
+    } catch (err) {
+      console.warn('Session refresh failed:', err)
+    }
+
     // 成功後清空表單
     passwordForm.value.currentPassword = ''
     passwordForm.value.newPassword = ''
     passwordForm.value.confirmPassword = ''
 
     console.log('Password updated successfully')
-    alert('密碼修改成功！下次登入時請使用新密碼')
+    toast.success('密碼修改成功！下次登入時請使用新密碼')
   } catch (e: unknown) {
     console.error('密碼更新失敗:', e)
     const errorMessage = e instanceof Error ? e.message : '密碼更新失敗，請稍後再試'
-    alert(errorMessage)
+    toast.error(errorMessage)
   } finally {
     console.log('Resetting updatingPassword to false')
     updatingPassword.value = false
