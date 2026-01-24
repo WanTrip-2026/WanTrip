@@ -42,6 +42,7 @@ const peopleConfig = reactive({ people: 2, rooms: 1 })
 
 const hotels = ref<Hotel[]>([])
 const error = ref<string | null>(null)
+const isLoading = ref(false) // [NEW] Loading state
 const facilities = ref<string[]>([]) // 存放 API 抓回的設施清單
 const isFilterDrawerOpen = ref(false)
 
@@ -63,7 +64,6 @@ const HotelFiltered = reactive<FilterMenu[]>([
     options: ['5星級', '4星級', '3星級', '2星級'],
     selected: [],
   },
-  { key: 'reviews', title: '評價', options: ['9分以上', '8分以上', '7分以上'], selected: [] },
   { key: 'types', title: '住宿類型', options: [], selected: [] },
   { key: 'facilities', title: '設施＆服務', options: [], selected: [] },
 ])
@@ -98,6 +98,7 @@ const visiblePagination = computed(() => {
 
 // --- 5. 核心 API 抓取 ---
 const fetchHotels = async (page = 1, limit = itemsPerPage) => {
+  isLoading.value = true
   try {
     const apiUrl = import.meta.env.VITE_API_BASE_URL
     const params = new URLSearchParams()
@@ -149,6 +150,8 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
     console.error(err)
     error.value = '目前無法取得飯店資料，請稍後再試'
     hotels.value = []
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -173,11 +176,36 @@ const handleGoToDetail = (hotelId: string) => {
 }
 
 const handleSearchUpdate = (data: SearchPayload) => {
+  // Update internal state
   keyword.value = data.keyword
   range.value = data.range
   peopleConfig.people = data.people
   peopleConfig.rooms = data.rooms
-  fetchHotels(1)
+
+  // Update URL (Trigger watcher to fetch)
+  const queryParams: LocationQueryRaw = {
+    ...route.query, // Keep existing filters
+    keyword: data.keyword,
+    adults: String(data.people),
+    rooms: String(data.rooms),
+  }
+
+  if (data.range && data.range.length === 2 && data.range[0] && data.range[1]) {
+    queryParams.start_date = formatDate(data.range[0])
+    queryParams.end_date = formatDate(data.range[1])
+  } else {
+    delete queryParams.start_date
+    delete queryParams.end_date
+  }
+
+  // Remove empty keyword
+  if (!data.keyword) {
+    delete queryParams.keyword
+  }
+
+  router.replace({ path: route.path, query: queryParams })
+
+  // Note: We don't need to call fetchHotels(1) manually because route watcher will do it
 }
 
 const goToPage = (page: number) => {
@@ -450,7 +478,9 @@ watch(
           >
             熱門高到低
           </button>
-          <button class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm whitespace-nowrap">
+          <button
+            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm whitespace-nowrap"
+          >
             評價高到低
           </button>
         </div>
@@ -460,26 +490,39 @@ watch(
         </div>
 
         <div class="flex flex-col gap-5">
+          <!-- Loading State [NEW] -->
           <div
-            v-for="hotel in hotels"
-            :key="hotel.id"
-            @click="handleGoToDetail(hotel.id)"
-            class="cursor-pointer"
+            v-if="isLoading"
+            class="text-center py-20 text-gray-500 text-lg flex flex-col items-center gap-4"
           >
-            <HotelCard
-              :hotel="hotel"
-              :search-params="{
-                start_date: range?.[0] ? formatDate(range[0]) : '',
-                end_date: range?.[1] ? formatDate(range[1]) : '',
-                adults: peopleConfig.people,
-                rooms: peopleConfig.rooms,
-              }"
-            />
+            <div
+              class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"
+            ></div>
+            正在搜尋中...
           </div>
-          <div v-if="hotels.length === 0 && !error" class="text-center py-20 text-gray-400">
-            沒有符合條件的飯店，試著調整篩選條件吧！<br />
-            我們會繼續努力開發的(๑•́ ₃ •̀๑)
-          </div>
+
+          <template v-else>
+            <div
+              v-for="hotel in hotels"
+              :key="hotel.id"
+              @click="handleGoToDetail(hotel.id)"
+              class="cursor-pointer"
+            >
+              <HotelCard
+                :hotel="hotel"
+                :search-params="{
+                  start_date: range?.[0] ? formatDate(range[0]) : '',
+                  end_date: range?.[1] ? formatDate(range[1]) : '',
+                  adults: peopleConfig.people,
+                  rooms: peopleConfig.rooms,
+                }"
+              />
+            </div>
+            <div v-if="hotels.length === 0 && !error" class="text-center py-20 text-gray-400">
+              沒有符合條件的飯店，試著調整篩選條件吧！<br />
+              我們會繼續努力開發的(๑•́ ₃ •̀๑)
+            </div>
+          </template>
         </div>
 
         <div class="flex justify-center items-center gap-2 mt-10 mb-20">
@@ -549,7 +592,9 @@ watch(
           >
             <div class="flex items-center justify-between mb-6">
               <h3 class="font-bold text-xl text-dark">篩選條件</h3>
-              <button @click="isFilterDrawerOpen = false" class="text-dark_500 text-2xl">&times;</button>
+              <button @click="isFilterDrawerOpen = false" class="text-dark_500 text-2xl">
+                &times;
+              </button>
             </div>
 
             <div class="flex flex-col gap-6">

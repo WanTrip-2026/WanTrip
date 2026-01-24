@@ -82,6 +82,17 @@ watch(
   { deep: true },
 )
 
+// Keyword debounce (Removed auto-search)
+// let keywordTimer: ReturnType<typeof setTimeout> | null = null
+// watch(keyword, (newVal) => {
+//   if (props.mode === 'emit') {
+//     if (keywordTimer) clearTimeout(keywordTimer)
+//     keywordTimer = setTimeout(() => {
+//       onSearch()
+//     }, 500)
+//   }
+// })
+
 // 3. 工具函數
 const formatDate = (date: Date | null): string => {
   if (!date) return ''
