@@ -6,7 +6,7 @@
       <div class="flex flex-row justify-between h-full">
         <div class="flex flex-row items-center gap-[16px]">
           <h1 class="text-black">
-            <a href="/">
+            <RouterLink to="/" aria-label="WanTrip Home">
               <svg
                 width="168"
                 height="44"
@@ -23,7 +23,7 @@
                   fill="black"
                 />
               </svg>
-            </a>
+            </RouterLink>
           </h1>
 
           <div class="hidden md:block">
@@ -312,7 +312,6 @@ const isOpen = ref(false)
 const isLoginModalOpen = computed({
   get: () => auth.showLoginModal,
   set: (val) => {
-    console.log('[AppNavbar] isLoginModalOpen setter called with:', val)
     auth.showLoginModal = val
   },
 })

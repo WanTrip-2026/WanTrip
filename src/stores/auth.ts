@@ -79,13 +79,11 @@ export const useAuthStore = defineStore('auth', () => {
 
       // 監聽登入狀態變化
       supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('[Auth] onAuthStateChange:', event, session?.user?.id)
         user.value = session?.user ?? null
 
         if (user.value) {
            // Temporarily disable profile check to debug hanging issue
-           // console.log('[Auth] Triggering ensureUserProfile from change event')
-           // await ensureUserProfile(user.value)
+          await ensureUserProfile(user.value)
         }
       })
     } catch (error) {
@@ -99,20 +97,16 @@ export const useAuthStore = defineStore('auth', () => {
   // ✅ 登出
   const logout = async () => {
     try {
-      console.log("start")
-
       // 使用 Promise.race 加入 3 秒超時
       const signOutPromise = supabase.auth.signOut()
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('SignOut timeout')), 1000)
       )
       await Promise.race([signOutPromise, timeoutPromise])
-      console.log("here")
     } catch (error) {
       console.error('Logout error:', error)
       // 即使 signOut 失敗，也強制清除本地狀態
     } finally {
-      console.log("end")
       user.value = null
       // 強制清除 localStorage 中的 session
       try {

@@ -370,7 +370,6 @@ const updatePassword = async () => {
     // 確保 Session 存在
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
     if (sessionError || !session) {
-      console.log('Session missing, trying to refresh...')
       const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
 
       if (refreshError || !refreshedSession) {
@@ -406,7 +405,6 @@ const updatePassword = async () => {
     passwordForm.value.newPassword = ''
     passwordForm.value.confirmPassword = ''
   } catch (err: unknown) {
-    console.error('Update Password Error:', err)
     let message = '修改失敗'
 
     if (err instanceof Error) {
