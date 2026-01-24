@@ -1,6 +1,7 @@
 <template>
   <AppNavbar v-if="showAppNavbar" />
   <router-view />
+  <ChatWidget />
   <AppFooter v-if="showFooter" />
 </template>
 
@@ -10,8 +11,8 @@ import { useRoute } from 'vue-router'
 import AppNavbar from './components/layout/AppNavbar.vue'
 import AppFooter from './components/layout/AppFooter.vue'
 import { onMounted } from 'vue'
-import { useAuthStore } from '@/stores/auth'
 import { useFavoriteStore } from '@/stores/favoriteStore'
+import ChatWidget from './components/layout/ChatWidget.vue'
 
 const route = useRoute()
 
@@ -26,7 +27,6 @@ const showAppNavbar = computed(() => {
 const showFooter = computed(() => {
   return route && route.meta && route.meta.showFooter !== false
 })
-
 
 const favoriteStore = useFavoriteStore()
 
