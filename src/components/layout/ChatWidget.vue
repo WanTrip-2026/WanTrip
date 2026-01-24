@@ -1,69 +1,76 @@
 <template>
   <div class="fixed bottom-0 right-0 z-50">
-    <div
-      v-if="isOpen"
-      class="flex flex-col w-80 h-[520px] rounded-[20px] shadow-xl overflow-hidden mr-6 mb-24 bg-white/50 backdrop-blur-xl border border-white/50"
-    >
-      <div class="bg-primary text-white font-semibold text-lg text-center py-3 z-10">
-        旅遊規劃師 阿萬🪄
-      </div>
-
-      <div ref="msgBox" class="flex-1 p-3 flex flex-col gap-3 overflow-y-auto scrollbar-thin pb-4">
-        <div
-          v-for="m in messages"
-          :key="m.id"
-          :class="[
-            'max-w-[85%] px-3 py-2 rounded-2xl shadow-sm break-words flex items-start relative',
-            m.role === 'user'
-              ? 'self-end bg-gradient-to-r bg-primary text-white rounded-br-sm'
-              : 'self-start bg-white/80 text-dark-800 rounded-bl-sm',
-          ]"
-        >
-          <img
-            v-if="m.role === 'assistant'"
-            src="https://i.imgur.com/1XbY9R1.png"
-            alt="AI"
-            class="w-6 h-6 rounded-full mr-2 mt-1 flex-shrink-0"
-          />
-          <span class="whitespace-pre-wrap text-sm leading-relaxed">{{ m.content }}</span>
+    <Transition name="slide-fade">
+      <div
+        v-if="isOpen"
+        class="flex flex-col w-80 h-[520px] rounded-[20px] shadow-xl overflow-hidden mr-6 mb-24 bg-white/50 backdrop-blur-xl border border-white/50"
+      >
+        <div class="bg-primary text-white font-semibold text-lg text-center py-3 z-10">
+          旅遊規劃師 阿萬🪄
         </div>
 
         <div
-          v-if="isLoading"
-          class="self-start bg-white/90 px-4 py-3 rounded-2xl shadow-sm border border-gray-100"
+          ref="msgBox"
+          class="flex-1 p-3 flex flex-col gap-3 overflow-y-auto scrollbar-thin pb-4"
         >
-          <div class="flex items-center gap-2">
-            <span class="text-lg animate-spin-slow">🪄</span>
-            <span class="text-sm text-dark-800 leading-relaxed">
-              {{ currentLoadingText }}
-            </span>
+          <div
+            v-for="m in messages"
+            :key="m.id"
+            :class="[
+              'max-w-[85%] px-3 py-2 rounded-2xl shadow-sm break-words flex items-start relative',
+              m.role === 'user'
+                ? 'self-end bg-gradient-to-r bg-primary text-white rounded-br-sm'
+                : 'self-start bg-white/80 text-dark-800 rounded-bl-sm',
+            ]"
+          >
+            <img
+              v-if="m.role === 'assistant'"
+              src="https://i.imgur.com/1XbY9R1.png"
+              alt="AI"
+              class="w-6 h-6 rounded-full mr-2 mt-1 flex-shrink-0"
+            />
+            <span class="whitespace-pre-wrap text-sm leading-relaxed">{{ m.content }}</span>
+          </div>
+
+          <div
+            v-if="isLoading"
+            class="self-start bg-white/90 px-4 py-3 rounded-2xl shadow-sm border border-gray-100"
+          >
+            <div class="flex items-center gap-2">
+              <span class="text-lg animate-spin-slow">🪄</span>
+              <span class="text-sm text-dark-800 leading-relaxed">
+                {{ currentLoadingText }}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="flex gap-2 p-3 border-t border-gray-100 bg-white z-10 relative">
-        <input
-          v-model="userInput"
-          @keyup.enter="sendMessage"
-          :disabled="isLoading"
-          placeholder="阿萬等你下指令冒險..."
-          class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark-900 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:bg-gray-50"
-        />
-        <button
-          @click="sendMessage"
-          :disabled="isLoading"
-          class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-main_800 transition disabled:bg-gray-400 flex-shrink-0"
-        >
-          GO!
-        </button>
+        <div class="flex gap-2 p-3 border-t border-gray-100 bg-white z-10 relative">
+          <input
+            v-model="userInput"
+            @keyup.enter="sendMessage"
+            :disabled="isLoading"
+            placeholder="阿萬等你下指令冒險..."
+            class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark-900 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:bg-gray-50"
+          />
+          <button
+            @click="sendMessage"
+            :disabled="isLoading"
+            class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-main_800 transition disabled:bg-gray-400 flex-shrink-0"
+          >
+            GO!
+          </button>
+        </div>
       </div>
-    </div>
+    </Transition>
 
     <button
       @click="toggleChat"
-      class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-white text-2xl flex items-center justify-center shadow-lg hover:scale-110 transition z-50"
+      class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300 z-50"
+      :class="{ 'rotate-180': isOpen }"
     >
-      <span>{{ isOpen ? '✖' : '💬' }}</span>
+      <font-awesome-icon v-if="isOpen" icon="fa-solid fa-xmark" class="text-2xl" />
+      <span v-else class="text-2xl">💬</span>
     </button>
   </div>
 </template>
@@ -201,6 +208,20 @@ const sendMessage = async () => {
 </script>
 
 <style>
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateY(20px) scale(0.9);
+  opacity: 0;
+}
+
 @keyframes spin-slow {
   from {
     transform: rotate(0deg);
@@ -233,7 +254,6 @@ const sendMessage = async () => {
   animation: magic-pulse 1.2s infinite ease-in-out;
 }
 
-/* 慢速旋轉星星 */
 @keyframes spin-slow {
   from {
     transform: rotate(0deg);
