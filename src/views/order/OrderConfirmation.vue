@@ -11,6 +11,7 @@ const errorMsg = ref('')
 
 onMounted(async () => {
   const id = route.params.id as string
+  console.log('[OrderConfirmation] Mounted, ID:', id)
 
   if (!id) {
     errorMsg.value = '無效的訂單編號'
@@ -18,12 +19,40 @@ onMounted(async () => {
   }
 
   try {
-    const { data: sessionData } = await supabase.auth.getSession()
-    const token = sessionData.session?.access_token
+    console.log('[OrderConfirmation] Getting session...')
+
+    // Create a timeout promise that resolves to null instead of rejecting
+    const timeout = new Promise<{ data: { session: null }; error: null }>((resolve) => {
+      setTimeout(() => {
+        console.warn('[OrderConfirmation] Session timeout, proceeding without token')
+        resolve({ data: { session: null }, error: null })
+      }, 2000)
+    })
+
+    // Race getSession against timeout
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sessionRes = (await Promise.race([supabase.auth.getSession(), timeout])) as {
+      data: { session: any }
+      error: any
+    }
+
+    const { data: sessionData, error: sessionError } = sessionRes
+    if (sessionError) console.error('[OrderConfirmation] Session error:', sessionError)
+
+    const token = sessionData?.session?.access_token
+    console.log('[OrderConfirmation] Token available:', !!token)
+
     // token is optional for getOrderById but recommended for protected routes
+    console.log('[OrderConfirmation] Fetching order...')
     order.value = await getOrderById(id, token)
+    console.log('[OrderConfirmation] Order fetched:', order.value)
+
+    if (!order.value || Object.keys(order.value).length === 0) {
+      console.error('[OrderConfirmation] Order is empty or null')
+      errorMsg.value = '找不到訂單資料 (404 Not Found)'
+    }
   } catch (e: unknown) {
-    console.error('[OrderConfirmation] Error:', e)
+    console.error('[OrderConfirmation] Error caught:', e)
 
     if (e instanceof Error) {
       errorMsg.value = e.message
@@ -138,7 +167,13 @@ const goToProduct = () => {
 
           <div class="rounded-[20px] bg-main_100 p-5 md:p-6 sm:col-span-2 md:col-span-1">
             <p class="text-xs font-bold text-main_800 mb-2">{{ isTicket ? '方案' : '房型' }}</p>
-            <p class="text-lg md:text-xl font-bold">{{ order.room_type || order.subtitle }}</p>
+            <p class="text-lg md:text-xl font-bold">
+              {{ order.room_type || order.subtitle }}
+              <span v-if="!isTicket && (order.quantity || 1) > 1"> * {{ order.quantity }} 間 </span>
+              <span v-else-if="isTicket && (order.quantity || 1) > 1">
+                * {{ order.quantity }} 張
+              </span>
+            </p>
           </div>
         </div>
       </section>
