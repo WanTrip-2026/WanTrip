@@ -40,6 +40,7 @@ const order = computed(() => {
       telephone: fetchedOrder.value.hotel_phone || fetchedOrder.value.phone || '無聯絡電話',
       address: fetchedOrder.value.address || fetchedOrder.value.city + fetchedOrder.value.district,
       image: fetchedOrder.value.image_url || fetchedOrder.value.image,
+      roomType: fetchedOrder.value.room_type || fetchedOrder.value.subtitle || '未知房型',
     }
   }
 
@@ -161,12 +162,11 @@ onMounted(async () => {
             <div class="flex flex-col items-center lg:items-stretch">
               <p class="text-dark text-xl font-bold">
                 {{ order.name }}
-                <span v-if="(fetchedOrder?.quantity || 1) > 1">
-                  * {{ fetchedOrder.quantity }} 間
-                </span>
               </p>
-              <p class="text-dark_700 text-base text-wrap">{{ order.address }}</p>
-              <p class="text-dark_700 text-base">{{ order.telephone }}</p>
+              <p v-if="(fetchedOrder?.quantity || 1) > 1" class="text-dark text-base font-bold">
+                <span class="text-dark font-bold">{{ order.roomType }}</span
+                >* {{ fetchedOrder.quantity }} 間
+              </p>
             </div>
             <div class="flex flex-col items-center lg:items-stretch">
               <p class="text-dark_700 font-bold text-base">總價</p>

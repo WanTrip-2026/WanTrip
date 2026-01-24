@@ -9,31 +9,32 @@ import { isValidEmail, isValidPhone } from '@/utils/validators'
 
 const orderStore = useOrderStore()
 const authStore = useAuthStore()
-const { orderData } = orderStore
+// const { orderData } = orderStore // [FIX] Removed destructuring to avoid stale reference
 
 const selectedPayment = ref<PaymentKey | ''>('')
 const isProcessing = ref(false)
 const errorMessage = ref('')
 
 const product = reactive({
-  title: orderData.title || '',
-  subtitle: orderData.subtitle || '',
-  date: orderData.date || '',
-  note: orderData.note || '',
-  image: orderData.image || '',
-  price: orderData.price || 0,
-  address: orderData.address || '',
-  phone: orderData.phone || '',
-  hotel_id: orderData.hotel_id || '',
-  room_id: orderData.room_id || '', // [NEW] Read room_id from store
-  type: orderData.type || 'hotel',
-  city: orderData.city || '台北',
-  category: orderData.category || '',
-  highlights: orderData.highlights || [],
-  attraction_id: orderData.attraction_id || '',
+  title: orderStore.orderData.title || '',
+  subtitle: orderStore.orderData.subtitle || '',
+  date: orderStore.orderData.date || '',
+  note: orderStore.orderData.note || '',
+  image: orderStore.orderData.image || '',
+  price: orderStore.orderData.price || 0,
+  address: orderStore.orderData.address || '',
+  phone: orderStore.orderData.phone || '',
+  hotel_id: orderStore.orderData.hotel_id || '',
+  room_id: orderStore.orderData.room_id || '',
+  type: orderStore.orderData.type || 'hotel',
+  city: orderStore.orderData.city || '台北',
+  category: orderStore.orderData.category || '',
+  highlights: orderStore.orderData.highlights || [],
+  attraction_id: orderStore.orderData.attraction_id || '',
 })
 const peopleNum = computed(() => {
-  const n = Number(orderData.peopleNum ?? orderData.quantity ?? 1)
+  const data = orderStore.orderData
+  const n = Number(data.peopleNum ?? data.quantity ?? 1)
   return Number.isFinite(n) && n > 0 ? n : 1
 })
 
@@ -79,6 +80,62 @@ const longStayDiscount = computed(() => {
 
 const total = computed(() => Math.max(subtotal.value - discount.value - longStayDiscount.value, 0))
 
+const checkInventory = async (): Promise<boolean> => {
+  if (product.type !== 'hotel' || !product.hotel_id || !product.room_id || !product.date)
+    return true
+
+  try {
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+    // Parse dates
+    let sDate = '',
+      eDate = ''
+    const parts = product.date.split(' - ')
+    if (parts.length === 2) {
+      sDate = parts[0] || ''
+      eDate = parts[1] || ''
+    } else {
+      return true // Cannot validate without dates
+    }
+
+    const res = await axios.get(`${apiBaseUrl}/hotels/${product.hotel_id}/rooms`, {
+      params: {
+        start_date: sDate,
+        end_date: eDate,
+        rooms: peopleNum.value, // Check if we have enough rooms
+        adults: 0, // We only care about room quantity for inventory
+      },
+    })
+
+    const rooms = res.data
+    const targetRoom = rooms.find((r: any) => r.id === product.room_id)
+
+    if (!targetRoom) {
+      alert('無法取得房型資訊，請稍後再試')
+      return false
+    }
+
+    if (
+      targetRoom.status === 'sold_out' ||
+      (targetRoom.maxAvailable !== undefined && targetRoom.maxAvailable < peopleNum.value)
+    ) {
+      const left = targetRoom.maxAvailable ?? 0
+      alert(
+        `庫存不足！該房型僅剩 ${left} 間，您預訂了 ${peopleNum.value} 間。請調整數量或選擇其他房型。`,
+      )
+      return false
+    }
+
+    return true
+  } catch (err) {
+    console.error('Inventory check failed', err)
+    // Decide whether to block or allow if check fails. Usually safe to allow unless critical?
+    // User requested explicit check. Let's warn but maybe not hard block if API error?
+    // Or block to be safe. "驗證庫存失敗，請重試"
+    alert('無法驗證庫存狀態，請稍後再試')
+    return false
+  }
+}
+
 const handleCheckout = async () => {
   if (!form.name || !form.email || !form.phone) {
     alert('請完整填寫訂購人資料')
@@ -93,6 +150,14 @@ const handleCheckout = async () => {
   if (!isValidPhone(form.phone)) {
     alert('請輸入有效的電話號碼格式 (例如: 0912-345-678 或 0912345678)')
     return
+  }
+
+  // [NEW] Inventory Check
+  if (product.type === 'hotel') {
+    isProcessing.value = true
+    const hasStock = await checkInventory()
+    isProcessing.value = false
+    if (!hasStock) return
   }
 
   if (!selectedPayment.value || isProcessing.value) return
