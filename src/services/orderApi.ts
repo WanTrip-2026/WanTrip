@@ -31,6 +31,7 @@ export type Order = {
   city?: string | null
   district?: string | null
   address?: string | null
+  hotel_phone?: string | null
 }
 
 export async function getUserOrders(token: string) {

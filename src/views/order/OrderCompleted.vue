@@ -37,7 +37,7 @@ const order = computed(() => {
       name: fetchedOrder.value.hotel_name || fetchedOrder.value.title || '旅宿行程',
       amount: fetchedOrder.value.price,
       createdAt: `${d.getFullYear()}年${String(d.getMonth() + 1).padStart(2, '0')}月${String(d.getDate()).padStart(2, '0')}日`,
-      telephone: fetchedOrder.value.contact_phone || fetchedOrder.value.phone,
+      telephone: fetchedOrder.value.hotel_phone || fetchedOrder.value.phone || '無聯絡電話',
       address: fetchedOrder.value.address || fetchedOrder.value.city + fetchedOrder.value.district,
       image: fetchedOrder.value.image_url || fetchedOrder.value.image,
     }

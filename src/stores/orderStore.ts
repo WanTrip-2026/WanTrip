@@ -79,7 +79,10 @@ export const useOrderStore = defineStore('order', () => {
       address: data.address ?? orderData.value.address,
       phone: data.phone ?? orderData.value.phone,
       hotel_id: data.hotel_id ?? orderData.value.hotel_id,
-      room_id: data.room_id ?? orderData.value.room_id, // [NEW] Update logic
+      room_id:
+        typeof data.room_id === 'string' && data.room_id.trim() !== ''
+          ? data.room_id
+          : orderData.value.room_id,
       latitude: data.latitude ?? orderData.value.latitude,
       longitude: data.longitude ?? orderData.value.longitude,
       type: data.type ?? orderData.value.type,

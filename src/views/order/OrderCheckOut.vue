@@ -175,6 +175,7 @@ const createOrderPayload = (orderId: string) => {
     date: product.date,
     note: product.note,
     price: product.price,
+    coupon: form.coupon.trim().toUpperCase(),
     image: product.image,
     checkInDate: checkIn,
     checkOutDate: checkOut,
