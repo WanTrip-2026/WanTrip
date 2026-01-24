@@ -169,8 +169,10 @@ const goToProduct = () => {
             <p class="text-xs font-bold text-main_800 mb-2">{{ isTicket ? '方案' : '房型' }}</p>
             <p class="text-lg md:text-xl font-bold">
               {{ order.room_type || order.subtitle }}
-              <span v-if="!isTicket && (order.quantity || 1) > 1"> * {{ order.quantity }} 間 </span>
-              <span v-else-if="isTicket && (order.quantity || 1) > 1">
+              <span class="text-lg font-bold" v-if="!isTicket && (order.quantity || 1) > 1">
+                * {{ order.quantity }} 間
+              </span>
+              <span class="text-lg font-bold" v-else-if="isTicket && (order.quantity || 1) > 1">
                 * {{ order.quantity }} 張
               </span>
             </p>

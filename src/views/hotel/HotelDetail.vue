@@ -257,9 +257,34 @@
             </div>
 
             <div
-              class="w-full md:w-[10%] p-[20px] flex border-t md:border-t-0 md:border-l border-gray-300 justify-start items-start"
+              class="w-full md:w-[10%] p-[20px] flex md:flex-col border-t md:border-t-0 md:border-l border-gray-300 justify-start items-start gap-2"
             >
               <p class="text-gray-600">可入住 {{ room.capacity }} 人</p>
+
+              <!-- [NEW] Room Quantity Selector -->
+              <div
+                v-if="room.status === 'available' || room.status === 'sold_out'"
+                class="flex items-center gap-1"
+              >
+                <select
+                  v-model="room.selectedQuantity"
+                  @click.stop
+                  :disabled="
+                    room.status === 'sold_out' && (!room.maxAvailable || room.maxAvailable <= 0)
+                  "
+                  class="border border-gray-300 rounded px-2 py-2 text-sm bg-white cursor-pointer hover:border-primary focus:outline-none focus:border-primary"
+                >
+                  <option
+                    v-for="n in room.maxAvailable && room.maxAvailable < 999
+                      ? room.maxAvailable
+                      : 10"
+                    :key="n"
+                    :value="n"
+                  >
+                    {{ n }} 間
+                  </option>
+                </select>
+              </div>
             </div>
 
             <div
@@ -575,6 +600,7 @@ interface Room {
   features: string[]
   status?: 'available' | 'sold_out' | 'capacity_exceeded'
   maxAvailable?: number
+  selectedQuantity?: number
 }
 
 interface SearchPayload {
@@ -599,28 +625,16 @@ const handleBook = async (room: Room) => {
 
   if (!room) {
     console.error('Room data is missing')
-    alert('無法取得房型資料，請重新整理頁面')
     return
   }
 
-  let finalRooms = peopleConfig.rooms
-  // [NEW] Check for partial availability
-  if (
-    room.maxAvailable !== undefined &&
-    room.maxAvailable > 0 &&
-    peopleConfig.rooms > room.maxAvailable
-  ) {
-    const confirmed = confirm(
-      `您預訂的房數 (${peopleConfig.rooms} 間) 超過目前剩餘空房 (${room.maxAvailable} 間)。\n是否願意調整為預訂 ${room.maxAvailable} 間？`,
-    )
-    if (!confirmed) return
+  // Use the specific selected quantity for this room
+  const finalRooms = room.selectedQuantity || 1
 
-    // User accepted adjustment
-    finalRooms = room.maxAvailable
-    peopleConfig.rooms = finalRooms
-    // Usually we might want to update the UI or query params here, but updating peopleConfig
-    // will trigger the watcher to refetch details (which is okay, ensures consistency).
-    // However, if we want to proceed immediately to checkout, we just use finalRooms.
+  // Basic validation against availability just in case
+  if (room.maxAvailable !== undefined && room.maxAvailable > 0 && finalRooms > room.maxAvailable) {
+    alert(`此房型僅剩 ${room.maxAvailable} 間，無法預訂 ${finalRooms} 間`)
+    return
   }
 
   try {
@@ -630,7 +644,7 @@ const handleBook = async (room: Room) => {
 
     orderStore.setOrder({
       hotel_id: hotel.value?.id,
-      room_id: room.id, // [NEW] Pass room_id
+      room_id: room.id,
       title: hotel.value?.name || '未知名稱',
       subtitle: room.name || '未知房型',
       date: dateStr,
@@ -643,7 +657,7 @@ const handleBook = async (room: Room) => {
       longitude: hotel.value?.longitude,
       type: 'hotel',
       peopleNum: finalRooms, // Use the adjusted room count
-      quantity: peopleConfig.people, // TODO: Might need to adjust people count too if logic dictates
+      quantity: peopleConfig.people, // Note: Total people count passed for reference
     })
     console.log('Order set successfully, navigating to checkout...')
     router.push('/orders/checkout')
@@ -830,24 +844,31 @@ const fetchHotelDetail = async () => {
       .sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999))
       .map((img) => img.image_url)
 
-    // 處理房型 (加入預設特徵)
-    rooms.value = apiRooms.map((r) => ({
-      ...r,
-      features: [
-        '可免費取消',
-        '即時確認',
-        '線上預付',
-        '豐盛早餐付費 TWD935 (現場選購)',
-        '12歲以下兒童免費加床',
-      ],
-    }))
+    // 處理房型 (加入預設特徵 & 初始化選取數量)
+    rooms.value = apiRooms.map((r) => {
+      // Calculate max select options
+      const max = r.maxAvailable && r.maxAvailable < 999 ? r.maxAvailable : 10
+      // Default to searched rooms, capped by availability and reasonable limit
+      let defaultQty = peopleConfig.rooms
+      if (defaultQty > max) defaultQty = max
+      if (defaultQty < 1) defaultQty = 1
+
+      return {
+        ...r,
+        features: ['即時確認', '線上預付', '豐盛早餐 NT$450 (現場選購)', '12歲以下兒童免費加床'],
+        selectedQuantity: defaultQty,
+      }
+    })
 
     // 7. 隨機分配評論的房型 (讓 UI 看起來比較真實)
     if (rooms.value.length > 0) {
-      reviews.value = reviews.value.map((review) => ({
-        ...review,
-        roomType: rooms.value[Math.floor(Math.random() * rooms.value.length)]?.name || '標準房',
-      }))
+      if (reviews.value) {
+        // Ensure reviews is not undefined
+        reviews.value = reviews.value.map((review) => ({
+          ...review,
+          roomType: rooms.value[Math.floor(Math.random() * rooms.value.length)]?.name || '標準房',
+        }))
+      }
     }
 
     error.value = null
@@ -858,13 +879,14 @@ const fetchHotelDetail = async () => {
 }
 
 // Watch for changes and refetch
-watch(
-  [range, () => peopleConfig.people, () => peopleConfig.rooms],
-  () => {
-    fetchHotelDetail()
-  },
-  { deep: true },
-)
+// [Modified] Disable live watcher to align with "Search Button" trigger behavior
+// watch(
+//   [range, () => peopleConfig.people, () => peopleConfig.rooms],
+//   () => {
+//     fetchHotelDetail()
+//   },
+//   { deep: true },
+// )
 
 // --- 4. 計算屬性 ---
 const desktopGallery = computed(() => [
@@ -907,15 +929,15 @@ const handleSearchUpdate = (data: SearchPayload) => {
   peopleConfig.rooms = data.rooms
 
   // 2. 如果關鍵字變了，通常代表 user 想找別家店，這時才跳轉回搜尋頁
-  if (hotel.value && data.keyword !== hotel.value.name) {
+  if (hotel.value && data.keyword && data.keyword !== hotel.value.name) {
     router.push({
       path: '/hotels/search',
       query: {
         keyword: data.keyword,
         start_date: formatDate(data.range[0]),
         end_date: formatDate(data.range[1]),
-        adults: data.people,
-        rooms: data.rooms,
+        adults: String(data.people),
+        rooms: String(data.rooms),
       },
     })
   } else {
@@ -926,15 +948,13 @@ const handleSearchUpdate = (data: SearchPayload) => {
         ...route.query,
         start_date: formatDate(data.range[0]),
         end_date: formatDate(data.range[1]),
-        adults: data.people,
-        rooms: data.rooms,
+        adults: String(data.people),
+        rooms: String(data.rooms),
       },
     })
 
-    // fetchHotelDetail 會由 watch(route.query) 或 watch(range/people) 觸發
-    // 原本有 watch [range, peopleConfig...] -> fetchHotelDetail
-    // 但如果有雙向綁定可能會重複觸發，這裡更新 range/people 已經會觸發 watch
-    // fetchHotelDetail()
+    // [Modified] Manually trigger fetch since we removed the watcher
+    fetchHotelDetail()
   }
 }
 
