@@ -189,6 +189,7 @@ const handleSearchUpdate = (data: SearchPayload) => {
     adults: String(data.people),
     rooms: String(data.rooms),
   }
+  queryParams.page = '1'
 
   if (data.range && data.range.length === 2 && data.range[0] && data.range[1]) {
     queryParams.start_date = formatDate(data.range[0])
@@ -210,8 +211,11 @@ const handleSearchUpdate = (data: SearchPayload) => {
 
 const goToPage = (page: number) => {
   const p = Math.min(Math.max(page, 1), totalPages.value)
-  currentPage.value = p
-  fetchHotels(p)
+  const queryParams: LocationQueryRaw = {
+    ...route.query,
+    page: String(p),
+  }
+  router.push({ path: route.path, query: queryParams })
 }
 
 const clearOptions = (key: string) => {
@@ -254,18 +258,20 @@ const goToMapSearch = () => {
 
 // --- 從 URL 解析參數的函式 ---
 const initStatesFromUrl = () => {
-  const { keyword: urlKeyword, start_date, end_date, adults, rooms } = route.query
+  const { keyword: urlKeyword, start_date, end_date, adults, rooms, page } = route.query
 
-  if (urlKeyword) {
-    keyword.value = String(urlKeyword)
-  }
+  keyword.value = urlKeyword ? String(urlKeyword) : ''
 
   if (start_date && end_date) {
     range.value = [new Date(String(start_date)), new Date(String(end_date))]
+  } else {
+    range.value = null
   }
 
-  if (adults) peopleConfig.people = Number(adults)
-  if (rooms) peopleConfig.rooms = Number(rooms)
+  peopleConfig.people = adults ? Number(adults) : 2
+  peopleConfig.rooms = rooms ? Number(rooms) : 1
+
+  currentPage.value = page ? Number(page) : 1
 }
 
 // --- 7. 生命週期與監聽 ---
@@ -296,7 +302,6 @@ onMounted(async () => {
     }
 
     // C. 執行搜尋
-    await fetchHotels(1)
   } catch (err) {
     console.error('初始化失敗', err)
   }
@@ -307,8 +312,10 @@ watch(
   () => route.query,
   () => {
     initStatesFromUrl()
-    fetchHotels(1)
+    const page = Number(route.query.page ?? 1)
+    fetchHotels(page)
   },
+  { immediate: true },
 )
 
 // 側邊欄篩選器變動即重新搜尋
