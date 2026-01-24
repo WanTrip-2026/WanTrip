@@ -13,24 +13,26 @@
           ref="msgBox"
           class="flex-1 p-3 flex flex-col gap-3 overflow-y-auto scrollbar-thin pb-4"
         >
-          <div
-            v-for="m in messages"
-            :key="m.id"
-            :class="[
-              'max-w-[85%] px-3 py-2 rounded-2xl shadow-sm break-words flex items-start relative',
-              m.role === 'user'
-                ? 'self-end bg-gradient-to-r bg-primary text-white rounded-br-sm'
-                : 'self-start bg-white/80 text-dark-800 rounded-bl-sm',
-            ]"
-          >
-            <img
-              v-if="m.role === 'assistant'"
-              src="https://i.imgur.com/1XbY9R1.png"
-              alt="AI"
-              class="w-6 h-6 rounded-full mr-2 mt-1 flex-shrink-0"
-            />
-            <span class="whitespace-pre-wrap text-sm leading-relaxed">{{ m.content }}</span>
-          </div>
+          <TransitionGroup name="chat-list">
+            <div
+              v-for="m in messages"
+              :key="m.id"
+              :class="[
+                'max-w-[85%] px-3 py-2 rounded-2xl shadow-sm break-words flex items-start relative',
+                m.role === 'user'
+                  ? 'self-end bg-gradient-to-r bg-primary text-white rounded-br-sm'
+                  : 'self-start bg-white/80 text-dark-800 rounded-bl-sm',
+              ]"
+            >
+              <img
+                v-if="m.role === 'assistant'"
+                src="https://i.imgur.com/1XbY9R1.png"
+                alt="AI"
+                class="w-6 h-6 rounded-full mr-2 mt-1 flex-shrink-0"
+              />
+              <span class="whitespace-pre-wrap text-sm leading-relaxed">{{ m.content }}</span>
+            </div>
+          </TransitionGroup>
 
           <div
             v-if="isLoading"
@@ -44,7 +46,6 @@
             </div>
           </div>
         </div>
-
         <div class="flex gap-2 p-3 border-t border-gray-100 bg-white z-10 relative">
           <input
             v-model="userInput"
@@ -56,7 +57,7 @@
           <button
             @click="sendMessage"
             :disabled="isLoading"
-            class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-main_800 transition disabled:bg-gray-400 flex-shrink-0"
+            class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-main transition disabled:bg-gray-400 flex-shrink-0"
           >
             GO!
           </button>
@@ -281,5 +282,23 @@ div[ref='msgBox']::-webkit-scrollbar-thumb,
 div[ref='msgBox']::-webkit-scrollbar-track,
 .overflow-y-auto::-webkit-scrollbar-track {
   background: transparent !important;
+}
+
+/* 訊息清單進場動畫 */
+.chat-list-enter-active {
+  transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.chat-list-enter-from {
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+}
+
+.chat-list-move {
+  transition: transform 0.3s ease;
+}
+
+.chat-list-leave-active {
+  position: absolute;
 }
 </style>
