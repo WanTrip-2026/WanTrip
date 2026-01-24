@@ -78,16 +78,12 @@
 
 <script setup lang="ts">
 import { ref, nextTick } from 'vue'
+import { chatService } from '@/constants/chatService'
 
 interface Message {
   id: number
   role: 'user' | 'assistant'
   content: string
-}
-
-interface ChatApiResponse {
-  answer?: string
-  error?: string
 }
 
 const isOpen = ref(false)
@@ -118,8 +114,7 @@ const toggleChat = () => {
 
   if (isOpen.value && messages.value.length === 0) {
     // 隨機選一個普通歡迎詞
-    const randomGreeting =
-      greetings[Math.floor(Math.random() * greetings.length)] || '您好！想去哪裡玩嗎？'
+    const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)]
 
     // 50% 機率出隨機詞，50% 出時間詞
     const welcomeMsg = Math.random() > 0.5 ? randomGreeting : getTimeGreeting()
@@ -127,7 +122,7 @@ const toggleChat = () => {
     messages.value.push({
       id: Date.now(),
       role: 'assistant',
-      content: welcomeMsg,
+      content: welcomeMsg ?? '你好！我是阿萬，有什麼可以幫你的嗎？',
     })
     scrollToBottom()
   }
@@ -164,7 +159,7 @@ const sendMessage = async () => {
   })
 
   const randomIndex = Math.floor(Math.random() * loadingTexts.length)
-  currentLoadingText.value = loadingTexts[randomIndex] || '阿萬正在思考中...'
+  currentLoadingText.value = loadingTexts[randomIndex] ?? '阿萬正在思考中...'
 
   // B. 清空輸入框、開啟載入狀態、捲動到底部
   userInput.value = ''
@@ -172,43 +167,27 @@ const sendMessage = async () => {
   await scrollToBottom()
 
   try {
-    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-ai`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-      },
-      body: JSON.stringify({ query: userQuery }),
-    })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`伺服器回應錯誤: ${response.status} - ${errorText}`)
-    }
-
-    const data: ChatApiResponse = await response.json()
+    const data = await chatService.sendMessage(userQuery)
 
     messages.value.push({
       id: Date.now() + 1,
       role: 'assistant',
       content: data.answer || '抱歉，我暫時無法回答這個問題。',
     })
-  } catch (err) {
-    console.error('--- ❌ 最終嘗試失敗 ---', err)
-    const errorMessage = err instanceof Error ? err.message : '未知錯誤'
+  } catch (error) {
+    console.error(error)
     messages.value.push({
-      id: Date.now() + 2,
+      id: Date.now() + 1,
       role: 'assistant',
-      content: `❌ 連線失敗：${errorMessage}`,
+      content: '哎呀，阿萬的訊號不太穩定，請稍後再試！',
     })
   } finally {
     isLoading.value = false
-    await scrollToBottom()
   }
 }
 </script>
 
-<style>
+<style scoped>
 .slide-fade-enter-active {
   transition: all 0.3s ease-out;
 }
@@ -253,19 +232,6 @@ const sendMessage = async () => {
 
 .magic-dot {
   animation: magic-pulse 1.2s infinite ease-in-out;
-}
-
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-.animate-spin-slow {
-  display: inline-block;
-  animation: spin-slow 3s linear infinite;
 }
 
 div[ref='msgBox']::-webkit-scrollbar,
