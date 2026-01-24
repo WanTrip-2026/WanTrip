@@ -656,8 +656,8 @@ const handleBook = async (room: Room) => {
       latitude: hotel.value?.latitude,
       longitude: hotel.value?.longitude,
       type: 'hotel',
-      peopleNum: finalRooms, // Use the adjusted room count
-      quantity: peopleConfig.people, // Note: Total people count passed for reference
+      roomQuantity: finalRooms, // Use the adjusted room count
+      peopleCount: peopleConfig.people, // Note: Total people count passed for reference
     })
     console.log('Order set successfully, navigating to checkout...')
     router.push('/orders/checkout')
@@ -774,7 +774,6 @@ const fetchHotelDetail = async () => {
   }
 
   try {
-    // 2. 設定 URL
     // 2. 設定 URL
     const hotelUrl = `${apiUrl}/hotels/${id}`
     const imagesUrl = `${apiUrl}/hotel_images/${id}`
