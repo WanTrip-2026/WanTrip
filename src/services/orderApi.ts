@@ -15,6 +15,7 @@ export type Order = {
 
   price: number
   status: string
+  quantity?: number // [NEW]
 
   date?: string
   check_in_date?: string

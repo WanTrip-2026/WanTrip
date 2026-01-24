@@ -45,12 +45,8 @@ const order = computed(() => {
 
   return {
     id: orderId,
-    name: orderStore.orderData.title || '高雄洲際酒店',
-    amount: orderStore.orderData.price || 50000,
+    status: 'processing', // 👈 關鍵
     createdAt: formattedDate,
-    telephone: orderStore.orderData.phone || '(07)339-1888',
-    address: orderStore.orderData.address || '高雄市前鎮區新光路33號',
-    image: orderStore.orderData.image || '/src/assets/hoteldetail_img/Wanhao.jpg',
   }
 })
 
@@ -86,16 +82,41 @@ onMounted(async () => {
 
   // 2. Fetch Order Data to ensure we display real data
   try {
-    const { data: sessionData } = await supabase.auth.getSession()
-    const token = sessionData.session?.access_token
-    if (token && orderId) {
+    console.log('[OrderCompleted] Getting session...')
+    // Create a timeout promise
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const timeout = new Promise<{ data: { session: null }; error: null }>((resolve) => {
+      setTimeout(() => {
+        console.warn('[OrderCompleted] Session timeout, proceeding without token')
+        resolve({ data: { session: null }, error: null })
+      }, 3000)
+    })
+
+    // Race getSession against timeout
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sessionRes = (await Promise.race([supabase.auth.getSession(), timeout])) as {
+      data: { session: any }
+      error: any
+    }
+
+    const { data: sessionData, error: sessionError } = sessionRes
+    if (sessionError) console.error('[OrderCompleted] Session error:', sessionError)
+
+    const token = sessionData?.session?.access_token
+    console.log('[OrderCompleted] Token available:', !!token)
+
+    if (orderId) {
       // Wait a bit if we just confirmed, to ensure DB propagation
       if (transactionId) await new Promise((r) => setTimeout(r, 1000))
 
-      const data = await getOrderById(orderId, token)
-      if (data && data.id) {
+      // Try fetching with token if available, otherwise undefined (public access enabled)
+      const data = await getOrderById(orderId, token ?? undefined)
+      console.log('[OrderCompleted] Fetched Data:', data)
+      if (data && (data.id || data.order_id)) {
         fetchedOrder.value = data
       }
+    } else {
+      console.warn('[OrderCompleted] No orderId, skipping fetch')
     }
   } catch (e) {
     console.warn('Failed to fetch order details:', e)
@@ -110,7 +131,13 @@ onMounted(async () => {
         class="mx-auto max-w-[800px] p-5 lg:p-10 mb-10 lg:mb-0 bg-white rounded-[40px] flex flex-col items-center gap-5 lg:gap-10 border border-gray-300 shadow-sm"
       >
         <h3 class="text-4xl font-bold text-black">訂購完成！</h3>
-        <div class="flex flex-col gap-5 items-center lg:flex-row lg:gap-10 justify-center w-full">
+        <div v-if="order.status === 'processing'" class="flex flex-col items-center gap-4">
+          <p class="text-xl font-bold text-dark">訂單處理中，請稍候…</p>
+        </div>
+        <div
+          v-else
+          class="flex flex-col gap-5 items-center lg:flex-row lg:gap-10 justify-center w-full"
+        >
           <div class="w-[200px] aspect-[1/1] overflow-hidden">
             <img
               :src="order.image"
@@ -132,7 +159,12 @@ onMounted(async () => {
             </div>
 
             <div class="flex flex-col items-center lg:items-stretch">
-              <p class="text-dark text-xl font-bold">{{ order.name }}</p>
+              <p class="text-dark text-xl font-bold">
+                {{ order.name }}
+                <span v-if="(fetchedOrder?.quantity || 1) > 1">
+                  * {{ fetchedOrder.quantity }} 間
+                </span>
+              </p>
               <p class="text-dark_700 text-base text-wrap">{{ order.address }}</p>
               <p class="text-dark_700 text-base">{{ order.telephone }}</p>
             </div>

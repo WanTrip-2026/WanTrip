@@ -270,15 +270,25 @@
               >
               <button
                 @click="handleBook(room)"
-                :disabled="room.status !== 'available'"
+                :disabled="
+                  room.status === 'capacity_exceeded' ||
+                  (room.status === 'sold_out' && (!room.maxAvailable || room.maxAvailable <= 0))
+                "
                 :class="[
                   'w-full px-[40px] py-[10px] rounded-full mt-4 font-bold transition-colors',
-                  room.status === 'available'
+                  room.status === 'available' ||
+                  (room.status === 'sold_out' && room.maxAvailable && room.maxAvailable > 0)
                     ? 'bg-primary text-white hover:bg-main'
                     : 'bg-gray-300 text-white cursor-not-allowed',
                 ]"
               >
-                <span v-if="room.status === 'sold_out'">已售完</span>
+                <span v-if="room.status === 'sold_out'">
+                  {{
+                    room.maxAvailable && room.maxAvailable > 0
+                      ? `僅剩 ${room.maxAvailable} 間`
+                      : '已售完'
+                  }}
+                </span>
                 <span v-else-if="room.status === 'capacity_exceeded'">超過人數上限</span>
                 <span v-else>立即預定</span>
               </button>
@@ -580,7 +590,7 @@ const router = useRouter()
 const orderStore = useOrderStore()
 const authStore = useAuthStore()
 
-const handleBook = (room: Room) => {
+const handleBook = async (room: Room) => {
   console.log('handleBook called with room:', room)
   if (!authStore.isLoggedIn) {
     alert('請先登入會員以完成結帳')
@@ -591,6 +601,26 @@ const handleBook = (room: Room) => {
     console.error('Room data is missing')
     alert('無法取得房型資料，請重新整理頁面')
     return
+  }
+
+  let finalRooms = peopleConfig.rooms
+  // [NEW] Check for partial availability
+  if (
+    room.maxAvailable !== undefined &&
+    room.maxAvailable > 0 &&
+    peopleConfig.rooms > room.maxAvailable
+  ) {
+    const confirmed = confirm(
+      `您預訂的房數 (${peopleConfig.rooms} 間) 超過目前剩餘空房 (${room.maxAvailable} 間)。\n是否願意調整為預訂 ${room.maxAvailable} 間？`,
+    )
+    if (!confirmed) return
+
+    // User accepted adjustment
+    finalRooms = room.maxAvailable
+    peopleConfig.rooms = finalRooms
+    // Usually we might want to update the UI or query params here, but updating peopleConfig
+    // will trigger the watcher to refetch details (which is okay, ensures consistency).
+    // However, if we want to proceed immediately to checkout, we just use finalRooms.
   }
 
   try {
@@ -612,8 +642,8 @@ const handleBook = (room: Room) => {
       latitude: hotel.value?.latitude,
       longitude: hotel.value?.longitude,
       type: 'hotel',
-      peopleNum: peopleConfig.rooms,
-      quantity: peopleConfig.people,
+      peopleNum: finalRooms, // Use the adjusted room count
+      quantity: peopleConfig.people, // TODO: Might need to adjust people count too if logic dictates
     })
     console.log('Order set successfully, navigating to checkout...')
     router.push('/orders/checkout')
