@@ -78,10 +78,14 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       // 監聽登入狀態變化
-      supabase.auth.onAuthStateChange(async (_event, session) => {
+      supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('[Auth] onAuthStateChange:', event, session?.user?.id)
         user.value = session?.user ?? null
+
         if (user.value) {
-           await ensureUserProfile(user.value)
+           // Temporarily disable profile check to debug hanging issue
+           // console.log('[Auth] Triggering ensureUserProfile from change event')
+           // await ensureUserProfile(user.value)
         }
       })
     } catch (error) {

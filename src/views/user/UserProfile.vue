@@ -367,32 +367,43 @@ const updatePassword = async () => {
 
   updatingPassword.value = true
   try {
-    // 建立一個 5 秒後自動 resolve 的 Promise (視為超時)
-    const timeoutPromise = new Promise((resolve) => {
-      setTimeout(() => resolve({ error: null, timeout: true }), 5000)
-    })
+    // 確保 Session 存在
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    if (sessionError || !session) {
+      console.log('Session missing, trying to refresh...')
+      const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
 
-    const updatePromise = supabase.auth.updateUser({
+      if (refreshError || !refreshedSession) {
+        throw new Error('登入狀態已失效，請重新登入')
+      }
+    }
+
+    const { error } = await supabase.auth.updateUser({
       password: passwordForm.value.newPassword,
     })
 
-    // 使用 Promise.race 避免請求卡死
-    const result: any = await Promise.race([updatePromise, timeoutPromise])
-
-    if (result.error) throw result.error
-
-    if (result.timeout) {
-      toast.success('請求已送出 (系統回應較慢)')
-    } else {
-      toast.success('密碼修改成功')
-    }
-
+    if (error) throw error
+    toast.success('密碼修改成功')
     passwordForm.value.currentPassword = ''
     passwordForm.value.newPassword = ''
     passwordForm.value.confirmPassword = ''
   } catch (err: unknown) {
-    console.error(err)
-    toast.error((err instanceof Error ? err.message : String(err)) || '修改失敗')
+    console.error('Update Password Error:', err)
+    let message = '修改失敗'
+
+    if (err instanceof Error) {
+        if (err.message === 'AUTH_SESSION_MISSING' || err.name === 'AuthSessionMissingError') {
+            message = '登入已過期，請重新登入'
+            // Optional: Redirect to login or open login modal
+            // authStore.openLoginModal() // If you want to auto-open login
+        } else if (err.message.includes('403')) {
+             message = '無權限修改，請確認帳號狀態或重新登入'
+        } else {
+            message = err.message
+        }
+    }
+
+    toast.error(message)
   } finally {
     updatingPassword.value = false
   }
