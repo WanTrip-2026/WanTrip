@@ -312,6 +312,7 @@ const isOpen = ref(false)
 const isLoginModalOpen = computed({
   get: () => auth.showLoginModal,
   set: (val) => {
+    console.log('[AppNavbar] isLoginModalOpen setter called with:', val)
     auth.showLoginModal = val
   },
 })
@@ -350,10 +351,6 @@ const handleLogout = async () => {
   isOpen.value = false
   await auth.logout()
   router.push('/')
-  // 等待路由跳轉完成後刷新頁面
-  setTimeout(() => {
-    window.location.reload()
-  }, 100)
 }
 const onDocClick = (e: MouseEvent) => {
   if (!isUserMenuOpen.value) return
@@ -366,10 +363,11 @@ const closeAllAuthModal = () => {
   auth.closeLoginModal()
   isRegisterModalOpen.value = false
 }
+
 const handleLogin = (payload: { user: unknown }) => {
   const user = payload.user as User
   auth.setAuth(user)
-  isLoginModalOpen.value = false
+  auth.closeLoginModal()
 }
 const handleSignup = () => {
   auth.closeLoginModal()
