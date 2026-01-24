@@ -1,0 +1,265 @@
+<template>
+  <div class="fixed bottom-0 right-0 z-50">
+    <div
+      v-if="isOpen"
+      class="flex flex-col w-80 h-[520px] rounded-[20px] shadow-xl overflow-hidden mr-6 mb-24 bg-white/50 backdrop-blur-xl border border-white/50"
+    >
+      <div class="bg-primary text-white font-semibold text-lg text-center py-3 z-10">
+        旅遊規劃師 阿萬🪄
+      </div>
+
+      <div ref="msgBox" class="flex-1 p-3 flex flex-col gap-3 overflow-y-auto scrollbar-thin pb-4">
+        <div
+          v-for="m in messages"
+          :key="m.id"
+          :class="[
+            'max-w-[85%] px-3 py-2 rounded-2xl shadow-sm break-words flex items-start relative',
+            m.role === 'user'
+              ? 'self-end bg-gradient-to-r bg-primary text-white rounded-br-sm'
+              : 'self-start bg-white/80 text-dark-800 rounded-bl-sm',
+          ]"
+        >
+          <img
+            v-if="m.role === 'assistant'"
+            src="https://i.imgur.com/1XbY9R1.png"
+            alt="AI"
+            class="w-6 h-6 rounded-full mr-2 mt-1 flex-shrink-0"
+          />
+          <span class="whitespace-pre-wrap text-sm leading-relaxed">{{ m.content }}</span>
+        </div>
+
+        <div
+          v-if="isLoading"
+          class="self-start bg-white/90 px-4 py-3 rounded-2xl shadow-sm border border-gray-100"
+        >
+          <div class="flex items-center gap-2">
+            <span class="text-lg animate-spin-slow">🪄</span>
+            <span class="text-sm text-dark-800 leading-relaxed">
+              {{ currentLoadingText }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-2 p-3 border-t border-gray-100 bg-white z-10 relative">
+        <input
+          v-model="userInput"
+          @keyup.enter="sendMessage"
+          :disabled="isLoading"
+          placeholder="阿萬等你下指令冒險..."
+          class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark-900 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:bg-gray-50"
+        />
+        <button
+          @click="sendMessage"
+          :disabled="isLoading"
+          class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-main_800 transition disabled:bg-gray-400 flex-shrink-0"
+        >
+          GO!
+        </button>
+      </div>
+    </div>
+
+    <button
+      @click="toggleChat"
+      class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-white text-2xl flex items-center justify-center shadow-lg hover:scale-110 transition z-50"
+    >
+      <span>{{ isOpen ? '✖' : '💬' }}</span>
+    </button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, nextTick } from 'vue'
+
+interface Message {
+  id: number
+  role: 'user' | 'assistant'
+  content: string
+}
+
+interface ChatApiResponse {
+  answer?: string
+  error?: string
+}
+
+const isOpen = ref(false)
+const userInput = ref('')
+const isLoading = ref(false)
+const msgBox = ref<HTMLElement | null>(null)
+
+// 1. 準備歡迎詞陣列
+const greetings = [
+  '今天的天氣適合出發！想去哪裡走走？☀️',
+  '世界這麼大，WanTrip 陪你去看看！✈️',
+  '正在為訂飯店煩惱嗎？交給我吧！🏨',
+  '聽說想旅行的人最帥/最美了，今天想去哪？🌈',
+]
+
+const getTimeGreeting = () => {
+  const hour = new Date().getHours()
+  if (hour < 12) return '早安！美好的一天從 WanTrip 開始，想去哪裡冒險呢？✈️'
+  if (hour < 18) return '午安！下午茶時間最適合規劃行程了，我幫你找靈感！ 🍰'
+  return '晚安！睡前偷偷看個景點，夢裡先去玩一次嘿嘿！🌙'
+}
+
+const messages = ref<Message[]>([])
+
+// 3. 切換視窗邏輯
+const toggleChat = () => {
+  isOpen.value = !isOpen.value
+
+  if (isOpen.value && messages.value.length === 0) {
+    // 隨機選一個普通歡迎詞
+    const randomGreeting =
+      greetings[Math.floor(Math.random() * greetings.length)] || '您好！想去哪裡玩嗎？'
+
+    // 50% 機率出隨機詞，50% 出時間詞
+    const welcomeMsg = Math.random() > 0.5 ? randomGreeting : getTimeGreeting()
+
+    messages.value.push({
+      id: Date.now(),
+      role: 'assistant',
+      content: welcomeMsg,
+    })
+    scrollToBottom()
+  }
+}
+
+const currentLoadingText = ref('')
+
+const loadingTexts = [
+  '阿萬正在尋找靈感... ✨',
+  '阿萬正在翻閱私藏地圖... 🗺️',
+  '阿萬幫你從口袋名單挑選最棒的景點... 💎',
+  '阿萬正在喝口咖啡，靈感馬上就來！☕',
+  '阿萬正在努力讓你的旅程變得更完美... 🌈',
+]
+
+// 自動捲動到底部
+const scrollToBottom = async () => {
+  await nextTick()
+  if (msgBox.value) {
+    msgBox.value.scrollTop = msgBox.value.scrollHeight
+  }
+}
+
+const sendMessage = async () => {
+  if (!userInput.value.trim() || isLoading.value) return
+
+  const userQuery = userInput.value
+
+  // A. 先把使用者的問題推送到畫面上
+  messages.value.push({
+    id: Date.now(),
+    role: 'user',
+    content: userQuery,
+  })
+
+  const randomIndex = Math.floor(Math.random() * loadingTexts.length)
+  currentLoadingText.value = loadingTexts[randomIndex] || '阿萬正在思考中...'
+
+  // B. 清空輸入框、開啟載入狀態、捲動到底部
+  userInput.value = ''
+  isLoading.value = true
+  await scrollToBottom()
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-ai`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ query: userQuery }),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`伺服器回應錯誤: ${response.status} - ${errorText}`)
+    }
+
+    const data: ChatApiResponse = await response.json()
+
+    messages.value.push({
+      id: Date.now() + 1,
+      role: 'assistant',
+      content: data.answer || '抱歉，我暫時無法回答這個問題。',
+    })
+  } catch (err) {
+    console.error('--- ❌ 最終嘗試失敗 ---', err)
+    const errorMessage = err instanceof Error ? err.message : '未知錯誤'
+    messages.value.push({
+      id: Date.now() + 2,
+      role: 'assistant',
+      content: `❌ 連線失敗：${errorMessage}`,
+    })
+  } finally {
+    isLoading.value = false
+    await scrollToBottom()
+  }
+}
+</script>
+
+<style>
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  display: inline-block;
+  animation: spin-slow 2s linear infinite;
+}
+
+@keyframes magic-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+    filter: blur(0px);
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
+    filter: blur(1px);
+  }
+}
+
+.magic-dot {
+  animation: magic-pulse 1.2s infinite ease-in-out;
+}
+
+/* 慢速旋轉星星 */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  display: inline-block;
+  animation: spin-slow 3s linear infinite;
+}
+
+div[ref='msgBox']::-webkit-scrollbar,
+.overflow-y-auto::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+div[ref='msgBox']::-webkit-scrollbar-thumb,
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1) !important;
+  border-radius: 10px !important;
+}
+
+div[ref='msgBox']::-webkit-scrollbar-track,
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+</style>
