@@ -32,9 +32,9 @@ const product = reactive({
   highlights: orderStore.orderData.highlights || [],
   attraction_id: orderStore.orderData.attraction_id || '',
 })
-const peopleNum = computed(() => {
+const roomQuantity = computed(() => {
   const data = orderStore.orderData
-  const n = Number(data.peopleNum ?? data.quantity ?? 1)
+  const n = Number(data.roomQuantity ?? 1)
   return Number.isFinite(n) && n > 0 ? n : 1
 })
 
@@ -61,7 +61,7 @@ const nights = computed(() => {
 
 const subtotal = computed(() => {
   const price = Number(product.price || 0)
-  const count = peopleNum.value
+  const count = roomQuantity.value
   if (product.type === 'hotel') {
     return price * count * nights.value
   }
@@ -101,7 +101,7 @@ const checkInventory = async (): Promise<boolean> => {
       params: {
         start_date: sDate,
         end_date: eDate,
-        rooms: peopleNum.value, // Check if we have enough rooms
+        rooms: roomQuantity.value, // Check if we have enough rooms
         adults: 0, // We only care about room quantity for inventory
       },
     })
@@ -116,11 +116,11 @@ const checkInventory = async (): Promise<boolean> => {
 
     if (
       targetRoom.status === 'sold_out' ||
-      (targetRoom.maxAvailable !== undefined && targetRoom.maxAvailable < peopleNum.value)
+      (targetRoom.maxAvailable !== undefined && targetRoom.maxAvailable < roomQuantity.value)
     ) {
       const left = targetRoom.maxAvailable ?? 0
       alert(
-        `庫存不足！該房型僅剩 ${left} 間，您預訂了 ${peopleNum.value} 間。請調整數量或選擇其他房型。`,
+        `庫存不足！該房型僅剩 ${left} 間，您預訂了 ${roomQuantity.value} 間。請調整數量或選擇其他房型。`,
       )
       return false
     }
@@ -244,9 +244,9 @@ const createOrderPayload = (orderId: string) => {
     image: product.image,
     checkInDate: checkIn,
     checkOutDate: checkOut,
-    room_id: product.type === 'hotel' ? product.room_id : null, // [NEW] Pass room_id
+    room_id: product.type === 'hotel' ? product.room_id : null,
     roomType: product.subtitle,
-    peopleNum: peopleNum.value,
+    peopleNum: roomQuantity.value, // Map to backend field
     userInfo: {
       name: form.name,
       email: form.email,
@@ -401,7 +401,7 @@ function applyCoupon() {
         <span class="text-dark_700 text-sm"
           >原價
           <span class="text-sm text-dark_500">
-            / {{ peopleNum }} 間 x {{ nights }} 晚 x NT$ {{ product.price.toLocaleString() }}
+            / {{ roomQuantity }} 間 x {{ nights }} 晚 x NT$ {{ product.price.toLocaleString() }}
           </span></span
         >
         <span class="text-dark_700 text-sm">續住優惠</span>
@@ -624,7 +624,7 @@ function applyCoupon() {
                 v-if="product.type === 'hotel'"
                 class="text-sm text-black/40 mb-1 flex items-center justify-end"
               >
-                {{ peopleNum }} 間 x {{ nights }} 晚 x NT$ {{ product.price.toLocaleString() }}
+                {{ roomQuantity }} 間 x {{ nights }} 晚 x NT$ {{ product.price.toLocaleString() }}
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-dark_500">原價</span>

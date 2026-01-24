@@ -26,8 +26,8 @@ type OrderData = {
   category?: string | string[]
   highlights?: string[]
   // Additional fields for checkout
-  peopleNum?: number | string
-  quantity?: number | string
+  roomQuantity?: number | string
+  peopleCount?: number | string
 }
 
 const STORAGE_KEY = 'orderData'
@@ -50,8 +50,8 @@ const DEFAULT_ORDER: OrderData = {
   city: '',
   category: '',
   highlights: [],
-  peopleNum: 1,
-  quantity: 1,
+  roomQuantity: 1,
+  peopleCount: 1,
 }
 
 function safeLoadOrder(): OrderData {
@@ -90,8 +90,8 @@ export const useOrderStore = defineStore('order', () => {
       city: data.city ?? orderData.value.city,
       category: data.category ?? orderData.value.category,
       highlights: data.highlights ?? orderData.value.highlights,
-      peopleNum: data.peopleNum ?? orderData.value.peopleNum,
-      quantity: data.quantity ?? orderData.value.quantity,
+      roomQuantity: data.roomQuantity ?? orderData.value.roomQuantity,
+      peopleCount: data.peopleCount ?? orderData.value.peopleCount,
     }
 
     orderData.value = newData
