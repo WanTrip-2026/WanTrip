@@ -699,9 +699,7 @@ const renderMarkers = async () => {
                     <h3 class="m-0 text-base font-bold text-black truncate pr-8">
                       ${hotel.name}
                     </h3>
-                    <div class="bg-[#2F3D4D] text-white p-2 rounded-full text-[10px]">
-                        ${hotel.star_rating}.0
-                    </div>
+
                 </div>
 
                   <div class="flex gap-0.5 my-1">

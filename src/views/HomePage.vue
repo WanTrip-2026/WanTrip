@@ -8,7 +8,7 @@
           <div class="relative w-full overflow-hidden rounded-[40px] bg-gray-200 shadow-sm">
             <img
               src="https://res.cloudinary.com/wantrip/image/upload/v1768481888/IMG_7318_dizpjn.jpg"
-              class="aspect-[3/4] absolute inset-0 w-full h-full object-fill"
+              class="aspect-[3/4] absolute inset-0 w-full h-full object-cover"
               alt="banner"
             />
             <div class="h-[340px] md:h-[420px]"></div>
@@ -97,8 +97,7 @@
             :key="hotel.id"
             v-bind="hotel"
             :expand-left="index >= hotHotelsA.length - 2"
-            @compare="handleWishlist"
-            @book="handleBook"
+            @book="handleBookHotel"
           />
         </div>
       </section>
@@ -114,8 +113,7 @@
             :key="hotel.id"
             v-bind="hotel"
             :expand-left="index >= hotHotelsB.length - 2"
-            @compare="handleWishlist"
-            @book="handleBook"
+            @book="handleBookHotel"
           />
         </div>
       </section>
@@ -130,8 +128,7 @@
             :key="recommend.id"
             v-bind="recommend"
             :expand-left="index >= recommendations.length - 2"
-            @compare="handleWishlist"
-            @book="handleBook"
+            @book="handleBookTicket"
           />
         </div>
       </section>
@@ -230,13 +227,8 @@ onMounted(async () => {
   }
 })
 
-const handleWishlist = (id: string | number) => {
-  const product = hotHotelsA.value.find((t) => t.id === id)
-}
-
-const handleBook = (id: string | number) => {
-  router.push(`/tickets/${id}`)
-}
+const handleBookHotel = (id: string | number) => router.push(`/hotels/${id}`)
+const handleBookTicket = (id: string | number) => router.push(`/tickets/${id}`)
 
 const stayKeywords = STAY_KEYWORDS
 
