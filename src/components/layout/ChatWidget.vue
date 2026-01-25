@@ -158,6 +158,12 @@ const sendMessage = async () => {
     content: userQuery,
   })
 
+  // 整理記憶紀錄
+  const chatHistory = messages.value.map((m) => ({
+    role: m.role,
+    content: m.content,
+  }))
+
   const randomIndex = Math.floor(Math.random() * loadingTexts.length)
   currentLoadingText.value = loadingTexts[randomIndex] ?? '阿萬正在思考中...'
 
@@ -167,7 +173,7 @@ const sendMessage = async () => {
   await scrollToBottom()
 
   try {
-    const data = await chatService.sendMessage(userQuery)
+    const data = await chatService.sendMessage(chatHistory)
 
     messages.value.push({
       id: Date.now() + 1,
