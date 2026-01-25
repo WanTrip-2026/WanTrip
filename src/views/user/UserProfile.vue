@@ -378,7 +378,7 @@ const updatePassword = async () => {
     }
 
     // 建立一個 5 秒後自動 resolve 的 Promise (視為超時)
-    const timeoutPromise = new Promise((resolve) => {
+    const timeoutPromise = new Promise<{ error: null; timeout: true }>((resolve) => {
       setTimeout(() => resolve({ error: null, timeout: true }), 5000)
     })
 
@@ -387,13 +387,13 @@ const updatePassword = async () => {
     })
 
     // 使用 Promise.race 避免請求卡死 (會同時跑更新與 5 秒計時)
-    const result: any = await Promise.race([updatePromise, timeoutPromise])
+    const result = await Promise.race([updatePromise, timeoutPromise])
 
     // 如果有錯誤就噴出錯誤
     if (result.error) throw result.error
 
     // 判斷是「真的成功」還是「跑到超時」
-    if (result.timeout) {
+    if ('timeout' in result) {
       // 雖然超時了，但通常資料已經送到後端，所以告訴使用者稍等
       toast.success('請求已送出 (系統回應較慢)')
     } else {
@@ -445,9 +445,7 @@ const loadMe = async () => {
 
   // Wait for auth to be ready
   if (!authStore.ready) {
-    // simpler to just return and let watch handle it, or wait
-    // But since we call this onMounted, we might need to wait manually or just rely on watch.
-    // actually, let's just proceed if ready, or return.
+    return
   }
 
   const currentUser = authStore.user
@@ -493,10 +491,10 @@ const loadMe = async () => {
 
 // Watch for auth changes to reload
 watch(
-  () => authStore.user,
-  (newUser) => {
-    if (newUser) loadMe()
-    else {
+  () => [authStore.user, authStore.ready],
+  ([newUser, isReady]) => {
+    if (isReady && newUser) loadMe()
+    else if (isReady && !newUser) {
       user.value = null
       profile.value = null
       orders.value = []
