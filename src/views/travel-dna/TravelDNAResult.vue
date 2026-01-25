@@ -1,13 +1,13 @@
 <template>
   <div
-    class="w-full h-[100dvh] relative bg-page bg-cover bg-center flex items-center justify-center overflow-x-hidden"
+    class="fixed inset-0 z-0 bg-page bg-cover bg-center"
     style="background-image: url('/src/assets/traveldna_img/IntroBg.png')"
   >
-    <div class="absolute inset-0 w-full h-full bg-primary/50 backdrop-blur-sm"></div>
+    <div class="absolute inset-0 bg-primary/50 backdrop-blur-sm"></div>
+  </div>
 
-    <div
-      class="relative z-10 w-full max-w-2xl px-4 pt-20 md:pt-28 pb-28 md:pb-20 flex flex-col items-center"
-    >
+  <div class="relative z-10 min-h-screen w-full flex justify-center overflow-y-auto">
+    <div class="w-full max-w-2xl px-5 py-24 md:py-24 flex flex-col items-center">
       <div
         class="bg-white/20 backdrop-blur-md rounded-[20px] border border-white/30 p-6 md:p-10 shadow-xl w-full"
       >
