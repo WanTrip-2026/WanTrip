@@ -68,7 +68,6 @@
               v-bind="item"
               :expand-left="index >= section.data.length - 2"
               @compare="handleWishlist"
-              @book="handleBook"
             />
           </div>
         </section>
