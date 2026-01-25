@@ -103,19 +103,19 @@ const router = createRouter({
       path: '/travel-dna',
       name: 'travelDna',
       component: TravelDNA,
-      meta: { showAppNavbar: true, showFooter: true },
+      meta: { showAppNavbar: true, showFooter: false },
     },
     {
       path: '/travel-dna/intro',
       name: 'travelDnaIntro',
       component: TravelDNAIntro,
-      meta: { showAppNavbar: true, showFooter: true },
+      meta: { showAppNavbar: true, showFooter: false },
     },
     {
       path: '/travel-dna/result',
       name: 'travelDnaResult',
       component: TravelDNAResult,
-      meta: { showAppNavbar: true, showFooter: true },
+      meta: { showAppNavbar: true, showFooter: false },
     },
     {
       path: '/orders/completed',
