@@ -1,10 +1,18 @@
+interface ChatMessage {
+  role: 'user' | 'assistant' | 'system'
+  content: string
+}
+
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export const chatService = {
-  async sendMessage(userQuery: string) {
-    // 如果 userQuery 完全是空的或亂碼，直接擋掉
-    if (!userQuery.trim()) throw new Error('請輸入問題喔！')
+  async sendMessage(history: ChatMessage[]) {
+    // 檢查最後一則訊息是否存在且不是空白
+    const lastMessage = history[history.length - 1]
+    if (!lastMessage || !lastMessage.content.trim()) {
+      throw new Error('請輸入問題喔！')
+    }
 
     const response = await fetch(`${SUPABASE_URL}/functions/v1/chat-ai`, {
       method: 'POST',
@@ -13,10 +21,7 @@ export const chatService = {
         Authorization: `Bearer ${ANON_KEY}`,
       },
       // 確保 query 被正確包裝
-      body: JSON.stringify({
-        query: userQuery,
-        timestamp: new Date().toISOString(),
-      }),
+      body: JSON.stringify({ messages: history }),
     })
 
     if (!response.ok) {
