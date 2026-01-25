@@ -85,7 +85,12 @@
                 @click="toggleUserMenu"
               >
                 <span class="max-w-[160px] truncate">
-                  {{ auth.user?.user_metadata?.full_name || auth.user?.user_metadata?.username || auth.user?.email || '會員' }}
+                  {{
+                    auth.user?.user_metadata?.full_name ||
+                    auth.user?.user_metadata?.username ||
+                    auth.user?.email ||
+                    '會員'
+                  }}
                 </span>
 
                 <svg
@@ -302,11 +307,13 @@ import LoginModal from '@/views/user/LoginModal.vue'
 import RegisterModal from '@/views/user/RegisterModal.vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useFavoriteStore } from '@/stores/favoriteStore'
 import type { User } from '@supabase/supabase-js'
 
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
+const favoriteStore = useFavoriteStore()
 
 const isOpen = ref(false)
 const isLoginModalOpen = computed({
@@ -348,6 +355,7 @@ const openLoginFromRegister = () => {
 const handleLogout = async () => {
   isUserMenuOpen.value = false
   isOpen.value = false
+  favoriteStore.clear()
   await auth.logout()
   router.push('/')
 }

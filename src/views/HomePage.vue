@@ -202,10 +202,10 @@ const hotHotelsB = computed(() => recommendedHotels.value.slice(0, 6))
 onMounted(async () => {
   try {
     const { data: featured } = await fetchFeaturedHotels()
-    featuredHotels.value = featured.value
+    featuredHotels.value = featured.value ?? []
 
     const { data: recommended } = await fetchRecommendedHotels()
-    recommendedHotels.value = recommended.value
+    recommendedHotels.value = recommended.value ?? []
   } catch (error) {
     console.error('Error fetching hotels:', error)
   }

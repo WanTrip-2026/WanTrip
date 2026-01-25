@@ -7,6 +7,12 @@ import { useAuthStore } from '@/stores/auth'
 
 import { isValidEmail, isValidPhone } from '@/utils/validators'
 
+interface Room {
+  id: string
+  status?: string
+  maxAvailable?: number
+}
+
 const orderStore = useOrderStore()
 const authStore = useAuthStore()
 // const { orderData } = orderStore // [FIX] Removed destructuring to avoid stale reference
@@ -107,7 +113,7 @@ const checkInventory = async (): Promise<boolean> => {
     })
 
     const rooms = res.data
-    const targetRoom = rooms.find((r: any) => r.id === product.room_id)
+    const targetRoom = rooms.find((r: Room) => r.id === product.room_id)
 
     if (!targetRoom) {
       alert('無法取得房型資訊，請稍後再試')
@@ -422,7 +428,7 @@ function applyCoupon() {
   </div>
 
   <div class="w-full min-h-screen">
-    <div class="mx-auto max-w-[1240px] px-5 pt-[200px] pb-24 pt-[260px] lg:pt-24">
+    <div class="mx-auto max-w-[1240px] px-5 pt-[200px] pb-24 lg:pt-24">
       <!-- Error Display -->
       <div
         v-if="errorMessage"

@@ -612,7 +612,7 @@ function handleBooking() {
 function onSearch() {
   if (!authStore.isLoggedIn) {
     alert('請先登入會員')
-    router.push('/login')
+    authStore.openLoginModal()
     return
   }
 
@@ -629,6 +629,9 @@ function onSearch() {
 
   // Total price is already computed in totalPrice
 
+  // Calculate total tickets
+  const totalTickets = selectedTickets.reduce((sum, t) => sum + t.quantity, 0)
+
   orderStore.setOrder({
     type: 'attraction',
     title: attraction.value.name,
@@ -643,6 +646,8 @@ function onSearch() {
     address: attraction.value.address || '',
     attraction_id: attraction.value.id,
     hotel_id: '', // Ensure hotel_id is empty for attractions to avoid backend confusion
+    roomQuantity: 1, // [FIX] Reset multiplier to 1 as price is already total
+    peopleCount: totalTickets, // [FIX] Set people count to total tickets
   })
 
   router.push('/orders/checkout')
