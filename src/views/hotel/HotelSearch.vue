@@ -45,6 +45,7 @@ const error = ref<string | null>(null)
 const isLoading = ref(false) // [NEW] Loading state
 const facilities = ref<string[]>([]) // 存放 API 抓回的設施清單
 const isFilterDrawerOpen = ref(false)
+const sortBy = ref('') // 'price_asc' | 'price_desc' | 'star_desc'
 
 // --- 3. 篩選與分頁狀態 ---
 const currentPage = ref(1)
@@ -112,6 +113,9 @@ const fetchHotels = async (page = 1, limit = itemsPerPage) => {
     // 價格篩選
     params.append('min_price', String(priceRange.min))
     params.append('max_price', String(priceRange.max))
+
+    // 排序
+    if (sortBy.value) params.append('sort_by', sortBy.value)
 
     // 側邊欄篩選參數
     const selectedFacilities = HotelFiltered.find((m) => m.key === 'facilities')?.selected ?? []
@@ -477,27 +481,54 @@ watch(
           </button>
           <button
             name="price-high-to-low"
-            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition whitespace-nowrap"
+            @click="
+              () => {
+                sortBy = 'price_desc'
+                fetchHotels(1)
+              }
+            "
+            :class="[
+              'rounded-[20px] px-6 py-2 shadow-sm transition whitespace-nowrap',
+              sortBy === 'price_desc'
+                ? 'bg-primary text-white hover:bg-main'
+                : 'bg-white text-dark border border-gray-300 hover:bg-gray-50',
+            ]"
           >
             價格高到低
           </button>
           <button
             name="price-low-to-high"
-            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition whitespace-nowrap"
+            @click="
+              () => {
+                sortBy = 'price_asc'
+                fetchHotels(1)
+              }
+            "
+            :class="[
+              'rounded-[20px] px-6 py-2 shadow-sm transition whitespace-nowrap',
+              sortBy === 'price_asc'
+                ? 'bg-primary text-white hover:bg-main'
+                : 'bg-white text-dark border border-gray-300 hover:bg-gray-50',
+            ]"
           >
             價格低到高
           </button>
           <button
             name="popular-high-to-low"
-            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition whitespace-nowrap"
+            @click="
+              () => {
+                sortBy = 'star_desc'
+                fetchHotels(1)
+              }
+            "
+            :class="[
+              'rounded-[20px] px-6 py-2 shadow-sm transition whitespace-nowrap',
+              sortBy === 'star_desc'
+                ? 'bg-primary text-white hover:bg-main'
+                : 'bg-white text-dark border border-gray-300 hover:bg-gray-50',
+            ]"
           >
-            熱門高到低
-          </button>
-          <button
-            name="recommend-high-to-low"
-            class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm whitespace-nowrap"
-          >
-            評價高到低
+            星級高到低
           </button>
         </div>
 
