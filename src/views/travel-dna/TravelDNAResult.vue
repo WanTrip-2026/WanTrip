@@ -203,35 +203,25 @@ const role = computed<RoleKey>(() => {
   return 'turtle'
 })
 
-const roleImgRef = ref<HTMLImageElement>()
-
 // 儲存角色圖
-const saveRoleImage = () => {
-  const img = roleImgRef.value
-  if (!img) return
+const saveRoleImage = async () => {
+  try {
+    const currentRole = roleMap[role.value] // 根據目前選的角色
+    const imgUrl = currentRole.img
 
-  const scale = 2
-  const canvas = document.createElement('canvas')
-  canvas.width = img.naturalWidth * scale
-  canvas.height = img.naturalHeight * scale
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
+    const res = await fetch(imgUrl, { mode: 'cors' })
+    if (!res.ok) throw new Error('圖片抓取失敗')
+    const blob = await res.blob()
 
-  // 提升畫質
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = 'high'
-
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-
-  canvas.toBlob((blob) => {
-    if (!blob) return
-    const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
-    link.href = url
-    link.download = 'WanTripTravelDNA.png'
+    link.href = URL.createObjectURL(blob)
+    link.download = `${currentRole.name}.webp` // 自動用角色名稱命名
     link.click()
-    URL.revokeObjectURL(url)
-  }, 'image/png')
+
+    URL.revokeObjectURL(link.href)
+  } catch (err) {
+    console.error('下載失敗', err)
+  }
 }
 
 const goToIntro = () => {
