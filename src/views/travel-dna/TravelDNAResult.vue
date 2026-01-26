@@ -19,8 +19,13 @@
           decoding="async"
           alt="Result"
           ref="roleImgRef"
-          class="w-full max-w-[280px] md:max-w-[380px] mb-6 mx-auto drop-shadow-2xl"
+          @load="playFadeIn"
+          class="w-full max-w-[280px] md:max-w-[380px] mb-6 mx-auto drop-shadow-2xl opacity-0"
         />
+        <div
+          v-if="!imgLoaded"
+          class="w-full max-w-[280px] md:max-w-[380px] mb-6 mx-auto h-[280px] md:h-[380px] bg-white/10 rounded-2xl animate-pulse"
+        ></div>
 
         <div class="mb-10 text-center">
           <p
@@ -111,6 +116,7 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router'
 import { ref, onMounted, computed } from 'vue'
+import { gsap } from 'gsap'
 
 type RoleKey = 'bear' | 'lion' | 'turtle' | 'sheep' | 'owl' | 'cat' | 'fox' | 'rabbit'
 
@@ -127,6 +133,20 @@ interface RoleData {
 
 const router = useRouter()
 const route = useRoute()
+
+const roleImgRef = ref<HTMLImageElement | null>(null)
+const imgLoaded = ref(false)
+
+const playFadeIn = () => {
+  if (!roleImgRef.value) return
+  imgLoaded.value = true
+
+  gsap.fromTo(
+    roleImgRef.value,
+    { opacity: 0, scale: 0.95 },
+    { opacity: 1, scale: 1, duration: 0.8, ease: 'power2.out' },
+  )
+}
 
 const roleMap: Record<RoleKey, RoleData> = {
   bear: {
