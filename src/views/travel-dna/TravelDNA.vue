@@ -1,8 +1,10 @@
 <template>
   <div class="w-full h-[100dvh] relative overflow-x-hidden flex flex-col">
     <div
-      class="fixed inset-0 w-full h-full bg-cover bg-center z-0"
-      style="background-image: url('/src/assets/traveldna_img/IntroBg.png')"
+      class="fixed inset-0 z-0 bg-page bg-cover bg-center"
+      style="
+        background-image: url('https://res.cloudinary.com/wantrip/image/upload/f_auto,q_90,w_2560,dpr_2/v1769236224/IntroBg_fji07v');
+      "
     ></div>
     <div class="fixed inset-0 w-full h-full bg-primary/50 backdrop-blur-sm z-0"></div>
 
