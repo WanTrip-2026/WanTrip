@@ -8,7 +8,7 @@
   >
     <div class="relative h-full w-[183px] flex-shrink-0">
       <img
-        :src="getOptimizedImageUrl(image_url, { w: 600 })"
+        :src="getOptimizedImageUrl(image_url, { w: 600, h: 400, c: 'fill' })"
         :alt="name"
         class="h-full w-full object-cover"
         loading="lazy"
