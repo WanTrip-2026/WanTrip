@@ -88,7 +88,7 @@ import { chatService } from '@/constants/chatService'
 
 interface Message {
   id: number
-  role: 'user' | 'assistant'
+  role: 'user' | 'assistant' | 'system'
   content: string
 }
 
