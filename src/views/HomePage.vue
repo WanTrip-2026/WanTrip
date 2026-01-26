@@ -6,17 +6,34 @@
       <section class="relative pb-32 md:pb-20">
         <div class="relative">
           <div class="relative w-full overflow-hidden rounded-[40px] bg-gray-200 shadow-sm">
-            <img
-              :src="
-                getOptimizedImageUrl(
-                  'https://res.cloudinary.com/wantrip/image/upload/v1768481888/IMG_7318_dizpjn.jpg',
-                  { w: 1240 },
-                )
-              "
-              class="aspect-[3/4] absolute inset-0 w-full h-full object-cover"
-              alt="banner"
-              fetchpriority="high"
-            />
+            <picture>
+              <!-- Desktop: h-420 -->
+              <source
+                media="(min-width: 768px)"
+                :srcset="
+                  getOptimizedImageUrl(BANNER_IMAGE, { w: 1240, h: 420, c: 'fill' }) +
+                  ' 1x, ' +
+                  getOptimizedImageUrl(BANNER_IMAGE, { w: 2480, h: 840, c: 'fill' }) +
+                  ' 2x'
+                "
+              />
+              <!-- Mobile: h-340 -->
+              <source
+                media="(max-width: 767px)"
+                :srcset="
+                  getOptimizedImageUrl(BANNER_IMAGE, { w: 768, h: 340, c: 'fill' }) +
+                  ' 1x, ' +
+                  getOptimizedImageUrl(BANNER_IMAGE, { w: 1536, h: 680, c: 'fill' }) +
+                  ' 2x'
+                "
+              />
+              <img
+                :src="getOptimizedImageUrl(BANNER_IMAGE, { w: 1240, h: 420, c: 'fill' })"
+                class="absolute inset-0 w-full h-full object-cover"
+                alt="banner"
+                fetchpriority="high"
+              />
+            </picture>
             <div class="h-[340px] md:h-[420px]"></div>
           </div>
 
@@ -182,6 +199,9 @@ import { useHotelApi } from '@/composables/useHotelApi'
 import { REGIONS, STAY_KEYWORDS, REGION_CITIES } from '@/constants/home'
 import type { HomePageCardItem } from '@/types/hotel'
 import { getOptimizedImageUrl } from '@/utils/image'
+
+const BANNER_IMAGE =
+  'https://res.cloudinary.com/wantrip/image/upload/v1768481888/IMG_7318_dizpjn.jpg'
 
 const activeTab = ref('stay')
 
