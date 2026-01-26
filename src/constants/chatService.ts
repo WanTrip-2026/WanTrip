@@ -18,6 +18,7 @@ export const chatService = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        apikey: ANON_KEY,
         Authorization: `Bearer ${ANON_KEY}`,
       },
       // 確保 query 被正確包裝
