@@ -7,7 +7,12 @@
     ]"
   >
     <div class="relative h-full w-[183px] flex-shrink-0">
-      <img :src="image_url" :alt="name" class="h-full w-full object-cover" />
+      <img
+        :src="getOptimizedImageUrl(image_url, { w: 600 })"
+        :alt="name"
+        class="h-full w-full object-cover"
+        loading="lazy"
+      />
       <div
         class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent group-hover:opacity-0 transition-opacity duration-300"
       >
@@ -73,6 +78,7 @@ import { RouterLink } from 'vue-router'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 import { useAuthStore } from '@/stores/auth'
 import { computed } from 'vue'
+import { getOptimizedImageUrl } from '@/utils/image'
 
 // 統一命名規範與預設值
 interface Props {

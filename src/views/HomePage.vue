@@ -7,9 +7,15 @@
         <div class="relative">
           <div class="relative w-full overflow-hidden rounded-[40px] bg-gray-200 shadow-sm">
             <img
-              src="https://res.cloudinary.com/wantrip/image/upload/v1768481888/IMG_7318_dizpjn.jpg"
+              :src="
+                getOptimizedImageUrl(
+                  'https://res.cloudinary.com/wantrip/image/upload/v1768481888/IMG_7318_dizpjn.jpg',
+                  { w: 1240 },
+                )
+              "
               class="aspect-[3/4] absolute inset-0 w-full h-full object-cover"
               alt="banner"
+              fetchpriority="high"
             />
             <div class="h-[340px] md:h-[420px]"></div>
           </div>
@@ -76,7 +82,7 @@
             <div
               class="h-[110px] w-full aspect-[3/4]"
               :style="{
-                backgroundImage: `url(${r.img})`,
+                backgroundImage: `url(${getOptimizedImageUrl(r.img, { w: 400 })})`,
                 backgroundSize: 'cover',
               }"
             ></div>
@@ -171,6 +177,7 @@ import SearchBar from '@/components/layout/SearchBar.vue'
 import { useHotelApi } from '@/composables/useHotelApi'
 import { REGIONS, STAY_KEYWORDS, REGION_CITIES } from '@/constants/home'
 import type { HomePageCardItem } from '@/types/hotel'
+import { getOptimizedImageUrl } from '@/utils/image'
 
 const activeTab = ref('stay')
 
