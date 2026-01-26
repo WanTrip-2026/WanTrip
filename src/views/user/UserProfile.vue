@@ -418,7 +418,7 @@ onUnmounted(() => {
               <!-- 生日 -->
               <div>
                 <label for="birthday" class="block mb-1 font-medium">
-                  生日（YYYY / MM / DD）
+                  生日
                 </label>
                 <input
                   id="birthday"
@@ -426,6 +426,7 @@ onUnmounted(() => {
                   :disabled="!isEditing"
                   type="date"
                   required
+                  placeholder="YYYY-MM-DD"
                   class="w-full rounded-full border border-gray-300 px-5 py-3"
                   v-model="form.birthday"
                 />
