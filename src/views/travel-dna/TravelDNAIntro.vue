@@ -1,10 +1,10 @@
 <template>
-  <div class="w-full h-screen relative">
-    <img
-      src="/src/assets/traveldna_img/IntroBg.png"
-      alt="Intro Background"
-      class="absolute inset-0 w-full h-full object-cover"
-    />
+  <div
+    class="fixed inset-0 z-0 bg-page bg-cover bg-center"
+    style="
+      background-image: url('https://res.cloudinary.com/wantrip/image/upload/f_auto,q_90,w_2560,dpr_2/v1769236224/IntroBg_fji07v');
+    "
+  >
     <div class="absolute inset-0 w-full h-full bg-primary/50 backdrop-blur-sm"></div>
     <div class="relative z-10 flex flex-col items-center justify-center h-screen px-4">
       <h1 class="text-white text-4xl md:text-5xl font-bold text-center mb-5 drop-shadow-lg">
