@@ -71,6 +71,7 @@
             <button
               v-if="!auth.isLoggedIn"
               type="button"
+              name="login-register"
               class="text-white rounded-[20px] bg-primary px-4 py-2 border border-white/15 hover:bg-[#455A71]"
               @click="openLogin"
             >
@@ -81,6 +82,7 @@
             <div v-else class="relative hidden md:block" data-user-menu>
               <button
                 type="button"
+                name="user-menu"
                 class="flex items-center gap-2 text-black font-medium px-4 py-2 hover:text-primary"
                 @click="toggleUserMenu"
               >
@@ -115,6 +117,7 @@
               >
                 <button
                   type="button"
+                  name="profile"
                   class="w-full text-left px-4 py-3 text-sm text-black hover:bg-primary/10"
                   @click="goProfileFromMenu"
                 >
@@ -123,6 +126,7 @@
 
                 <button
                   type="button"
+                  name="logout"
                   class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-primary/10"
                   @click="handleLogout"
                 >
@@ -210,12 +214,15 @@
       >
         <div class="flex justify-between items-center">
           <h2 class="text-xl font-bold text-primary">更多</h2>
-          <button @click="isOpen = false" class="text-gray-500 text-2xl">&times;</button>
+          <button name="open-menu" @click="isOpen = false" class="text-gray-500 text-2xl">
+            &times;
+          </button>
         </div>
 
         <nav class="flex flex-col gap-4">
           <button
             v-if="!auth.isLoggedIn"
+            name="login-register"
             type="button"
             class="text-left text-black font-medium border-b border-primary/25 pb-2"
             @click="openLogin"
@@ -226,6 +233,7 @@
           <div v-else class="flex items-center justify-between gap-3">
             <button
               type="button"
+              name="profile"
               class="text-black font-medium hover:text-primary"
               @click="(goProfile(), (isOpen = false))"
             >
@@ -234,6 +242,7 @@
 
             <button
               type="button"
+              name="logout"
               class="text-left text-black font-medium border-b border-primary/25 pb-2"
               @click="handleLogout"
             >

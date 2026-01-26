@@ -42,6 +42,7 @@
         </div>
         <div class="flex justify-end gap-3">
           <button
+            name="add-favorite"
             @click.stop.prevent="onFavoriteClick"
             class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors"
           >
@@ -62,6 +63,7 @@
             </svg>
           </button>
           <button
+            name="details"
             @click.stop="$emit('details', id)"
             class="h-10 bg-primary hover:bg-main text-white px-6 rounded-full font-medium transition-colors"
           >

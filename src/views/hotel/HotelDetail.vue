@@ -192,6 +192,7 @@
                   allowfullscreen
                   referrerpolicy="no-referrer-when-downgrade"
                   :src="`https://maps.google.com/maps?q=${hotel.latitude},${hotel.longitude}&z=15&output=embed`"
+                  sandbox="allow-scripts allow-same-origin allow-popups"
                 ></iframe>
                 <div
                   v-else
