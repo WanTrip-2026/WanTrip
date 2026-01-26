@@ -111,6 +111,7 @@ const onFavoriteClick = async () => {
           loading="lazy"
         />
         <button
+          name="add-compare"
           @click.stop="toggleCompare"
           class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 rounded-full border border-white/80 sm:rounded-[20px] h-[40px] w-[110px] text-sm transition-all shadow-lg"
           :class="[
@@ -170,6 +171,7 @@ const onFavoriteClick = async () => {
           </div>
           <div class="flex gap-2 sm:gap-4">
             <button
+              name="add-favorite"
               @click.stop.prevent="onFavoriteClick"
               class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors"
             >
@@ -204,6 +206,7 @@ const onFavoriteClick = async () => {
               }"
             >
               <button
+                name="details"
                 class="bg-primary text-white px-4 sm:px-6 py-2 rounded-full sm:rounded-[20px] text-sm sm:text-base hover:bg-main transition shadow-sm"
               >
                 查看詳情

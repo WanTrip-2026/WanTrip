@@ -34,6 +34,7 @@
                 ></div>
 
                 <button
+                  name="ticket-tab"
                   type="button"
                   class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
                   :class="activeTab === 'package' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
@@ -42,6 +43,7 @@
                   找門票
                 </button>
                 <button
+                  name="hotel-tab"
                   type="button"
                   class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
                   :class="activeTab === 'stay' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
@@ -72,6 +74,7 @@
 
         <div class="grid grid-cols-6 sm:grid-cols-5 gap-5">
           <button
+            name="ticket-region"
             v-for="(r, index) in regions"
             :key="r.key"
             type="button"
@@ -145,6 +148,7 @@
           <p class="text-2xl font-bold text-dark">大家都在找...</p>
           <div class="mt-5 flex flex-wrap justify-center gap-2">
             <button
+              name="keyword-btn"
               v-for="k in stayKeywords"
               :key="k"
               type="button"

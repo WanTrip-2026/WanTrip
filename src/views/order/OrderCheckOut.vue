@@ -547,6 +547,7 @@ function applyCoupon() {
                 />
               </div>
               <button
+                name="apply-coupon"
                 type="button"
                 @click="applyCoupon"
                 class="h-11 rounded-full border bg-primary px-6 text-sm text-white transition hover:bg-main active:scale-[0.99]"
@@ -611,6 +612,7 @@ function applyCoupon() {
             </div>
             <div class="w-full">
               <button
+                name="checkout"
                 @click="handleCheckout"
                 :disabled="!selectedPayment || isProcessing"
                 class="mt-5 rounded-full float-right bg-primary hover:bg-main h-11 px-8 text-white font-bold transition disabled:bg-gray-400 disabled:cursor-not-allowed active:scale-[0.99]"

@@ -357,6 +357,7 @@ watch(
         >
           <div class="absolute inset-0 bg-white/30"></div>
           <button
+            name="map-search"
             @click="goToMapSearch"
             class="relative z-10 rounded-full bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition"
           >
@@ -409,6 +410,7 @@ watch(
               <div class="flex justify-between items-center mb-2">
                 <h4 class="font-medium text-dark_900">{{ menu.title }}</h4>
                 <button
+                  name="clear-options"
                   @click="clearOptions(menu.key)"
                   class="text-xs text-gray-400 hover:text-primary"
                 >
@@ -433,6 +435,7 @@ watch(
                   {{ option }}
                 </label>
                 <button
+                  name="expand-more"
                   v-if="menu.options.length > 4 && !expandedMenus.includes(menu.key)"
                   @click="toggleMenu(menu.key)"
                   class="text-xs text-primary mt-2"
@@ -451,6 +454,7 @@ watch(
         >
           <div class="absolute inset-0 bg-white/30"></div>
           <button
+            name="map-search"
             @click="goToMapSearch"
             class="relative z-10 rounded-full bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition"
           >
@@ -464,6 +468,7 @@ watch(
 
         <div class="flex flex-row items-center gap-2 overflow-x-auto scrollbar-hide">
           <button
+            name="filter-drawer"
             @click="isFilterDrawerOpen = true"
             class="lg:hidden flex items-center gap-2 rounded-[20px] bg-white border border-gray-300 text-dark px-4 py-2 shadow-sm transition whitespace-nowrap"
           >
@@ -471,21 +476,25 @@ watch(
             篩選
           </button>
           <button
+            name="price-high-to-low"
             class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition whitespace-nowrap"
           >
             價格高到低
           </button>
           <button
+            name="price-low-to-high"
             class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition whitespace-nowrap"
           >
             價格低到高
           </button>
           <button
+            name="popular-high-to-low"
             class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition whitespace-nowrap"
           >
             熱門高到低
           </button>
           <button
+            name="recommend-high-to-low"
             class="rounded-[20px] bg-primary hover:bg-main text-white px-6 py-2 shadow-sm whitespace-nowrap"
           >
             評價高到低
@@ -534,6 +543,7 @@ watch(
 
         <div class="flex justify-center items-center gap-2 mt-10 mb-20">
           <button
+            name="previous-page"
             @click="goToPage(currentPage - 1)"
             :disabled="currentPage === 1"
             class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 disabled:opacity-30"
@@ -541,6 +551,7 @@ watch(
             &lt;
           </button>
           <button
+            name="switch-page"
             v-for="p in visiblePagination"
             :key="p"
             @click="typeof p === 'number' && goToPage(p)"
@@ -555,6 +566,7 @@ watch(
             {{ p }}
           </button>
           <button
+            name="next-page"
             @click="goToPage(currentPage + 1)"
             :disabled="currentPage === totalPages"
             class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 disabled:opacity-30"
@@ -649,6 +661,7 @@ watch(
                 <div class="flex justify-between items-center mb-4">
                   <h4 class="font-medium text-dark">{{ menu.title }}</h4>
                   <button
+                    name="clear-options"
                     @click="clearOptions(menu.key)"
                     class="text-xs text-dark hover:text-primary"
                   >
@@ -674,6 +687,7 @@ watch(
             </div>
 
             <button
+              name="filter-complete"
               @click="isFilterDrawerOpen = false"
               class="mt-8 mb-4 w-full bg-primary text-white py-3 rounded-full font-bold shadow-md hover:bg-main transition"
             >

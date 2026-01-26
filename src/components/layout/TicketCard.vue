@@ -61,6 +61,7 @@ const onFavoriteClick = async () => {
                 {{ props.ticket.name }}
               </h3>
               <button
+                name="add-favorite"
                 @click.stop.prevent="onFavoriteClick"
                 class="relative z-10 p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors bg-white"
               >

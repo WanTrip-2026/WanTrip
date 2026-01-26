@@ -9,6 +9,7 @@
         <div class="flex flex-col gap-5">
           <div v-for="(faq, index) in faqs" :key="index" class="border rounded-lg overflow-hidden">
             <button
+              name="faq-question"
               @click="toggleFaq(index)"
               class="w-full flex justify-between items-center p-5 bg-main_100 hover:bg-main_300 transition text-left"
             >
@@ -36,6 +37,7 @@
             class="border rounded-lg overflow-hidden"
           >
             <button
+              name="payment-question"
               @click="togglePaymentFaq(index)"
               class="w-full flex justify-between items-center p-5 bg-main_100 hover:bg-main_300 transition text-left"
             >

@@ -224,6 +224,7 @@
               class="border rounded-lg overflow-hidden"
             >
               <button
+                name="toggle-faq"
                 @click="toggleFaq(index)"
                 class="w-full flex justify-between items-center px-5 py-4 bg-main_100 hover:bg-main_200 transition text-left"
               >
@@ -286,6 +287,7 @@
                 {{ ticketIntro.title }}
               </h2>
               <button
+                name="toggle-booking"
                 @click="isBookingExpanded = !isBookingExpanded"
                 class="lg:hidden w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-main transition-all"
               >
@@ -376,6 +378,7 @@
                       </div>
                       <div class="flex items-center gap-3 shrink-0">
                         <button
+                          name="quantity-minus"
                           @click="decreaseQuantity(t.id)"
                           class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100 disabled:opacity-50 transition"
                           :disabled="t.quantity <= 0"
@@ -384,6 +387,7 @@
                         </button>
                         <span class="w-4 text-center text-sm font-bold">{{ t.quantity }}</span>
                         <button
+                          name="quantity-plus"
                           @click="increaseQuantity(t.id)"
                           class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100 transition"
                         >
@@ -399,6 +403,7 @@
 
           <div v-if="totalPrice > 0" class="pt-2">
             <button
+              name="checkout"
               type="submit"
               @click="handleBooking"
               class="w-full h-12 flex items-center justify-center bg-primary hover:bg-main text-white font-bold rounded-full md:rounded-[10px] transition duration-200 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
