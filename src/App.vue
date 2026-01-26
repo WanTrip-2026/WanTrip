@@ -2,6 +2,7 @@
   <AppNavbar v-if="showAppNavbar" />
   <router-view />
   <ChatWidget />
+  <BrowserRedirectNotice />
   <AppFooter v-if="showFooter" />
 </template>
 
@@ -13,6 +14,7 @@ import AppFooter from './components/layout/AppFooter.vue'
 import { onMounted } from 'vue'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 import ChatWidget from './components/layout/ChatWidget.vue'
+import BrowserRedirectNotice from '@/views/notice/BrowserRedirectNotice.vue'
 
 const route = useRoute()
 
