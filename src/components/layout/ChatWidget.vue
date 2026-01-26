@@ -56,6 +56,8 @@
             class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark-900 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:bg-gray-50"
           />
           <button
+            name="enter"
+            aria-label="送出訊息"
             @click="sendMessage"
             :disabled="isLoading"
             class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-main transition disabled:bg-gray-400 flex-shrink-0"
@@ -67,6 +69,8 @@
     </Transition>
 
     <button
+      name="chat"
+      aria-label="開啟聊天視窗"
       @click="toggleChat"
       class="fixed bottom-24 md:bottom-6 right-6 w-10 h-10 md:w-14 md:h-14 rounded-full bg-primary text-white border border-white/60 flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300 z-50"
       :class="{ 'rotate-180': isOpen }"

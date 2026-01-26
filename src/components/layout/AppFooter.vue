@@ -21,7 +21,7 @@
         </div>
         <div class="flex flex-col gap-2 justify-center items-center">
           <!-- footer logo -->
-          <a href="#">
+          <RouterLink to="/" aria-label="回到首頁" class="inline-flex">
             <svg
               width="177"
               height="48"
@@ -34,7 +34,7 @@
                 fill="white"
               />
             </svg>
-          </a>
+          </RouterLink>
         </div>
         <div class="w-full">
           <div class="flex flex-col float-right">

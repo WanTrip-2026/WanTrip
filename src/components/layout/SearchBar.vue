@@ -637,6 +637,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
     <div class="flex items-center justify-center">
       <button
+        aria-label="搜尋"
         name="search-btn"
         @click="onSearch"
         class="w-[64px] h-[64px] rounded-full bg-primary hover:bg-main text-white transition-all shadow-lg hover:shadow-primary/30 flex items-center justify-center group"
