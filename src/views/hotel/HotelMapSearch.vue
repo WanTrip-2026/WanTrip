@@ -175,7 +175,7 @@
               </transition>
             </div>
             <button
-              @click="fetchHotels"
+              @click="handleSearch"
               class="w-full md:w-[60px] h-[60px] flex items-center justify-center rounded-full bg-primary hover:bg-main border border-white/20 shadow-md text-white transition-all"
             >
               <font-awesome-icon icon="search" class="text-xl" />
@@ -484,12 +484,7 @@ const starOptions = computed(() => ['5', '4', '3', '2'])
 
 const HotelFiltered = reactive<FilterMenu[]>([
   { key: 'star_rating', title: '星級', options: starOptions.value, selected: [] },
-  {
-    key: 'reviews',
-    title: '評價',
-    options: ['好極了: 9分以上', '非常好: 8分以上', '好: 7分以上', '令人愉悅: 6分以上'],
-    selected: [],
-  },
+
   { key: 'types', title: '住宿類型', options: [], selected: [] },
   { key: 'facilities', title: '設施＆服務', options: [], selected: [] },
 ])
@@ -622,7 +617,10 @@ function toggleMenu(key: string) {
 
 const resetSearch = () => {
   keyword.value = ''
-  fetchHotels()
+  // 更新 URL 來觸發搜尋，而不是直接呼叫 fetchHotels
+  const queryParams: LocationQueryRaw = { ...route.query }
+  delete queryParams.keyword
+  router.replace({ query: queryParams })
 }
 
 let infoWindow: google.maps.InfoWindow
@@ -899,34 +897,8 @@ onMounted(async () => {
 
   isMapLoading.value = true
   try {
-    // 1. 關鍵字
-    if (route.query.keyword) {
-      keyword.value = route.query.keyword as string
-    }
+    // 透過 watcher 初始化資料，這裡主要處理 Google Maps 與選項與設施
 
-    // 2. 人數與房間
-    if (route.query.adults) {
-      peopleConfig.people = parseInt(route.query.adults as string, 10)
-    }
-    if (route.query.rooms) {
-      peopleConfig.rooms = parseInt(route.query.rooms as string, 10)
-    }
-
-    // 2.5 價格區間
-    if (route.query.min_price) {
-      priceRange.value.min = parseInt(route.query.min_price as string, 10)
-    }
-    if (route.query.max_price) {
-      priceRange.value.max = parseInt(route.query.max_price as string, 10)
-    }
-
-    // 3. 日期區間 (start_date & end_date)
-    if (route.query.start_date && route.query.end_date) {
-      range.value = [
-        new Date(route.query.start_date as string),
-        new Date(route.query.end_date as string),
-      ]
-    }
     const apiUrl = import.meta.env.VITE_API_BASE_URL
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID
@@ -960,7 +932,10 @@ onMounted(async () => {
     }
 
     const runMapInitialization = async () => {
-      const map = new google.maps.Map(document.getElementById('map') as HTMLElement, {
+      const mapElement = document.getElementById('map')
+      if (!mapElement) return
+
+      const map = new google.maps.Map(mapElement, {
         center: { lat: 25.033964, lng: 121.564468 },
         zoom: 12,
         mapId: mapId,
@@ -977,7 +952,11 @@ onMounted(async () => {
       })
 
       setupInfoWindowDomListener()
-      await fetchHotels()
+
+      // 地圖載入完成後，如果已經有資料，嘗試渲染標記
+      if (hotels.value.length > 0) {
+        await renderMarkers()
+      }
     }
 
     // 設定全域回呼，給 Google Maps 載入完成後呼叫
@@ -1036,9 +1015,81 @@ onMounted(async () => {
 
     error.value = '初始化資料時發生錯誤'
   } finally {
+    // isMapLoading 應由 fetchHotels 控制，或者是兩者共同控制？
+    // 這裡 loading 可能主要是指地圖和選項的載入
+    // 讓它保持 true 直到 fetchHotels 完成可能更好，但那邊也有 finally
+    // 為了不與 fetchHotels 衝突，這裡只設 false
     isMapLoading.value = false
   }
 })
+
+// --- 新增：處理搜尋按鈕點擊 ---
+const handleSearch = () => {
+  const queryParams: LocationQueryRaw = {
+    ...route.query,
+    keyword: keyword.value,
+    adults: String(peopleConfig.people),
+    rooms: String(peopleConfig.rooms),
+  }
+
+  if (range.value && range.value.length === 2 && range.value[0] && range.value[1]) {
+    queryParams.start_date = formatDate(range.value[0])
+    queryParams.end_date = formatDate(range.value[1])
+  } else {
+    delete queryParams.start_date
+    delete queryParams.end_date
+  }
+
+  // 移除空的 keyword
+  if (!keyword.value) {
+    delete queryParams.keyword
+  }
+
+  // 這裡不需處理 page，因為 Map Search 使用無限滾動或分批載入邏輯，通常重置為第一批次
+  // 但目前的 fetchHotels 邏輯是自動抓取全部 (1~5頁)，所以不需要重置 page 參數
+
+  router.replace({ path: route.path, query: queryParams })
+}
+
+// --- 新增：從 URL 初始化狀態 ---
+const initStatesFromUrl = () => {
+  const {
+    keyword: urlKeyword,
+    start_date,
+    end_date,
+    adults,
+    rooms,
+    min_price,
+    max_price,
+  } = route.query
+
+  keyword.value = urlKeyword ? String(urlKeyword) : ''
+
+  if (start_date && end_date) {
+    range.value = [new Date(String(start_date)), new Date(String(end_date))]
+  } else {
+    // 保持預設值 (今天, 明天) 或不處理?
+    // HotelSearch 是設為 null，但這裡預設是 [Today, Tomorrow]
+    // 如果 URL 沒參數，保留預設值比較合理，避免地圖沒日期
+  }
+
+  if (adults) peopleConfig.people = Number(adults)
+  if (rooms) peopleConfig.rooms = Number(rooms)
+
+  // 價格也從 URL 同步，保持一致性
+  if (min_price) priceRange.value.min = Number(min_price)
+  if (max_price) priceRange.value.max = Number(max_price)
+}
+
+// --- 新增：監聽路由變化，觸發搜尋 ---
+watch(
+  () => route.query,
+  () => {
+    initStatesFromUrl()
+    fetchHotels()
+  },
+  { immediate: true },
+)
 
 const goToHotelDetail = (hotel: Hotel) => {
   const queryParams: LocationQueryRaw = {
