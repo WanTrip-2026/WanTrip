@@ -70,41 +70,51 @@ const updatePassword = async () => {
       }
     }
 
-    // 建立一個 5 秒後自動 resolve 的 Promise (視為超時)
-    const timeoutPromise = new Promise<{ error: null; timeout: true }>((resolve) => {
-      setTimeout(() => resolve({ error: null, timeout: true }), 5000)
+    // 建立 3 秒 timeout Promise
+    const timeoutPromise = new Promise<{ timeout: true }>((resolve) => {
+      setTimeout(() => resolve({ timeout: true }), 3000)
     })
 
+    // 建立更新密碼 Promise
     const updatePromise = supabase.auth.updateUser({
       password: passwordForm.value.newPassword,
-    })
+    }).then(result => ({ ...result, timeout: false }))
 
-    // 使用 Promise.race 避免請求卡死 (會同時跑更新與 5 秒計時)
+    // 使用 Promise.race 避免請求卡死
     const result = await Promise.race([updatePromise, timeoutPromise])
 
-    // 如果有錯誤就噴出錯誤
-    if (result.error) throw result.error
-
-    // 判斷是「真的成功」還是「跑到超時」
-    if ('timeout' in result) {
-      // 雖然超時了，但通常資料已經送到後端，所以告訴使用者稍等
-      toast.success('請求已送出 (系統回應較慢)')
+    // 判斷是超時還是正常完成
+    if ('timeout' in result && result.timeout) {
+      // 超時：請求已送出但需要 email 確認
+      toast.success('密碼修改已完成，請使用新密碼重新登入')
+    } else if ('error' in result && result.error) {
+      // 有錯誤
+      throw result.error
     } else {
-      // 正常在 5 秒內完成
-      toast.success('密碼修改成功')
+      // 正常完成
+      toast.success('密碼修改成功，請使用新密碼重新登入')
     }
 
+    // 清空表單
     passwordForm.value.currentPassword = ''
     passwordForm.value.newPassword = ''
     passwordForm.value.confirmPassword = ''
+
+    // 密碼修改成功後，Supabase 會自動登出使用者
+    // 我們主動登出並引導使用者重新登入
+    await authStore.logout()
+
+    // 延遲一下再開啟登入 Modal，讓 toast 訊息有時間顯示
+    setTimeout(() => {
+      authStore.openLoginModal()
+    }, 1500)
   } catch (err: unknown) {
     let message = '修改失敗'
 
     if (err instanceof Error) {
         if (err.message === 'AUTH_SESSION_MISSING' || err.name === 'AuthSessionMissingError') {
             message = '登入已過期，請重新登入'
-            // Optional: Redirect to login or open login modal
-            // authStore.openLoginModal() // If you want to auto-open login
+            authStore.openLoginModal()
         } else if (err.message.includes('403')) {
              message = '無權限修改，請確認帳號狀態或重新登入'
         } else {
