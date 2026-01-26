@@ -1,8 +1,10 @@
 <template>
   <div class="w-full h-[100dvh] relative overflow-x-hidden flex flex-col">
     <div
-      class="fixed inset-0 w-full h-full bg-cover bg-center z-0"
-      style="background-image: url('/src/assets/traveldna_img/IntroBg.png')"
+      class="fixed inset-0 z-0 bg-page bg-cover bg-center"
+      style="
+        background-image: url('https://res.cloudinary.com/wantrip/image/upload/f_auto,q_90,w_2560,dpr_2/v1769236224/IntroBg_fji07v');
+      "
     ></div>
     <div class="fixed inset-0 w-full h-full bg-primary/50 backdrop-blur-sm z-0"></div>
 
@@ -50,10 +52,10 @@
             v-for="(option, index) in currentQuestion.options"
             :key="index"
             @click="handleAnswer(option, index)"
-            class="p-4 md:p-5 rounded-[20px] text-lg md:text-xl font-medium border-2 transition-all duration-200 active:scale-[0.98] shadow-md w-full"
+            class="p-4 md:p-5 rounded-[20px] text-lg md:text-xl font-medium border transition-all duration-200 active:scale-[0.98] shadow-md w-full"
             :class="
               selectedOptionIndex === index
-                ? 'bg-white/90 border-black/30'
+                ? ' bg-primary/80 text-white font-bold scale-105 shadow-xl'
                 : 'bg-[#EEF2F7] border-transparent'
             "
           >

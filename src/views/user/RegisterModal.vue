@@ -9,9 +9,7 @@
         @keydown.esc="close"
         tabindex="-1"
       >
-
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="close">
-        </div>
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="close"></div>
 
         <div
           class="relative mx-5 p-4 w-full max-w-[920px] overflow-hidden rounded-[40px] bg-white shadow-2xl"
@@ -84,6 +82,7 @@
                 <!-- buttons -->
                 <div class="pt-2 space-y-4">
                   <button
+                    name="signup"
                     type="submit"
                     class="w-full rounded-[20px] bg-primary px-6 py-3 font-semibold text-white shadow-sm hover:bg-main"
                   >
@@ -91,6 +90,7 @@
                   </button>
 
                   <button
+                    name="go-login"
                     type="button"
                     class="w-full rounded-[20px] bg-dark_100 px-6 py-3 font-semibold text-dark shadow-sm hover:bg_dark_300"
                     @click="$emit('go-login')"
@@ -101,6 +101,7 @@
 
                 <div class="text-center">
                   <button
+                    name="close"
                     type="button"
                     class="text-sm text-dark hover:text-dark_700 hover:underline hover:cursor-pointer"
                     @click="close"
@@ -113,7 +114,9 @@
 
             <!-- Right: image card -->
             <div class="hidden md:block p-1 lg:p-2">
-              <div class="relative h-full min-h-[400px] lg:min-h-[500px] overflow-hidden rounded-[28px]">
+              <div
+                class="relative h-full min-h-[400px] lg:min-h-[500px] overflow-hidden rounded-[28px]"
+              >
                 <img
                   :src="heroImage"
                   :alt="rightSubtitle"
@@ -131,6 +134,7 @@
 
           <!-- close button (top-right) -->
           <button
+            name="close"
             type="button"
             class="absolute right-8 top-8 grid h-10 w-10 place-items-center rounded-full bg-white/80 text-dark shadow hover:bg-dark_100"
             aria-label="Close modal"
@@ -213,7 +217,7 @@ const onSubmit = async () => {
         username: username.value,
         full_name: username.value,
         birthday: birthday.value,
-      }
+      },
     })
 
     console.log('[signup] data =', data)
@@ -228,17 +232,18 @@ const onSubmit = async () => {
     // ✅ if session exists, create profile immediately (Auto Confirm enabled)
     // ❌ if session is null, user must verify email first (Email Confirm enabled)
     if (data.session && userId) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({
+      const { error: profileError } = await supabase.from('profiles').upsert(
+        {
           id: userId,
           email: email.value,
           full_name: username.value,
           birthday: birthday.value,
           updated_at: new Date().toISOString(),
-        }, {
+        },
+        {
           onConflict: 'id',
-        })
+        },
+      )
 
       if (profileError) {
         console.error('[profile upsert] error:', profileError)
@@ -246,7 +251,7 @@ const onSubmit = async () => {
         console.log('[profile upsert] success')
       }
     } else {
-       console.log('[signup] Verification required. Profile creation deferred to first login.')
+      console.log('[signup] Verification required. Profile creation deferred to first login.')
     }
 
     toast.success('註冊成功！請到信箱完成驗證（若有開啟信箱驗證）')

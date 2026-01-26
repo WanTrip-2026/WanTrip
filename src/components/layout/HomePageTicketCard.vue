@@ -2,12 +2,17 @@
   <RouterLink
     :to="`/tickets/${id}`"
     :class="[
-      'group relative flex h-[270px] w-[183px] hover:w-[408px] z-[1] hover:z-[20] bg-white rounded-[20px] hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
-      expandLeft ? 'hover:-translate-x-[225px]' : '',
+      'group relative flex h-[270px] w-[183px] lg:hover:w-[408px] z-[1] lg:hover:z-[20] bg-white rounded-[20px] lg:hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
+      expandLeft ? 'lg:hover:-translate-x-[225px]' : '',
     ]"
   >
     <div class="relative h-full w-[183px] flex-shrink-0">
-      <img :src="image_url" :alt="name" class="h-full w-full object-cover" />
+      <img
+        :src="getOptimizedImageUrl(image_url, { w: 600 })"
+        :alt="name"
+        class="h-full w-full object-cover"
+        loading="lazy"
+      />
       <div
         class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent group-hover:opacity-0 transition-opacity duration-300"
       >
@@ -37,6 +42,7 @@
         </div>
         <div class="flex justify-end gap-3">
           <button
+            name="add-favorite"
             @click.stop.prevent="onFavoriteClick"
             class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors"
           >
@@ -57,6 +63,7 @@
             </svg>
           </button>
           <button
+            name="details"
             @click.stop="$emit('details', id)"
             class="h-10 bg-primary hover:bg-main text-white px-6 rounded-full font-medium transition-colors"
           >
@@ -73,6 +80,7 @@ import { RouterLink } from 'vue-router'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 import { useAuthStore } from '@/stores/auth'
 import { computed } from 'vue'
+import { getOptimizedImageUrl } from '@/utils/image'
 
 // 統一命名規範與預設值
 interface Props {

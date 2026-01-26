@@ -7,9 +7,15 @@
         <div class="relative">
           <div class="relative w-full overflow-hidden rounded-[40px] bg-gray-200 shadow-sm">
             <img
-              src="https://res.cloudinary.com/wantrip/image/upload/v1768481888/IMG_7318_dizpjn.jpg"
+              :src="
+                getOptimizedImageUrl(
+                  'https://res.cloudinary.com/wantrip/image/upload/v1768481888/IMG_7318_dizpjn.jpg',
+                  { w: 1240 },
+                )
+              "
               class="aspect-[3/4] absolute inset-0 w-full h-full object-cover"
               alt="banner"
+              fetchpriority="high"
             />
             <div class="h-[340px] md:h-[420px]"></div>
           </div>
@@ -28,6 +34,7 @@
                 ></div>
 
                 <button
+                  name="ticket-tab"
                   type="button"
                   class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
                   :class="activeTab === 'package' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
@@ -36,6 +43,7 @@
                   找門票
                 </button>
                 <button
+                  name="hotel-tab"
                   type="button"
                   class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
                   :class="activeTab === 'stay' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
@@ -66,6 +74,7 @@
 
         <div class="grid grid-cols-6 sm:grid-cols-5 gap-5">
           <button
+            name="ticket-region"
             v-for="(r, index) in regions"
             :key="r.key"
             type="button"
@@ -76,7 +85,7 @@
             <div
               class="h-[110px] w-full aspect-[3/4]"
               :style="{
-                backgroundImage: `url(${r.img})`,
+                backgroundImage: `url(${getOptimizedImageUrl(r.img, { w: 400 })})`,
                 backgroundSize: 'cover',
               }"
             ></div>
@@ -139,6 +148,7 @@
           <p class="text-2xl font-bold text-dark">大家都在找...</p>
           <div class="mt-5 flex flex-wrap justify-center gap-2">
             <button
+              name="keyword-btn"
               v-for="k in stayKeywords"
               :key="k"
               type="button"
@@ -171,6 +181,7 @@ import SearchBar from '@/components/layout/SearchBar.vue'
 import { useHotelApi } from '@/composables/useHotelApi'
 import { REGIONS, STAY_KEYWORDS, REGION_CITIES } from '@/constants/home'
 import type { HomePageCardItem } from '@/types/hotel'
+import { getOptimizedImageUrl } from '@/utils/image'
 
 const activeTab = ref('stay')
 
@@ -202,10 +213,10 @@ const hotHotelsB = computed(() => recommendedHotels.value.slice(0, 6))
 onMounted(async () => {
   try {
     const { data: featured } = await fetchFeaturedHotels()
-    featuredHotels.value = featured.value
+    featuredHotels.value = featured.value ?? []
 
     const { data: recommended } = await fetchRecommendedHotels()
-    recommendedHotels.value = recommended.value
+    recommendedHotels.value = recommended.value ?? []
   } catch (error) {
     console.error('Error fetching hotels:', error)
   }

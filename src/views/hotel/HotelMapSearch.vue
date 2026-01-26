@@ -224,7 +224,7 @@
           ? 'top-[490px] h-[calc(100vh-510px)] md:top-[165px] md:h-[calc(100vh-190px)]'
           : 'top-[145px] h-[calc(100vh-170px)] md:top-[165px] md:h-[calc(100vh-190px)]',
       ]"
-      class="w-[60vw] md:w-[400px]"
+      class="w-[80vw] md:w-[400px]"
     >
       <button
         @click="isListOpen = !isListOpen"

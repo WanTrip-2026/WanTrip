@@ -3,7 +3,7 @@
     <Transition name="slide-fade">
       <div
         v-if="isOpen"
-        class="flex flex-col w-80 h-[520px] rounded-[20px] shadow-xl overflow-hidden mr-6 mb-24 bg-white/50 backdrop-blur-xl border border-white/50"
+        class="flex flex-col w-80 h-[420px] md:w-80 md:h-[520px] rounded-[20px] shadow-xl overflow-hidden mr-6 mb-36 md:mb-24 bg-white/50 backdrop-blur-xl border border-white/50"
       >
         <div class="bg-primary text-white font-semibold text-lg text-center py-3 z-10">
           旅遊規劃師 阿萬🪄
@@ -26,9 +26,9 @@
             >
               <img
                 v-if="m.role === 'assistant'"
-                src="https://i.imgur.com/1XbY9R1.png"
+                src="https://res.cloudinary.com/wantrip/image/upload/f_auto,q_100,dpr_2/v1769403862/robot1_yaznos"
                 alt="AI"
-                class="w-6 h-6 rounded-full mr-2 mt-1 flex-shrink-0"
+                class="w-6 h-6 rounded-full mr-2 mt-1 flex-shrink-0 object-cover"
               />
               <span class="whitespace-pre-wrap text-sm leading-relaxed">{{ m.content }}</span>
             </div>
@@ -48,6 +48,7 @@
         </div>
         <div class="flex gap-2 p-3 border-t border-gray-100 bg-white z-10 relative">
           <input
+            ref="inputField"
             v-model="userInput"
             @keyup.enter="sendMessage"
             :disabled="isLoading"
@@ -67,11 +68,17 @@
 
     <button
       @click="toggleChat"
-      class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300 z-50"
+      class="fixed bottom-24 md:bottom-6 right-6 w-10 h-10 md:w-14 md:h-14 rounded-full bg-primary text-white border border-white/60 flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300 z-50"
       :class="{ 'rotate-180': isOpen }"
     >
-      <font-awesome-icon v-if="isOpen" icon="fa-solid fa-xmark" class="text-2xl" />
-      <span v-else class="text-2xl">💬</span>
+      <font-awesome-icon v-if="isOpen" icon="fa-solid fa-xmark" class="text-2xl text-white" />
+
+      <img
+        v-else
+        src="https://res.cloudinary.com/wantrip/image/upload/f_auto,q_100,dpr_2/v1769403862/robot_geqjl0"
+        alt="阿萬"
+        class="w-10 h-10 md:w-14 md:h-14 rounded-full object-cover"
+      />
     </button>
   </div>
 </template>
@@ -82,7 +89,7 @@ import { chatService } from '@/constants/chatService'
 
 interface Message {
   id: number
-  role: 'user' | 'assistant'
+  role: 'user' | 'assistant' | 'system'
   content: string
 }
 
@@ -146,6 +153,8 @@ const scrollToBottom = async () => {
   }
 }
 
+const inputField = ref<HTMLInputElement | null>(null)
+
 const sendMessage = async () => {
   if (!userInput.value.trim() || isLoading.value) return
 
@@ -158,6 +167,12 @@ const sendMessage = async () => {
     content: userQuery,
   })
 
+  // 整理記憶紀錄
+  const chatHistory = messages.value.map((m) => ({
+    role: m.role,
+    content: m.content,
+  }))
+
   const randomIndex = Math.floor(Math.random() * loadingTexts.length)
   currentLoadingText.value = loadingTexts[randomIndex] ?? '阿萬正在思考中...'
 
@@ -167,7 +182,7 @@ const sendMessage = async () => {
   await scrollToBottom()
 
   try {
-    const data = await chatService.sendMessage(userQuery)
+    const data = await chatService.sendMessage(chatHistory)
 
     messages.value.push({
       id: Date.now() + 1,
@@ -183,6 +198,11 @@ const sendMessage = async () => {
     })
   } finally {
     isLoading.value = false
+
+    // 讓游標回到輸入框
+    // 使用 nextTick 確保 DOM 已經從 disabled 狀態恢復
+    await nextTick()
+    inputField.value?.focus()
   }
 }
 </script>

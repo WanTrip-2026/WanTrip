@@ -1,22 +1,31 @@
 <template>
   <div
-    class="w-full h-[100dvh] relative bg-page bg-cover bg-center flex items-center justify-center overflow-x-hidden"
-    style="background-image: url('/src/assets/traveldna_img/IntroBg.png')"
+    class="fixed inset-0 z-0 bg-page bg-cover bg-center"
+    style="
+      background-image: url('https://res.cloudinary.com/wantrip/image/upload/f_auto,q_90,w_2560,dpr_2/v1769236224/IntroBg_fji07v');
+    "
   >
-    <div class="absolute inset-0 w-full h-full bg-primary/50 backdrop-blur-sm"></div>
+    <div class="absolute inset-0 bg-primary/50 backdrop-blur-sm"></div>
+  </div>
 
-    <div
-      class="relative z-10 w-full max-w-2xl px-4 pt-20 md:pt-28 pb-28 md:pb-20 flex flex-col items-center"
-    >
+  <div class="relative z-10 min-h-screen w-full flex justify-center overflow-y-auto">
+    <div class="w-full max-w-2xl px-5 py-24 md:py-24 flex flex-col items-center">
       <div
         class="bg-white/20 backdrop-blur-md rounded-[20px] border border-white/30 p-6 md:p-10 shadow-xl w-full"
       >
         <img
           :src="roleMap[role].img"
+          loading="lazy"
+          decoding="async"
           alt="Result"
           ref="roleImgRef"
-          class="w-full max-w-[280px] md:max-w-[380px] mb-6 mx-auto drop-shadow-2xl"
+          @load="playFadeIn"
+          class="w-full max-w-[280px] md:max-w-[380px] mb-6 mx-auto drop-shadow-2xl opacity-0"
         />
+        <div
+          v-if="!imgLoaded"
+          class="w-full max-w-[280px] md:max-w-[380px] mb-6 mx-auto h-[280px] md:h-[380px] bg-white/10 rounded-2xl animate-pulse"
+        ></div>
 
         <div class="mb-10 text-center">
           <p
@@ -107,6 +116,7 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router'
 import { ref, onMounted, computed } from 'vue'
+import { gsap } from 'gsap'
 
 type RoleKey = 'bear' | 'lion' | 'turtle' | 'sheep' | 'owl' | 'cat' | 'fox' | 'rabbit'
 
@@ -124,10 +134,24 @@ interface RoleData {
 const router = useRouter()
 const route = useRoute()
 
+const roleImgRef = ref<HTMLImageElement | null>(null)
+const imgLoaded = ref(false)
+
+const playFadeIn = () => {
+  if (!roleImgRef.value) return
+  imgLoaded.value = true
+
+  gsap.fromTo(
+    roleImgRef.value,
+    { opacity: 0, scale: 0.95 },
+    { opacity: 1, scale: 1, duration: 0.8, ease: 'power2.out' },
+  )
+}
+
 const roleMap: Record<RoleKey, RoleData> = {
   bear: {
     name: '探險熊',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1769236223/Bear_o2nkiv.svg',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/f_auto,q_100,w_800,dpr_2/v1769236223/Bear_o2nkiv',
     tickets: [
       { name: '大坑登山步道', id: '8415e430-db48-4b54-ade3-ec1884104384' },
       { name: '合歡山步道', id: '8dda1f46-390c-4524-81d7-d7fc911f0ea2' },
@@ -135,7 +159,7 @@ const roleMap: Record<RoleKey, RoleData> = {
   },
   lion: {
     name: '刺激獅',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1769236237/Lion_kpkiiq.svg',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/f_auto,q_100,w_800,dpr_2/v1769236237/Lion_kpkiiq',
     tickets: [
       { name: '六福村主題樂園', id: '34e1de2e-a7fd-48be-868d-51df067e3854' },
       { name: '義大遊樂世界', id: '4113d661-777c-41ef-84b9-907aaa32da42' },
@@ -143,7 +167,7 @@ const roleMap: Record<RoleKey, RoleData> = {
   },
   turtle: {
     name: '漫遊龜',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1769236246/Turtle_gqeqsv.svg',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/f_auto,q_100,w_800,dpr_2/v1769236246/Turtle_gqeqsv',
     tickets: [
       { name: '大安森林公園', id: '204ec8b3-1065-46e8-8496-6c3c1793945d' },
       { name: '高雄市立美術館', id: 'b818940a-2d61-462b-9b29-19b2ca53957f' },
@@ -151,7 +175,7 @@ const roleMap: Record<RoleKey, RoleData> = {
   },
   sheep: {
     name: '放空羊',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1769236232/Sheep_yg9er2.svg',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/f_auto,q_100,w_800,dpr_2/v1769236232/Sheep_yg9er2',
     tickets: [
       { name: '淡水漁人碼頭', id: 'ccdb9755-2f55-45a6-a719-73e0c9ff2c8e' },
       { name: '日月潭遊湖', id: 'cb423c81-45a0-468d-9561-5031b9f8f5eb' },
@@ -159,7 +183,7 @@ const roleMap: Record<RoleKey, RoleData> = {
   },
   owl: {
     name: '知旅鴞',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1769236240/Owl_pizgxo.svg',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/f_auto,q_100,w_800,dpr_2/v1769236240/Owl_pizgxo',
     tickets: [
       { name: '淡水老街導覽', id: '89f201ab-2f3d-481f-8312-5cb79f00e20f' },
       { name: '華山文創園區', id: '871f316b-9555-4449-adab-bbb70c327aa1' },
@@ -167,7 +191,7 @@ const roleMap: Record<RoleKey, RoleData> = {
   },
   cat: {
     name: '城市貓',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1769236233/Cat_mugn3l.svg',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/f_auto,q_100,w_800,dpr_2/v1769236233/Cat_mugn3l',
     tickets: [
       { name: '淡水紅毛城', id: '31343d56-4be0-44d8-8e61-207ed6597678' },
       { name: '打狗英國領事館', id: '62051de7-c3f0-4a57-90b7-b0e30f79f9da' },
@@ -175,7 +199,7 @@ const roleMap: Record<RoleKey, RoleData> = {
   },
   fox: {
     name: '社交狐',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1769236227/Fox_cjqqhv.svg',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/f_auto,q_100,w_800,dpr_2/v1769236227/Fox_cjqqhv',
     tickets: [
       { name: '羅東夜市', id: '978d6790-bda3-4b5c-9783-86f3ffe8b4a2' },
       { name: '漢來海港自助餐', id: '41d977c8-16f3-4356-bc44-62b4d59af6e1' },
@@ -183,7 +207,7 @@ const roleMap: Record<RoleKey, RoleData> = {
   },
   rabbit: {
     name: '美食兔',
-    img: 'https://res.cloudinary.com/wantrip/image/upload/v1769236238/Rabbit_ewi9ck.svg',
+    img: 'https://res.cloudinary.com/wantrip/image/upload/f_auto,q_100,w_800,dpr_2/v1769236238/Rabbit_ewi9ck',
     tickets: [
       { name: '饗 A JOY', id: 'c17cb3f8-69ce-43a2-8250-4feb9d396e3f' },
       { name: '漢來海港自助餐', id: '41d977c8-16f3-4356-bc44-62b4d59af6e1' },
@@ -199,35 +223,25 @@ const role = computed<RoleKey>(() => {
   return 'turtle'
 })
 
-const roleImgRef = ref<HTMLImageElement>()
-
 // 儲存角色圖
-const saveRoleImage = () => {
-  const img = roleImgRef.value
-  if (!img) return
+const saveRoleImage = async () => {
+  try {
+    const currentRole = roleMap[role.value] // 根據目前選的角色
+    const imgUrl = currentRole.img
 
-  const scale = 2
-  const canvas = document.createElement('canvas')
-  canvas.width = img.naturalWidth * scale
-  canvas.height = img.naturalHeight * scale
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
+    const res = await fetch(imgUrl, { mode: 'cors' })
+    if (!res.ok) throw new Error('圖片抓取失敗')
+    const blob = await res.blob()
 
-  // 提升畫質
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = 'high'
-
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-
-  canvas.toBlob((blob) => {
-    if (!blob) return
-    const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
-    link.href = url
-    link.download = 'WanTripTravelDNA.png'
+    link.href = URL.createObjectURL(blob)
+    link.download = `${currentRole.name}.webp` // 自動用角色名稱命名
     link.click()
-    URL.revokeObjectURL(url)
-  }, 'image/png')
+
+    URL.revokeObjectURL(link.href)
+  } catch (err) {
+    console.error('下載失敗', err)
+  }
 }
 
 const goToIntro = () => {

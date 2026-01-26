@@ -71,6 +71,7 @@
             <button
               v-if="!auth.isLoggedIn"
               type="button"
+              name="login-register"
               class="text-white rounded-[20px] bg-primary px-4 py-2 border border-white/15 hover:bg-[#455A71]"
               @click="openLogin"
             >
@@ -81,11 +82,17 @@
             <div v-else class="relative hidden md:block" data-user-menu>
               <button
                 type="button"
+                name="user-menu"
                 class="flex items-center gap-2 text-black font-medium px-4 py-2 hover:text-primary"
                 @click="toggleUserMenu"
               >
                 <span class="max-w-[160px] truncate">
-                  {{ auth.user?.user_metadata?.full_name || auth.user?.user_metadata?.username || auth.user?.email || '會員' }}
+                  {{
+                    auth.user?.user_metadata?.full_name ||
+                    auth.user?.user_metadata?.username ||
+                    auth.user?.email ||
+                    '會員'
+                  }}
                 </span>
 
                 <svg
@@ -110,6 +117,7 @@
               >
                 <button
                   type="button"
+                  name="profile"
                   class="w-full text-left px-4 py-3 text-sm text-black hover:bg-primary/10"
                   @click="goProfileFromMenu"
                 >
@@ -118,6 +126,7 @@
 
                 <button
                   type="button"
+                  name="logout"
                   class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-primary/10"
                   @click="handleLogout"
                 >
@@ -205,12 +214,15 @@
       >
         <div class="flex justify-between items-center">
           <h2 class="text-xl font-bold text-primary">更多</h2>
-          <button @click="isOpen = false" class="text-gray-500 text-2xl">&times;</button>
+          <button name="open-menu" @click="isOpen = false" class="text-gray-500 text-2xl">
+            &times;
+          </button>
         </div>
 
         <nav class="flex flex-col gap-4">
           <button
             v-if="!auth.isLoggedIn"
+            name="login-register"
             type="button"
             class="text-left text-black font-medium border-b border-primary/25 pb-2"
             @click="openLogin"
@@ -221,6 +233,7 @@
           <div v-else class="flex items-center justify-between gap-3">
             <button
               type="button"
+              name="profile"
               class="text-black font-medium hover:text-primary"
               @click="(goProfile(), (isOpen = false))"
             >
@@ -229,6 +242,7 @@
 
             <button
               type="button"
+              name="logout"
               class="text-left text-black font-medium border-b border-primary/25 pb-2"
               @click="handleLogout"
             >
@@ -301,10 +315,12 @@ import LoginModal from '@/views/user/LoginModal.vue'
 import RegisterModal from '@/views/user/RegisterModal.vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useFavoriteStore } from '@/stores/favoriteStore'
 
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
+const favoriteStore = useFavoriteStore()
 
 const isOpen = ref(false)
 const isLoginModalOpen = computed({
@@ -351,6 +367,7 @@ const openLoginFromRegister = () => {
 const handleLogout = async () => {
   isUserMenuOpen.value = false
   isOpen.value = false
+  favoriteStore.clear()
   await auth.logout()
   router.push('/')
 }

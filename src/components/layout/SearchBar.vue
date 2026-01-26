@@ -314,6 +314,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                   <p class="text-xs font-bold text-gray-400 mb-2">熱門城市</p>
                   <div class="flex flex-wrap gap-2">
                     <button
+                      name="hot-city"
                       v-for="city in hotCities"
                       :key="city"
                       @click="selectCity(city)"
@@ -329,6 +330,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                   <p class="text-xs font-bold text-gray-400 mb-2">{{ group.region }}</p>
                   <div class="grid grid-cols-6 gap-1">
                     <button
+                      name="city"
                       v-for="city in group.cities"
                       :key="city"
                       @click="selectCity(city)"
@@ -396,6 +398,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                   </div>
                   <div class="flex items-center gap-3">
                     <button
+                      name="adult-minus"
                       type="button"
                       class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50"
                       :disabled="ticketGuests.adults <= 1"
@@ -405,6 +408,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                     </button>
                     <span class="text-sm font-bold w-4 text-center">{{ ticketGuests.adults }}</span>
                     <button
+                      name="adult-plus"
                       type="button"
                       class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"
                       @click="ticketGuests.adults++"
@@ -421,6 +425,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                   </div>
                   <div class="flex items-center gap-3">
                     <button
+                      name="children-minus"
                       type="button"
                       class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50"
                       :disabled="ticketGuests.children <= 0"
@@ -432,6 +437,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                       ticketGuests.children
                     }}</span>
                     <button
+                      name="children-plus"
                       type="button"
                       class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"
                       @click="ticketGuests.children++"
@@ -579,6 +585,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                   </div>
                   <div class="flex items-center gap-4">
                     <button
+                      name="room-minus"
                       @click.stop="peopleConfig.rooms > 1 ? peopleConfig.rooms-- : null"
                       type="button"
                       class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
@@ -587,6 +594,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                     </button>
                     <span class="text-sm font-bold w-4 text-center">{{ peopleConfig.rooms }}</span>
                     <button
+                      name="room-plus"
                       @click.stop="peopleConfig.rooms++"
                       type="button"
                       class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
@@ -602,6 +610,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                   </div>
                   <div class="flex items-center gap-4">
                     <button
+                      name="people-minus"
                       @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null"
                       type="button"
                       class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
@@ -610,6 +619,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                     </button>
                     <span class="text-sm font-bold w-4 text-center">{{ peopleConfig.people }}</span>
                     <button
+                      name="people-plus"
                       @click.stop="peopleConfig.people++"
                       type="button"
                       class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
@@ -627,6 +637,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
     <div class="flex items-center justify-center">
       <button
+        name="search-btn"
         @click="onSearch"
         class="w-[64px] h-[64px] rounded-full bg-primary hover:bg-main text-white transition-all shadow-lg hover:shadow-primary/30 flex items-center justify-center group"
       >

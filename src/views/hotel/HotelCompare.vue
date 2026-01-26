@@ -3,6 +3,7 @@
     <div class="mx-5">
       <!-- 上方操作：只出現一次 -->
       <button
+        name="open-picker"
         v-if="compareStore.hotels.length !== 0"
         type="button"
         @click="openPicker"
@@ -19,6 +20,7 @@
         目前沒有加入任何飯店可以比較。請先回飯店列表按「加入比較」。
         <div class="mt-4">
           <button
+            name="go-hotellist"
             class="px-5 py-2 rounded-[20px] bg-primary hover:bg-main text-white transition-all"
             @click="goBackToList"
           >
@@ -31,6 +33,7 @@
       <div v-else class="grid grid-cols-2 lg:grid-cols-3 gap-5">
         <div v-for="hotel in limitedHotels" :key="hotel.id" class="flex flex-col space-y-2">
           <button
+            name="remove-hotel"
             class="w-full py-3 rounded-[20px] bg-dark_100 text-dark font-bold hover:bg-dark_200 transition-all"
             @click="removeFromCompare(hotel.id)"
           >
@@ -125,6 +128,7 @@
           <div class="flex items-center justify-between mb-4">
             <p class="font-bold text-lg text-dark">已加入比較的飯店（最多 5 間）</p>
             <button
+              name="close-picker"
               class="w-8 h-8 rounded-full transition-all text-dark_700 hover:bg-main_100"
               @click="showPicker = false"
             >
@@ -149,6 +153,7 @@
                 <div class="text-sm text-dark_500">{{ (h.types ?? []).join(' / ') }}</div>
               </div>
               <button
+                name="remove-hotel-in-picker"
                 class="text-sm text-dark_700 hover:text-dark_500"
                 @click="removeFromCompare(h.id)"
               >
@@ -159,12 +164,14 @@
 
           <div class="flex justify-end gap-3 mt-5">
             <button
+              name="clear-all"
               class="px-4 py-2 rounded-xl border text-dark bg-dark_100 hover:bg-dark_300"
               @click="clearAll"
             >
               清空
             </button>
             <button
+              name="close-picker"
               class="px-4 py-2 rounded-xl bg-primary hover:bg-main text-white"
               @click="showPicker = false"
             >

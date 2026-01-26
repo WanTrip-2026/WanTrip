@@ -7,6 +7,12 @@ import { useAuthStore } from '@/stores/auth'
 
 import { isValidEmail, isValidPhone } from '@/utils/validators'
 
+interface Room {
+  id: string
+  status?: string
+  maxAvailable?: number
+}
+
 const orderStore = useOrderStore()
 const authStore = useAuthStore()
 // const { orderData } = orderStore // [FIX] Removed destructuring to avoid stale reference
@@ -107,7 +113,7 @@ const checkInventory = async (): Promise<boolean> => {
     })
 
     const rooms = res.data
-    const targetRoom = rooms.find((r: any) => r.id === product.room_id)
+    const targetRoom = rooms.find((r: Room) => r.id === product.room_id)
 
     if (!targetRoom) {
       alert('無法取得房型資訊，請稍後再試')
@@ -422,7 +428,7 @@ function applyCoupon() {
   </div>
 
   <div class="w-full min-h-screen">
-    <div class="mx-auto max-w-[1240px] px-5 pt-[200px] pb-24 pt-[260px] lg:pt-24">
+    <div class="mx-auto max-w-[1240px] px-5 pt-[200px] pb-24 lg:pt-24">
       <!-- Error Display -->
       <div
         v-if="errorMessage"
@@ -521,7 +527,7 @@ function applyCoupon() {
                 <input
                   v-model="form.phone"
                   type="tel"
-                  placeholder="09xx-xxx-xxx"
+                  placeholder="09xxxxxxxx"
                   class="h-[44px] w-full rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary"
                 />
               </div>
@@ -541,6 +547,7 @@ function applyCoupon() {
                 />
               </div>
               <button
+                name="apply-coupon"
                 type="button"
                 @click="applyCoupon"
                 class="h-11 rounded-full border bg-primary px-6 text-sm text-white transition hover:bg-main active:scale-[0.99]"
@@ -605,6 +612,7 @@ function applyCoupon() {
             </div>
             <div class="w-full">
               <button
+                name="checkout"
                 @click="handleCheckout"
                 :disabled="!selectedPayment || isProcessing"
                 class="mt-5 rounded-full float-right bg-primary hover:bg-main h-11 px-8 text-white font-bold transition disabled:bg-gray-400 disabled:cursor-not-allowed active:scale-[0.99]"

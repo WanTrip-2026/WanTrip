@@ -2,8 +2,8 @@
   <RouterLink
     :to="type === 'ticket' ? `/tickets/${id}` : `/hotels/${id}`"
     :class="[
-      'group relative flex h-[270px] w-[183px] md:hover:w-[408px] z-[1] md:hover:z-[20] bg-white rounded-[20px] md:hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
-      expandLeft ? 'hover:-translate-x-[225px]' : '',
+      'group relative flex h-[270px] w-[183px] lg:hover:w-[408px] z-[1] lg:hover:z-[20] bg-white rounded-[20px] lg:hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
+      expandLeft ? 'lg:hover:-translate-x-[225px]' : '',
     ]"
   >
     <div class="relative h-full w-[183px] flex-shrink-0">
@@ -20,6 +20,7 @@
         class="absolute bottom-[20px] right-[20px] flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
       >
         <button
+          name="add-compare"
           @click.stop.prevent="toggleCompare"
           class="flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-sm"
           :class="
@@ -56,6 +57,7 @@
         </div>
         <div class="flex justify-end gap-3">
           <button
+            name="add-favorite"
             @click.stop.prevent="onFavoriteClick"
             class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors"
           >

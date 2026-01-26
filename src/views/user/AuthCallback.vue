@@ -11,6 +11,7 @@
         <p class="text-gray-800 font-semibold">登入失敗</p>
         <p class="text-gray-600">{{ error }}</p>
         <button
+          name="return-home"
           @click="goHome"
           class="mt-4 px-6 py-2 bg-primary text-white rounded-full hover:bg-main"
         >

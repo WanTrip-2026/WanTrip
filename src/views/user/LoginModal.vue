@@ -84,6 +84,7 @@
                       class="w-full rounded-full border border-gray-300 bg-white px-5 py-3 pr-12 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700"
                     />
                     <button
+                      name="toggle-password-visibility"
                       type="button"
                       class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
                       @click="showPassword = !showPassword"
@@ -140,6 +141,7 @@
                   </label>
 
                   <button
+                    name="forgot-password"
                     type="button"
                     class="text-sm text-dark hover:text-dark_700 hover:underline hover:cursor-pointer"
                     @click="$emit('forgot-password')"
@@ -150,6 +152,7 @@
 
                 <div class="pt-2 space-y-4">
                   <button
+                    name="login"
                     type="submit"
                     class="w-full rounded-full bg-primary px-6 py-3 font-semibold text-white shadow-sm hover:bg-main"
                   >
@@ -157,6 +160,7 @@
                   </button>
 
                   <button
+                    name="signup"
                     type="button"
                     class="w-full rounded-full bg-main_100 px-6 py-3 font-semibold text-dark shadow-sm hover:bg_main_300"
                     @click="$emit('signup')"
@@ -174,6 +178,7 @@
                 <!-- social -->
                 <div class="flex items-center justify-center gap-4">
                   <button
+                    name="google-login"
                     type="button"
                     class="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white border border-gray-300 hover:bg-main_100"
                     aria-label="Continue with Google"
@@ -204,6 +209,7 @@
 
                 <div class="text-center">
                   <button
+                    name="close"
                     type="button"
                     class="text-sm text-dark hover:text-dark_800 hover:underline cursor-pointer"
                     @click="close"
@@ -233,6 +239,7 @@
           </div>
 
           <button
+            name="close"
             type="button"
             class="absolute right-8 top-8 grid h-10 w-10 place-items-center rounded-full bg-white/80 text-dark shadow hover:bg-dark_100"
             aria-label="Close modal"
