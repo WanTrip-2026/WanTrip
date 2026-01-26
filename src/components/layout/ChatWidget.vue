@@ -48,6 +48,7 @@
         </div>
         <div class="flex gap-2 p-3 border-t border-gray-100 bg-white z-10 relative">
           <input
+            ref="inputField"
             v-model="userInput"
             @keyup.enter="sendMessage"
             :disabled="isLoading"
@@ -152,6 +153,8 @@ const scrollToBottom = async () => {
   }
 }
 
+const inputField = ref<HTMLInputElement | null>(null)
+
 const sendMessage = async () => {
   if (!userInput.value.trim() || isLoading.value) return
 
@@ -195,6 +198,11 @@ const sendMessage = async () => {
     })
   } finally {
     isLoading.value = false
+
+    // 讓游標回到輸入框
+    // 使用 nextTick 確保 DOM 已經從 disabled 狀態恢復
+    await nextTick()
+    inputField.value?.focus()
   }
 }
 </script>
