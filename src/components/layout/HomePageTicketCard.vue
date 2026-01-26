@@ -2,8 +2,8 @@
   <RouterLink
     :to="`/tickets/${id}`"
     :class="[
-      'group relative flex h-[270px] w-[183px] hover:w-[408px] z-[1] hover:z-[20] bg-white rounded-[20px] hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
-      expandLeft ? 'hover:-translate-x-[225px]' : '',
+      'group relative flex h-[270px] w-[183px] lg:hover:w-[408px] z-[1] lg:hover:z-[20] bg-white rounded-[20px] lg:hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
+      expandLeft ? 'lg:hover:-translate-x-[225px]' : '',
     ]"
   >
     <div class="relative h-full w-[183px] flex-shrink-0">
