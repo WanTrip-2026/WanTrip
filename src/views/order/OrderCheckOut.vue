@@ -527,7 +527,7 @@ function applyCoupon() {
                 <input
                   v-model="form.phone"
                   type="tel"
-                  placeholder="09xx-xxx-xxx"
+                  placeholder="09xxxxxxxx"
                   class="h-[44px] w-full rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary"
                 />
               </div>

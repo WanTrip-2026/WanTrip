@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 import { useCompareStore } from '@/stores/compareStore'
 import { useFavoriteStore } from '@/stores/favoriteStore'
 import { useAuthStore } from '@/stores/auth'
+import { getOptimizedImageUrl } from '@/utils/image'
 
 type HotelCard = {
   id: string
@@ -97,9 +98,18 @@ const onFavoriteClick = async () => {
       <!-- 圖片 -->
       <div
         class="relative flex-shrink-0"
-        :class="isCompact ? 'h-[160px] aspect-[16/9] sm:aspect-[2/3]' : 'h-[200px] aspect-[16/9] sm:aspect-[4/3]'"
+        :class="
+          isCompact
+            ? 'h-[160px] aspect-[16/9] sm:aspect-[2/3]'
+            : 'h-[200px] aspect-[16/9] sm:aspect-[4/3]'
+        "
       >
-        <img :src="hotel.image_url" :alt="hotel.name" class="w-full h-full object-cover" />
+        <img
+          :src="getOptimizedImageUrl(hotel.image_url, { w: 600 })"
+          :alt="hotel.name"
+          class="w-full h-full object-cover"
+          loading="lazy"
+        />
         <button
           @click.stop="toggleCompare"
           class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 rounded-full border border-white/80 sm:rounded-[20px] h-[40px] w-[110px] text-sm transition-all shadow-lg"
@@ -107,7 +117,9 @@ const onFavoriteClick = async () => {
             isInCompare
               ? 'bg-white backdrop-blur-sm text-red-500 hover:bg-white/65 cursor-pointer'
               : 'bg-white/65 backdrop-blur-sm text-primary hover:bg-white cursor-pointer',
-            isCompact ? 'sm:scale-75 sm:origin-center sm:bottom-1.5 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto' : '',
+            isCompact
+              ? 'sm:scale-75 sm:origin-center sm:bottom-1.5 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto'
+              : '',
           ]"
         >
           <template v-if="isInCompare">取消比較</template>
@@ -150,7 +162,9 @@ const onFavoriteClick = async () => {
         </div>
 
         <!-- 底部 -->
-        <div class="flex flex-row sm:flex-col justify-between sm:justify-end items-center sm:items-end gap-2 border-t sm:border-0 pt-3 sm:pt-0">
+        <div
+          class="flex flex-row sm:flex-col justify-between sm:justify-end items-center sm:items-end gap-2 border-t sm:border-0 pt-3 sm:pt-0"
+        >
           <div v-if="!isCompact" class="text-red-500 text-lg sm:text-xl font-bold">
             NT${{ hotel.min_price.toLocaleString() }}
           </div>
