@@ -254,7 +254,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch, ref, onUnmounted } from 'vue'
+import { watch, ref, onUnmounted, nextTick } from 'vue'
 import { supabase } from '@/utils/supabaseClient'
 import type { User } from '@supabase/supabase-js'
 
@@ -295,10 +295,14 @@ const onSubmit = async () => {
     const user = signInData.session?.user
     if (!user) throw new Error('No user data')
 
-    emit('login', { user })
+    console.log('[LoginModal] Login successful, emitting close', user.email)
+    // 登入成功，關閉 modal
+    // Supabase 的 onAuthStateChange 會自動更新 authStore
     emit('update:modelValue', false)
+    // 確保 Vue 完成 UI 更新
+    await nextTick()
   } catch (err: unknown) {
-    console.error('[login] error:', err)
+    console.error('[LoginModal] Error:', err)
 
     // 提供更友善的錯誤訊息
     let errorMessage = '登入失敗'

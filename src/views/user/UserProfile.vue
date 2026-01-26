@@ -1,3 +1,335 @@
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import type { User } from '@supabase/supabase-js'
+import { supabase } from '@/utils/supabaseClient'
+import { useAuthStore } from '@/stores/auth'
+import { useFavoriteStore } from '@/stores/favoriteStore'
+import HomePageCard from '@/components/layout/HomePageCard.vue'
+import { getUserOrders, type Order } from '@/services/orderApi'
+import { useToast } from 'vue-toastification'
+
+const authStore = useAuthStore()
+const router = useRouter()
+const toast = useToast()
+
+type ProfileRow = {
+  id: string
+  email: string | null
+  full_name: string | null
+  phone: string | null
+  gender: string | null
+  birthday: string | null // date 會以 'YYYY-MM-DD' 字串回來
+  updated_at: string | null
+  created_at?: string
+}
+
+const goToOrder = (order: Order) => {
+  const targetId = order.order_id || order.id
+  router.push(`/orders/confirmation/${targetId}`)
+}
+
+const user = ref<User | null>(null)
+const profile = ref<ProfileRow | null>(null)
+const orders = ref<Order[]>([]) // 訂單列表
+
+const loadingProfile = ref(false)
+const saving = ref(false)
+const errorMsg = ref('')
+
+const form = ref({
+  email: '',
+  fullName: '',
+  birthday: '',
+  gender: 'male',
+  phone: '',
+})
+
+const passwordForm = ref({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+})
+const updatingPassword = ref(false)
+const skipNextLoad = ref(false) // 用於跳過密碼更新後的 loadMe
+
+const updatePassword = async () => {
+  if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
+    toast.error('兩次輸入的密碼不一致')
+    return
+  }
+
+  updatingPassword.value = true
+  try {
+    // 確保 Session 存在
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    if (sessionError || !session) {
+      const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
+
+      if (refreshError || !refreshedSession) {
+        throw new Error('登入狀態已失效，請重新登入')
+      }
+    }
+
+    // 更新密碼（加入 timeout）
+    const updatePromise = supabase.auth.updateUser({
+      password: passwordForm.value.newPassword,
+    })
+
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('密碼更新請求超時，請檢查網路連線或稍後再試')), 15000)
+    })
+
+    const result = await Promise.race([updatePromise, timeoutPromise]) as any
+
+    if ('error' in result && result.error) {
+      throw result.error
+    }
+
+    // 清空表單
+    passwordForm.value.currentPassword = ''
+    passwordForm.value.newPassword = ''
+    passwordForm.value.confirmPassword = ''
+
+    // 成功：顯示訊息
+    toast.success('密碼修改成功！')
+
+  } catch (err: unknown) {
+    console.error('[UserProfile] updatePassword error:', err)
+    let message = '修改失敗'
+
+    if (err instanceof Error) {
+        if (err.message === 'AUTH_SESSION_MISSING' || err.name === 'AuthSessionMissingError') {
+            message = '登入已過期，請重新登入'
+            authStore.openLoginModal()
+        } else if (err.message.includes('403')) {
+             message = '無權限修改，請確認帳號狀態或重新登入'
+        } else {
+            message = err.message
+        }
+    }
+
+    toast.error(message)
+  } finally {
+    updatingPassword.value = false
+  }
+}
+
+const isEditing = ref(false)
+const toggleEdit = () => {
+  isEditing.value = !isEditing.value
+
+  // 取消編輯時還原表單
+  if (!isEditing.value && profile.value) {
+    form.value.email = profile.value.email ?? user.value?.email ?? ''
+    form.value.fullName = profile.value.full_name ?? ''
+    form.value.birthday = profile.value.birthday ?? ''
+    form.value.gender = profile.value.gender ?? 'male'
+    form.value.phone = profile.value.phone ?? ''
+  }
+}
+
+const loadMe = async () => {
+  console.log('[UserProfile] loadMe execution started')
+  errorMsg.value = ''
+  loadingProfile.value = true
+
+  // Wait for auth to be ready
+  if (!authStore.ready) {
+    console.log('[UserProfile] authStore not ready, waiting...')
+    await new Promise<void>((resolve) => {
+      const unwatch = watch(
+        () => authStore.ready,
+        (isReady) => {
+          if (isReady) {
+            unwatch()
+            resolve()
+          }
+        },
+        { immediate: true }
+      )
+    })
+  }
+
+  const currentUser = authStore.user
+  user.value = currentUser
+  console.log('[UserProfile] currentUser:', currentUser?.email)
+
+  if (!currentUser) {
+    errorMsg.value = '未登入'
+    loadingProfile.value = false
+    console.log('[UserProfile] No current user, abort')
+    return
+  }
+
+  const fetchProfile = async (retry = false) => {
+    console.log('[UserProfile] Fetching profile...')
+
+    // 加入 30 秒 timeout 防止卡住
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Profile fetch timeout')), 30000)
+    })
+
+    const fetchPromise = supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', currentUser.id)
+      .single()
+
+    const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any
+
+    if (error) {
+      console.error('[UserProfile] fetchProfile error:', error)
+      // 如果是認證錯誤，稍等再試一次
+      if ((error as { status?: number }).status === 401 && !retry) {
+        console.log('[UserProfile] Auth error, retrying after 1000ms')
+        await new Promise((res) => setTimeout(res, 1000))
+        return fetchProfile(true)
+      }
+      throw error
+    }
+    console.log('[UserProfile] fetchProfile:', data)
+    return data
+  }
+
+  try {
+    const data = await fetchProfile()
+    profile.value = data
+    console.log('[UserProfile] profile loaded:', data)
+
+    // Fill Form
+    form.value.email = currentUser.email ?? ''
+    form.value.fullName = data?.full_name ?? currentUser.user_metadata?.full_name ?? ''
+    form.value.phone = data?.phone ?? currentUser.user_metadata?.phone ?? ''
+    form.value.gender = data?.gender ?? 'male'
+    form.value.birthday = data?.birthday ?? currentUser.user_metadata?.birthday ?? ''
+
+    // Load Orders
+    console.log('[UserProfile] Loading orders...')
+    await loadOrders()
+    console.log('[UserProfile] loadMe completed')
+  } catch (e: unknown) {
+    console.error('[UserProfile] loadMe error:', e)
+    errorMsg.value = '載入會員資料失敗'
+  } finally {
+    loadingProfile.value = false
+  }
+}
+
+// Watch for auth changes to reload
+watch(
+() => [authStore.user, authStore.ready],
+  ([newUser, isReady]) => {
+    // 如果正在跳過，直接返回
+    if (skipNextLoad.value) {
+      console.log('[UserProfile] Skipping loadMe due to password update')
+      return
+    }
+
+    // 只有在 ready 且有使用者，且目前沒有在載入時才執行
+    if (isReady && newUser && !loadingProfile.value) {
+      loadMe()
+    } else if (isReady && !newUser) {
+      user.value = null
+      profile.value = null
+      orders.value = []
+    }
+  },
+)
+
+const loadOrders = async () => {
+  try {
+    const { data } = await supabase.auth.getSession()
+    const token = data.session?.access_token
+    if (!token) throw new Error('No auth token')
+
+    const allOrders = await getUserOrders(token)
+    console.log('All Orders:', allOrders)
+    orders.value = allOrders
+  } catch (error) {
+    console.error('Failed to load orders:', error)
+  }
+}
+
+const saveProfile = async () => {
+  if (!user.value) return
+  saving.value = true
+  errorMsg.value = ''
+
+  try {
+    const payload: Partial<ProfileRow> = {
+      full_name: form.value.fullName,
+      birthday: form.value.birthday || null,
+      gender: form.value.gender,
+      phone: form.value.phone,
+      updated_at: new Date().toISOString(),
+    }
+    console.log(form.value)
+    const { error } = await supabase.from('profiles').update(payload).eq('id', user.value.id)
+    if (error) throw error
+
+    isEditing.value = false
+    await loadMe()
+  } catch (e: unknown) {
+    errorMsg.value = (e instanceof Error ? e.message : String(e)) || '更新失敗'
+  } finally {
+    saving.value = false
+  }
+}
+
+/** 左側選單 IntersectionObserver */
+const activeMenu = ref('#account-section')
+import { USER_MENUS } from '@/constants/user'
+const menus = USER_MENUS
+
+let observer: IntersectionObserver | null = null
+
+onMounted(async () => {
+  observer?.disconnect()
+
+  await loadMe()
+  await favoriteStore.fetchFavorites()
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          activeMenu.value = `#${entry.target.id}`
+        }
+      })
+    },
+    {
+      root: null,
+      rootMargin: '-120px 0px -60% 0px',
+      threshold: 0,
+    },
+  )
+
+  menus.forEach((menu) => {
+    const section = document.getElementById(menu.id)
+    if (section) observer?.observe(section)
+  })
+})
+const setActive = (href: string) => {
+  activeMenu.value = href
+}
+
+const favoriteStore = useFavoriteStore()
+
+const selectedCategory = ref('all')
+
+const filteredFavorites = computed(() => {
+  if (selectedCategory.value === 'all') {
+    return favoriteStore.favoriteList
+  }
+  return favoriteStore.favoriteList.filter((item) => item.type === selectedCategory.value)
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+})
+</script>
+
 <template>
   <main class="max-w-[1240px] mx-auto pt-24 min-h-screen">
     <section class="mx-5">
@@ -128,7 +460,7 @@
               <!-- 生日 -->
               <div>
                 <label for="birthday" class="block mb-1 font-medium">
-                  生日（YYYY / MM / DD）
+                  生日
                 </label>
                 <input
                   id="birthday"
@@ -136,6 +468,7 @@
                   :disabled="!isEditing"
                   type="date"
                   required
+                  placeholder="YYYY-MM-DD"
                   class="w-full rounded-full border border-gray-300 px-5 py-3"
                   v-model="form.birthday"
                 />
@@ -293,7 +626,7 @@
                 :category="item.category"
                 :date="item.date"
                 :address="item.address"
-                :rating="item.rating"
+                :rating="Number(item.rating)"
                 :type="item.type"
                 class="shrink-0"
               />
@@ -304,295 +637,3 @@
     </section>
   </main>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import type { User } from '@supabase/supabase-js'
-import { supabase } from '@/utils/supabaseClient'
-import { useAuthStore } from '@/stores/auth'
-import { useFavoriteStore } from '@/stores/favoriteStore'
-import HomePageCard from '@/components/layout/HomePageCard.vue'
-import { getUserOrders, type Order } from '@/services/orderApi'
-import { useToast } from 'vue-toastification'
-
-const authStore = useAuthStore()
-const router = useRouter()
-const toast = useToast()
-
-type ProfileRow = {
-  id: string
-  email: string | null
-  full_name: string | null
-  phone: string | null
-  gender: string | null
-  birthday: string | null // date 會以 'YYYY-MM-DD' 字串回來
-  updated_at: string | null
-  created_at?: string
-}
-
-const goToOrder = (order: Order) => {
-  const targetId = order.order_id || order.id
-  router.push(`/orders/confirmation/${targetId}`)
-}
-
-const user = ref<User | null>(null)
-const profile = ref<ProfileRow | null>(null)
-const orders = ref<Order[]>([]) // 訂單列表
-
-const loadingProfile = ref(false)
-const saving = ref(false)
-const errorMsg = ref('')
-
-const form = ref({
-  email: '',
-  fullName: '',
-  birthday: '',
-  gender: 'male',
-  phone: '',
-})
-
-const passwordForm = ref({
-  currentPassword: '',
-  newPassword: '',
-  confirmPassword: '',
-})
-const updatingPassword = ref(false)
-
-const updatePassword = async () => {
-  if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
-    toast.error('兩次輸入的密碼不一致')
-    return
-  }
-
-  updatingPassword.value = true
-  try {
-    // 確保 Session 存在
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-    if (sessionError || !session) {
-      const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
-
-      if (refreshError || !refreshedSession) {
-        throw new Error('登入狀態已失效，請重新登入')
-      }
-    }
-
-    // 建立一個 5 秒後自動 resolve 的 Promise (視為超時)
-    const timeoutPromise = new Promise((resolve) => {
-      setTimeout(() => resolve({ error: null, timeout: true }), 5000)
-    })
-
-    const updatePromise = supabase.auth.updateUser({
-      password: passwordForm.value.newPassword,
-    })
-
-    // 使用 Promise.race 避免請求卡死 (會同時跑更新與 5 秒計時)
-    const result: any = await Promise.race([updatePromise, timeoutPromise])
-
-    // 如果有錯誤就噴出錯誤
-    if (result.error) throw result.error
-
-    // 判斷是「真的成功」還是「跑到超時」
-    if (result.timeout) {
-      // 雖然超時了，但通常資料已經送到後端，所以告訴使用者稍等
-      toast.success('請求已送出 (系統回應較慢)')
-    } else {
-      // 正常在 5 秒內完成
-      toast.success('密碼修改成功')
-    }
-
-    passwordForm.value.currentPassword = ''
-    passwordForm.value.newPassword = ''
-    passwordForm.value.confirmPassword = ''
-  } catch (err: unknown) {
-    let message = '修改失敗'
-
-    if (err instanceof Error) {
-        if (err.message === 'AUTH_SESSION_MISSING' || err.name === 'AuthSessionMissingError') {
-            message = '登入已過期，請重新登入'
-            // Optional: Redirect to login or open login modal
-            // authStore.openLoginModal() // If you want to auto-open login
-        } else if (err.message.includes('403')) {
-             message = '無權限修改，請確認帳號狀態或重新登入'
-        } else {
-            message = err.message
-        }
-    }
-
-    toast.error(message)
-  } finally {
-    updatingPassword.value = false
-  }
-}
-
-const isEditing = ref(false)
-const toggleEdit = () => {
-  isEditing.value = !isEditing.value
-
-  // 取消編輯時還原表單
-  if (!isEditing.value && profile.value) {
-    form.value.email = profile.value.email ?? user.value?.email ?? ''
-    form.value.fullName = profile.value.full_name ?? ''
-    form.value.birthday = profile.value.birthday ?? ''
-    form.value.gender = profile.value.gender ?? 'male'
-    form.value.phone = profile.value.phone ?? ''
-  }
-}
-
-const loadMe = async () => {
-  errorMsg.value = ''
-  loadingProfile.value = true
-
-  // Wait for auth to be ready
-  if (!authStore.ready) {
-    // simpler to just return and let watch handle it, or wait
-    // But since we call this onMounted, we might need to wait manually or just rely on watch.
-    // actually, let's just proceed if ready, or return.
-  }
-
-  const currentUser = authStore.user
-  user.value = currentUser
-
-  if (!currentUser) {
-    errorMsg.value = '未登入'
-    loadingProfile.value = false
-    return
-  }
-
-  try {
-    // 1. Fetch Profile
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', currentUser.id)
-      .single()
-
-    if (error && error.code !== 'PGRST116') {
-      // PGRST116: JSON object requested, multiple (or no) rows returned
-      throw error
-    }
-
-    profile.value = data
-
-    // 2. Fill Form
-    form.value.email = currentUser.email ?? ''
-    form.value.fullName = data?.full_name ?? currentUser.user_metadata?.full_name ?? ''
-    form.value.phone = data?.phone ?? currentUser.user_metadata?.phone ?? ''
-    form.value.gender = data?.gender ?? 'male'
-    form.value.birthday = data?.birthday ?? currentUser.user_metadata?.birthday ?? ''
-
-    // 3. Load Orders
-    await loadOrders()
-  } catch (e: unknown) {
-    console.error(e)
-    errorMsg.value = '載入會員資料失敗'
-  } finally {
-    loadingProfile.value = false
-  }
-}
-
-// Watch for auth changes to reload
-watch(
-  () => authStore.user,
-  (newUser) => {
-    if (newUser) loadMe()
-    else {
-      user.value = null
-      profile.value = null
-      orders.value = []
-    }
-  },
-)
-
-const loadOrders = async () => {
-  try {
-    const { data } = await supabase.auth.getSession()
-    const token = data.session?.access_token
-    if (!token) throw new Error('No auth token')
-
-    const allOrders = await getUserOrders(token)
-    console.log('All Orders:', allOrders)
-    orders.value = allOrders
-  } catch (error) {
-    console.error('Failed to load orders:', error)
-  }
-}
-
-const saveProfile = async () => {
-  if (!user.value) return
-  saving.value = true
-  errorMsg.value = ''
-
-  try {
-    const payload: Partial<ProfileRow> = {
-      full_name: form.value.fullName,
-      birthday: form.value.birthday || null,
-      gender: form.value.gender,
-      phone: form.value.phone,
-      updated_at: new Date().toISOString(),
-    }
-    console.log(form.value)
-    const { error } = await supabase.from('profiles').update(payload).eq('id', user.value.id)
-    if (error) throw error
-
-    isEditing.value = false
-    await loadMe()
-  } catch (e: unknown) {
-    errorMsg.value = (e instanceof Error ? e.message : String(e)) || '更新失敗'
-  } finally {
-    saving.value = false
-  }
-}
-
-/** 左側選單 IntersectionObserver */
-const activeMenu = ref('#account-section')
-import { USER_MENUS } from '@/constants/user'
-const menus = USER_MENUS
-
-let observer: IntersectionObserver | null = null
-
-onMounted(async () => {
-  observer?.disconnect()
-
-  await loadMe()
-  await favoriteStore.fetchFavorites()
-
-  observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          activeMenu.value = `#${entry.target.id}`
-        }
-      })
-    },
-    {
-      root: null,
-      rootMargin: '-120px 0px -60% 0px',
-      threshold: 0,
-    },
-  )
-
-  menus.forEach((menu) => {
-    const section = document.getElementById(menu.id)
-    if (section) observer?.observe(section)
-  })
-})
-const setActive = (href: string) => {
-  activeMenu.value = href
-}
-
-const favoriteStore = useFavoriteStore()
-
-const selectedCategory = ref('all')
-
-const filteredFavorites = computed(() => {
-  if (selectedCategory.value === 'all') {
-    return favoriteStore.favoriteList
-  }
-  return favoriteStore.favoriteList.filter((item) => item.type === selectedCategory.value)
-})
-
-onUnmounted(() => {
-  observer?.disconnect()
-})
-</script>

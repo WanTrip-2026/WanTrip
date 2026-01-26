@@ -298,7 +298,6 @@
   </div>
   <LoginModal
     v-model="isLoginModalOpen"
-    @login="handleLogin"
     @signup="handleSignup"
     @forgot-password="handleForgotPassword"
     @social="handleSocial"
@@ -317,7 +316,6 @@ import RegisterModal from '@/views/user/RegisterModal.vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useFavoriteStore } from '@/stores/favoriteStore'
-import type { User } from '@supabase/supabase-js'
 
 const router = useRouter()
 const route = useRoute()
@@ -328,7 +326,12 @@ const isOpen = ref(false)
 const isLoginModalOpen = computed({
   get: () => auth.showLoginModal,
   set: (val) => {
-    auth.showLoginModal = val
+    console.log('[AppNavbar] isLoginModalOpen setter:', val)
+    if (val) {
+      auth.openLoginModal()
+    } else {
+      auth.closeLoginModal()
+    }
   },
 })
 const isRegisterModalOpen = ref(false)
@@ -380,11 +383,9 @@ const closeAllAuthModal = () => {
   isRegisterModalOpen.value = false
 }
 
-const handleLogin = (payload: { user: unknown }) => {
-  const user = payload.user as User
-  auth.setAuth(user)
-  auth.closeLoginModal()
-}
+// handleLogin 已移除，因為 LoginModal 不再 emit login 事件
+// Supabase 的 onAuthStateChange 會自動更新 authStore
+
 const handleSignup = () => {
   auth.closeLoginModal()
   openRegister()

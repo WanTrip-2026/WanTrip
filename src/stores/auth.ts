@@ -79,7 +79,15 @@ export const useAuthStore = defineStore('auth', () => {
 
       // 監聽登入狀態變化
       supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('[Auth] onAuthStateChange:', event, session?.user?.email)
         user.value = session?.user ?? null
+
+        // 跳過 USER_UPDATED 事件，避免在 onAuthStateChange handler 中呼叫 Supabase API 導致 hang
+        // 參考：https://github.com/supabase/supabase/issues
+        if (event === 'USER_UPDATED') {
+          console.log('[Auth] Skipping ensureUserProfile for USER_UPDATED event')
+          return
+        }
 
         if (user.value) {
            // Temporarily disable profile check to debug hanging issue
@@ -94,26 +102,27 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // ✅ 清除本地狀態 (不呼叫 Supabase signOut)
+  const clearLocalState = () => {
+    console.log('[Auth] 清除本地狀態 (僅更新 UI)...')
+    user.value = null
+    // 不要手動清除 localStorage，讓 Supabase Client 自行管理
+    // 手動清除可能會導致 Supabase Client 在重新登入後狀態不同步
+  }
+
   // ✅ 登出
   const logout = async () => {
+    console.log('[Auth] Logging out...')
     try {
-      // 使用 Promise.race 加入 3 秒超時
-      const signOutPromise = supabase.auth.signOut()
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('SignOut timeout')), 1000)
-      )
-      await Promise.race([signOutPromise, timeoutPromise])
+      // 正確等待 signOut 完成
+      await supabase.auth.signOut()
+      console.log('[Auth] signOut completed')
     } catch (error) {
-      console.error('Logout error:', error)
-      // 即使 signOut 失敗，也強制清除本地狀態
+      console.error('[Auth] signOut error:', error)
+      // 即使 signOut 失敗，也要清除本地狀態
     } finally {
-      user.value = null
-      // 強制清除 localStorage 中的 session
-      try {
-        localStorage.removeItem('supabase.auth.token')
-      } catch (e) {
-        console.warn('Failed to clear localStorage:', e)
-      }
+      // 清除本地狀態
+      clearLocalState()
     }
   }
 
@@ -122,7 +131,9 @@ export const useAuthStore = defineStore('auth', () => {
     showLoginModal.value = true
   }
   const closeLoginModal = () => {
+    console.log('[Auth] closeLoginModal called, setting showLoginModal to false')
     showLoginModal.value = false
+    console.log('[Auth] showLoginModal.value is now:', showLoginModal.value)
   }
 
   const setAuth = (sessionUser: User | null) => {
@@ -140,5 +151,6 @@ export const useAuthStore = defineStore('auth', () => {
     openLoginModal,
     closeLoginModal,
     setAuth,
+    clearLocalState,
   }
 })
