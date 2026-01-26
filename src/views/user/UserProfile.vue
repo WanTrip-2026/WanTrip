@@ -51,6 +51,7 @@ const passwordForm = ref({
   confirmPassword: '',
 })
 const updatingPassword = ref(false)
+const skipNextLoad = ref(false) // 用於跳過密碼更新後的 loadMe
 
 const updatePassword = async () => {
   if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
@@ -70,29 +71,19 @@ const updatePassword = async () => {
       }
     }
 
-    // 建立 3 秒 timeout Promise
-    const timeoutPromise = new Promise<{ timeout: true }>((resolve) => {
-      setTimeout(() => resolve({ timeout: true }), 3000)
-    })
-
-    // 建立更新密碼 Promise
+    // 更新密碼（加入 timeout）
     const updatePromise = supabase.auth.updateUser({
       password: passwordForm.value.newPassword,
-    }).then(result => ({ ...result, timeout: false }))
+    })
 
-    // 使用 Promise.race 避免請求卡死
-    const result = await Promise.race([updatePromise, timeoutPromise])
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('密碼更新請求超時，請檢查網路連線或稍後再試')), 15000)
+    })
 
-    // 判斷是超時還是正常完成
-    if ('timeout' in result && result.timeout) {
-      // 超時：請求已送出但需要 email 確認
-      toast.success('密碼修改已完成，請使用新密碼重新登入')
-    } else if ('error' in result && result.error) {
-      // 有錯誤
+    const result = await Promise.race([updatePromise, timeoutPromise]) as any
+
+    if ('error' in result && result.error) {
       throw result.error
-    } else {
-      // 正常完成
-      toast.success('密碼修改成功，請使用新密碼重新登入')
     }
 
     // 清空表單
@@ -100,15 +91,11 @@ const updatePassword = async () => {
     passwordForm.value.newPassword = ''
     passwordForm.value.confirmPassword = ''
 
-    // 密碼修改成功後，Supabase 會自動登出使用者
-    // 我們主動登出並引導使用者重新登入
-    await authStore.logout()
+    // 成功：顯示訊息
+    toast.success('密碼修改成功！')
 
-    // 延遲一下再開啟登入 Modal，讓 toast 訊息有時間顯示
-    setTimeout(() => {
-      authStore.openLoginModal()
-    }, 1500)
   } catch (err: unknown) {
+    console.error('[UserProfile] updatePassword error:', err)
     let message = '修改失敗'
 
     if (err instanceof Error) {
@@ -143,49 +130,86 @@ const toggleEdit = () => {
 }
 
 const loadMe = async () => {
+  console.log('[UserProfile] loadMe execution started')
   errorMsg.value = ''
   loadingProfile.value = true
 
   // Wait for auth to be ready
   if (!authStore.ready) {
-    return
+    console.log('[UserProfile] authStore not ready, waiting...')
+    await new Promise<void>((resolve) => {
+      const unwatch = watch(
+        () => authStore.ready,
+        (isReady) => {
+          if (isReady) {
+            unwatch()
+            resolve()
+          }
+        },
+        { immediate: true }
+      )
+    })
   }
 
   const currentUser = authStore.user
   user.value = currentUser
+  console.log('[UserProfile] currentUser:', currentUser?.email)
 
   if (!currentUser) {
     errorMsg.value = '未登入'
     loadingProfile.value = false
+    console.log('[UserProfile] No current user, abort')
     return
   }
 
-  try {
-    // 1. Fetch Profile
-    const { data, error } = await supabase
+  const fetchProfile = async (retry = false) => {
+    console.log('[UserProfile] Fetching profile...')
+
+    // 加入 30 秒 timeout 防止卡住
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Profile fetch timeout')), 30000)
+    })
+
+    const fetchPromise = supabase
       .from('profiles')
       .select('*')
       .eq('id', currentUser.id)
       .single()
 
-    if (error && error.code !== 'PGRST116') {
-      // PGRST116: JSON object requested, multiple (or no) rows returned
+    const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any
+
+    if (error) {
+      console.error('[UserProfile] fetchProfile error:', error)
+      // 如果是認證錯誤，稍等再試一次
+      if ((error as { status?: number }).status === 401 && !retry) {
+        console.log('[UserProfile] Auth error, retrying after 1000ms')
+        await new Promise((res) => setTimeout(res, 1000))
+        return fetchProfile(true)
+      }
       throw error
     }
+    console.log('[UserProfile] fetchProfile:', data)
+    return data
+  }
 
+  try {
+    const data = await fetchProfile()
     profile.value = data
+    console.log('[UserProfile] profile loaded:', data)
 
-    // 2. Fill Form
+    // Fill Form
     form.value.email = currentUser.email ?? ''
     form.value.fullName = data?.full_name ?? currentUser.user_metadata?.full_name ?? ''
     form.value.phone = data?.phone ?? currentUser.user_metadata?.phone ?? ''
     form.value.gender = data?.gender ?? 'male'
     form.value.birthday = data?.birthday ?? currentUser.user_metadata?.birthday ?? ''
 
-    // 3. Load Orders
+    // Load Orders
+    console.log('[UserProfile] Loading orders...')
     await loadOrders()
+    console.log('[UserProfile] loadMe completed')
   } catch (e: unknown) {
-    console.error(e)
+    console.error('[UserProfile] loadMe error:', e)
     errorMsg.value = '載入會員資料失敗'
   } finally {
     loadingProfile.value = false
@@ -194,10 +218,18 @@ const loadMe = async () => {
 
 // Watch for auth changes to reload
 watch(
-  () => [authStore.user, authStore.ready],
+() => [authStore.user, authStore.ready],
   ([newUser, isReady]) => {
-    if (isReady && newUser) loadMe()
-    else if (isReady && !newUser) {
+    // 如果正在跳過，直接返回
+    if (skipNextLoad.value) {
+      console.log('[UserProfile] Skipping loadMe due to password update')
+      return
+    }
+
+    // 只有在 ready 且有使用者，且目前沒有在載入時才執行
+    if (isReady && newUser && !loadingProfile.value) {
+      loadMe()
+    } else if (isReady && !newUser) {
       user.value = null
       profile.value = null
       orders.value = []
