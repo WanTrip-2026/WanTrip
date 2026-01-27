@@ -1,3 +1,19 @@
+<template>
+  <div
+    v-if="packets.length > 0"
+    class="fixed inset-0 w-screen h-screen z-[9999] pointer-events-none overflow-hidden"
+  >
+    <div
+      v-for="packet in packets"
+      :key="packet.id"
+      class="absolute top-[-100px] animate-[fall_linear_forwards]"
+      :style="packet.style"
+    >
+      <div>🧧</div>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import type { CSSProperties } from 'vue'
@@ -55,3 +71,14 @@ onUnmounted(() => {
   packets.value = []
 })
 </script>
+
+<style scoped>
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(115vh) rotate(360deg);
+  }
+}
+</style>
