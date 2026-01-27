@@ -22,6 +22,7 @@ const OrderCheckOut = () => import('@/views/order/OrderCheckOut.vue')
 const OrderConfirmation = () => import('@/views/order/OrderConfirmation.vue')
 const OrderCompleted = () => import('@/views/order/OrderCompleted.vue')
 const TermsOfService = () => import('@/views/policy/TermsofService.vue')
+const PrivacyPage = () => import('@/views/policy/PrivacyPage.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -153,6 +154,12 @@ const router = createRouter({
       path: '/tos',
       name: 'termsOfService',
       component: TermsOfService,
+      meta: { showAppNavbar: true, showFooter: true },
+    },
+    {
+      path: '/privacy',
+      name: 'privacyPage',
+      component: PrivacyPage,
       meta: { showAppNavbar: true, showFooter: true },
     },
     // 404 頁
