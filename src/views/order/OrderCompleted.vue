@@ -6,6 +6,7 @@ import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { supabase } from '@/utils/supabaseClient'
 import { getOrderById } from '@/services/orderApi'
+import Redenvelop from '@/components/layout/Redenvelop.vue'
 
 const route = useRoute()
 const orderStore = useOrderStore()
@@ -139,6 +140,7 @@ onMounted(async () => {
           v-else
           class="flex flex-col gap-5 items-center lg:flex-row lg:gap-10 justify-center w-full"
         >
+          <Redenvelop />
           <div class="w-[200px] aspect-[1/1] overflow-hidden">
             <img
               :src="order.image"
