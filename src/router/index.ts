@@ -21,6 +21,7 @@ const TravelDNAResult = () => import('@/views/travel-dna/TravelDNAResult.vue')
 const OrderCheckOut = () => import('@/views/order/OrderCheckOut.vue')
 const OrderConfirmation = () => import('@/views/order/OrderConfirmation.vue')
 const OrderCompleted = () => import('@/views/order/OrderCompleted.vue')
+const TermsOfService = () => import('@/views/policy/TermsofService.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -147,6 +148,12 @@ const router = createRouter({
       name: 'hotelMapSearch',
       component: HotelMapSearch,
       meta: { showAppNavbar: false, showFooter: false },
+    },
+    {
+      path: '/tos',
+      name: 'termsOfService',
+      component: TermsOfService,
+      meta: { showAppNavbar: true, showFooter: true },
     },
     // 404 頁
     {
