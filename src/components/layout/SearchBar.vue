@@ -144,15 +144,8 @@ const allCities = [
 
 // Ticket State
 const ticketDestination = ref(props.initialDestination)
-const ticketGuests = reactive({ ...props.initialTicketGuests })
+const ticketKeyword = ref('')
 const ticketSearchKeyword = ref('') // For filtering cities in dropdown
-
-const ticketGuestDisplay = computed(() => {
-  const { adults, children, hasPet } = ticketGuests
-  let text = `${adults + children} 人`
-  if (hasPet) text += ' · 攜帶寵物'
-  return text
-})
 
 // Filtered Cities
 const filteredCities = computed(() => {
@@ -176,18 +169,20 @@ const onSearch = () => {
   if (props.searchType === 'package') {
     const payload = {
       destination: ticketDestination.value,
-      guests: ticketGuests,
+      keyword: ticketKeyword.value,
     }
     emit('search', payload)
 
     if (props.mode === 'redirect') {
+      const query: Record<string, string> = {
+        keyword: payload.keyword,
+      }
+      if (payload.destination) {
+        query.destination = payload.destination
+      }
       router.push({
         path: '/tickets/search',
-        query: {
-          destination: payload.destination,
-          adults: String(payload.guests.adults),
-          children: String(payload.guests.children),
-        },
+        query,
       })
     }
   } else {
@@ -281,7 +276,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                   autoFocus
                 />
                 <p v-else class="text-base font-medium text-black truncate flex-1">
-                  {{ ticketDestination || '選擇城市、景點' }}
+                  {{ ticketDestination || '選擇城市' }}
                 </p>
 
                 <!-- Chevron Icon for City -->
@@ -347,127 +342,31 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
             </transition>
           </div>
 
-          <!-- Ticket Guest Picker -->
+          <!-- Ticket Keyword Input -->
           <div class="relative flex-[1.5]">
             <div
-              class="h-[64px] rounded-[20px] md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
+              class="h-[64px] rounded-[20px] md:rounded-full px-5 flex flex-col justify-center border transition-all"
               :class="[
-                activePicker === 'ticketGuest'
+                activePicker === 'ticketKeyword'
                   ? 'bg-white ring-1 ring-gray-300'
                   : 'bg-gray-50 border-transparent hover:bg-gray-100',
               ]"
-              @click="togglePicker('ticketGuest')"
+              @click="activePicker = 'ticketKeyword'"
             >
               <p
-                class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-0.5 pointer-events-none"
+                class="text-xs font-bold text-primary/70 uppercase tracking-wider mb-0.5 pointer-events-none"
               >
-                人數、需求
+                關鍵字
               </p>
-              <div class="flex items-center justify-between pointer-events-none">
-                <span class="text-base font-medium text-black truncate">{{
-                  ticketGuestDisplay
-                }}</span>
-                <svg
-                  class="h-4 w-4 text-primary/40 transition-transform duration-300"
-                  :class="{ 'rotate-180': activePicker === 'ticketGuest' }"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
+              <input
+                v-model="ticketKeyword"
+                type="text"
+                placeholder="搜尋目的地/當地體驗"
+                class="w-full text-base text-black bg-transparent border-none outline-none placeholder:text-gray-400"
+                @focus="activePicker = 'ticketKeyword'"
+                @keyup.enter="onSearch"
+              />
             </div>
-
-            <transition name="fade">
-              <div
-                v-if="activePicker === 'ticketGuest'"
-                @click.stop
-                class="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 md:translate-x-0 md:right-0 md:left-auto z-[100] w-[calc(100vw-32px)] md:w-[320px] rounded-[24px] bg-white p-6 border border-gray-200 shadow-[0px_8px_32px_rgba(0,0,0,0.12)] space-y-6"
-              >
-                <!-- Adults -->
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-sm font-bold text-primary">成人</p>
-                    <p class="text-sm text-gray-400">18 歲以上</p>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <button
-                      name="adult-minus"
-                      type="button"
-                      class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50"
-                      :disabled="ticketGuests.adults <= 1"
-                      @click="ticketGuests.adults--"
-                    >
-                      -
-                    </button>
-                    <span class="text-sm font-bold w-4 text-center">{{ ticketGuests.adults }}</span>
-                    <button
-                      name="adult-plus"
-                      type="button"
-                      class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"
-                      @click="ticketGuests.adults++"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                <!-- Children -->
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-sm font-bold text-primary">孩童</p>
-                    <p class="text-sm text-gray-400">0 - 17 歲</p>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <button
-                      name="children-minus"
-                      type="button"
-                      class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50"
-                      :disabled="ticketGuests.children <= 0"
-                      @click="ticketGuests.children--"
-                    >
-                      -
-                    </button>
-                    <span class="text-sm font-bold w-4 text-center">{{
-                      ticketGuests.children
-                    }}</span>
-                    <button
-                      name="children-plus"
-                      type="button"
-                      class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"
-                      @click="ticketGuests.children++"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                <hr class="border-gray-100" />
-                <!-- Pet -->
-                <div
-                  class="flex items-center justify-between cursor-pointer"
-                  @click="ticketGuests.hasPet = !ticketGuests.hasPet"
-                >
-                  <div>
-                    <p class="text-sm font-bold text-primary">攜帶寵物</p>
-                    <p class="text-[11px] text-gray-400">將為您篩選可攜帶寵物的行程</p>
-                  </div>
-                  <div
-                    class="w-11 h-6 rounded-full transition-colors relative"
-                    :class="ticketGuests.hasPet ? 'bg-primary' : 'bg-gray-200'"
-                  >
-                    <div
-                      class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform"
-                      :class="ticketGuests.hasPet ? 'translate-x-5' : 'translate-x-0'"
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </transition>
           </div>
         </template>
 
