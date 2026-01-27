@@ -1,9 +1,9 @@
 <template>
-  <div class="fixed bottom-2 md:bottom-5 right-0 md:right-5 z-50">
+  <div class="fixed bottom-0 right-0 z-50">
     <Transition name="slide-fade">
       <div
         v-if="isOpen"
-        class="flex flex-col w-[calc(100%-40px)] mx-5 max-h-[calc(100vh-160px)] h-[420px] md:w-80 md:h-[520px] rounded-[32px] shadow-xl overflow-hidden mb-36 md:mb-24 bg-white/65 backdrop-blur-xl border border-white/25"
+        class="flex flex-col w-80 h-[420px] md:w-80 md:h-[520px] rounded-[20px] shadow-xl overflow-hidden mr-6 mb-36 md:mb-24 bg-white/50 backdrop-blur-xl border border-white/50"
       >
         <div class="bg-primary text-white font-semibold text-lg text-center py-3 z-10">
           旅遊規劃師 阿萬🪄
@@ -53,12 +53,12 @@
             @keyup.enter="sendMessage"
             :disabled="isLoading"
             placeholder="阿萬等你下指令冒險..."
-            class="flex-1 border border-gray-200 rounded-full px-3 py-2 text-sm text-dark-900 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:bg-gray-50"
+            class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark-900 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:bg-gray-50"
           />
           <button
             @click="sendMessage"
             :disabled="isLoading"
-            class="bg-primary text-white px-4 py-2 rounded-full font-medium hover:bg-main transition disabled:bg-gray-400 flex-shrink-0"
+            class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-main transition disabled:bg-gray-400 flex-shrink-0"
           >
             GO!
           </button>
@@ -68,7 +68,7 @@
 
     <button
       @click="toggleChat"
-      class="fixed bottom-24 md:bottom-10 right-5 md:right-10 w-12 md:w-16 h-12 md:h-16 rounded-full bg-primary text-white border-2 border-white/30 flex items-center justify-center shadow-xl shadow-primary/30 hover:scale-110 transition-all duration-300 z-50"
+      class="fixed bottom-24 md:bottom-6 right-6 w-10 h-10 md:w-14 md:h-14 rounded-full bg-primary text-white border border-white/60 flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300 z-50"
       :class="{ 'rotate-180': isOpen }"
     >
       <font-awesome-icon v-if="isOpen" icon="fa-solid fa-xmark" class="text-2xl text-white" />
@@ -77,7 +77,7 @@
         v-else
         src="https://res.cloudinary.com/wantrip/image/upload/f_auto,q_100,dpr_2/v1769403862/robot_geqjl0"
         alt="阿萬"
-        class="w-11 md:w-14 h-11 md:h-14 rounded-full object-cover"
+        class="w-10 h-10 md:w-14 md:h-14 rounded-full object-cover"
       />
     </button>
   </div>
