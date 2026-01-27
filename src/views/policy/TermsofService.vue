@@ -14,20 +14,13 @@
       <p class="text-black font-bold pt-10">
         服務項目說明
       </p>
-      <p class="text-black">
-        WanTrip 是一個提供旅遊相關資訊與服務的平台，主要功能包括：
-        WanTrip 提供多樣化的旅遊相關功能，包含但不限於：
-        <br>
-        住宿預訂 (Accommodation Booking)：提供全台飯店、民宿等住宿之預約與支付服務。
-        <br>
-        票券訂購(體驗活動) (Tickets Sales)：提供景點門票、票券及體驗活動之訂購。
-        <br>
-        飯店設施比對工具 (Facility Comparison Tool)：提供不同住宿業者間設施、價格與評價之橫向對比。
-        <br>
-        旅遊DNA (Travel DNA)：透過趣味測驗提供個性化旅遊建議。
-        <br>
-        AI旅遊顧問：透過與用戶問答提供旅遊建議。
-      </p>
+      <ul class="list-disc list-inside text-black decoration-2 mt-4 space-y-2">
+          <li>住宿預訂 (Accommodation Booking)：提供全台飯店、民宿等住宿之預約與支付服務。</li>
+          <li>票券訂購(體驗活動) (Tickets Sales)：提供景點門票、票券及體驗活動之訂購。</li>
+          <li>飯店設施比對工具 (Facility Comparison Tool)：提供不同住宿業者間設施、價格與評價之橫向對比。</li>
+          <li>旅遊DNA (Travel DNA)：透過趣味測驗提供個性化旅遊建議。</li>
+          <li>AI旅遊顧問：透過與用戶問答提供旅遊建議。</li>
+        </ul>
       <p class="text-black font-bold pt-10">
         用戶帳號管理
       </p>
@@ -63,8 +56,7 @@
       <p class="text-black">
         WanTrip 保留隨時修改本條款之權利。修改後的內容將公佈於 服務通告頁面 (Service Announcement Page)，自公佈之日起生效。
         WanTrip 退改規章條款 (Refund and Cancellation Policy)
-        本條款旨在說明用戶透過 WanTrip 平台進行交易後的變更、取消及退款作業準則。請注意，由於本平台包含多種不同性質的旅遊產品，具體規範將視產品類別而定。我們重視您的隱私。詳細資訊請參閱我們的 隱私權政策 (Privacy
-        Policy)。
+        本條款旨在說明用戶透過 WanTrip 平台進行交易後的變更、取消及退款作業準則。請注意，由於本平台包含多種不同性質的旅遊產品，具體規範將視產品類別而定。我們重視您的隱私。詳細資訊請參閱我們的 <RouterLink to="/policy" class="text-primary hover:underline">隱私權聲明</RouterLink>。
       </p>
       <p class="text-black font-bold pt-10">
         退款處理進度 (Refund Processing Timeline)
