@@ -1,17 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
-import { useOrderStore } from '@/stores/orderStore'
-import { useAuthStore } from '@/stores/auth'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { supabase } from '@/utils/supabaseClient'
 import { getOrderById } from '@/services/orderApi'
-import Redenvelop from '@/components/layout/Redenvelop.vue'
+import Redenvelop from '@/components/layout/RedEnvelop.vue'
 
 const route = useRoute()
-const orderStore = useOrderStore()
-const authStore = useAuthStore()
-
 const now = new Date()
 const formattedDate = `${now.getFullYear()}年${String(now.getMonth() + 1).padStart(2, '0')}月${String(now.getDate()).padStart(2, '0')}日 ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
 
@@ -86,7 +81,6 @@ onMounted(async () => {
   try {
     console.log('[OrderCompleted] Getting session...')
     // Create a timeout promise
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const timeout = new Promise<{ data: { session: null }; error: null }>((resolve) => {
       setTimeout(() => {
         console.warn('[OrderCompleted] Session timeout, proceeding without token')
@@ -95,7 +89,6 @@ onMounted(async () => {
     })
 
     // Race getSession against timeout
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sessionRes = (await Promise.race([supabase.auth.getSession(), timeout])) as {
       data: { session: any }
       error: any
