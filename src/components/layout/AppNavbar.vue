@@ -290,7 +290,7 @@
             class="text-black font-medium border-b border-primary/25 pb-2"
             @click="isOpen = false"
           >
-            旅遊DNA
+            旅行DNA
           </RouterLink>
         </nav>
       </div>
