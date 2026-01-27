@@ -8,7 +8,7 @@
         <div class="w-full flex flex-col md:flex-row md:items-center gap-2">
           <!-- Logo and Mobile Toggle Group -->
           <div class="flex items-center justify-between">
-            <RouterLink to="/" aria-label="回首頁" class="flex-shrink-0">
+            <a href="/" class="flex-shrink-0">
               <svg
                 width="168"
                 height="44"
@@ -26,7 +26,7 @@
                   fill="black"
                 />
               </svg>
-            </RouterLink>
+            </a>
 
             <!-- Mobile Search Toggle Button -->
             <button

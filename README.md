@@ -114,7 +114,7 @@ WanTrip-Backend/
 
 ### 線上體驗
 
-- [點此進入 WanTrip 官方網站](https://你的前端網址.com)
+- [點此進入 WanTrip 官方網站](https://wantrip.store)
 
 ### 本地開發環境設置
 

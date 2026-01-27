@@ -8,119 +8,51 @@
     </div> -->
 
     <div class="mx-5 mb-8">
-      <div class="grid grid-cols-[2fr_1fr] lg:grid-cols-[2fr_1fr_1fr_1fr] gap-2.5 mb-10">
-        <div class="relative h-[400px] rounded-[20px] overflow-hidden">
-          <div
-            v-show="!imageLoadStatus[0]"
-            class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
-          ></div>
-          <img
-            v-if="attractionImages[0]?.image_url || loading"
-            :src="attractionImages[0]?.image_url"
-            fetchpriority="high"
-            @load="onImageLoad(0)"
+      <div class="grid gap-2.5 mb-10 grid-cols-2 lg:grid-cols-[2fr_1fr_1fr]">
+        <div
+          class="relative h-[300px] lg:h-[400px] rounded-[20px] overflow-hidden col-span-2 lg:col-span-1 lg:row-span-2">
+          <div v-show="!imageLoadStatus[0]" class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"></div>
+          <img v-if="attractionImages[0]?.image_url || loading" :src="attractionImages[0]?.image_url"
+            fetchpriority="high" @load="onImageLoad(0)"
             class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-            :class="{ 'opacity-0': !imageLoadStatus[0], 'opacity-100': imageLoadStatus[0] }"
-          />
+            :class="{ 'opacity-0': !imageLoadStatus[0], 'opacity-100': imageLoadStatus[0] }" />
         </div>
-
-        <div class="grid grid-rows-2 gap-2.5 h-[400px]">
+        <div class="grid grid-rows-2 gap-2.5 h-[300px] lg:h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
-            <div
-              v-show="!imageLoadStatus[1]"
-              class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
-            ></div>
-            <img
-              v-if="attractionImages[1]?.image_url || loading"
-              :src="attractionImages[1]?.image_url"
-              @load="onImageLoad(1)"
+            <div v-show="!imageLoadStatus[1]" class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10">
+            </div>
+            <img :src="attractionImages[1]?.image_url" @load="onImageLoad(1)"
               class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-              :class="{ 'opacity-0': !imageLoadStatus[1], 'opacity-100': imageLoadStatus[1] }"
-            />
+              :class="{ 'opacity-0': !imageLoadStatus[1], 'opacity-100': imageLoadStatus[1] }" />
           </div>
-
           <div class="relative rounded-[20px] overflow-hidden">
-            <div
-              v-show="!imageLoadStatus[2]"
-              class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
-            ></div>
-            <img
-              v-if="attractionImages[2]?.image_url || loading"
-              :src="attractionImages[2]?.image_url"
-              @load="onImageLoad(2)"
+            <div v-show="!imageLoadStatus[2]" class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10">
+            </div>
+            <img :src="attractionImages[2]?.image_url" @load="onImageLoad(2)"
               class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-              :class="{ 'opacity-0': !imageLoadStatus[2], 'opacity-100': imageLoadStatus[2] }"
-            />
+              :class="{ 'opacity-0': !imageLoadStatus[2], 'opacity-100': imageLoadStatus[2] }" />
           </div>
         </div>
-
-        <div class="grid grid-rows-2 gap-2.5 h-[400px]">
+        <div class="grid grid-rows-2 gap-2.5 h-[300px] lg:h-[400px]">
           <div class="relative rounded-[20px] overflow-hidden">
-            <div
-              v-show="!imageLoadStatus[3]"
-              class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
-            ></div>
-            <img
-              v-if="attractionImages[3]?.image_url || loading"
-              :src="attractionImages[3]?.image_url"
-              @load="onImageLoad(3)"
+            <div v-show="!imageLoadStatus[3]" class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10">
+            </div>
+            <img :src="attractionImages[3]?.image_url" @load="onImageLoad(3)"
               class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-              :class="{ 'opacity-0': !imageLoadStatus[3], 'opacity-100': imageLoadStatus[3] }"
-            />
+              :class="{ 'opacity-0': !imageLoadStatus[3], 'opacity-100': imageLoadStatus[3] }" />
           </div>
-
           <div class="relative rounded-[20px] overflow-hidden">
-            <div
-              v-show="!imageLoadStatus[4]"
-              class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
-            ></div>
-            <img
-              v-if="attractionImages[4]?.image_url || loading"
-              :src="attractionImages[4]?.image_url"
-              @load="onImageLoad(4)"
+            <div v-show="!imageLoadStatus[4]" class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10">
+            </div>
+            <img :src="attractionImages[4]?.image_url" @load="onImageLoad(4)"
               class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-              :class="{ 'opacity-0': !imageLoadStatus[4], 'opacity-100': imageLoadStatus[4] }"
-            />
-          </div>
-        </div>
-
-        <div class="grid grid-rows-2 gap-2.5 h-[400px]">
-          <div class="relative rounded-[20px] overflow-hidden">
-            <div
-              v-show="!imageLoadStatus[5]"
-              class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
-            ></div>
-            <img
-              :src="attractionImages[5]?.image_url || '/src/assets/hoteldetail_img/Wanhao6.jpg'"
-              @load="onImageLoad(5)"
-              class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-              :class="{ 'opacity-0': !imageLoadStatus[5], 'opacity-100': imageLoadStatus[5] }"
-            />
-          </div>
-
-          <div class="relative rounded-[20px] overflow-hidden">
-            <div
-              v-show="!imageLoadStatus[6]"
-              class="absolute inset-0 w-full h-full bg-gray-200 animate-pulse z-10"
-            ></div>
-            <img
-              :src="attractionImages[6]?.image_url || '/src/assets/hoteldetail_img/Wanhao7.jpg'"
-              @load="onImageLoad(6)"
-              class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-              :class="{ 'opacity-0': !imageLoadStatus[6], 'opacity-100': imageLoadStatus[6] }"
-            />
-            <div
-              v-if="!loading"
-              class="absolute inset-0 flex items-center justify-center text-white font-bold transition-all z-0"
-            ></div>
+              :class="{ 'opacity-0': !imageLoadStatus[4], 'opacity-100': imageLoadStatus[4] }" />
           </div>
         </div>
       </div>
     </div>
 
-    <div
-      class="max-w-[1200px] mx-auto px-5 lg:px-0 grid grid-cols-1 lg:grid-cols-12 gap-5 relative"
-    >
+    <div class="max-w-[1200px] mx-auto px-5 lg:px-0 grid grid-cols-1 lg:grid-cols-12 gap-5 relative">
       <div class="col-span-12 lg:col-span-8 space-y-5 mb-[300px] lg:mb-0">
         <section class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
           <h2 class="text-xl line-clamp-2 md:text-2xl font-bold text-dark_900 mb-4">
@@ -140,23 +72,11 @@
           <div>
             <h4 class="font-bold text-dark_900 mb-3">行程特色</h4>
             <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-              <li
-                v-for="(feature, index) in ticketIntro.highlights"
-                :key="index"
-                class="flex items-start text-dark_600"
-              >
-                <svg
-                  class="w-5 h-5 text-dark_700 mr-2 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M5 13l4 4L19 7"
-                  ></path>
+              <li v-for="(feature, index) in ticketIntro.highlights" :key="index"
+                class="flex items-start text-dark_600">
+                <svg class="w-5 h-5 text-dark_700 mr-2 flex-shrink-0" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 <span>{{ feature }}</span>
               </li>
@@ -170,10 +90,7 @@
 
           <div class="space-y-6 mt-4">
             <div v-for="detail in ticketDetail" :key="detail.id">
-              <div
-                v-if="detail.type === 'text'"
-                class="prose max-w-none text-dark_700 text-sm leading-relaxed"
-              >
+              <div v-if="detail.type === 'text'" class="prose max-w-none text-dark_700 text-sm leading-relaxed">
                 <p class="whitespace-pre-line">{{ detail.content }}</p>
               </div>
               <div v-else-if="detail.type === 'image'" class="overflow-hidden rounded-[10px]">
@@ -200,13 +117,10 @@
               <p v-if="policy.type === 'text'">
                 {{ policy.content }}
               </p>
-              <ul
-                v-else-if="policy.type === 'list'"
-                :class="[
-                  'list-disc list-inside space-y-1',
-                  policy.highlight ? 'bg-main_100 p-5 rounded-[10px] border border-white-300' : '',
-                ]"
-              >
+              <ul v-else-if="policy.type === 'list'" :class="[
+                'list-disc list-inside space-y-1',
+                policy.highlight ? 'bg-main_100 p-5 rounded-[10px] border border-white-300' : '',
+              ]">
                 <li v-for="(item, i) in policy.items" :key="i">
                   {{ item }}
                 </li>
@@ -218,22 +132,12 @@
         <section class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
           <h3 class="text-xl font-bold text-dark_900 mb-2">常見問題</h3>
           <div class="space-y-2.5">
-            <div
-              v-for="(faq, index) in faqs"
-              :key="index"
-              class="border rounded-lg overflow-hidden"
-            >
-              <button
-                name="toggle-faq"
-                @click="toggleFaq(index)"
-                class="w-full flex justify-between items-center px-5 py-4 bg-main_100 hover:bg-main_200 transition text-left"
-              >
+            <div v-for="(faq, index) in faqs" :key="index" class="border rounded-lg overflow-hidden">
+              <button name="toggle-faq" @click="toggleFaq(index)"
+                class="w-full flex justify-between items-center px-5 py-4 bg-main_100 hover:bg-main_200 transition text-left">
                 <span class="font-medium text-dark_900">{{ faq.question }}</span>
-                <span
-                  class="text-dark_700 transform transition-transform duration-200"
-                  :class="{ 'rotate-180': activeIndex === index }"
-                  >▼</span
-                >
+                <span class="text-dark_700 transform transition-transform duration-200"
+                  :class="{ 'rotate-180': activeIndex === index }">▼</span>
               </button>
               <div v-show="activeIndex === index" class="px-5 py-4 bg-white text-md text-dark_700">
                 {{ faq.answer }}
@@ -245,23 +149,14 @@
         <section class="mt-10">
           <h3 class="font-bold text-2xl mb-5 text-dark">熱門體驗</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
-            <RouterLink
-              v-for="recommend in recommendations"
-              :key="recommend.id"
-              :to="`/tickets/${recommend.id}`"
-              class="group bg-white rounded-[20px] shadow-sm overflow-hidden border border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer"
-            >
+            <RouterLink v-for="recommend in recommendations" :key="recommend.id" :to="`/tickets/${recommend.id}`"
+              class="group bg-white rounded-[20px] shadow-sm overflow-hidden border border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer">
               <div class="h-32 bg-dark_100 overflow-hidden">
-                <img
-                  :src="recommend.image_url"
-                  :alt="recommend.name"
-                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
+                <img :src="recommend.image_url" :alt="recommend.name"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               </div>
               <div class="p-5">
-                <div
-                  class="text-sm font-bold truncate mb-1 text-dark_900 group-hover:text-main_800 transition-colors"
-                >
+                <div class="text-sm font-bold truncate mb-1 text-dark_900 group-hover:text-main_800 transition-colors">
                   {{ recommend.name }}
                 </div>
                 <div class="text-xs text-dark_700 font-medium">
@@ -274,11 +169,9 @@
       </div>
 
       <div
-        class="fixed bottom-[94px] left-0 right-0 bg-white rounded-[40px] z-50 p-5 mx-5 border border-gray-300 lg:relative lg:bottom-auto lg:left-auto lg:w-full lg:right-auto lg:z-0 lg:p-0 lg:mr-5 lg:ml-0 lg:col-span-4 lg:border-0 lg:bg-transparent"
-      >
+        class="fixed bottom-[94px] left-0 right-0 bg-white rounded-[40px] z-50 p-5 mx-5 border border-gray-300 lg:relative lg:bottom-auto lg:left-auto lg:w-full lg:right-auto lg:z-0 lg:p-0 lg:mr-5 lg:ml-0 lg:col-span-4 lg:border-0 lg:bg-transparent">
         <div
-          class="lg:sticky lg:top-[96px] bg-white lg:rounded-[20px] lg:shadow-sm lg:border lg:border-gray-300 lg:p-5"
-        >
+          class="lg:sticky lg:top-[96px] bg-white lg:rounded-[20px] lg:shadow-sm lg:border lg:border-gray-300 lg:p-5">
           <!-- Header: Title and Price -->
           <div class="mb-4 flex flex-col gap-2 lg:gap-5">
             <!-- Toggle Button (Mobile/Tablet Only) -->
@@ -286,24 +179,11 @@
               <h2 class="w-full line-clamp-1 lg:line-clamp-2 text-xl font-bold text-dark">
                 {{ ticketIntro.title }}
               </h2>
-              <button
-                name="toggle-booking"
-                @click="isBookingExpanded = !isBookingExpanded"
-                class="lg:hidden w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-main transition-all"
-              >
-                <svg
-                  class="w-4 h-4 transition-transform rotate-180 duration-300"
-                  :class="{ 'rotate-0': isBookingExpanded }"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 9l-7 7-7-7"
-                  />
+              <button name="toggle-booking" @click="isBookingExpanded = !isBookingExpanded"
+                class="lg:hidden w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-main transition-all">
+                <svg class="w-4 h-4 transition-transform rotate-180 duration-300"
+                  :class="{ 'rotate-0': isBookingExpanded }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
             </div>
@@ -327,27 +207,16 @@
               <div class="text-sm text-dark_600 mt-2">無需選擇日期與方案，可直接前往。</div>
             </div>
           </div>
-          <Transition
-            v-else
-            enter-active-class="transition-all duration-1000 ease-out"
+          <Transition v-else enter-active-class="transition-all duration-1000 ease-out"
             leave-active-class="transition-all duration-800 ease-in"
-            enter-from-class="opacity-0 max-h-0 overflow-hidden"
-            enter-to-class="opacity-100 max-h-[600px]"
-            leave-from-class="opacity-100 max-h-[600px]"
-            leave-to-class="opacity-0 max-h-0 overflow-hidden"
-          >
+            enter-from-class="opacity-0 max-h-0 overflow-hidden" enter-to-class="opacity-100 max-h-[600px]"
+            leave-from-class="opacity-100 max-h-[600px]" leave-to-class="opacity-0 max-h-0 overflow-hidden">
             <div v-show="isBookingExpanded" class="flex flex-col gap-3 lg:!gap-5 lg:!block">
-              <DatePicker
-                v-model="selectedDate"
-                :min-date="minDate"
-                color="teal"
-                :masks="{ input: 'YYYY-MM-DD' }"
-              >
+              <DatePicker v-model="selectedDate" :min-date="minDate" color="teal" :masks="{ input: 'YYYY-MM-DD' }">
                 <template #default="{ inputValue, inputEvents }">
                   <div
                     class="p-3 w-full border rounded-[10px] hover:border-primary cursor-pointer transition flex flex-col justify-center"
-                    v-on="inputEvents"
-                  >
+                    v-on="inputEvents">
                     <div class="text-xs text-dark_700 mb-1 font-bold">選擇日期</div>
                     <div class="font-medium text-dark text-sm">
                       {{ inputValue || '請選擇日期' }}
@@ -365,32 +234,21 @@
                   </div>
 
                   <div v-else class="space-y-4">
-                    <div
-                      v-for="t in tickets"
-                      :key="t.id"
-                      class="flex items-center justify-between gap-4"
-                    >
+                    <div v-for="t in tickets" :key="t.id" class="flex items-center justify-between gap-4">
                       <div class="flex flex-col min-w-0">
                         <span class="font-bold text-dark text-sm truncate">{{ t.name }}</span>
-                        <span class="text-xs text-dark_500 font-medium"
-                          >NT$ {{ Math.floor(t.price).toLocaleString() }}</span
-                        >
+                        <span class="text-xs text-dark_500 font-medium">NT$ {{ Math.floor(t.price).toLocaleString()
+                        }}</span>
                       </div>
                       <div class="flex items-center gap-3 shrink-0">
-                        <button
-                          name="quantity-minus"
-                          @click="decreaseQuantity(t.id)"
+                        <button name="quantity-minus" @click="decreaseQuantity(t.id)"
                           class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100 disabled:opacity-50 transition"
-                          :disabled="t.quantity <= 0"
-                        >
+                          :disabled="t.quantity <= 0">
                           -
                         </button>
                         <span class="w-4 text-center text-sm font-bold">{{ t.quantity }}</span>
-                        <button
-                          name="quantity-plus"
-                          @click="increaseQuantity(t.id)"
-                          class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100 transition"
-                        >
+                        <button name="quantity-plus" @click="increaseQuantity(t.id)"
+                          class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100 transition">
                           +
                         </button>
                       </div>
@@ -402,13 +260,9 @@
           </Transition>
 
           <div v-if="totalPrice > 0" class="pt-2">
-            <button
-              name="checkout"
-              type="submit"
-              @click="handleBooking"
+            <button name="checkout" type="submit" @click="handleBooking"
               class="w-full h-12 flex items-center justify-center bg-primary hover:bg-main text-white font-bold rounded-full md:rounded-[10px] transition duration-200 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
-              :disabled="totalPrice === 0"
-            >
+              :disabled="totalPrice === 0">
               立即預訂
             </button>
           </div>

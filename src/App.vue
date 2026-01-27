@@ -40,12 +40,9 @@ onMounted(() => {
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
-#app {
-  font-family:
-    'Helvetica', 'Arial', 'SF Pro', 'Noto Sans', 'Noto Sans TC', '微軟正黑體', sans-serif;
-}
-
 body {
   background-color: #f8fdff;
+  font-family:
+    'Helvetica', 'Arial', 'Noto Sans', 'Noto Sans TC', '微軟正黑體', sans-serif;
 }
 </style>
