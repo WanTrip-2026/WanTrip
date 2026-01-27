@@ -52,11 +52,11 @@
             v-for="(option, index) in currentQuestion.options"
             :key="index"
             @click="handleAnswer(option, index)"
-            class="p-4 md:p-5 rounded-[20px] text-lg md:text-xl font-medium border transition-all duration-200 active:scale-[0.98] shadow-md w-full"
+            class="p-4 md:p-5 rounded-[20px] text-base md:text-lg font-medium border transition-all duration-200 active:scale-[0.98] shadow-md w-full"
             :class="
               selectedOptionIndex === index
                 ? ' bg-primary/80 text-white font-bold scale-105 shadow-xl'
-                : 'bg-[#EEF2F7] border-transparent'
+                : 'bg-main_100 border-transparent text-black'
             "
           >
             {{ option.text }}
