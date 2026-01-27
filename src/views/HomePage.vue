@@ -152,13 +152,8 @@
               v-for="k in stayKeywords"
               :key="k"
               type="button"
-              class="rounded-full px-4 py-1 text-sm font-semibold border transition"
-              :class="
-                selectedKeywords.has(k)
-                  ? 'bg-primary text-white border-primary shadow-sm'
-                  : 'bg-gray-100 text-primary/80 border-primary/10 hover:bg-main_100'
-              "
-              @click="toggleKeyword(k)"
+              class="rounded-full px-4 py-1 text-sm font-semibold border transition bg-gray-100 text-primary/80 border-primary/10 hover:bg-main_100"
+              @click="handleKeywordClick(k)"
             >
               {{ k }}
             </button>
@@ -243,11 +238,40 @@ const handleBookTicket = (id: string | number) => router.push(`/tickets/${id}`)
 
 const stayKeywords = STAY_KEYWORDS
 
-const selectedKeywords = reactive(new Set<string>())
+const handleKeywordClick = (k: string) => {
+  const isHotel = k.includes('住宿')
 
-function toggleKeyword(k: string) {
-  if (selectedKeywords.has(k)) selectedKeywords.delete(k)
-  else selectedKeywords.add(k)
+  if (isHotel) {
+    const today = new Date()
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+
+    const formatDate = (date: Date) => {
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+
+    router.push({
+      path: '/hotels/search',
+      query: {
+        keyword: k.replace('住宿', ''),
+        start_date: formatDate(today),
+        end_date: formatDate(tomorrow),
+        adults: '2',
+        rooms: '1',
+      },
+    })
+  } else {
+    router.push({
+      path: '/tickets/search',
+      query: {
+        destination: '',
+        keyword: k,
+      },
+    })
+  }
 }
 
 // Methods
