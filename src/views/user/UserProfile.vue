@@ -62,9 +62,15 @@ const updatePassword = async () => {
   updatingPassword.value = true
   try {
     // 確保 Session 存在
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession()
     if (sessionError || !session) {
-      const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
+      const {
+        data: { session: refreshedSession },
+        error: refreshError,
+      } = await supabase.auth.refreshSession()
 
       if (refreshError || !refreshedSession) {
         throw new Error('登入狀態已失效，請重新登入')
@@ -80,7 +86,7 @@ const updatePassword = async () => {
       setTimeout(() => reject(new Error('密碼更新請求超時，請檢查網路連線或稍後再試')), 15000)
     })
 
-    const result = await Promise.race([updatePromise, timeoutPromise]) as any
+    const result = (await Promise.race([updatePromise, timeoutPromise])) as any
 
     if ('error' in result && result.error) {
       throw result.error
@@ -93,20 +99,19 @@ const updatePassword = async () => {
 
     // 成功：顯示訊息
     toast.success('密碼修改成功！')
-
   } catch (err: unknown) {
     console.error('[UserProfile] updatePassword error:', err)
     let message = '修改失敗'
 
     if (err instanceof Error) {
-        if (err.message === 'AUTH_SESSION_MISSING' || err.name === 'AuthSessionMissingError') {
-            message = '登入已過期，請重新登入'
-            authStore.openLoginModal()
-        } else if (err.message.includes('403')) {
-             message = '無權限修改，請確認帳號狀態或重新登入'
-        } else {
-            message = err.message
-        }
+      if (err.message === 'AUTH_SESSION_MISSING' || err.name === 'AuthSessionMissingError') {
+        message = '登入已過期，請重新登入'
+        authStore.openLoginModal()
+      } else if (err.message.includes('403')) {
+        message = '無權限修改，請確認帳號狀態或重新登入'
+      } else {
+        message = err.message
+      }
     }
 
     toast.error(message)
@@ -146,7 +151,7 @@ const loadMe = async () => {
             resolve()
           }
         },
-        { immediate: true }
+        { immediate: true },
       )
     })
   }
@@ -170,13 +175,9 @@ const loadMe = async () => {
       setTimeout(() => reject(new Error('Profile fetch timeout')), 30000)
     })
 
-    const fetchPromise = supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', currentUser.id)
-      .single()
+    const fetchPromise = supabase.from('profiles').select('*').eq('id', currentUser.id).single()
 
-    const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any
+    const { data, error } = (await Promise.race([fetchPromise, timeoutPromise])) as any
 
     if (error) {
       console.error('[UserProfile] fetchProfile error:', error)
@@ -218,7 +219,7 @@ const loadMe = async () => {
 
 // Watch for auth changes to reload
 watch(
-() => [authStore.user, authStore.ready],
+  () => [authStore.user, authStore.ready],
   ([newUser, isReady]) => {
     // 如果正在跳過，直接返回
     if (skipNextLoad.value) {
@@ -358,7 +359,10 @@ onUnmounted(() => {
             id="account-section"
           >
             <h3 class="font-bold text-2xl border-b-gray-300 border-b pb-2 text-dark">我的帳號</h3>
-            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2 text-black" @submit.prevent="updatePassword">
+            <form
+              class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2 text-black"
+              @submit.prevent="updatePassword"
+            >
               <!-- Email -->
               <div>
                 <label for="email" class="block mb-1 font-medium text-black">帳號</label>
@@ -374,7 +378,9 @@ onUnmounted(() => {
                 />
               </div>
               <div>
-                <label for="currentPassword" class="block mb-1 font-medium text-black">原密碼</label>
+                <label for="currentPassword" class="block mb-1 font-medium text-black"
+                  >原密碼</label
+                >
                 <input
                   id="currentPassword"
                   type="password"
@@ -401,7 +407,9 @@ onUnmounted(() => {
               </div>
 
               <div>
-                <label for="confirmPassword" class="block mb-1 font-medium text-black">確認密碼</label>
+                <label for="confirmPassword" class="block mb-1 font-medium text-black"
+                  >確認密碼</label
+                >
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -435,7 +443,9 @@ onUnmounted(() => {
             >
               {{ isEditing ? '取消' : '編輯' }}
             </button>
-            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">我的資料</h3>
+            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">
+              我的資料
+            </h3>
             <p v-if="loadingProfile" class="text-sm text-gray-500 mt-2">載入中...</p>
             <p v-if="errorMsg" class="text-sm text-red-500 mt-2">{{ errorMsg }}</p>
 
@@ -459,9 +469,7 @@ onUnmounted(() => {
               </div>
               <!-- 生日 -->
               <div>
-                <label for="birthday" class="block mb-1 font-medium text-black">
-                  生日
-                </label>
+                <label for="birthday" class="block mb-1 font-medium text-black"> 生日 </label>
                 <input
                   id="birthday"
                   name="birthday"
@@ -532,7 +540,9 @@ onUnmounted(() => {
             class="scroll-mt-[96px] bg-white rounded-[20px] border border-gray-300 p-5 mb-5 text-black"
             id="order-section"
           >
-            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">我的訂單</h3>
+            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">
+              我的訂單
+            </h3>
             <div class="flex flex-col gap-2.5 py-5">
               <div v-if="orders.length === 0" class="text-center text-gray-500 py-10">
                 目前沒有訂單
@@ -570,13 +580,18 @@ onUnmounted(() => {
                       </template>
                     </p>
                     <p class="text-sm font-bold text-black">
-                      總價：<span class="text-red-500">NT$ {{ order.price }}</span>
+                      總價：<span class="text-red-500 font-bold">
+                        NT${{ Number(order.price).toLocaleString('zh-TW') }}
+                      </span>
                     </p>
                   </div>
                 </div>
                 <!-- 按鈕區可依需求加上功能 -->
                 <div class="flex flex-col justify-center gap-2 px-5">
-                  <button class="text-nowrap text-black hover:text-main_800" @click="goToOrder(order)">
+                  <button
+                    class="text-nowrap text-black hover:text-main_800"
+                    @click="goToOrder(order)"
+                  >
                     訂單詳情
                   </button>
                   <!-- <button class="text-nowrap hover:text-main_800">取消訂單</button> -->
@@ -589,7 +604,9 @@ onUnmounted(() => {
             class="scroll-mt-[96px] bg-white rounded-[20px] border border-gray-300 p-5 mb-5"
             id="favorite-section"
           >
-            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">收藏清單</h3>
+            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">
+              收藏清單
+            </h3>
 
             <!-- Tabs -->
             <div class="flex gap-4 mt-5 border-b border-gray-200">
