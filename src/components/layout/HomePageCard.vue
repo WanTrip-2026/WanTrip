@@ -20,6 +20,7 @@
         class="absolute bottom-[20px] right-[20px] flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
       >
         <button
+          aria-label="加入比較"
           name="add-compare"
           @click.stop.prevent="toggleCompare"
           class="flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-sm"
@@ -57,6 +58,7 @@
         </div>
         <div class="flex justify-end gap-3">
           <button
+            aria-label="加入收藏"
             name="add-favorite"
             @click.stop.prevent="onFavoriteClick"
             class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors"
@@ -78,6 +80,8 @@
             </svg>
           </button>
           <button
+            name="details"
+            aria-label="前往飯店詳細頁"
             class="h-10 bg-primary hover:bg-main text-white px-6 rounded-full font-medium text-nowrap transition-colors"
           >
             了解更多

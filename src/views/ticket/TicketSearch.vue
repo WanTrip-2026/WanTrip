@@ -272,14 +272,6 @@ const ticketFiltered = reactive<FilterMenu[]>([
   },
 ])
 
-// Removed redundant watcher for route.query.category as it is handled in fetchAttractions
-/*
-watch(
-  () => route.query.category,
-  ...
-)
-*/
-
 watch(
   ticketFiltered,
   (newVal) => {
@@ -326,15 +318,6 @@ function clearOptions(key: string) {
     const newQuery = { ...route.query }
     delete newQuery.category
     router.push({ path: '/tickets/search', query: newQuery })
-  }
-}
-
-function toggleExpandMenu(title: string) {
-  const index = expandedMenus.value.indexOf(title)
-  if (index > -1) {
-    expandedMenus.value.splice(index, 1)
-  } else {
-    expandedMenus.value.push(title)
   }
 }
 </script>

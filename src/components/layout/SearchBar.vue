@@ -610,6 +610,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                   </div>
                   <div class="flex items-center gap-4">
                     <button
+                      aria-label="減少人數"
                       name="people-minus"
                       @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null"
                       type="button"
@@ -619,6 +620,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                     </button>
                     <span class="text-sm font-bold w-4 text-center">{{ peopleConfig.people }}</span>
                     <button
+                      aria-label="增加人數"
                       name="people-plus"
                       @click.stop="peopleConfig.people++"
                       type="button"
@@ -637,6 +639,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
     <div class="flex items-center justify-center">
       <button
+        aria-label="開始搜尋"
         name="search-btn"
         @click="onSearch"
         class="w-[64px] h-[64px] rounded-full bg-primary hover:bg-main text-white transition-all shadow-lg hover:shadow-primary/30 flex items-center justify-center group"
