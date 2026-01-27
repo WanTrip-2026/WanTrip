@@ -351,17 +351,17 @@ onUnmounted(() => {
             </a>
           </div>
         </aside>
-        <div class="lg:col-span-3 gap-10 pb-10 mb-10 lg:mb-0">
+        <div class="lg:col-span-3 gap-5 pb-24">
           <!-- 帳號管理區 -->
           <div
-            class="scroll-mt-[96px] bg-white w-full rounded-[20px] border border-gray-300 p-5 mb-10"
+            class="scroll-mt-[96px] bg-white w-full rounded-[20px] border border-gray-300 p-5 mb-5"
             id="account-section"
           >
-            <h3 class="font-bold text-2xl border-b-gray-300 border-b pb-2">我的帳號</h3>
-            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2" @submit.prevent="updatePassword">
+            <h3 class="font-bold text-2xl border-b-gray-300 border-b pb-2 text-dark">我的帳號</h3>
+            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2 text-black" @submit.prevent="updatePassword">
               <!-- Email -->
               <div>
-                <label for="email" class="block mb-1 font-medium">帳號</label>
+                <label for="email" class="block mb-1 font-medium text-black">帳號</label>
                 <input
                   id="email"
                   name="email"
@@ -374,7 +374,7 @@ onUnmounted(() => {
                 />
               </div>
               <div>
-                <label for="currentPassword" class="block mb-1 font-medium">原密碼</label>
+                <label for="currentPassword" class="block mb-1 font-medium text-black">原密碼</label>
                 <input
                   id="currentPassword"
                   type="password"
@@ -382,12 +382,12 @@ onUnmounted(() => {
                   required
                   minlength="8"
                   placeholder="請輸入原密碼"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
                 />
               </div>
               <!-- Password -->
               <div>
-                <label for="newPassword" class="block mb-1 font-medium">新密碼</label>
+                <label for="newPassword" class="block mb-1 font-medium text-black">新密碼</label>
                 <input
                   id="newPassword"
                   name="password"
@@ -396,12 +396,12 @@ onUnmounted(() => {
                   required
                   minlength="8"
                   placeholder="至少 8 碼"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
                 />
               </div>
 
               <div>
-                <label for="confirmPassword" class="block mb-1 font-medium">確認密碼</label>
+                <label for="confirmPassword" class="block mb-1 font-medium text-black">確認密碼</label>
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -410,7 +410,7 @@ onUnmounted(() => {
                   required
                   minlength="8"
                   placeholder="請再次輸入密碼"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
                 />
               </div>
 
@@ -425,7 +425,7 @@ onUnmounted(() => {
           </div>
           <!-- 個資管理區 -->
           <div
-            class="scroll-mt-[96px] bg-white w-full rounded-[20px] border border-gray-300 p-5 mb-10"
+            class="scroll-mt-[96px] bg-white w-full rounded-[20px] border border-gray-300 p-5 mb-5"
             id="admin-section"
           >
             <button
@@ -435,7 +435,7 @@ onUnmounted(() => {
             >
               {{ isEditing ? '取消' : '編輯' }}
             </button>
-            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">我的資料</h3>
+            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">我的資料</h3>
             <p v-if="loadingProfile" class="text-sm text-gray-500 mt-2">載入中...</p>
             <p v-if="errorMsg" class="text-sm text-red-500 mt-2">{{ errorMsg }}</p>
 
@@ -445,7 +445,7 @@ onUnmounted(() => {
             >
               <!-- 使用者名稱 -->
               <div>
-                <label for="fullName" class="block mb-1 font-medium">使用者名稱</label>
+                <label for="fullName" class="block mb-1 font-medium text-black">使用者名稱</label>
                 <input
                   id="fullName"
                   name="fullName"
@@ -453,13 +453,13 @@ onUnmounted(() => {
                   type="text"
                   required
                   placeholder="請輸入姓名"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
                   v-model="form.fullName"
                 />
               </div>
               <!-- 生日 -->
               <div>
-                <label for="birthday" class="block mb-1 font-medium">
+                <label for="birthday" class="block mb-1 font-medium text-black">
                   生日
                 </label>
                 <input
@@ -469,15 +469,15 @@ onUnmounted(() => {
                   type="date"
                   required
                   placeholder="YYYY-MM-DD"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
                   v-model="form.birthday"
                 />
               </div>
               <!-- 性別 -->
               <div>
-                <span class="block mb-1 font-medium">性別</span>
+                <span class="block mb-1 font-medium text-black">性別</span>
                 <div class="flex items-center gap-4">
-                  <label class="flex items-center gap-1">
+                  <label class="flex items-center gap-1 text-black">
                     <input
                       type="radio"
                       :disabled="!isEditing"
@@ -489,7 +489,7 @@ onUnmounted(() => {
                     />
                     男
                   </label>
-                  <label class="flex items-center gap-1">
+                  <label class="flex items-center gap-1 text-black">
                     <input
                       type="radio"
                       :disabled="!isEditing"
@@ -504,7 +504,7 @@ onUnmounted(() => {
               </div>
               <!-- 電話 -->
               <div>
-                <label for="phone" class="block mb-1 font-medium">電話</label>
+                <label for="phone" class="block mb-1 font-medium text-black">電話</label>
                 <input
                   id="phone"
                   name="phone"
@@ -512,7 +512,7 @@ onUnmounted(() => {
                   type="tel"
                   required
                   placeholder="請輸入電話號碼"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
                   v-model="form.phone"
                 />
               </div>
@@ -529,10 +529,10 @@ onUnmounted(() => {
           </div>
           <!-- 我的訂單 -->
           <div
-            class="scroll-mt-[96px] bg-white rounded-[20px] border border-gray-300 p-5 mb-10"
+            class="scroll-mt-[96px] bg-white rounded-[20px] border border-gray-300 p-5 mb-5 text-black"
             id="order-section"
           >
-            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">我的訂單</h3>
+            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">我的訂單</h3>
             <div class="flex flex-col gap-2.5 py-5">
               <div v-if="orders.length === 0" class="text-center text-gray-500 py-10">
                 目前沒有訂單
@@ -555,7 +555,7 @@ onUnmounted(() => {
                     alt="產品照片"
                   />
                   <div class="flex flex-col justify-center gap-1 px-5">
-                    <h3 class="text-md lg:text-xl font-bold">
+                    <h3 class="text-md lg:text-xl font-bold text-black">
                       {{ order.hotel_name || order.title }}
                     </h3>
                     <p class="text-sm text-gray-600 hidden lg:block">
@@ -569,14 +569,14 @@ onUnmounted(() => {
                         日期：{{ order.check_in_date }} - {{ order.check_out_date }}
                       </template>
                     </p>
-                    <p class="text-sm font-bold">
+                    <p class="text-sm font-bold text-black">
                       總價：<span class="text-red-500">NT$ {{ order.price }}</span>
                     </p>
                   </div>
                 </div>
                 <!-- 按鈕區可依需求加上功能 -->
                 <div class="flex flex-col justify-center gap-2 px-5">
-                  <button class="text-nowrap hover:text-main_800" @click="goToOrder(order)">
+                  <button class="text-nowrap text-black hover:text-main_800" @click="goToOrder(order)">
                     訂單詳情
                   </button>
                   <!-- <button class="text-nowrap hover:text-main_800">取消訂單</button> -->
@@ -586,10 +586,10 @@ onUnmounted(() => {
           </div>
           <!-- 收藏清單 -->
           <div
-            class="scroll-mt-[96px] bg-white rounded-[20px] border border-gray-300 p-5 mb-10"
+            class="scroll-mt-[96px] bg-white rounded-[20px] border border-gray-300 p-5 mb-5"
             id="favorite-section"
           >
-            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2">收藏清單</h3>
+            <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">收藏清單</h3>
 
             <!-- Tabs -->
             <div class="flex gap-4 mt-5 border-b border-gray-200">

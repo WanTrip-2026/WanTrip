@@ -102,7 +102,7 @@ const goToProduct = () => {
       <section class="bg-white rounded-[20px] shadow-sm border border-gray-300 p-5 lg:p-10 mb-10">
         <div class="flex flex-col md:flex-row justify-between items-start gap-8">
           <div
-            class="flex flex-col sm:flex-row gap-6 items-center text-center sm:text-left cursor-pointer hover:opacity-80 transition-opacity"
+            class="w-full flex flex-col sm:flex-row gap-6 items-center text-center sm:text-left cursor-pointer hover:opacity-80 transition-opacity"
             @click="goToProduct"
           >
             <div class="h-24 md:h-32 rounded-[20px] overflow-hidden shrink-0 aspect-[4/3]">
