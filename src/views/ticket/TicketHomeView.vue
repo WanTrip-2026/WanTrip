@@ -59,64 +59,11 @@ const prevSlide = () => {
   currentSlide.value = (currentSlide.value - 1 + hotelImages.length) % hotelImages.length
 }
 
-// --- 人數需求狀態與邏輯 ---
-const isPeoplePickerOpen = ref(false)
-const peoplePickerRef = ref<HTMLElement | null>(null)
-
-const peopleConfig = reactive({
-  adults: 2,
-  children: 0,
-  hasPet: false,
-})
-
-const peopleDisplayText = computed(() => {
-  let text = `${peopleConfig.adults} 位成人`
-  if (peopleConfig.children > 0) text += `｜${peopleConfig.children} 位孩童`
-  if (peopleConfig.hasPet) text += `｜帶寵物`
-  return text
-})
-
-const handleOutsideClick = (e: MouseEvent) => {
-  if (peoplePickerRef.value && !peoplePickerRef.value.contains(e.target as Node)) {
-    isPeoplePickerOpen.value = false
-  }
-}
-
-// function isticketSection(sectionTitle: string) { return sectionTitle === '人氣地區' } // Unused
-
-const isLoading = ref(true)
-
-onMounted(() => {
-  startTimer()
-  window.addEventListener('click', handleOutsideClick)
-  fetchTickets()
-})
-
-const fetchTickets = async () => {
-  errorMsg.value = ''
-  isLoading.value = true
-  try {
-    const [popularRes, topRatedRes] = await Promise.all([
-      axios.get(`${API_BASE_URL}/tickets/popular`),
-      axios.get(`${API_BASE_URL}/tickets/top-rated`),
-    ])
-
-    tickets.value = popularRes.data
-    topRatedTickets.value = topRatedRes.data
-  } catch (err: unknown) {
-    console.error('Unexpected error:', err)
-    errorMsg.value = `Unexpected Error: ${err instanceof Error ? err.message : String(err)}`
-  } finally {
-    isLoading.value = false
-  }
-}
-
-onUnmounted(() => {
-  stopTimer()
-  window.removeEventListener('click', handleOutsideClick)
-})
-
+// --- 搜尋狀態與邏輯 ---
+const searchInput = ref('')
+const selectedCity = ref('')
 const isOpen = ref(false)
+
 const cityGroups = [
   {
     label: '熱門城市',
@@ -147,39 +94,58 @@ const cityGroups = [
 ]
 
 function selectCity(city: string) {
-  form.destination = city
+  selectedCity.value = city
   isOpen.value = false
-}
-
-const form = reactive({
-  destination: '',
-  dateRange: '',
-  people: '',
-})
-
-const range = ref({
-  start: new Date(),
-  end: new Date(new Date().setDate(new Date().getDate() + 1)),
-})
-
-watch(
-  range,
-  (newRange) => {
-    if (newRange?.start && newRange?.end) {
-      form.dateRange = `${newRange.start.toLocaleDateString()} - ${newRange.end.toLocaleDateString()}`
-    }
-  },
-  { immediate: true },
-)
-
-function onSearch() {
   router.push({
     path: '/tickets/search',
     query: {
-      destination: form.destination,
+      city: city, // Use 'city' to match TicketSearch logic preferences
     },
   })
 }
+
+function onLocalSearch() {
+  router.push({
+    path: '/tickets/search',
+    query: {
+      keyword: searchInput.value || undefined,
+      // If city is selected but we didn't redirect instantly (unlikely given selectCity logic), we could send it.
+      // But adhering to TicketSearch "select causes redirect", we just send keyword here.
+      // If user typed keyword without selecting city.
+    },
+  })
+}
+
+// --- Restore Lifecycle & Fetch Logic ---
+const isLoading = ref(true)
+
+const fetchTickets = async () => {
+  errorMsg.value = ''
+  isLoading.value = true
+  try {
+    const [popularRes, topRatedRes] = await Promise.all([
+      axios.get(`${API_BASE_URL}/tickets/popular`),
+      axios.get(`${API_BASE_URL}/tickets/top-rated`),
+    ])
+
+    tickets.value = popularRes.data
+    topRatedTickets.value = topRatedRes.data
+  } catch (err: unknown) {
+    console.error('Unexpected error:', err)
+    errorMsg.value = `Unexpected Error: ${err instanceof Error ? err.message : String(err)}`
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(() => {
+  startTimer()
+  fetchTickets()
+})
+
+onUnmounted(() => {
+  stopTimer()
+})
 
 const ticketClassify = [
   {
@@ -351,170 +317,64 @@ function onClickRegion(tc: { label: string }) {
         ></button>
       </div>
     </section>
-    <section class="flex justify-center">
-      <form class="w-full max-w-2xl" @submit.prevent="onSearch">
-        <div class="mt-4 flex justify-center">
-          <div class="w-full max-w-4xl">
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div class="relative">
+    <section class="flex justify-center -mt-8 relative z-10 px-4">
+      <div
+        class="w-full max-w-[800px] border border-gray-300 p-2 mx-auto bg-white rounded-[20px] md:rounded-full flex flex-col md:flex-row justify-between gap-2 shadow-xl text-nowrap"
+      >
+        <div
+          class="relative flex-auto h-full focus:border focus:border-primary"
+          @mouseenter="isOpen = true"
+          @mouseleave="isOpen = false"
+        >
+          <div
+            class="rounded-full border border-gray-300 px-6 py-3 flex items-center justify-center text-dark_500 hover:text-primary bg-white cursor-pointer h-full"
+            @click="isOpen = !isOpen"
+          >
+            {{ selectedCity || '選擇城市' }}
+          </div>
+
+          <div
+            v-if="isOpen"
+            class="absolute top-full left-0 w-full overflow-hidden px-5 bg-white/80 backdrop-blur-lg border border-white/25 z-10 rounded-[20px] shadow-md mt-2"
+          >
+            <template v-for="group in cityGroups" :key="group.label">
+              <div
+                class="px-6 py-2 text-sm text-primary border-b border-gray-300 font-bold text-center"
+              >
+                {{ group.label }}
+              </div>
+              <div class="grid grid-cols-3 py-2">
                 <div
-                  @click="isOpen = !isOpen"
-                  class="relative block rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 group cursor-pointer transition-all hover:border-primary"
+                  v-for="city in group.cities"
+                  :key="city"
+                  class="px-4 py-2 text-dark hover:bg-main_100 hover:font-bold cursor-pointer whitespace-nowrap text-center rounded-full"
+                  @click="selectCity(city)"
                 >
-                  <p class="text-xs font-bold text-dark_500">想去哪裡？</p>
-                  <div class="relative mt-2 flex items-center justify-between">
-                    <span
-                      class="text-sm font-medium transition-colors"
-                      :class="form.destination ? 'text-primary' : 'text-gray-400'"
-                    >
-                      {{ form.destination || '選擇城市、景點' }}
-                    </span>
-                    <svg
-                      class="h-4 w-4 text-primary/30 transition-transform duration-300"
-                      :class="{ 'rotate-180': isOpen }"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
+                  {{ city }}
                 </div>
-
-                <transition name="fade">
-                  <div
-                    v-if="isOpen"
-                    class="absolute top-[calc(100%+8px)] left-0 z-[100] w-full overflow-hidden rounded-[20px] bg-white p-2 shadow-2xl border border-gray-300"
-                  >
-                    <div class="max-h-[300px] overflow-y-auto no-scrollbar">
-                      <template v-for="group in cityGroups" :key="group.label">
-                        <div class="px-4 py-2 text-xs font-bold text-primary bg-gray-50/50 mb-1">
-                          {{ group.label }}
-                        </div>
-                        <div class="grid grid-cols-2 gap-1 px-2 pb-2">
-                          <button
-                            v-for="city in group.cities"
-                            :key="city"
-                            type="button"
-                            @click="selectCity(city)"
-                            class="px-3 py-2 text-sm text-dark hover:bg-main_100 hover:text-primary hover:font-bold rounded-xl transition-all text-left"
-                            :class="{
-                              'bg-main_100 text-primary font-bold': form.destination === city,
-                            }"
-                          >
-                            {{ city }}
-                          </button>
-                        </div>
-                      </template>
-                    </div>
-                  </div>
-                </transition>
               </div>
-
-              <div class="relative" ref="peoplePickerRef">
-                <label
-                  @click="isPeoplePickerOpen = !isPeoplePickerOpen"
-                  class="block h-full rounded-[20px] bg-white p-5 shadow-lg border border-gray-300 transition-all hover:border-primary cursor-pointer"
-                >
-                  <p class="text-xs font-bold text-dark_500">人數、需求</p>
-                  <div class="mt-2 flex items-center justify-between">
-                    <span class="text-sm font-medium text-black">{{ peopleDisplayText }}</span>
-                    <svg
-                      class="h-4 w-4 text-primary/30 transition-transform duration-300"
-                      :class="{ 'rotate-180': isPeoplePickerOpen }"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </label>
-
-                <transition name="fade">
-                  <div
-                    v-if="isPeoplePickerOpen"
-                    class="absolute top-[calc(100%+8px)] left-0 z-[100] w-full rounded-[20px] bg-white p-5 shadow-2xl border border-gray-300"
-                  >
-                    <div class="space-y-4">
-                      <div class="flex items-center justify-between">
-                        <span class="text-sm font-bold text-black">成人</span>
-                        <div class="flex items-center gap-3">
-                          <button
-                            @click.stop="peopleConfig.adults > 1 ? peopleConfig.adults-- : null"
-                            type="button"
-                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white"
-                          >
-                            -
-                          </button>
-                          <span class="text-sm font-medium w-4 text-center text-black">{{
-                            peopleConfig.adults
-                          }}</span>
-                          <button
-                            @click.stop="peopleConfig.adults++"
-                            type="button"
-                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                      <div class="flex items-center justify-between">
-                        <span class="text-sm font-bold text-black">孩童</span>
-                        <div class="flex items-center gap-3">
-                          <button
-                            @click.stop="peopleConfig.children > 0 ? peopleConfig.children-- : null"
-                            type="button"
-                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white"
-                          >
-                            -
-                          </button>
-                          <span class="text-sm font-medium w-4 text-center text-black">{{
-                            peopleConfig.children
-                          }}</span>
-                          <button
-                            @click.stop="peopleConfig.children++"
-                            type="button"
-                            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-black hover:bg-main hover:text-white"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                      <label class="flex items-center justify-between pt-2 cursor-pointer">
-                        <span class="text-sm font-bold text-black">可帶寵物</span>
-                        <input
-                          type="checkbox"
-                          v-model="peopleConfig.hasPet"
-                          class="w-5 h-5 accent-primary cursor-pointer"
-                        />
-                      </label>
-                    </div>
-                  </div>
-                </transition>
-              </div>
-            </div>
+            </template>
           </div>
         </div>
-        <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
+        <div class="flex-auto">
+          <input
+            v-model="searchInput"
+            type="text"
+            placeholder="搜尋目的地/當地體驗"
+            @keyup.enter="onLocalSearch"
+            class="w-full h-full border text-center text-black border-gray-300 rounded-full px-6 py-3 focus:ring-2 focus:ring-primary outline-none"
+          />
+        </div>
+
+        <div class="text-dark_500 rounded-full flex-none">
           <button
-            type="submit"
-            class="h-10 rounded-full bg-primary px-8 text-sm font-semibold text-white transition-all duration-300 hover:bg-main active:scale-[0.98] shadow-sm"
+            @click="onLocalSearch"
+            class="text-center bg-primary hover:bg-main text-white font-bold w-full px-6 py-3 rounded-full transition-colors text-nowrap h-full"
           >
             搜尋
           </button>
         </div>
-      </form>
+      </div>
     </section>
 
     <template v-if="isLoading">

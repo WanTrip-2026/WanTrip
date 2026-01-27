@@ -64,9 +64,10 @@ const fetchAttractions = async (): Promise<void> => {
       }
     }
 
-    // Auto-clean URL logic for filters (category, cities, city/destination)
-    if (category || cities || (city && city !== '選擇城市' && city !== '全部城市')) {
+    // Auto-clean URL logic for filters (category, cities, city/destination, keyword)
+    if (keyword || category || cities || (city && city !== '選擇城市' && city !== '全部城市')) {
       const newQuery = { ...route.query }
+      if (keyword) delete newQuery.keyword
       if (category) delete newQuery.category
       if (cities) delete newQuery.cities
       if (city) {
