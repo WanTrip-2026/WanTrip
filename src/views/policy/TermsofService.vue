@@ -25,21 +25,21 @@
         用戶帳號管理
       </p>
       <p class="text-black">
-        您在建立 用戶個人檔案 (User Profile) 時，必須提供真實且準確的資訊。
+        您在建立用戶個人檔案 (User Profile) 時，必須提供真實且準確的資訊。
         用戶有責任妥善保管 登入憑證資訊 (Login Credential Information)，任何以該帳號進行的行為均視為用戶本人之行為。
       </p>
       <p class="text-black font-bold pt-10">
         預訂與付款條款
       </p>
       <p class="text-black">
-        當您透過 訂單處理流程 (Order Processing Workflow) 完成交易時，契約即成立。
+        當您透過訂單處理流程 (Order Processing Workflow) 完成交易時，契約即成立。
         各項商品之取消與退款政策將依據 供應商條款細則 (Supplier Specific Terms) 執行，請於下單前詳閱該頁面說明。
       </p>
       <p class="text-black font-bold pt-10">
         平台使用規範
       </p>
       <p class="text-black">
-        用戶在使用 內容互動區域 (Content Interaction Area) 或測驗功能時，不得：
+        用戶在使用內容互動區域 (Content Interaction Area) 或測驗功能時，不得：
         上傳任何違法、誹謗或侵犯他人隱私之資訊。
         試圖透過自動化程式干擾 數據檢索接口 (Data Retrieval Interface) 的正常運作。
       </p>
@@ -47,29 +47,29 @@
         免責聲明
       </p>
       <p class="text-black">
-        設施比對工具 所顯示之資訊係基於合作夥伴提供之資料，WanTrip 雖盡力確保準確性，但不保證資訊之即時性與無誤性。
-        互動測驗組件 之結果僅供參考，不構成法律或專業之旅遊建議。
+        設施比對工具所顯示之資訊係基於合作夥伴提供之資料，WanTrip 雖盡力確保準確性，但不保證資訊之即時性與無誤性。
+        互動測驗組件之結果僅供參考，不構成法律或專業之旅遊建議。
       </p>
       <p class="text-black font-bold pt-10">
         條款修訂
       </p>
       <p class="text-black">
-        WanTrip 保留隨時修改本條款之權利。修改後的內容將公佈於 服務通告頁面 (Service Announcement Page)，自公佈之日起生效。
+        WanTrip 保留隨時修改本條款之權利。修改後的內容將公佈於服務通告頁面 (Service Announcement Page)，自公佈之日起生效。
         WanTrip 退改規章條款 (Refund and Cancellation Policy)
-        本條款旨在說明用戶透過 WanTrip 平台進行交易後的變更、取消及退款作業準則。請注意，由於本平台包含多種不同性質的旅遊產品，具體規範將視產品類別而定。我們重視您的隱私。詳細資訊請參閱我們的 <RouterLink to="/policy" class="text-primary hover:underline">隱私權聲明</RouterLink>。
+        本條款旨在說明用戶透過 WanTrip 平台進行交易後的變更、取消及退款作業準則。請注意，由於本平台包含多種不同性質的旅遊產品，具體規範將視產品類別而定。我們重視您的隱私。詳細資訊請參閱我們的<RouterLink to="/privacy" class="text-primary hover:underline">隱私權聲明</RouterLink>。
       </p>
       <p class="text-black font-bold pt-10">
         退款處理進度 (Refund Processing Timeline)
       </p>
       <p class="text-black">
-        款項原路退回 (Original Payment Return)：所有退款將透過用戶原先使用的 支付網關接口 (Payment Gateway Interface) 進行退還。
+        款項原路退回 (Original Payment Return)：所有退款將透過用戶原先使用的支付網關接口 (Payment Gateway Interface) 進行退還。
         銀行作業週期 (Banking Operation Cycle)：款項實際入帳時間取決於發卡銀行或第三方支付平台之作業流程，通常需 7 至 14 個工作日。
       </p>
       <p class="text-black font-bold pt-10">
         特別爭議處理 (Special Dispute Resolution)
       </p>
       <p class="text-black">
-        若發生消費爭議，將啟動 用戶支援對接 (User Support Liaison) 程序。WanTrip 將作為中介方，協助用戶與供應商協調。若屬個人因素之突發狀況，強烈建議用戶自行購買 旅遊平安保險 (Travel
+        若發生消費爭議，將啟動 用戶支援對接 (User Support Liaison) 程序。WanTrip 將作為中介方，協助用戶與供應商協調。若屬個人因素之突發狀況，強烈建議用戶自行購買旅遊平安保險 (Travel
         Insurance Policy) 以獲得更多保障。
       </p>
       <p class="text-black font-bold pt-10">
@@ -77,7 +77,7 @@
       </p>
       <p class="text-black">
         當發生非當事人之人力所能控制之突發事件時，適用以下處理標準：
-        定義範疇說明 (Definition Scope Explanation)：包含但不限於自然災害（如地震、颱風）、法定傳染病、政府政策變更、恐怖攻擊、或大規模 交通中斷事件 (Transportation
+        定義範疇說明 (Definition Scope Explanation)：包含但不限於自然災害（如地震、颱風）、法定傳染病、政府政策變更、恐怖攻擊、或大規模交通中斷事件 (Transportation
         Interruption Event)。
         特別退改通道 (Special Cancellation Channel)：若因上述因素導致行程無法履行，用戶可透過 證明文件上傳系統 (Document Upload System) 提交官方證明（如醫療診斷證明）。
         非全額退款聲明 (Non-Full Refund Statement)：即便符合不可抗力條件，若供應商已產生不可撤銷之費用（如已支付之 行政規費支出 (Administrative Fee
@@ -86,8 +86,8 @@
         爭議解決機制 (Dispute Resolution Mechanism)
       </p>
       <p class="text-black">
-        申訴路徑 (Grievance Feedback Path)：用戶如對退款金額有異議，應於收到通知後 7 個工作日內聯繫 客戶服務中心 (Customer Service Center)。
-        仲裁管轄約定 (Arbitration Jurisdiction Agreement)：如未能達成共識，相關爭議將依據 服務所在地法律 (Service Location Laws) 進行裁決。
+        申訴路徑 (Grievance Feedback Path)：用戶如對退款金額有異議，應於收到通知後 7 個工作日內聯繫客戶服務中心 (Customer Service Center)。
+        仲裁管轄約定 (Arbitration Jurisdiction Agreement)：如未能達成共識，相關爭議將依據服務所在地法律 (Service Location Laws) 進行裁決。
       </p>
       <p class="text-red-500 text-lg font-bold pt-10">
         ◎本網站為商研院前端開發工程師實戰養成班專題作品，所有內容僅展示使用，不具任何正式訂購/訂房等商業用途。請勿當真。
