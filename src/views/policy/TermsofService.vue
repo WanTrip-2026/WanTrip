@@ -25,6 +25,8 @@
         飯店設施比對工具 (Facility Comparison Tool)：提供不同住宿業者間設施、價格與評價之橫向對比。
         <br>
         旅遊DNA (Travel DNA)：透過趣味測驗提供個性化旅遊建議。
+        <br>
+        AI旅遊顧問：透過與用戶問答提供旅遊建議。
       </p>
       <p class="text-black font-bold pt-10">
         用戶帳號管理
@@ -65,26 +67,6 @@
         Policy)。
       </p>
       <p class="text-black font-bold pt-10">
-        住宿預訂系統 (Accommodation Booking System)
-      </p>
-      <p class="text-black">
-        針對飯店、民宿等住宿產品，退改規定如下：
-
-        不可退款專案 (Non-Refundable Project)：若訂單標註為此類型，一旦預訂完成，無論任何理由均無法退還費用。
-        限時取消政策 (Timed Cancellation Policy)：
-        於入住日 規定寬限期 (Standard Grace Period) 前取消，可獲全額退款。
-        於入住日前 24 至 72 小時內取消，將酌收 手續服務規費 (Service Handling Fee) 或第一晚房費。
-        無故缺席處置 (No-Show Disposal)：若未於入住當日抵達且未事先通知，視同放棄使用權，恕不退費。
-      </p>
-      <p class="text-black font-bold pt-10">
-        票券銷售模組 (Ticket Sales Module)
-      </p>
-      <p class="text-black">
-        針對景點門票、交通票券及一日遊活動：
-        即時確認憑證 (Instant Confirmation Voucher)：部分電子門票一經發送即視同使用，不接受任何形式之退改。
-        供應商審核程序 (Supplier Review Procedure)：若因不可抗力因素（如天災、景點閉館）需申請退款，需經由 第三方合作夥伴 (Third-Party Partner) 審核通過後方可辦理。
-      </p>
-      <p class="text-black font-bold pt-10">
         退款處理進度 (Refund Processing Timeline)
       </p>
       <p class="text-black">
@@ -115,8 +97,8 @@
         申訴路徑 (Grievance Feedback Path)：用戶如對退款金額有異議，應於收到通知後 7 個工作日內聯繫 客戶服務中心 (Customer Service Center)。
         仲裁管轄約定 (Arbitration Jurisdiction Agreement)：如未能達成共識，相關爭議將依據 服務所在地法律 (Service Location Laws) 進行裁決。
       </p>
-      <p class="text-red-500 font-bold pt-10">
-        本網站為商研院前端開發工程師實戰養成班專題作品，所有內容僅展示使用，不具任何正式訂購/訂房等商業用途。請勿當真。
+      <p class="text-red-500 text-lg font-bold pt-10">
+        ◎本網站為商研院前端開發工程師實戰養成班專題作品，所有內容僅展示使用，不具任何正式訂購/訂房等商業用途。請勿當真。
       </p>
     </div>
   </main>
