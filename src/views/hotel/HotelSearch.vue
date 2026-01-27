@@ -488,10 +488,10 @@ watch(
               }
             "
             :class="[
-              'rounded-[20px] px-6 py-2 shadow-sm transition whitespace-nowrap',
+              'rounded-[20px] px-6 py-2 shadow-sm font-bold transition whitespace-nowrap border',
               sortBy === 'price_desc'
-                ? 'bg-primary text-white hover:bg-main'
-                : 'bg-white text-dark border border-gray-300 hover:bg-gray-50',
+                ? 'bg-primary text-white border-primary hover:bg-main'
+                : 'bg-white text-dark border-gray-300 hover:bg-main_100',
             ]"
           >
             價格高到低
@@ -505,10 +505,10 @@ watch(
               }
             "
             :class="[
-              'rounded-[20px] px-6 py-2 shadow-sm transition whitespace-nowrap',
+              'rounded-[20px] px-6 py-2 shadow-sm font-bold transition whitespace-nowrap border',
               sortBy === 'price_asc'
-                ? 'bg-primary text-white hover:bg-main'
-                : 'bg-white text-dark border border-gray-300 hover:bg-gray-50',
+                ? 'bg-primary text-white border-primary hover:bg-main'
+                : 'bg-white text-dark border-gray-300 hover:bg-main_100',
             ]"
           >
             價格低到高
@@ -522,10 +522,10 @@ watch(
               }
             "
             :class="[
-              'rounded-[20px] px-6 py-2 shadow-sm transition whitespace-nowrap',
+              'rounded-[20px] px-6 py-2 shadow-sm font-bold transition whitespace-nowrap border',
               sortBy === 'star_desc'
-                ? 'bg-primary text-white hover:bg-main'
-                : 'bg-white text-dark border border-gray-300 hover:bg-gray-50',
+                ? 'bg-primary text-white border-primary hover:bg-main'
+                : 'bg-white text-dark border-gray-300 hover:bg-main_100',
             ]"
           >
             星級高到低

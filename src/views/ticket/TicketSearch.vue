@@ -175,9 +175,28 @@ const applyClientSideFilters = () => {
     // Note: '即日可用' and '明日可用' would require real-time schedule data availability, which is likely not available in this simple UI object
   }
 
+  // Sorting
+  if (currentSort.value === 'price-desc') {
+    result.sort((a, b) => b.price - a.price)
+  } else if (currentSort.value === 'price-asc') {
+    result.sort((a, b) => a.price - b.price)
+  }
+
   attractions.value = result
   // Reset page when filters change
   currentPage.value = 1
+}
+
+// Sorting logic
+const currentSort = ref<string>('')
+
+const setSort = (sortType: string) => {
+  if (currentSort.value === sortType) {
+    currentSort.value = ''
+  } else {
+    currentSort.value = sortType
+  }
+  applyClientSideFilters()
 }
 
 // Watch for route changes to re-fetch
@@ -274,7 +293,7 @@ const ticketFiltered = reactive<FilterMenu[]>([
 
 watch(
   ticketFiltered,
-  (newVal) => {
+  () => {
     applyClientSideFilters()
   },
   { deep: true },
@@ -454,14 +473,27 @@ function clearOptions(key: string) {
               <font-awesome-icon icon="sliders" />
               篩選
             </button>
-            <button class="rounded-[20px] bg-primary hover:bg-main text-white h-10 px-4 font-bold">
-              最多人推薦
+            <button
+              @click="setSort('price-desc')"
+              class="rounded-[20px] h-10 px-4 font-bold transition-colors border"
+              :class="
+                currentSort === 'price-desc'
+                  ? 'bg-primary text-white border-primary hover:bg-main'
+                  : 'bg-white text-dark border-gray-300 hover:bg-main_100'
+              "
+            >
+              價格高到低
             </button>
-            <button class="rounded-[20px] bg-primary hover:bg-main text-white h-10 px-4 font-bold">
-              好評優惠
-            </button>
-            <button class="rounded-[20px] bg-primary hover:bg-main text-white h-10 px-4 font-bold">
-              最低價
+            <button
+              @click="setSort('price-asc')"
+              class="rounded-[20px] h-10 px-4 font-bold transition-colors border"
+              :class="
+                currentSort === 'price-asc'
+                  ? 'bg-primary text-white border-primary hover:bg-main'
+                  : 'bg-white text-dark border-gray-300 hover:bg-main_100'
+              "
+            >
+              價格低到高
             </button>
           </div>
           <div class="xl:grid xl:grid-cols-3 flex flex-col w-full gap-5">
