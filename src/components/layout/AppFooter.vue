@@ -158,7 +158,7 @@ const footerLinks = [
   {
     title: '關於',
     links: [
-      { label: '關於 WanTrip', to: '/about' },
+      { label: '關於 WanTrip', to: '/about-us' },
       { label: '客服中心', to: '/service' },
     ],
   },
