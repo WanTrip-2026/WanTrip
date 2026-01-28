@@ -156,18 +156,17 @@ const footerLinks = [
     ],
   },
   {
-    title: '關於',
-    links: [
-      { label: '關於 WanTrip', to: '/about-us' },
-      { label: '客服中心', to: '/service' },
-    ],
-  },
-  {
     title: '條款與規則',
     links: [
       { label: '常見問題', to: '/support' },
       { label: '服務條款', to: '/tos' },
       { label: '隱私權聲明', to: '/privacy' },
+    ],
+  },
+  {
+    title: '關於',
+    links: [
+      { label: '關於 WanTrip', to: '/about-us' },
     ],
   },
 ]
