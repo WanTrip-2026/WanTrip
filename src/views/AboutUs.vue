@@ -2,7 +2,7 @@
   <div class="relative min-h-screen bg-white">
     <div class="absolute top-0 left-0 w-full h-[500px] overflow-hidden">
       <video autoplay muted loop playsinline class="w-full h-full object-cover">
-        <source src="../assets/about.mp4" type="video/mp4" />
+        <source src="https://res.cloudinary.com/wantrip/video/upload/v1769573809/614834964.757857_2_ezwlv3.mov" type="video/mp4" />
       </video>
       <div class="absolute inset-0 bg-black/10"></div>
     </div>
@@ -10,12 +10,11 @@
     <main class="relative z-10 mx-auto max-w-[1240px] px-5">
       <div class="pt-32 pb-20">
         <section class="flex justify-center animate-hero-in mb-32">
-          <div class="bg-white/10 backdrop-blur-2xl border border-white/30 p-10 md:p-16 rounded-[20px] shadow-2xl text-center max-w-3xl w-full">
-            <h1 class="text-white text-5xl md:text-7xl font-bold mb-6 tracking-tight drop-shadow-lg">
+          <div class="bg-white/10 backdrop-blur-2xl border border-white/30 p-10 md:p-16 rounded-[40px] shadow-2xl text-center max-w-3xl w-full">
+            <h1 class="text-white text-5xl md:text-7xl font-bold mb-6 drop-shadow-lg">
               WanTrip
             </h1>
-            <div class="w-16 h-1 rounded-full bg-accent mx-auto mb-6"></div>
-            <p class="text-white/95 text-xl md:text-2xl font-light tracking-[0.15em] leading-relaxed">
+            <p class="text-white/95 text-xl md:text-2xl tracking-[0.25em] leading-relaxed">
               重新發現這片土地<br class="md:hidden"/>
               <span class="mt-2 block">找回旅行的初心</span>
             </p>
@@ -29,10 +28,10 @@
               <span class="block w-12 h-1 bg-accent rounded-full mx-auto mt-4"></span>
             </h2>
             <div class="space-y-8">
-              <p class="text-2xl md:text-3xl text-primary font-semibold leading-relaxed">
+              <p class="text-2xl md:text-3xl text-primary font-semibold leading-relaxed mb-24">
                 懂你的每一次出發，無論遠方或家鄉。
               </p>
-              <div class="bg-white/50 p-8 rounded-[20px] shadow-inner border border-white/20 max-w-4xl mx-auto">
+              <div class="bg-white/50 p-10 my-20 rounded-[40px] shadow-inner shadow-primary/25 max-w-4xl mx-auto">
                 <p class="text-lg text-gray-600 leading-relaxed tracking-wider">
                   在 <span class="text-primary font-bold text-xl mx-1">WanTrip</span> 的心中，<br class="hidden md:block">
                   旅行從來不只是「一個房門號碼」或「一張入場票券」，而是那些閃閃發光的時刻。<br class="hidden md:block">
@@ -68,7 +67,7 @@
             <div class="w-12 h-1 bg-accent rounded-full"></div>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div v-for="member in team" :key="member.name" class="bg-white p-8 rounded-[20px] shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-50 group text-center">
+            <div v-for="member in team" :key="member.name" class="bg-white p-8 rounded-[20px] shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-50 group text-center">
               <div class="relative w-32 h-32 mx-auto mb-6">
                 <div class="absolute inset-0 bg-primary/20 rounded-full rotate-6 group-hover:rotate-12 transition-transform duration-500"></div>
                 <img :src="member.avatar" class="relative w-full h-full object-cover rounded-full border-4 border-white shadow-lg" />
@@ -101,25 +100,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const vAppear = {
-  mounted: (el: HTMLElement) => {
-    el.style.opacity = '0'
-    el.style.transform = 'translateY(40px)'
-    el.style.transition = 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)'
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          el.style.opacity = '1'
-          el.style.transform = 'translateY(0)'
-          observer.unobserve(el)
-        }
-      })
-    }, { threshold: 0.15 })
-    observer.observe(el)
-  }
-}
-
 interface TeamMember {
   name: string
   role: string
@@ -128,11 +108,44 @@ interface TeamMember {
   github?: string
 }
 
+const observerMap = new WeakMap<HTMLElement, IntersectionObserver>();
+
+const vAppear = {
+  mounted: (el: HTMLElement) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(40px)';
+    el.style.transition = 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+          observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    // 將 observer 存入 WeakMap，以 el 為 key
+    observerMap.set(el, observer);
+    observer.observe(el);
+  },
+  
+  beforeUnmount: (el: HTMLElement) => {
+    // 從 WeakMap 取得對應的 observer 並斷開連線
+    const observer = observerMap.get(el);
+    if (observer) {
+      observer.disconnect();
+      observerMap.delete(el);
+    }
+  },
+}
+
 const team = ref<TeamMember[]>([
   { name: '陳仟龍', github: 'https://github.com/chenchienlung/', role: 'Founder', avatar: 'https://res.cloudinary.com/wantrip/image/upload/w_200,c_fill,f_auto,q_auto/v1769568878/%E9%99%B3%E4%BB%9F%E9%BE%8D_%E4%B8%BB%E9%AB%94_1_1_svb7iu', bio: '專注於創造讓人一眼心動的視覺旅遊體驗與細節。' },
-  { name: '彭奕翔', github: 'https://github.com/andypeng1416',role: 'Founder', avatar: 'https://res.cloudinary.com/wantrip/image/upload/w_200,c_fill,f_auto,q_auto/v1769568087/18_%E5%BD%AD%E5%A5%95%E7%BF%94_zcleku.webp', bio: '擅長挖掘巷弄美食與在地職人的動人生活美學。' },
-  { name: '莊珈毓', github: 'https://github.com/B616G',role: 'Founder', avatar: 'https://res.cloudinary.com/wantrip/image/upload/w_200,c_fill,f_auto,q_auto/v1769568087/S__115097610_cfnchp.webp', bio: '用技術連結每一份對旅行的熱情，讓預約更簡單。' },
-  { name: '顏文琳', github: 'https://github.com/yencarol',role: 'Founder', avatar: 'https://res.cloudinary.com/wantrip/image/upload/w_200,c_fill,f_auto,q_auto/v1769568087/S__106119214_p5sgmm.webp', bio: '資深旅行家，熱愛台灣每一寸土地的溫度與故事。' },
+  { name: '彭奕翔', github: 'https://github.com/andypeng1416', role: 'Founder', avatar: 'https://res.cloudinary.com/wantrip/image/upload/w_200,c_fill,f_auto,q_auto/v1769568087/18_%E5%BD%AD%E5%A5%95%E7%BF%94_zcleku.webp', bio: '擅長挖掘巷弄美食與在地職人的動人生活美學。' },
+  { name: '莊珈毓', github: 'https://github.com/B616G', role: 'Founder', avatar: 'https://res.cloudinary.com/wantrip/image/upload/w_200,c_fill,f_auto,q_auto/v1769568087/S__115097610_cfnchp.webp', bio: '用技術連結每一份對旅行的熱情，讓預約更簡單。' },
+  { name: '顏文琳', github: 'https://github.com/yencarol', role: 'Founder', avatar: 'https://res.cloudinary.com/wantrip/image/upload/w_200,c_fill,f_auto,q_auto/v1769568087/S__106119214_p5sgmm.webp', bio: '資深旅行家，熱愛台灣每一寸土地的溫度與故事。' },
 ])
 </script>
 
