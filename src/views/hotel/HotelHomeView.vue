@@ -95,17 +95,17 @@ const router = useRouter()
 // --- 輪播盒邏輯 ---
 const hotelImages = [
   {
-    url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200',
+    url: 'https://res.cloudinary.com/wantrip/image/upload/v1769506021/%E9%A3%AF%E5%BA%97%E5%A4%96%E8%A7%804_a03gqo.webp',
     title: '頂級海景套房',
-    desc: '享受無邊際泳池與絕美夕陽',
+    desc: '享受海水與絕美夕陽',
   },
   {
-    url: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200',
+    url: 'https://res.cloudinary.com/wantrip/image/upload/v1769506190/%E9%A3%AF%E5%BA%97%E9%A6%96%E5%9C%964_todrzk.webp',
     title: '森林木屋飯店',
     desc: '沈浸在芬多精的懷抱中',
   },
   {
-    url: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200',
+    url: 'https://res.cloudinary.com/wantrip/image/upload/v1769506091/%E9%A3%AF%E5%BA%97%E9%A6%96%E5%9C%96_dualwy.webp',
     title: '城市綠洲旅店',
     desc: '位於市中心的最便利選擇',
   },

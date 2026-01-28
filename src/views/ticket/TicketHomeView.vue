@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, watch, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import HomePageTicketCard from '@/components/layout/HomePageTicketCard.vue'
 import axios from 'axios'
@@ -26,17 +26,17 @@ const errorMsg = ref<string>('')
 // --- 輪播盒邏輯 ---
 const hotelImages = [
   {
-    url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200',
-    title: '頂級海景',
-    desc: '享受絕美夕陽',
+    url: 'https://res.cloudinary.com/wantrip/image/upload/v1768532688/art_yfj3t1.jpg',
+    title: '美術展覽',
+    desc: '感受藝術與建築交織出的文化氛圍',
   },
   {
-    url: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200',
-    title: '森林風景區',
-    desc: '沈浸在芬多精的懷抱中',
+    url: 'https://res.cloudinary.com/wantrip/image/upload/v1768478823/%E6%AD%A6%E5%B6%BA2_vgrnqm.jpg',
+    title: '中央山脈',
+    desc: '體驗高山森林、雲海與遼闊視野',
   },
   {
-    url: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200',
+    url: 'https://res.cloudinary.com/wantrip/image/upload/v1768530786/1024x768_attractions-image-jd9wfbhrmkerakes6ymo7g_somi7m.jpg',
     title: '城市綠洲',
     desc: '位於市中心的大型公園',
   },
@@ -307,13 +307,17 @@ function onClickRegion(tc: { label: string }) {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
       </button>
-      <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+      <div class="absolute bottom-12 left-1/2 -translate-x-1/2 z-0 flex gap-2">
         <button
           v-for="(_, index) in hotelImages"
           :key="index"
           @click="currentSlide = index"
           class="w-2.5 h-2.5 rounded-full transition-all duration-300"
-          :class="currentSlide === index ? 'bg-[#93ACAA] w-8' : 'bg-white/50 hover:bg-white'"
+          :class="
+            currentSlide === index
+              ? 'bg-primary w-8'
+              : 'bg-white/40 backdrop-blur-sm hover:bg-white'
+          "
         ></button>
       </div>
     </section>
