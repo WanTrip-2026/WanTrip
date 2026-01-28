@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { supabase } from '@/utils/supabaseClient'
 import { getOrderById } from '@/services/orderApi'
-import Redenvelop from '@/components/layout/RedEnvelop.vue'
+import Redenvelop from '@/components/layout/RedEnvelope.vue'
 
 const route = useRoute()
 const now = new Date()
