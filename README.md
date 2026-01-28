@@ -1,5 +1,5 @@
 # WanTrip - 全方位旅遊預訂平台
-
+![](https://res.cloudinary.com/wantrip/image/upload/v1769395567/meta_img_p0n4p6.png)
 WanTrip 是一個現代化的旅遊預訂平台，專為提供流暢的飯店住宿與景點門票預訂體驗而設計。  
 本專案採用前後端分離架構，前端使用 Vue 3 生態系，後端則基於 Node.js 與 Supabase 構建。
 
@@ -7,7 +7,7 @@ WanTrip 是一個現代化的旅遊預訂平台，專為提供流暢的飯店住
 
 ## 技術堆疊 (Tech Stack)
 
-### 前端 (Frontend) - `WanTrip/`
+### 前端 (Frontend)
 
 - **核心框架**: [Vue 3](https://vuejs.org/)
 - **狀態管理**: [Pinia](https://pinia.vuejs.org/)
@@ -17,7 +17,7 @@ WanTrip 是一個現代化的旅遊預訂平台，專為提供流暢的飯店住
 - **日期處理**: [date-fns](https://date-fns.org/) / [VueDatePicker](https://vue3datepicker.com/)
 - **打包工具**: [Vite](https://vitejs.dev/)
 
-### 後端 (Backend) - `WanTrip-Backend/`
+### 後端 (Backend) 
 
 - **運行環境**: [Node.js](https://nodejs.org/)
 - **框架**: [Express.js](https://expressjs.com/)
