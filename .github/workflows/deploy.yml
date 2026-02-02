@@ -23,7 +23,6 @@ jobs:
         run: npm install
 
       - name: Build Project
-        # 這裡會讀取專案內的 .env.production
         run: npm run build
 
       - name: Deploy to EC2 via SCP
@@ -34,4 +33,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: 'dist/*'
           target: '/home/ubuntu/wantrip-frontend/dist'
-          strip_components: 1 # 這會讓檔案直接進到 dist，而不是多一層 dist 資料夾
+          strip_components: 1
+          overwrite: true
