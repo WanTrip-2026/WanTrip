@@ -258,21 +258,21 @@
             常見問題
           </RouterLink>
           <RouterLink
-            to="/about"
+            to="/about-us"
             class="text-black font-medium border-b border-primary/25 pb-2"
             @click="isOpen = false"
           >
             關於Wantrip
           </RouterLink>
           <RouterLink
-            to="/support"
+            to="/tos"
             class="text-black font-medium border-b border-primary/25 pb-2"
             @click="isOpen = false"
           >
             服務條款
           </RouterLink>
           <RouterLink
-            to="/support"
+            to="/privacy"
             class="text-black font-medium border-b border-primary/25 pb-2"
             @click="isOpen = false"
           >
