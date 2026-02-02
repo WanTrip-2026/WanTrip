@@ -14,6 +14,7 @@ export default defineConfig({
       /* pass your config */
     }),
   ],
+  base: '/',
   css: {
     postcss: './postcss.config.js',
   },
