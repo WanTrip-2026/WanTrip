@@ -22,6 +22,13 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Create .env.production
+        run: |
+          echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" > .env.production
+          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env.production
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> .env.production
+          echo "VITE_GOOGLE_MAPS_KEY=${{ secrets.VITE_GOOGLE_MAPS_KEY }}" >> .env.production
+
       - name: Build Project
         run: npm run build
 
@@ -32,6 +39,6 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: 'dist/*'
-          target: '/home/ubuntu/wantrip-frontend'
-          strip_components: 0
+          target: '/home/ubuntu/wantrip-frontend/dist'
+          strip_components: 1
           overwrite: true
