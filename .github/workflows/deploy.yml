@@ -1,0 +1,37 @@
+name: Deploy Frontend to AWS EC2
+
+on:
+  push:
+    branches:
+      - dev # 只有 push 到 main 分支時才觸發 (待推上main分之後改成main)
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Project
+        # 這裡會讀取專案內的 .env.production
+        run: npm run build
+
+      - name: Deploy to EC2 via SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: 'dist/*'
+          target: '/home/ubuntu/wantrip-frontend/dist'
+          strip_components: 1 # 這會讓檔案直接進到 dist，而不是多一層 dist 資料夾
