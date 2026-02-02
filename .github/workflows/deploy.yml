@@ -32,6 +32,6 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: 'dist/*'
-          target: '/home/ubuntu/wantrip-frontend/'
-          strip_components: 1
+          target: '/home/ubuntu/wantrip-frontend'
+          strip_components: 0
           overwrite: true
