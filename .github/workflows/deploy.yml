@@ -29,6 +29,9 @@ jobs:
           echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> .env.production
           echo "VITE_GOOGLE_MAPS_KEY=${{ secrets.VITE_GOOGLE_MAPS_KEY }}" >> .env.production
 
+      - name: Check env file (Debug)
+        run: cat .env.production # 這行可以讓你在 Actions 的 Log 裡看到檔案是否正確生成
+
       - name: Build Project
         run: npm run build
 
