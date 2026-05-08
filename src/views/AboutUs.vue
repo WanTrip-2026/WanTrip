@@ -2,7 +2,8 @@
   <div class="relative min-h-screen bg-white">
     <div class="absolute top-0 left-0 w-full h-[500px] overflow-hidden">
       <video autoplay muted loop playsinline class="w-full h-full object-cover">
-        <source src="https://res.cloudinary.com/wantrip/video/upload/v1769573809/614834964.757857_2_ezwlv3.mov" type="video/mp4" />
+        <source src="https://res.cloudinary.com/wantrip/video/upload/v1769573809/614834964.757857_2_ezwlv3.mov"
+          type="video/mp4" />
       </video>
       <div class="absolute inset-0 bg-black/10"></div>
     </div>
@@ -10,12 +11,13 @@
     <main class="relative z-10 mx-auto max-w-[1240px] px-5">
       <div class="pt-32 pb-20">
         <section class="flex justify-center animate-hero-in mb-32">
-          <div class="bg-white/10 backdrop-blur-2xl border border-white/30 p-10 md:p-16 rounded-[40px] shadow-2xl text-center max-w-3xl w-full">
+          <div
+            class="bg-white/10 backdrop-blur-2xl border border-white/30 p-10 md:p-16 rounded-30 shadow-2xl text-center max-w-3xl w-full">
             <h1 class="text-white text-5xl md:text-7xl font-bold mb-6 drop-shadow-lg">
               WanTrip
             </h1>
             <p class="text-white/95 text-xl md:text-2xl tracking-[0.25em] leading-relaxed">
-              重新發現這片土地<br class="md:hidden"/>
+              重新發現這片土地<br class="md:hidden" />
               <span class="mt-2 block">找回旅行的初心</span>
             </p>
           </div>
@@ -31,7 +33,7 @@
               <p class="text-2xl md:text-3xl text-primary font-semibold leading-relaxed mb-24">
                 懂你的每一次出發，無論遠方或家鄉。
               </p>
-              <div class="bg-white/50 p-10 my-20 rounded-[40px] shadow-inner shadow-primary/25 max-w-4xl mx-auto">
+              <div class="bg-white/50 p-10 my-20 rounded-30 shadow-inner shadow-primary/25 max-w-4xl mx-auto">
                 <p class="text-lg text-gray-600 leading-relaxed tracking-wider">
                   在 <span class="text-primary font-bold text-xl mx-1">WanTrip</span> 的心中，<br class="hidden md:block">
                   旅行從來不只是「一個房門號碼」或「一張入場票券」，而是那些閃閃發光的時刻。<br class="hidden md:block">
@@ -43,18 +45,31 @@
         </section>
 
         <section v-appear class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-40">
-          <div class="group relative h-[500px] md:h-[550px] overflow-hidden rounded-[40px] shadow-2xl border border-white/10">
-            <img src="https://res.cloudinary.com/wantrip/image/upload/v1768478823/%E6%AD%A6%E5%B6%BA3_ba69ea.jpg" alt="山間美景" class="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-10">
-              <div class="self-start px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-sm mb-4 border border-white/30">🗺️ 台灣之美</div>
+          <div
+            class="group relative h-[500px] md:h-[550px] overflow-hidden rounded-30 shadow-2xl border border-white/10">
+            <img src="https://res.cloudinary.com/wantrip/image/upload/v1768478823/%E6%AD%A6%E5%B6%BA3_ba69ea.jpg"
+              alt="山間美景" class="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110"
+              loading="lazy" />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-10">
+              <div
+                class="self-start px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-sm mb-4 border border-white/30">
+                🗺️ 台灣之美</div>
               <h3 class="text-white text-3xl font-bold mb-4">旅行不一定要遠行</h3>
               <p class="text-white/70 text-lg font-light">可能是花蓮山海間的一抹晨曦，或台南巷弄裡的百年茶香。我們致力挖掘台灣每一處角落的溫度。</p>
             </div>
           </div>
-          <div class="group relative h-[500px] md:h-[550px] overflow-hidden rounded-[40px] shadow-2xl border border-white/10">
-            <img src="https://res.cloudinary.com/wantrip/image/upload/v1767682689/%E9%A3%AF%E5%BA%97%E5%A4%96%E8%A7%80_y7xe12.jpg" alt="飯店度假" class="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-10">
-              <div class="self-start px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-sm mb-4 border border-white/30">✨ 溫柔對待</div>
+          <div
+            class="group relative h-[500px] md:h-[550px] overflow-hidden rounded-30 shadow-2xl border border-white/10">
+            <img
+              src="https://res.cloudinary.com/wantrip/image/upload/v1767682689/%E9%A3%AF%E5%BA%97%E5%A4%96%E8%A7%80_y7xe12.jpg"
+              alt="飯店度假" class="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110"
+              loading="lazy" />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-10">
+              <div
+                class="self-start px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-sm mb-4 border border-white/30">
+                ✨ 溫柔對待</div>
               <h3 class="text-white text-3xl font-bold mb-4">每一種旅行，都值得被珍惜</h3>
               <p class="text-white/70 text-lg font-light">無論是環島冒險，還是飯店度假。我們準備了多樣選擇，成就您專屬的回憶。</p>
             </div>
@@ -67,21 +82,21 @@
             <div class="w-12 h-1 bg-accent rounded-full"></div>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div v-for="member in team" :key="member.name" class="bg-white p-8 rounded-[20px] shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-50 group text-center">
+            <div v-for="member in team" :key="member.name"
+              class="bg-white p-8 rounded-20 shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-50 group text-center">
               <div class="relative w-32 h-32 mx-auto mb-6">
-                <div class="absolute inset-0 bg-primary/20 rounded-full rotate-6 group-hover:rotate-12 transition-transform duration-500"></div>
-                <img :src="member.avatar" class="relative w-full h-full object-cover rounded-full border-4 border-white shadow-lg" />
+                <div
+                  class="absolute inset-0 bg-primary/20 rounded-full rotate-6 group-hover:rotate-12 transition-transform duration-500">
+                </div>
+                <img :src="member.avatar"
+                  class="relative w-full h-full object-cover rounded-full border-4 border-white shadow-lg" />
               </div>
               <div class="flex justify-center mb-1">
                 <div class="inline-flex items-center gap-2">
                   <h4 class="text-xl font-bold text-primary">{{ member.name }}</h4>
-                  
-                  <a v-if="member.github" 
-                    :href="member.github" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    class="text-primary hover:text-main transition-colors duration-300 flex items-center"
-                  >
+
+                  <a v-if="member.github" :href="member.github" target="_blank" rel="noopener noreferrer"
+                    class="text-primary hover:text-main transition-colors duration-300 flex items-center">
                     <font-awesome-icon :icon="['fab', 'github']" class="text-lg" />
                   </a>
                 </div>
@@ -130,7 +145,7 @@ const vAppear = {
     observerMap.set(el, observer);
     observer.observe(el);
   },
-  
+
   beforeUnmount: (el: HTMLElement) => {
     // 從 WeakMap 取得對應的 observer 並斷開連線
     const observer = observerMap.get(el);
@@ -155,7 +170,14 @@ const team = ref<TeamMember[]>([
 }
 
 @keyframes heroUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

@@ -4,55 +4,32 @@
       <h1 class="max-w-[1240px] mx-auto px-5">歡迎來到幫助中心，我們可以如何幫助您？</h1>
     </header>
     <main class="max-w-[1240px] mx-auto px-5 flex flex-col gap-10 mb-8">
-      <div class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
+      <div class="bg-white p-5 rounded-30 shadow-sm border border-gray-300">
         <h3 class="text-xl font-bold text-dark_900 mb-5">常見問題</h3>
         <div class="flex flex-col gap-5">
           <div v-for="(faq, index) in faqs" :key="index" class="border rounded-lg overflow-hidden">
-            <button
-              name="faq-question"
-              @click="toggleFaq(index)"
-              class="w-full flex justify-between items-center p-5 bg-main_100 hover:bg-main_300 transition text-left"
-            >
+            <button name="faq-question" @click="toggleFaq(index)"
+              class="w-full flex justify-between items-center p-5 bg-main_100 hover:bg-main_300 transition text-left">
               <span class="font-medium text-dark_900">{{ faq.question }}</span>
-              <span
-                class="text-gray-400 transform transition-transform duration-200"
-                :class="{ 'rotate-180': activeIndex === index }"
-                >▼</span
-              >
+              <span class="text-gray-400 transform transition-transform duration-200"
+                :class="{ 'rotate-180': activeIndex === index }">▼</span>
             </button>
-            <div
-              v-show="activeIndex === index"
-              class="p-5 bg-white text-sm text-dark_700"
-              v-html="faq.answer"
-            ></div>
+            <div v-show="activeIndex === index" class="p-5 bg-white text-sm text-dark_700" v-html="faq.answer"></div>
           </div>
         </div>
       </div>
-      <div class="bg-white p-5 rounded-[20px] shadow-sm border border-gray-300">
+      <div class="bg-white p-5 rounded-10 shadow-sm border border-gray-300">
         <h3 class="text-xl font-bold text-dark_900 mb-5">付款問題</h3>
         <div class="flex flex-col gap-5">
-          <div
-            v-for="(paymentfaq, index) in paymentfaqs"
-            :key="index"
-            class="border rounded-lg overflow-hidden"
-          >
-            <button
-              name="payment-question"
-              @click="togglePaymentFaq(index)"
-              class="w-full flex justify-between items-center p-5 bg-main_100 hover:bg-main_300 transition text-left"
-            >
+          <div v-for="(paymentfaq, index) in paymentfaqs" :key="index" class="border rounded-lg overflow-hidden">
+            <button name="payment-question" @click="togglePaymentFaq(index)"
+              class="w-full flex justify-between items-center p-5 bg-main_100 hover:bg-main_300 transition text-left">
               <span class="font-medium text-dark_900">{{ paymentfaq.question }}</span>
-              <span
-                class="text-gray-400 transform transition-transform duration-200"
-                :class="{ 'rotate-180': activePaymentFaqIndex === index }"
-                >▼</span
-              >
+              <span class="text-gray-400 transform transition-transform duration-200"
+                :class="{ 'rotate-180': activePaymentFaqIndex === index }">▼</span>
             </button>
-            <div
-              v-show="activePaymentFaqIndex === index"
-              class="p-5 bg-white text-sm text-dark_700"
-              v-html="paymentfaq.answer"
-            ></div>
+            <div v-show="activePaymentFaqIndex === index" class="p-5 bg-white text-sm text-dark_700"
+              v-html="paymentfaq.answer"></div>
           </div>
         </div>
       </div>

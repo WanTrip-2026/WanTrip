@@ -117,7 +117,7 @@ export const useCompareStore = defineStore('compare', {
             )
             if (listRes.ok) {
               const listData = await listRes.json()
-              const found = (listData.hotels || []).find((h: any) => h.id === hotelData.id)
+              const found = (listData.hotels || []).find((h: { id: unknown }) => h.id === hotelData.id)
               if (found) {
                 if (!normalized.types.length && found.types) {
                   normalized.types = found.types

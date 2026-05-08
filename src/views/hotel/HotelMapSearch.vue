@@ -1,147 +1,93 @@
 <template>
   <main class="relative w-full h-screen overflow-hidden">
-    <header
-      class="fixed top-[20px] left-0 w-full z-50 transition-all duration-300"
-      :class="[isMobileSearchOpen ? 'py-2' : 'h-[64px] flex items-center']"
-    >
+    <header class="fixed top-[20px] left-0 w-full z-50 transition-all duration-300"
+      :class="[isMobileSearchOpen ? 'py-2' : 'h-[64px] flex items-center']">
       <div class="w-full xl:max-w-[1240px] mx-auto px-5">
         <div class="w-full flex flex-col md:flex-row md:items-center gap-2">
           <!-- Logo and Mobile Toggle Group -->
           <div class="flex items-center justify-between">
             <a href="/" class="flex-shrink-0">
-              <svg
-                width="168"
-                height="44"
-                viewBox="0 0 168 44"
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-                class="mx-auto h-full"
-              >
+              <svg width="168" height="44" viewBox="0 0 168 44" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
+                class="mx-auto h-full">
                 <path
                   d="M25.9471 38.2725C25.305 38.4567 24.6818 38.6267 24.0456 38.4803C23.5925 38.3858 23.1553 38.2267 22.7473 38.008C20.7998 36.8803 18.8759 35.7219 16.9308 34.5776C16.764 34.4852 16.6246 34.3504 16.5266 34.1868C16.4285 34.0232 16.3754 33.8366 16.3725 33.6459C16.3748 33.549 16.3467 33.4538 16.2921 33.3737C16.2374 33.2936 16.1591 33.2327 16.068 33.1996C15.9545 33.1399 15.8442 33.0745 15.7375 33.0035C15.4094 33.3578 15.0812 33.718 14.7401 34.0663C13.9954 34.8315 13.1739 35.494 12.1564 35.8671C11.6474 36.0635 11.0925 36.1091 10.5583 35.9982C10.0626 35.8931 9.87374 35.5636 10.0862 35.1007C10.2896 34.6839 10.5137 34.2776 10.7578 33.8833C11.7351 32.2435 12.7163 30.6056 13.7015 28.9698C14.0178 28.4478 14.327 28.3793 14.8747 28.6533C15.957 29.1929 17.0075 29.8141 18.1299 30.2522C20.0609 31.0055 22.0332 31.6503 23.9949 32.3246C24.3844 32.458 24.4811 32.3647 24.4764 31.9597C24.4623 30.9063 24.4103 29.8519 24.4351 28.7997C24.4623 27.6626 24.5236 26.523 24.6381 25.3918C24.7703 24.0751 24.9757 22.7656 25.1527 21.4536C25.169 21.3576 25.1906 21.2626 25.2177 21.1691C24.916 21.3094 24.6057 21.4305 24.2888 21.5316C23.7116 21.6804 23.1899 21.5422 22.8028 21.0675C22.5825 20.8029 22.3888 20.5174 22.2244 20.2149C21.8573 19.5253 22.0226 18.8333 22.6611 18.3669C22.8998 18.1841 23.1654 18.0395 23.4484 17.9382C23.989 17.7635 24.4245 17.4447 24.8435 17.0821C25.4336 16.5696 26.0368 16.0619 26.6482 15.5706C26.8474 15.4081 26.9951 15.191 27.0731 14.946C27.9371 12.5311 28.9368 10.1789 30.3189 8.00611C31.8462 5.60663 33.6521 3.45748 35.9844 1.79484C37.1906 0.93282 38.5137 0.293979 39.9974 0.0826065C42.4111 -0.262202 44.4507 0.469926 46.0535 2.32622C47.399 3.88613 48.06 5.76486 48.5085 7.73688C48.9901 9.86241 49.0597 12.0245 48.9618 14.1902C48.8804 15.9279 48.665 17.6567 48.3173 19.3612C47.4311 23.7569 46.068 28.0428 44.2524 32.1427C43.2816 34.3851 42.0537 36.5072 40.5934 38.4662C39.4332 40.0013 38.1537 41.4183 36.5674 42.5318C35.5925 43.2155 34.5326 43.7316 33.3535 43.917C31.4048 44.2216 29.6945 43.6879 28.2581 42.3169C27.1604 41.2671 26.4877 39.9647 26.0356 38.5311C26.0085 38.4496 25.9801 38.3693 25.9471 38.2725ZM47.2244 21.3214C47.2381 21.3027 47.2496 21.2825 47.2586 21.2612C47.4392 20.3507 47.6127 19.4391 47.8062 18.5322C47.8346 18.4432 47.8323 18.3473 47.7998 18.2598C47.7672 18.1723 47.7064 18.0981 47.6268 18.0492C47.0107 17.5769 46.3899 17.1128 45.7986 16.611C44.5002 15.5069 43.0685 14.6342 41.3996 14.2209C40.8866 14.0837 40.3594 14.0072 39.8286 13.993C39.1204 13.9871 38.4783 14.2871 37.8823 14.6649C36.5084 15.5317 35.4036 16.6925 34.3626 17.9182C33.0702 19.445 31.8085 20.999 30.5373 22.5436C30.2327 22.912 29.94 23.291 29.6343 23.6748L37.4704 25.7236L42.2458 20.2752L40.558 19.0093L41.7171 17.6407L47.2244 21.3214ZM42.934 33.6648C43.3612 32.6446 43.785 31.6231 44.2181 30.6052C44.3763 30.2333 44.3196 29.8873 44.1544 29.5425C43.6894 28.56 42.9139 27.9448 41.8859 27.6531C40.3031 27.2115 38.7144 26.7923 37.1245 26.3742C34.4984 25.6846 31.8698 25.0068 29.246 24.3137C29.0182 24.2534 28.8978 24.3042 28.781 24.4943C28.132 25.5295 27.8267 26.7433 27.9087 27.9625C27.9689 28.9166 28.3018 29.7798 29.0135 30.4423C30.3354 31.6857 31.9383 32.04 33.6757 31.7707C35.2408 31.5263 36.7905 31.1803 38.3473 30.8792C38.789 30.7799 39.2469 30.7772 39.6897 30.8711C40.1325 30.9651 40.5499 31.1535 40.9133 31.4236C41.7312 32.0264 42.4186 32.7889 42.934 33.6648ZM27.3127 29.2638C27.2242 29.3901 27.1474 29.494 27.0766 29.6015C26.444 30.5663 25.8172 31.5334 25.1799 32.4946C24.8423 33.0024 24.4245 33.1559 23.8438 32.9917C23.4814 32.8902 23.1226 32.7745 22.7662 32.6528C21.4773 32.2088 20.1896 31.7648 18.9054 31.309C18.6752 31.2275 18.5513 31.25 18.4144 31.4767C17.9907 32.1758 17.5445 32.8618 17.0901 33.5396C16.9485 33.7498 16.9721 33.849 17.1869 33.9766C18.9573 35.0204 20.716 36.0832 22.4888 37.1223C23.0046 37.4258 23.5381 37.7128 24.1566 37.7635C25.3923 37.8545 26.4204 37.4093 27.2371 36.4989C27.9453 35.716 28.611 34.9047 29.2897 34.1005C29.789 33.5101 30.2788 32.9079 30.7993 32.2785C29.1445 31.8298 27.8462 30.989 27.3127 29.2638ZM26.0616 19.1085L26.6517 18.7093C27.9988 17.7969 29.3412 16.8841 30.6789 15.971C30.7712 15.9098 30.8749 15.8678 30.9838 15.8475C31.0927 15.8272 31.2046 15.829 31.3127 15.8529C31.7034 15.9119 32.0976 15.9462 32.493 15.9851C33.2461 16.0595 34.0003 16.1186 34.7509 16.2118C34.8202 16.2251 34.8916 16.2204 34.9585 16.1983C35.0254 16.1762 35.0856 16.1374 35.1334 16.0855C35.6326 15.6226 36.1319 15.1597 36.6465 14.7133C36.9404 14.4595 37.2626 14.241 37.5907 13.9895C36.4435 13.9104 35.3293 13.836 34.2139 13.7533C33.4585 13.7002 32.7019 13.6577 31.9501 13.5715C31.4579 13.5148 30.9917 13.5715 30.5892 13.8395C29.2342 14.737 27.8906 15.6505 26.5585 16.5803C25.9955 16.9747 25.4785 17.434 24.9674 17.8426L26.0616 19.1085ZM48.3539 10.8165C48.2359 10.0513 48.1178 9.33339 47.9998 8.61661C47.9881 8.52194 47.9444 8.43413 47.8759 8.36775C47.8074 8.30138 47.7183 8.26044 47.6233 8.25173C47.0497 8.13128 46.459 8.11608 45.88 8.20686C44.8697 8.37218 44.0092 8.79728 43.3624 9.62388C42.6117 10.5768 42.3096 11.6797 42.2919 12.8665C42.2754 13.9918 42.1125 13.7203 43.1866 14.1583C43.4557 14.2682 43.7295 14.3426 44.0128 14.2516C44.4589 14.1052 44.9062 13.9541 45.3418 13.7793C45.9319 13.5431 46.201 13.0885 46.2305 12.4544C46.273 11.5558 46.7369 10.9948 47.5643 10.8272C47.7933 10.7835 48.0293 10.8154 48.3539 10.8154V10.8165ZM44.5049 14.7748C44.5049 14.7925 44.5049 14.8043 44.5144 14.8078C44.8826 15.0759 45.271 15.3203 45.6144 15.6179C46.0264 15.9721 46.4406 16.1398 46.9635 15.8836C47.0353 15.8547 47.1108 15.8361 47.1878 15.8281C47.7933 15.7253 48.1072 15.3203 48.2406 14.7653C48.3186 14.4381 48.3621 14.1037 48.3704 13.7675C48.3858 13.1393 48.3775 12.5087 48.3433 11.8781C48.3313 11.8004 48.3019 11.7264 48.2574 11.6616C48.2128 11.5967 48.1542 11.5428 48.086 11.5038C47.9383 11.4289 47.7707 11.403 47.6073 11.4297C47.4439 11.4565 47.2933 11.5345 47.1772 11.6526C47.0389 11.7911 46.9408 11.9645 46.8932 12.1543C46.8456 12.3441 46.8503 12.5433 46.9069 12.7307C46.9836 13.046 47.2409 13.1688 47.5348 13.2337C47.6351 13.2562 47.7343 13.2892 47.8334 13.3176V13.3884C47.7236 13.4498 47.6186 13.5538 47.5053 13.5632C47.2692 13.5833 47.0331 13.5467 46.7971 13.5455C46.7168 13.5455 46.6023 13.5573 46.561 13.6104C46.0441 14.2918 45.2792 14.5268 44.5049 14.7736V14.7748ZM14.6067 29.3311C14.5702 29.2886 14.5418 29.2248 14.5064 29.2225C14.4182 29.2016 14.3255 29.2094 14.242 29.2449C14.1514 29.3233 14.0765 29.4183 14.0213 29.5248C12.9197 31.3291 11.8204 33.1342 10.7236 34.9401C10.6666 35.0259 10.6194 35.1178 10.5831 35.2141C10.5666 35.2625 10.5831 35.3593 10.6162 35.3794C10.6451 35.3909 10.6762 35.396 10.7073 35.3946C10.7385 35.3932 10.7689 35.3852 10.7967 35.3711C10.8463 35.3384 10.8869 35.2938 10.9148 35.2412C11.2264 34.7878 11.5557 34.3462 11.8425 33.8774C12.7407 32.4131 13.6224 30.9382 14.5111 29.4681C14.5418 29.4256 14.5713 29.3842 14.6067 29.3311ZM23.7553 18.4401C24.3206 18.6314 24.6039 19.0577 24.6806 19.621C24.742 20.072 24.5284 20.2267 24.0964 20.1051C23.9995 20.0876 23.8996 20.1061 23.8155 20.1571C23.7718 20.1819 23.7494 20.2988 23.7647 20.3625C23.8827 20.8349 24.4209 21.025 24.7715 20.6825C24.9895 20.4426 25.1869 20.1846 25.3617 19.9114C25.4344 19.8183 25.4727 19.7029 25.4701 19.5848C25.4675 19.4666 25.4242 19.353 25.3475 19.2632C25.1534 19.0025 24.9408 18.7563 24.7113 18.5263C24.3867 18.1992 24.1872 18.1909 23.7553 18.4401ZM16.7136 32.9374L17.8467 31.1661C17.3368 30.9016 17.338 30.9028 17.0311 31.3456C16.7537 31.7471 16.4716 32.1439 16.1895 32.5465L16.7136 32.9374ZM15.5805 30.8367C15.5843 30.7768 15.576 30.7168 15.556 30.6603C15.536 30.6037 15.5048 30.5518 15.4642 30.5076C15.4236 30.4635 15.3745 30.428 15.3198 30.4034C15.2652 30.3788 15.2061 30.3655 15.1461 30.3643C15.0224 30.3705 14.9057 30.424 14.8203 30.5138C14.7349 30.6035 14.6873 30.7228 14.6873 30.8467C14.6873 30.9707 14.7349 31.0899 14.8203 31.1797C14.9057 31.2695 15.0224 31.323 15.1461 31.3291C15.2676 31.3177 15.3801 31.2605 15.4608 31.169C15.5415 31.0775 15.5843 30.9586 15.5805 30.8367ZM23.7494 19.1344C23.4661 19.5159 23.2088 19.8619 22.9503 20.2078L23.0058 20.248C23.3964 19.9941 23.8332 19.4037 23.7494 19.1344ZM23.2772 18.864C22.85 19.0719 22.5891 19.4155 22.6458 19.7048C22.8948 19.4226 23.1875 19.223 23.2784 18.864H23.2772Z"
-                  fill="black"
-                />
+                  fill="black" />
                 <path
                   d="M163.47 16.8896C166.261 16.8897 168 19.4597 168 23.4335C168 27.7696 165.93 30.5478 162.771 30.5478C160.674 30.5477 159.95 29.3001 159.665 28.0283C159.561 27.5623 159.483 27.4843 159.354 27.4843C159.224 27.4845 159.173 27.5626 159.173 27.9501C159.171 30.884 160.672 32.6243 160.672 34.0263C160.672 35.35 159.43 35.9999 157.799 35.9999C156.168 35.9999 155.007 35.35 155.007 33.3261C155.007 31.6122 155.805 29.794 155.805 26.4443C155.805 21.5389 154.356 19.9542 154.355 18.8642C154.355 17.7742 155.805 16.8896 157.073 16.8896C158.867 16.8899 159.894 18.6557 158.601 20.9394C158.367 21.3554 158.401 21.4337 158.471 21.5117C158.6 21.5636 158.704 21.4859 158.884 21.122C159.376 20.136 160.385 16.8896 163.47 16.8896ZM93.2432 10.9492C93.2732 10.9492 95.9621 10.966 96.1426 13.832C96.3218 17.5964 92.2314 29.5398 90.4189 31.7978C89.6433 32.7597 88.4014 33.0703 87.4941 33.0703C83.5345 33.0702 84.5709 28.0866 84.7764 26.3203C84.88 25.4644 84.8024 25.3336 84.6729 25.3076C84.5433 25.2816 84.4934 25.3598 84.3379 26.1376C83.9231 28.6037 83.845 33.0703 79.7812 33.0703C78.0985 33.0702 77.0639 31.9798 76.1826 29.54C74.9863 26.2421 73.0239 13.5988 70.5137 13.5976C69.1179 13.5976 69.012 15.4401 70.332 17.2841C72.1443 19.884 71.3685 22.556 68.7266 22.582C66.8642 22.6079 65 21.3335 65 17.7255C65.0001 13.6757 67.3289 11.2334 71.1611 11.2333C76.8301 11.2333 78.1241 16.6879 78.6426 18.79C80.3753 26.0599 80.3234 26.3458 79.5996 27.5898C79.4003 27.9797 79.401 28.1102 79.4189 28.2402C79.4371 28.3698 79.5745 28.3691 79.8594 27.9794C81.1793 25.9013 82.5508 22.0074 81.3086 18.4755C80.1124 15.1797 82.1367 13.9579 83.9014 13.9579C85.1437 13.9581 87.2674 14.6085 88.3281 19.8261C88.5316 20.9367 89.2289 24.7521 87.2373 27.7997C87.1897 27.8616 87.1571 27.9347 87.1436 28.0117C87.1301 28.0885 87.1356 28.1678 87.1592 28.2421C87.211 28.3459 87.2888 28.3452 87.5977 27.9814C89.6433 25.6195 89.8768 22.582 89.9805 20.582C90.3175 13.7279 89.6181 10.9492 93.2432 10.9492ZM140.104 8.56927C142.297 7.58326 143.055 7.92201 143.294 9.24603C143.527 10.7781 143.062 13.6081 139.956 14.246C138.636 14.5059 135.893 14.4458 134.648 13.624C135.037 15.6243 134.08 21.4379 134.08 23.0478C134.08 28.4239 135.244 28.268 135.244 29.332C135.244 30.3959 134.028 31.3319 132.164 31.332C130.118 31.332 128.953 30.2395 128.953 28.0595C128.953 26.2415 129.731 23.8794 129.731 21.3076C129.731 18.7358 128.953 16.6359 128.953 14.662C128.953 13.52 129.369 12.4034 130.922 12.4814C131.284 12.5053 131.336 12.4557 131.336 12.3779C131.336 12.2999 131.284 12.2477 131.025 12.1777C130.343 11.9717 129.541 12.0233 128.815 12.1533C125.245 12.6973 125.115 14.5156 126.643 15.6835C128.997 17.4835 127.47 20.8252 124.727 20.8515C122.966 20.8775 121.104 19.6059 121.104 16.2822C121.104 12.1541 124.08 9.50583 128.608 9.5058C131.611 9.5058 135.495 10.6472 140.104 8.56927ZM151.452 16.8974C153.109 16.8975 154.195 17.5462 154.195 19.0781C154.195 20.3781 153.418 22.3761 153.418 23.622V23.8222C153.426 27.4578 154.584 27.4579 154.584 28.5478C154.584 29.6378 153.368 30.5477 151.607 30.5478C149.717 30.5478 148.527 29.4561 148.526 27.6923C148.526 26.2645 149.324 25.0421 149.324 23.8222V23.622C149.324 22.8861 149.047 21.8875 148.819 20.9365C148.489 22.0916 147.587 22.9406 146.345 23.0019C145.133 23.0697 144.329 22.3155 144.484 21.4335C144.614 20.8097 144.124 20.7841 143.942 20.7841C143.009 20.7841 142.363 21.9022 142.363 23.6142V23.8134C142.363 27.6133 143.398 26.9299 143.657 27.9677C143.942 29.1897 142.518 30.54 140.68 30.54C139.178 30.5398 137.858 29.6033 137.858 27.4755C137.858 26.2556 138.297 25.0333 138.297 23.8134V23.6142C138.301 22.936 138.224 22.2591 138.066 21.5995C137.704 20.0159 136.978 19.4959 136.978 18.6142C136.978 17.6522 137.885 16.8994 139.282 16.8994C140.479 16.8994 141.456 17.4721 141.638 18.3281C141.793 19.0021 141.533 20.1463 141.039 20.9501C140.84 21.288 140.78 21.496 140.987 21.496C141.065 21.496 141.143 21.4439 141.4 20.9501C142.645 18.4323 144.532 16.8996 146.396 16.8994C147.648 16.8994 148.309 17.5894 148.645 18.3642C148.995 17.3336 150.093 16.8974 151.452 16.8974ZM118.668 16.6777C122.552 16.6777 121.051 21.8175 121.051 23.2197V23.6093C121.051 27.3991 122.086 26.7259 122.319 27.7636C122.63 28.9836 121.181 30.3339 119.368 30.3339C117.867 30.3339 116.521 29.3994 116.521 27.2695C116.521 26.0496 116.962 24.8292 116.962 23.6093V23.4101C116.962 21.6101 116.728 20.58 115.615 20.58C114.088 20.5803 113.881 22.5022 113.881 23.4101V23.6093C113.881 27.3991 114.915 26.726 115.175 27.7636C115.46 28.9835 114.037 30.3337 112.198 30.3339C110.697 30.3339 109.376 29.3995 109.376 27.2695C109.376 26.0496 109.815 24.8292 109.815 23.6093V23.4101C109.821 22.7278 109.743 22.0471 109.584 21.3837C109.286 20.0851 108.744 19.5018 108.56 18.8456C108.355 19.7463 107.356 20.8822 107.356 23.3759C107.356 26.2314 108.598 27.5034 108.599 28.4394C108.599 29.4254 107.175 30.3339 105.881 30.3339C104.12 30.3339 103.09 28.544 104.354 26.2841C104.613 25.8421 104.587 25.7639 104.509 25.7119C104.353 25.662 104.25 25.738 104.095 26.1015C103.604 27.0635 102.593 30.3338 99.4863 30.3339C96.7167 30.3339 94.9814 27.7636 94.9814 23.7656C94.9815 19.4298 97.0274 16.6779 100.186 16.6777C102.281 16.6777 103.034 17.8974 103.293 19.1953C103.423 19.6633 103.492 19.7421 103.63 19.7421C103.767 19.742 103.809 19.6633 103.783 19.3515C103.422 17.7158 104.431 16.6779 105.854 16.6777C106.991 16.6777 108.202 17.3516 108.518 18.1513C108.659 17.3123 109.524 16.6856 110.8 16.6855C111.996 16.6855 112.974 17.2562 113.155 18.1142C113.311 18.7882 113.051 19.9295 112.557 20.7353C112.357 21.0733 112.298 21.2802 112.505 21.2802C112.583 21.2802 112.661 21.2293 112.918 20.7353C114.166 18.2097 116.598 16.6779 118.668 16.6777ZM162.044 21.7997C160.905 21.7997 160.182 22.8377 160.182 24.1357C160.182 25.4335 160.931 26.446 162.069 26.4462C163.266 26.4462 163.908 25.3037 163.908 24.1357C163.908 22.8357 163.159 21.7998 162.044 21.7997ZM100.91 20.7773C99.7138 20.7773 99.0479 21.9198 99.0479 23.0878C99.0479 24.3618 99.8234 25.3994 100.962 25.3994C102.076 25.3992 102.774 24.3597 102.774 23.0878C102.774 21.8159 102.051 20.7775 100.91 20.7773ZM151.426 11.1474C151.941 11.1363 152.447 11.2797 152.881 11.5585C153.314 11.8373 153.656 12.239 153.86 12.7128C154.065 13.1868 154.124 13.7117 154.03 14.2197C153.937 14.7276 153.694 15.1961 153.334 15.5654C152.974 15.9345 152.512 16.188 152.008 16.2929C151.504 16.3977 150.98 16.3492 150.503 16.1542C150.026 15.9592 149.617 15.6268 149.33 15.1982C149.043 14.7696 148.89 14.2645 148.89 13.748C148.884 13.4092 148.946 13.0724 149.071 12.7578C149.197 12.4433 149.382 12.1565 149.619 11.915C149.856 11.6734 150.139 11.4816 150.45 11.3505C150.762 11.2195 151.096 11.1516 151.434 11.1513L151.426 11.1474Z"
-                  fill="black"
-                />
+                  fill="black" />
               </svg>
             </a>
 
             <!-- Mobile Search Toggle Button -->
-            <button
-              @click="isMobileSearchOpen = !isMobileSearchOpen"
-              class="md:hidden w-12 h-12 flex items-center justify-center rounded-full bg-white/65 backdrop-blur-sm text-dark text-lg"
-            >
+            <button @click="isMobileSearchOpen = !isMobileSearchOpen"
+              class="md:hidden w-12 h-12 flex items-center justify-center rounded-full bg-white/65 backdrop-blur-sm text-dark text-lg">
               <font-awesome-icon :icon="isMobileSearchOpen ? 'times' : 'search'" />
             </button>
           </div>
 
           <!-- Search Inputs Container -->
-          <div
-            v-show="isMobileSearchOpen"
-            class="flex flex-col md:flex-row md:flex-grow gap-2 md:items-center md:!flex p-4 md:p-0 bg-white/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-0 rounded-[24px] md:rounded-none shadow-lg md:shadow-none border border-white/20 md:border-none"
-          >
+          <div v-show="isMobileSearchOpen"
+            class="flex flex-col md:flex-row md:flex-grow gap-2 md:items-center md:!flex p-4 md:p-0 bg-white/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-0 rounded-30 md:rounded-none shadow-lg md:shadow-none border border-white/20 md:border-none">
             <label
-              class="md:flex-1 relative rounded-[20px] bg-white px-5 h-[60px] flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 group cursor-pointer transition-all hover:ring-primary/50"
-            >
+              class="md:flex-1 relative rounded-10 bg-white px-5 h-[60px] flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 group cursor-pointer transition-all hover:ring-primary/50">
               <p class="text-xs font-bold leading-tight text-primary/70">目的地</p>
               <div class="relative">
-                <input
-                  v-model="keyword"
+                <input v-model="keyword"
                   class="w-full bg-transparent outline-none appearance-none cursor-pointer pr-8 text-base text-black truncate transition-colors"
-                  type="text"
-                  placeholder="想住哪～"
-                />
+                  type="text" placeholder="想住哪～" />
               </div>
             </label>
 
             <div class="relative flex h-[60px] md:flex-[1.2]">
-              <VueDatePicker
-                v-model="range"
-                range
-                :min-range="1"
-                :enable-time-picker="false"
-                format="yyyy-MM-dd"
-                :min-date="new Date()"
-                auto-apply
-                hide-input-icon
-                :clearable="false"
-                class="w-full h-full"
-                @update:model-value="handleDateChange"
-                @open="activePicker = 'date'"
-                @closed="activePicker = 'none'"
-              >
+              <VueDatePicker v-model="range" range :min-range="1" :enable-time-picker="false" format="yyyy-MM-dd"
+                :min-date="new Date()" auto-apply hide-input-icon :clearable="false" class="w-full h-full"
+                @update:model-value="handleDateChange" @open="activePicker = 'date'" @closed="activePicker = 'none'">
                 <template #dp-input>
                   <div
-                    class="w-full h-full rounded-[20px] bg-white px-5 flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
-                    :class="{ 'ring-accent/50': activePicker === 'date' }"
-                  >
+                    class="w-full h-full rounded-10 bg-white px-5 flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
+                    :class="{ 'ring-accent/50': activePicker === 'date' }">
                     <p class="text-xs font-bold leading-tight text-primary/70">入住 - 退房日期</p>
-                    <input
-                      :value="formatRangeDisplay()"
+                    <input :value="formatRangeDisplay()"
                       class="w-full bg-transparent text-sm md:text-base text-black outline-none pointer-events-none"
-                      placeholder="點選選擇日期"
-                      readonly
-                    />
+                      placeholder="點選選擇日期" readonly />
                   </div>
                 </template>
               </VueDatePicker>
             </div>
 
             <div class="relative flex-1 flex" ref="peoplePickerRef">
-              <div
-                @click="togglePicker('people')"
-                class="w-full h-[60px] rounded-[20px] bg-white px-5 flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
-                :class="{ 'ring-accent/50': activePicker === 'people' }"
-              >
+              <div @click="togglePicker('people')"
+                class="w-full h-[60px] rounded-10 bg-white px-5 flex flex-col justify-center gap-1 shadow-sm ring-1 ring-primary/10 transition-all hover:ring-accent/50 cursor-pointer"
+                :class="{ 'ring-accent/50': activePicker === 'people' }">
                 <p class="text-xs font-bold leading-tight text-primary/70">人數、需求</p>
                 <div class="flex items-center justify-between pointer-events-none">
                   <span class="text-base text-black truncate">{{ peopleDisplayText }}</span>
-                  <svg
-                    class="h-4 w-4 text-primary/40 transition-transform duration-300"
-                    :class="{ 'rotate-180': activePicker === 'people' }"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 9l-7 7-7-7"
-                    />
+                  <svg class="h-4 w-4 text-primary/40 transition-transform duration-300"
+                    :class="{ 'rotate-180': activePicker === 'people' }" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </div>
 
               <transition name="fade">
-                <div
-                  v-if="activePicker === 'people'"
-                  @click.stop
-                  class="absolute top-[calc(100%+12px)] left-0 md:right-0 md:left-auto z-[100] w-full md:w-[300px] rounded-[24px] bg-white p-6 border border-gray-300 shadow-[0px_8px_24px_rgba(0,0,0,0.08)] space-y-6"
-                >
+                <div v-if="activePicker === 'people'" @click.stop
+                  class="absolute top-[calc(100%+12px)] left-0 md:right-0 md:left-auto z-[100] w-full md:w-[300px] rounded-30 bg-white p-6 border border-gray-300 shadow-[0px_8px_24px_rgba(0,0,0,0.08)] space-y-6">
                   <div class="flex items-center justify-between">
                     <div>
                       <p class="text-sm font-bold text-primary">房間</p>
                       <p class="text-sm text-gray-400">所需的客房數量</p>
                     </div>
                     <div class="flex items-center gap-4">
-                      <button
-                        @click.stop="peopleConfig.rooms > 1 ? peopleConfig.rooms-- : null"
-                        type="button"
-                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
-                      >
+                      <button @click.stop="peopleConfig.rooms > 1 ? peopleConfig.rooms-- : null" type="button"
+                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50">
                         -
                       </button>
                       <span class="text-sm font-bold w-4 text-center">{{
                         peopleConfig.rooms
-                      }}</span>
-                      <button
-                        @click.stop="peopleConfig.rooms++"
-                        type="button"
-                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
-                      >
+                        }}</span>
+                      <button @click.stop="peopleConfig.rooms++" type="button"
+                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50">
                         +
                       </button>
                     </div>
@@ -152,21 +98,15 @@
                       <p class="text-sm text-gray-400">總人數</p>
                     </div>
                     <div class="flex items-center gap-4">
-                      <button
-                        @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null"
-                        type="button"
-                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
-                      >
+                      <button @click.stop="peopleConfig.people > 1 ? peopleConfig.people-- : null" type="button"
+                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50">
                         -
                       </button>
                       <span class="text-sm font-bold w-4 text-center">{{
                         peopleConfig.people
-                      }}</span>
-                      <button
-                        @click.stop="peopleConfig.people++"
-                        type="button"
-                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50"
-                      >
+                        }}</span>
+                      <button @click.stop="peopleConfig.people++" type="button"
+                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50">
                         +
                       </button>
                     </div>
@@ -174,10 +114,8 @@
                 </div>
               </transition>
             </div>
-            <button
-              @click="handleSearch"
-              class="w-full md:w-[60px] h-[60px] flex items-center justify-center rounded-full bg-primary hover:bg-main border border-white/20 shadow-md text-white transition-all"
-            >
+            <button @click="handleSearch"
+              class="w-full md:w-[60px] h-[60px] flex items-center justify-center rounded-full bg-primary hover:bg-main border border-white/20 shadow-md text-white transition-all">
               <font-awesome-icon icon="search" class="text-xl" />
             </button>
           </div>
@@ -188,98 +126,69 @@
     <div class="absolute inset-0 bg-[#e5e3df] z-0 overflow-hidden">
       <div id="map" class="w-full h-full"></div>
     </div>
-    <div
-      class="flex gap-3 fixed ml-5 z-40 transition-all duration-300"
-      :class="[isMobileSearchOpen ? 'top-[440px] md:top-[120px]' : 'top-[100px] md:top-[120px]']"
-    >
-      <button
-        @click="goBackToList"
-        class="items-center px-8 py-3 rounded-[18px] bg-primary hover:bg-main shadow text-sm font-medium text-white transition"
-      >
+    <div class="flex gap-3 fixed ml-5 z-40 transition-all duration-300"
+      :class="[isMobileSearchOpen ? 'top-[440px] md:top-[120px]' : 'top-[100px] md:top-[120px]']">
+      <button @click="goBackToList"
+        class="items-center px-8 py-3 rounded-10 bg-primary hover:bg-main shadow text-sm font-medium text-white transition">
         <font-awesome-icon icon="chevron-left" />
         返回搜尋結果列表
       </button>
-      <button
-        @click="isFilterOpen = !isFilterOpen"
-        class="items-center px-8 py-3 rounded-[18px] bg-primary hover:bg-main shadow text-sm font-medium text-white transition"
-      >
+      <button @click="isFilterOpen = !isFilterOpen"
+        class="items-center px-8 py-3 rounded-10 bg-primary hover:bg-main shadow text-sm font-medium text-white transition">
         篩選
       </button>
     </div>
     <div class="fixed bottom-[200px] right-[10px] z-10">
-      <button
-        @click="toggleMapType"
-        class="w-[40px] h-[40px] bg-white rounded-[20px] shadow-md hover:bg-main_100 transition-colors flex items-center justify-center"
-      >
+      <button @click="toggleMapType"
+        class="w-[40px] h-[40px] bg-white rounded-10 shadow-md hover:bg-main_100 transition-colors flex items-center justify-center">
         <div class="text-base">
           {{ currentMapType === 'roadmap' ? '🛰️' : '🗺️' }}
         </div>
       </button>
     </div>
-    <aside
-      :class="[
-        'fixed bg-white z-20 shadow-xl transition-all duration-500 ease-in-out flex flex-col self-start my-2.5 ml-5 rounded-[20px] rounded-tr-none',
-        isListOpen ? 'translate-x-0' : '-translate-x-[calc(100%+20px)]',
-        isMobileSearchOpen
-          ? 'top-[490px] h-[calc(100vh-510px)] md:top-[165px] md:h-[calc(100vh-190px)]'
-          : 'top-[145px] h-[calc(100vh-170px)] md:top-[165px] md:h-[calc(100vh-190px)]',
-      ]"
-      class="w-[80vw] md:w-[400px]"
-    >
-      <button
-        @click="isListOpen = !isListOpen"
-        :class="[
-          'absolute top-0 z-20 bg-white border shadow-md flex items-center justify-center text-primary hover:text-main_800 transition-all duration-500 ease-in-out',
-          isListOpen
-            ? 'left-full w-8 h-12 rounded-r-lg border-l-0'
-            : 'left-[calc(100%+20px)] w-12 h-12 rounded-lg',
-        ]"
-      >
+    <aside :class="[
+      'fixed bg-white z-20 shadow-xl transition-all duration-500 ease-in-out flex flex-col self-start my-2.5 ml-5 rounded-10 rounded-tr-none',
+      isListOpen ? 'translate-x-0' : '-translate-x-[calc(100%+20px)]',
+      isMobileSearchOpen
+        ? 'top-[490px] h-[calc(100vh-510px)] md:top-[165px] md:h-[calc(100vh-190px)]'
+        : 'top-[145px] h-[calc(100vh-170px)] md:top-[165px] md:h-[calc(100vh-190px)]',
+    ]" class="w-[80vw] md:w-[400px]">
+      <button @click="isListOpen = !isListOpen" :class="[
+        'absolute top-0 z-20 bg-white border shadow-md flex items-center justify-center text-primary hover:text-main_800 transition-all duration-500 ease-in-out',
+        isListOpen
+          ? 'left-full w-8 h-12 rounded-r-lg border-l-0'
+          : 'left-[calc(100%+20px)] w-12 h-12 rounded-lg',
+      ]">
         <font-awesome-icon :icon="isListOpen ? 'chevron-left' : 'chevron-right'" />
       </button>
-      <div
-        v-show="isListOpen"
-        class="relative flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar"
-      >
-        <div
-          v-if="isMapLoading"
-          class="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-[20px]"
-        >
+      <div v-show="isListOpen" class="relative flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar">
+        <div v-if="isMapLoading"
+          class="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-10">
           <div class="animate-spin">
             <font-awesome-icon icon="circle-notch" spin class="text-accent/60 text-5xl" />
           </div>
           <p class="text-primary font-bold mt-4">搜尋中 ···</p>
         </div>
 
-        <div
-          v-else-if="!isMapLoading && hotels.length === 0"
-          class="flex flex-col items-center justify-center h-full py-10 text-center"
-        >
+        <div v-else-if="!isMapLoading && hotels.length === 0"
+          class="flex flex-col items-center justify-center h-full py-10 text-center">
           <div class="bg-accent/10 rounded-full p-5 mb-5">
             <font-awesome-icon icon="search" class="text-4xl text-accent/60" />
           </div>
           <h3 class="text-lg font-bold text-primary">找不到符合的飯店</h3>
           <p class="text-primary/60 text-sm mt-1">請嘗試變更關鍵字或篩選條件</p>
 
-          <button
-            @click="resetSearch"
-            class="mt-6 px-6 py-2 bg-primary text-white rounded-full hover:bg-main transition shadow-md"
-          >
+          <button @click="resetSearch"
+            class="mt-6 px-6 py-2 bg-primary text-white rounded-full hover:bg-main transition shadow-md">
             查看所有飯店
           </button>
         </div>
 
         <div class="flex flex-col gap-5">
-          <HotelCard
-            v-for="hotel in hotels"
-            :key="hotel.id"
-            :hotel="hotel"
-            :is-compact="true"
-            @mouseenter="handleHotelHover(hotel.id, true)"
-            @mouseleave="handleHotelHover(hotel.id, false)"
+          <HotelCard v-for="hotel in hotels" :key="hotel.id" :hotel="hotel" :is-compact="true"
+            @mouseenter="handleHotelHover(hotel.id, true)" @mouseleave="handleHotelHover(hotel.id, false)"
             @click="goToHotelDetail(hotel)"
-            class="cursor-pointer hover:shadow-lg transition-shadow duration-300 bg-white rounded-[20px]"
-          />
+            class="cursor-pointer hover:shadow-lg transition-shadow duration-300 bg-white rounded-10" />
         </div>
       </div>
     </aside>
@@ -291,9 +200,7 @@
         <div class="absolute inset-0 bg-[#020408]/60 transition-opacity duration-300"></div>
         <div
           class="fixed top-0 left-0 h-full w-[285px] bg-white z-[1000] shadow-xl overflow-y-auto transform transition-transform duration-300"
-          :class="{ '-translate-x-full': !isFilterOpen, 'translate-x-0': isFilterOpen }"
-          @click.stop
-        >
+          :class="{ '-translate-x-full': !isFilterOpen, 'translate-x-0': isFilterOpen }" @click.stop>
           <div class="flex flex-col gap-5 p-5">
             <h3 class="font-bold text-xl text-dark mb-[20px]">篩選條件</h3>
             <div class="flex flex-col gap-5">
@@ -303,94 +210,50 @@
                 <!-- 滑桿 -->
                 <div class="relative h-2 w-full bg-main_100 rounded-full">
                   <!-- 已選範圍 -->
-                  <div
-                    class="absolute h-2 bg-main_300 rounded-full"
-                    :style="{
-                      left: `${((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100}%`,
-                      right: `${100 - ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100}%`,
-                    }"
-                  ></div>
+                  <div class="absolute h-2 bg-main_300 rounded-full" :style="{
+                    left: `${((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100}%`,
+                    right: `${100 - ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100}%`,
+                  }"></div>
 
                   <!-- 左滑塊 -->
-                  <input
-                    type="range"
-                    :min="minPrice"
-                    :max="maxPrice"
-                    :step="step"
-                    v-model.number="priceRange.min"
-                    class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
-                  />
+                  <input type="range" :min="minPrice" :max="maxPrice" :step="step" v-model.number="priceRange.min"
+                    class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none" />
 
                   <!-- 右滑塊 -->
-                  <input
-                    type="range"
-                    :min="minPrice"
-                    :max="maxPrice"
-                    :step="step"
-                    v-model.number="priceRange.max"
-                    class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
-                  />
+                  <input type="range" :min="minPrice" :max="maxPrice" :step="step" v-model.number="priceRange.max"
+                    class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none" />
                 </div>
                 <!-- 顯示數值 -->
                 <div class="flex justify-between mt-2">
-                  <input
-                    type="number"
-                    v-model.number="priceRange.min"
-                    :min="minPrice"
-                    :max="maxPrice"
-                    :step="step"
-                    class="border border-gray-300 rounded-full p-1 w-24 text-dark_900 text-center"
-                  />
-                  <input
-                    type="number"
-                    v-model.number="priceRange.max"
-                    :min="minPrice"
-                    :max="maxPrice"
-                    :step="step"
-                    class="border border-gray-300 rounded-full p-1 w-24 text-dark_900 text-center"
-                  />
+                  <input type="number" v-model.number="priceRange.min" :min="minPrice" :max="maxPrice" :step="step"
+                    class="border border-gray-300 rounded-full p-1 w-24 text-dark_900 text-center" />
+                  <input type="number" v-model.number="priceRange.max" :min="minPrice" :max="maxPrice" :step="step"
+                    class="border border-gray-300 rounded-full p-1 w-24 text-dark_900 text-center" />
                 </div>
               </div>
 
               <!-- Option Filter -->
-              <div
-                class="border-b-[1px] pb-[20px] border-main_800 border-solid last:border-b-0"
-                v-for="HotelMenu in HotelFiltered"
-                :key="HotelMenu.key"
-              >
+              <div class="border-b-[1px] pb-[20px] border-main_800 border-solid last:border-b-0"
+                v-for="HotelMenu in HotelFiltered" :key="HotelMenu.key">
                 <div class="flex justify-between items-center mb-2">
                   <h4 class="font-medium text-base text-dark_900">{{ HotelMenu.title }}</h4>
-                  <button
-                    class="text-xs text-dark_500 hover:text-primary"
-                    @click="clearOptions(HotelMenu.key)"
-                  >
+                  <button class="text-xs text-dark_500 hover:text-primary" @click="clearOptions(HotelMenu.key)">
                     清除
                   </button>
                 </div>
                 <div class="space-y-2">
-                  <label
-                    class="flex cursor-pointer text-sm text-dark_900 items-center"
-                    v-for="option in HotelMenu.options.slice(
-                      0,
-                      expandedMenus.includes(HotelMenu.key) ? HotelMenu.options.length : 4,
-                    )"
-                    :key="option"
-                  >
-                    <input
-                      type="checkbox"
-                      class="mr-2 text-dark_900 focus:ring-primary"
-                      :value="option"
-                      v-model="HotelMenu.selected"
-                    />
+                  <label class="flex cursor-pointer text-sm text-dark_900 items-center" v-for="option in HotelMenu.options.slice(
+                    0,
+                    expandedMenus.includes(HotelMenu.key) ? HotelMenu.options.length : 4,
+                  )" :key="option">
+                    <input type="checkbox" class="mr-2 text-dark_900 focus:ring-primary" :value="option"
+                      v-model="HotelMenu.selected" />
                     <span>
                       {{ HotelMenu.key === 'star_rating' ? `${option} 星級` : option }}
                     </span>
                   </label>
-                  <button
-                    v-if="HotelMenu.options.length > 4 && !expandedMenus.includes(HotelMenu.key)"
-                    class="text-dark_500 hover:text-primary text-sm mt-1"
-                    @click="toggleMenu(HotelMenu.key)"
-                  >
+                  <button v-if="HotelMenu.options.length > 4 && !expandedMenus.includes(HotelMenu.key)"
+                    class="text-dark_500 hover:text-primary text-sm mt-1" @click="toggleMenu(HotelMenu.key)">
                     展開更多選項
                   </button>
                 </div>
@@ -682,8 +545,8 @@ const renderMarkers = async () => {
 
       const newContent = `
         <div class="clickable-card cursor-pointer">
-          <div class="bg-white rounded-[20px] p-2 w-[340px] box-border">
-            <div class="flex bg-white rounded-[12px] border border-gray-200 overflow-hidden h-[132px]">
+          <div class="bg-white rounded-10 p-2 w-[340px] box-border">
+            <div class="flex bg-white rounded-10 border border-gray-200 overflow-hidden h-[132px]">
               <div class="w-[100px] flex-shrink-0">
                 <img
                     src="${hotel.image_url}"
@@ -1209,6 +1072,7 @@ function clearOptions(key: string) {
   from {
     transform: translateX(-100%);
   }
+
   to {
     transform: translateX(0);
   }
@@ -1221,6 +1085,7 @@ function clearOptions(key: string) {
 .overflow-y-auto::-webkit-scrollbar {
   width: 4px;
 }
+
 .overflow-y-auto::-webkit-scrollbar-thumb {
   background-color: #e5e7eb;
   border-radius: 10px;
@@ -1230,10 +1095,12 @@ function clearOptions(key: string) {
 .fade-leave-active {
   transition: opacity 0.3s;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
 }
+
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;

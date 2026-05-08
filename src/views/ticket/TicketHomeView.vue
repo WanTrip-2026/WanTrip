@@ -181,8 +181,8 @@ const ticketClassify = [
   },
 ]
 
-const handleWishlist = (id: number | string) => {}
-const handleBook = (id: number | string) => {}
+const handleWishlist = () => { }
+const handleBook = () => { }
 
 function onClickRegion(tc: { label: string }) {
   router.push({ path: '/tickets/search', query: { category: tc.label } })
@@ -270,90 +270,60 @@ function onClickRegion(tc: { label: string }) {
 
 <template>
   <main class="pb-20 pt-24 max-w-[1240px] px-5 mx-auto">
-    <section
-      class="relative group h-[350px] md:h-[450px] overflow-hidden rounded-[40px] shadow-2xl"
-    >
+    <section class="relative group h-[350px] md:h-[450px] overflow-hidden rounded-30 shadow-2xl">
       <div v-for="(img, index) in hotelImages" :key="index">
         <transition name="fade-slide">
           <div v-if="currentSlide === index" class="absolute inset-0">
             <img :src="img.url" class="w-full h-full object-cover" />
             <div
-              class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent flex flex-col justify-end p-10 md:p-14"
-            >
+              class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent flex flex-col justify-end p-10 md:p-14">
               <h3 class="text-white text-3xl font-bold mb-2">{{ img.title }}</h3>
               <p class="text-white/80 text-lg">{{ img.desc }}</p>
             </div>
           </div>
         </transition>
       </div>
-      <button
-        @click="prevSlide"
-        class="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg"
-      >
+      <button @click="prevSlide"
+        class="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M15 19l-7-7 7-7"
-          />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
       </button>
-      <button
-        @click="nextSlide"
-        class="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg"
-      >
+      <button @click="nextSlide"
+        class="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
       </button>
       <div class="absolute bottom-12 left-1/2 -translate-x-1/2 z-0 flex gap-2">
-        <button
-          v-for="(_, index) in hotelImages"
-          :key="index"
-          @click="currentSlide = index"
-          class="w-2.5 h-2.5 rounded-full transition-all duration-300"
-          :class="
-            currentSlide === index
-              ? 'bg-primary w-8'
-              : 'bg-white/40 backdrop-blur-sm hover:bg-white'
-          "
-        ></button>
+        <button v-for="(_, index) in hotelImages" :key="index" @click="currentSlide = index"
+          class="w-2.5 h-2.5 rounded-full transition-all duration-300" :class="currentSlide === index
+            ? 'bg-primary w-8'
+            : 'bg-white/40 backdrop-blur-sm hover:bg-white'
+            "></button>
       </div>
     </section>
     <section class="flex justify-center -mt-8 relative z-10 px-4">
       <div
-        class="w-full max-w-[800px] border border-gray-300 p-2 mx-auto bg-white rounded-[20px] md:rounded-full flex flex-col md:flex-row justify-between gap-2 shadow-xl text-nowrap"
-      >
-        <div
-          class="relative flex-auto h-full focus:border focus:border-primary"
-          @mouseenter="isOpen = true"
-          @mouseleave="isOpen = false"
-        >
+        class="w-full max-w-[800px] border border-gray-300 p-2 mx-auto bg-white rounded-10 md:rounded-full flex flex-col md:flex-row justify-between gap-2 shadow-xl text-nowrap">
+        <div class="relative flex-auto h-full focus:border focus:border-primary" @mouseenter="isOpen = true"
+          @mouseleave="isOpen = false">
           <div
             class="rounded-full border border-gray-300 px-6 py-3 flex items-center justify-center text-dark_500 hover:text-primary bg-white cursor-pointer h-full"
-            @click="isOpen = !isOpen"
-          >
+            @click="isOpen = !isOpen">
             {{ selectedCity || '選擇城市' }}
           </div>
 
-          <div
-            v-if="isOpen"
-            class="absolute top-full left-0 w-full overflow-hidden px-5 bg-white/80 backdrop-blur-lg border border-white/25 z-10 rounded-[20px] shadow-md mt-2"
-          >
+          <div v-if="isOpen"
+            class="absolute top-full left-0 w-full overflow-hidden px-5 bg-white/80 backdrop-blur-lg border border-white/25 z-10 rounded-10 shadow-md mt-2">
             <template v-for="group in cityGroups" :key="group.label">
-              <div
-                class="px-6 py-2 text-sm text-primary border-b border-gray-300 font-bold text-center"
-              >
+              <div class="px-6 py-2 text-sm text-primary border-b border-gray-300 font-bold text-center">
                 {{ group.label }}
               </div>
               <div class="grid grid-cols-3 py-2">
-                <div
-                  v-for="city in group.cities"
-                  :key="city"
+                <div v-for="city in group.cities" :key="city"
                   class="px-4 py-2 text-dark hover:bg-main_100 hover:font-bold cursor-pointer whitespace-nowrap text-center rounded-full"
-                  @click="selectCity(city)"
-                >
+                  @click="selectCity(city)">
                   {{ city }}
                 </div>
               </div>
@@ -361,20 +331,13 @@ function onClickRegion(tc: { label: string }) {
           </div>
         </div>
         <div class="flex-auto">
-          <input
-            v-model="searchInput"
-            type="text"
-            placeholder="搜尋目的地/當地體驗"
-            @keyup.enter="onLocalSearch"
-            class="w-full h-full border text-center text-black border-gray-300 rounded-full px-6 py-3 focus:ring-2 focus:ring-primary outline-none"
-          />
+          <input v-model="searchInput" type="text" placeholder="搜尋目的地/當地體驗" @keyup.enter="onLocalSearch"
+            class="w-full h-full border text-center text-black border-gray-300 rounded-full px-6 py-3 focus:ring-2 focus:ring-primary outline-none" />
         </div>
 
         <div class="text-dark_500 rounded-full flex-none">
-          <button
-            @click="onLocalSearch"
-            class="text-center bg-primary hover:bg-main text-white font-bold w-full px-6 py-3 rounded-full transition-colors text-nowrap h-full"
-          >
+          <button @click="onLocalSearch"
+            class="text-center bg-primary hover:bg-main text-white font-bold w-full px-6 py-3 rounded-full transition-colors text-nowrap h-full">
             搜尋
           </button>
         </div>
@@ -386,11 +349,7 @@ function onClickRegion(tc: { label: string }) {
         <div class="h-6 w-32 bg-gray-200 rounded mb-10 animate-pulse"></div>
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
-          <div
-            v-for="i in 4"
-            :key="i"
-            class="bg-gray-200 rounded-[20px] aspect-[4/3] animate-pulse"
-          ></div>
+          <div v-for="i in 4" :key="i" class="bg-gray-200 rounded-10 aspect-[4/3] animate-pulse"></div>
         </div>
 
         <div class="mt-5 flex justify-center">
@@ -402,20 +361,13 @@ function onClickRegion(tc: { label: string }) {
     <section class="mt-10">
       <h2 class="mb-5 text-xl font-bold text-dark">想去哪裡玩？</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
-        <button
-          v-for="tc in ticketClassify"
-          :key="tc.key"
-          type="button"
-          class="relative group overflow-hidden rounded-[20px] bg-white/70 border border-gray-300 transition shadow-sm hover:shadow-lg"
-          @click="onClickRegion(tc)"
-        >
-          <div
-            class="h-[110px] w-full aspect-[3/4]"
-            :style="{
-              backgroundImage: `url(${tc.img})`,
-              backgroundSize: 'cover',
-            }"
-          ></div>
+        <button v-for="tc in ticketClassify" :key="tc.key" type="button"
+          class="relative group overflow-hidden rounded-24 bg-white/70 border border-gray-300 transition shadow-sm hover:shadow-lg"
+          @click="onClickRegion(tc)">
+          <div class="h-[110px] w-full aspect-[3/4]" :style="{
+            backgroundImage: `url(${tc.img})`,
+            backgroundSize: 'cover',
+          }"></div>
 
           <div class="absolute inset-0 flex items-center justify-center">
             <span class="text-xl font-black text-white drop-shadow-sm">{{ tc.label }}</span>
@@ -431,42 +383,25 @@ function onClickRegion(tc: { label: string }) {
       <div v-if="errorMsg" class="p-4 mb-4 text-red-700 bg-red-100 rounded-lg">
         {{ errorMsg }}
       </div>
-      <div
-        v-if="!isLoading && tickets.length === 0 && !errorMsg"
-        class="p-4 mb-4 text-gray-500 bg-gray-100 rounded-lg"
-      >
+      <div v-if="!isLoading && tickets.length === 0 && !errorMsg" class="p-4 mb-4 text-gray-500 bg-gray-100 rounded-lg">
         目前沒有熱門景點資料 (No tickets found)
       </div>
 
       <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
-        <HomePageTicketCard
-          v-for="(ticket, index) in tickets"
-          :key="ticket.id"
-          v-bind="ticket"
-          :expand-left="index >= tickets.length - 2"
-          @compare="handleWishlist"
-          @book="handleBook"
-        />
+        <HomePageTicketCard v-for="(ticket, index) in tickets" :key="ticket.id" v-bind="ticket"
+          :expand-left="index >= tickets.length - 2" @compare="handleWishlist" @book="handleBook" />
       </div>
     </section>
 
     <section class="mt-10">
       <h2 class="mb-5 text-xl font-bold text-dark">評價最高</h2>
-      <div
-        v-if="!isLoading && topRatedTickets.length === 0 && !errorMsg"
-        class="p-4 mb-4 text-gray-500 bg-gray-100 rounded-lg"
-      >
+      <div v-if="!isLoading && topRatedTickets.length === 0 && !errorMsg"
+        class="p-4 mb-4 text-gray-500 bg-gray-100 rounded-lg">
         目前沒有評價最高資料 (No tickets found)
       </div>
       <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
-        <HomePageTicketCard
-          v-for="(ticket, index) in topRatedTickets"
-          :key="ticket.id"
-          v-bind="ticket"
-          :expand-left="index >= topRatedTickets.length - 2"
-          @compare="handleWishlist"
-          @book="handleBook"
-        />
+        <HomePageTicketCard v-for="(ticket, index) in topRatedTickets" :key="ticket.id" v-bind="ticket"
+          :expand-left="index >= topRatedTickets.length - 2" @compare="handleWishlist" @book="handleBook" />
       </div>
     </section>
   </main>

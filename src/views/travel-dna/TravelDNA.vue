@@ -1,34 +1,21 @@
 <template>
   <div class="w-full h-[100dvh] relative overflow-x-hidden flex flex-col">
-    <div
-      class="fixed inset-0 z-0 bg-page bg-cover bg-center"
-      style="
+    <div class="fixed inset-0 z-0 bg-page bg-cover bg-center" style="
         background-image: url('https://res.cloudinary.com/wantrip/image/upload/f_auto,q_90,w_2560,dpr_2/v1769236224/IntroBg_fji07v');
-      "
-    ></div>
+      "></div>
     <div class="fixed inset-0 w-full h-full bg-primary/50 backdrop-blur-sm z-0"></div>
 
     <div
-      class="relative z-10 w-full max-w-[1200px] mx-auto px-4 pt-16 md:pt-[160px] pb-24 md:pb-10 flex-1 flex flex-col"
-    >
-      <div
-        class="relative w-full max-w-[800px] h-2.5 md:h-4 mt-12 md:mt-0 mb-10 md:mb-0 mx-auto px-2"
-      >
+      class="relative z-10 w-full max-w-[1200px] mx-auto px-4 pt-16 md:pt-[160px] pb-24 md:pb-10 flex-1 flex flex-col">
+      <div class="relative w-full max-w-[800px] h-2.5 md:h-4 mt-12 md:mt-0 mb-10 md:mb-0 mx-auto px-2">
         <div class="w-full h-full bg-main_100 rounded-full"></div>
         <div
           class="absolute top-0 left-2 right-2 h-full bg-primary rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-primary via-white/30 to-primary bg-[length:200%_100%] animate-progress-flow"
-          :style="{ width: `calc(${(currentStep / totalSteps) * 100}% - 16px)` }"
-        ></div>
+          :style="{ width: `calc(${(currentStep / totalSteps) * 100}% - 16px)` }"></div>
 
-        <div
-          class="absolute -top-7 md:-top-10 transition-all duration-500 ease-out"
-          :style="{ left: `${(currentStep / totalSteps) * 100}%`, transform: 'translateX(-50%)' }"
-        >
-          <img
-            src="/src/assets/logoIcon.svg"
-            class="w-14 h-14 md:w-24 md:h-24 object-contain"
-            alt="WanTrip Logo"
-          />
+        <div class="absolute -top-7 md:-top-10 transition-all duration-500 ease-out"
+          :style="{ left: `${(currentStep / totalSteps) * 100}%`, transform: 'translateX(-50%)' }">
+          <img src="/src/assets/logoIcon.svg" class="w-14 h-14 md:w-24 md:h-24 object-contain" alt="WanTrip Logo" />
         </div>
       </div>
 
@@ -40,34 +27,25 @@
           <h3 class="text-xl md:text-2xl font-semibold text-primary pb-3 md:pb-5 leading-tight">
             {{ currentQuestion.title }}
           </h3>
-          <p
-            class="text-white tracking-wider font-semibold drop-shadow-lg text-base md:text-lg opacity-95"
-          >
+          <p class="text-white tracking-wider font-semibold drop-shadow-lg text-base md:text-lg opacity-95">
             {{ currentQuestion.subTitle }}
           </p>
         </div>
 
         <div class="grid grid-cols-1 gap-3 md:gap-5 px-2">
-          <button
-            v-for="(option, index) in currentQuestion.options"
-            :key="index"
-            @click="handleAnswer(option, index)"
-            class="p-4 md:p-5 rounded-[20px] text-base md:text-lg font-medium border transition-all duration-200 active:scale-[0.98] shadow-md w-full"
-            :class="
-              selectedOptionIndex === index
-                ? ' bg-primary/80 text-white font-bold scale-105 shadow-xl'
-                : 'bg-main_100 border-transparent text-black'
-            "
-          >
+          <button v-for="(option, index) in currentQuestion.options" :key="index" @click="handleAnswer(option, index)"
+            class="p-4 md:p-5 rounded-full text-base md:text-lg font-medium border transition-all duration-200 active:scale-[0.98] shadow-md w-full"
+            :class="selectedOptionIndex === index
+              ? ' bg-primary/80 text-white font-bold scale-105 shadow-xl'
+              : 'bg-main_100 border-transparent text-black'
+              ">
             {{ option.text }}
           </button>
         </div>
 
         <div v-if="showResultButton" class="mt-8 md:mt-12 flex flex-col items-center">
-          <button
-            @click="goToResult"
-            class="bg-primary text-white px-8 py-3 md:py-4 rounded-full text-lg md:text-xl font-bold hover:bg-primary_hover transition shadow-lg w-full max-w-[280px]"
-          >
+          <button @click="goToResult"
+            class="bg-primary text-white px-8 py-3 md:py-4 rounded-full text-lg md:text-xl font-bold hover:bg-primary_hover transition shadow-lg w-full max-w-[280px]">
             ✨ 解鎖角色 ✨
           </button>
         </div>
@@ -361,6 +339,7 @@ const handleAnswer = (option: Option, index: number) => {
   0% {
     background-position: 0% 50%;
   }
+
   100% {
     background-position: 200% 50%;
   }
@@ -375,13 +354,16 @@ const handleAnswer = (option: Option, index: number) => {
   0% {
     transform: scaleY(1);
   }
+
   50% {
     transform: scaleY(1.3);
   }
+
   100% {
     transform: scaleY(1);
   }
 }
+
 .animate-progress-bounce {
   animation: progress-bounce 0.3s ease-out;
 }

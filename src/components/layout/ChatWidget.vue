@@ -3,7 +3,7 @@
     <Transition name="slide-fade">
       <div
         v-if="isOpen"
-        class="flex flex-col w-[calc(100%-40px)] mx-5 max-h-[calc(100vh-180px)] h-[420px] md:w-80 md:h-[520px] rounded-[32px] shadow-xl overflow-hidden mb-36 md:mb-24 bg-white/65 backdrop-blur-xl border border-white/25"
+        class="flex flex-col w-[calc(100%-40px)] mx-5 max-h-[calc(100vh-180px)] h-[420px] md:w-80 md:h-[520px] rounded-30 shadow-xl overflow-hidden mb-36 md:mb-24 bg-white/65 backdrop-blur-xl border border-white/25"
       >
         <div class="bg-primary text-white font-semibold text-lg text-center py-3 z-10">
           旅遊規劃師 阿萬🪄

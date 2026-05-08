@@ -1,56 +1,35 @@
 <template>
   <main class="min-h-screen mx-auto max-w-[1240px]">
     <div class="mx-5 pt-24 pb-20">
-      <section
-        class="relative group h-[350px] md:h-[450px] overflow-hidden rounded-[40px] shadow-2xl px-5"
-      >
+      <section class="relative group h-[350px] md:h-[450px] overflow-hidden rounded-30 shadow-2xl px-5">
         <div v-for="(img, index) in hotelImages" :key="index">
           <transition name="fade-slide">
             <div v-if="currentSlide === index" class="absolute inset-0">
               <img :src="img.url" class="w-full h-full object-cover" />
               <div
-                class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent flex flex-col justify-end p-10 md:p-14"
-              >
+                class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent flex flex-col justify-end p-10 md:p-14">
                 <h3 class="text-white text-3xl font-bold mb-2">{{ img.title }}</h3>
                 <p class="text-white/80 text-lg">{{ img.desc }}</p>
               </div>
             </div>
           </transition>
         </div>
-        <button
-          @click="prevSlide"
-          class="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg"
-        >
+        <button @click="prevSlide"
+          class="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 19l-7-7 7-7"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <button
-          @click="nextSlide"
-          class="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg"
-        >
+        <button @click="nextSlide"
+          class="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center hover:bg-white/40 shadow-lg">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 5l7 7-7 7"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </button>
         <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-          <button
-            v-for="(_, index) in hotelImages"
-            :key="index"
-            @click="currentSlide = index"
+          <button v-for="(_, index) in hotelImages" :key="index" @click="currentSlide = index"
             class="w-2.5 h-2.5 rounded-full transition-all duration-300"
-            :class="currentSlide === index ? 'bg-[#93ACAA] w-8' : 'bg-white/50 hover:bg-white'"
-          ></button>
+            :class="currentSlide === index ? 'bg-[#93ACAA] w-8' : 'bg-white/50 hover:bg-white'"></button>
         </div>
       </section>
 
@@ -59,16 +38,9 @@
       <div class="mt-[40px] space-y-[40px]">
         <section v-for="section in sections" :key="section.title">
           <h2 class="text-xl font-bold text-dark mb-5">{{ section.title }}</h2>
-          <div
-            class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar"
-          >
-            <HomePageCard
-              v-for="(item, index) in section.data"
-              :key="item.id"
-              v-bind="item"
-              :expand-left="index >= section.data.length - 2"
-              @compare="handleWishlist"
-            />
+          <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
+            <HomePageCard v-for="(item, index) in section.data" :key="item.id" v-bind="item"
+              :expand-left="index >= section.data.length - 2" @compare="handleWishlist" />
           </div>
         </section>
       </div>
@@ -226,9 +198,6 @@ const handleWishlist = (id: string | number) => {
   }
 }
 
-const handleBook = (id: string | number) => {
-  router.push(`/product/${id}`)
-}
 </script>
 
 <style scoped>

@@ -15,14 +15,14 @@ const queryOrderId = route.query.orderId || route.query.MerchantTradeNo || route
 const orderId = queryOrderId
   ? String(queryOrderId)
   : `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${Math.floor(
-      Math.random() * 1000000,
-    )
-      .toString()
-      .padStart(6, '0')}`
+    Math.random() * 1000000,
+  )
+    .toString()
+    .padStart(6, '0')}`
 
 const isVerifying = ref(false)
 const verificationError = ref('')
-const fetchedOrder = ref<any>(null)
+const fetchedOrder = ref<Record<string, unknown> | null>(null)
 
 const order = computed(() => {
   // Priority: 1. Fetched from API (Real) 2. Store (Just paid) 3. Mock (Fallback)
@@ -69,9 +69,9 @@ onMounted(async () => {
       } else {
         throw new Error(res.data.returnMessage || 'Line Pay Confirmation Failed')
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Payment Confirmation Error:', err)
-      verificationError.value = err.message || '付款確認失敗，請聯繫客服'
+      verificationError.value = (err instanceof Error ? err.message : String(err)) || '付款確認失敗，請聯繫客服'
     } finally {
       isVerifying.value = false
     }
@@ -90,8 +90,8 @@ onMounted(async () => {
 
     // Race getSession against timeout
     const sessionRes = (await Promise.race([supabase.auth.getSession(), timeout])) as {
-      data: { session: any }
-      error: any
+      data: { session: { access_token: string } | null }
+      error: Error | null
     }
 
     const { data: sessionData, error: sessionError } = sessionRes
@@ -123,23 +123,15 @@ onMounted(async () => {
   <main class="w-full bg-page pt-32">
     <section class="max-w-[1240px] min-h-screen mx-auto px-5">
       <div
-        class="mx-auto max-w-[800px] p-5 lg:p-10 mb-10 lg:mb-0 bg-white rounded-[40px] flex flex-col items-center gap-5 lg:gap-10 border border-gray-300 shadow-sm"
-      >
+        class="mx-auto max-w-[800px] p-5 lg:p-10 mb-10 lg:mb-0 bg-white rounded-30 flex flex-col items-center gap-5 lg:gap-10 border border-gray-300 shadow-sm">
         <h3 class="text-4xl font-bold text-black">訂購完成！</h3>
         <div v-if="order.status === 'processing'" class="flex flex-col items-center gap-4">
           <p class="text-xl font-bold text-dark">訂單處理中，請稍候…</p>
         </div>
-        <div
-          v-else
-          class="flex flex-col gap-5 items-center lg:flex-row lg:gap-10 justify-center w-full"
-        >
+        <div v-else class="flex flex-col gap-5 items-center lg:flex-row lg:gap-10 justify-center w-full">
           <Redenvelop />
           <div class="w-[200px] aspect-[1/1] overflow-hidden">
-            <img
-              :src="order.image"
-              alt="訂購飯店圖"
-              class="w-full h-full object-cover rounded-[20px]"
-            />
+            <img :src="order.image" alt="訂購飯店圖" class="w-full h-full object-cover rounded-10" />
           </div>
 
           <div class="flex flex-col items-center lg:items-stretch flex-nowrap gap-2 text-nowrap">
@@ -159,8 +151,7 @@ onMounted(async () => {
                 {{ order.name }}
               </p>
               <p v-if="(fetchedOrder?.quantity || 1) > 1" class="text-dark text-base font-bold">
-                <span class="text-dark font-bold">{{ order.roomType }}</span
-                >* {{ fetchedOrder.quantity }} 間
+                <span class="text-dark font-bold">{{ order.roomType }}</span>* {{ fetchedOrder.quantity }} 間
               </p>
             </div>
             <div class="flex flex-col items-center lg:items-stretch">
@@ -170,17 +161,13 @@ onMounted(async () => {
           </div>
         </div>
         <div class="flex gap-2">
-          <router-link
-            to="/"
-            class="rounded-full text-nowrap bg-primary text-white px-6 md:px-12 py-3 inline-block hover:bg-main"
-          >
+          <router-link to="/"
+            class="rounded-full text-nowrap bg-primary text-white px-6 md:px-12 py-3 inline-block hover:bg-main">
             回到首頁
           </router-link>
 
-          <router-link
-            :to="'/orders/confirmation/' + order.id"
-            class="rounded-full text-nowrap bg-main_100 text-dark_700 px-6 md:px-12 py-3 inline-block hover:bg-main_300"
-          >
+          <router-link :to="'/orders/confirmation/' + order.id"
+            class="rounded-full text-nowrap bg-main_100 text-dark_700 px-6 md:px-12 py-3 inline-block hover:bg-main_300">
             前往訂單
           </router-link>
         </div>

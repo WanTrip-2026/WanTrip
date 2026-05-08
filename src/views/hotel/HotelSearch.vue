@@ -345,60 +345,36 @@ watch(
 
 <template>
   <main class="max-w-[1240px] mx-auto pt-24 bg-page px-5">
-    <SearchBar
-      mode="emit"
-      :initial-keyword="keyword"
-      :initial-range="range"
-      :initial-people="{ rooms: peopleConfig.rooms, people: peopleConfig.people }"
-      @search="handleSearchUpdate"
-    />
+    <SearchBar mode="emit" :initial-keyword="keyword" :initial-range="range"
+      :initial-people="{ rooms: peopleConfig.rooms, people: peopleConfig.people }" @search="handleSearchUpdate" />
 
     <section class="gap-5 mx-auto flex flex-col lg:flex-row">
       <!-- 桌面版側邊欄 -->
       <aside class="hidden lg:flex flex-col gap-5 w-[285px]">
         <div
-          class="relative flex h-[120px] items-center justify-center rounded-[20px] border border-gray-300 overflow-hidden bg-center bg-cover bg-[url('https://res.cloudinary.com/wantrip/image/upload/v1768379566/MapSearch_cezz0b.png')]"
-        >
+          class="relative flex h-[120px] items-center justify-center rounded-10 border border-gray-300 overflow-hidden bg-center bg-cover bg-[url('https://res.cloudinary.com/wantrip/image/upload/v1768379566/MapSearch_cezz0b.png')]">
           <div class="absolute inset-0 bg-white/30"></div>
-          <button
-            name="map-search"
-            @click="goToMapSearch"
-            class="relative z-10 rounded-full bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition"
-          >
+          <button name="map-search" @click="goToMapSearch"
+            class="relative z-10 rounded-full bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition">
             地圖找房
           </button>
         </div>
 
-        <div class="rounded-[20px] p-10 bg-white border border-gray-300 shadow-sm">
+        <div class="rounded-10 p-10 bg-white border border-gray-300 shadow-sm">
           <h3 class="font-bold text-xl text-dark mb-[20px]">篩選條件</h3>
           <div class="flex flex-col gap-5">
             <!-- Price Filter -->
             <h4 class="font-medium text-dark">每晚預算</h4>
             <div class="flex flex-col gap-2 border-b pb-5 border-gray-100 last:border-0">
               <div class="relative h-2 w-full bg-main_100 rounded-full">
-                <div
-                  class="absolute h-2 bg-main_300 rounded-full"
-                  :style="{
-                    left: `${((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100}%`,
-                    right: `${100 - ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100}%`,
-                  }"
-                ></div>
-                <input
-                  type="range"
-                  :min="minPrice"
-                  :max="maxPrice"
-                  :step="step"
-                  v-model.number="priceRange.min"
-                  class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
-                />
-                <input
-                  type="range"
-                  :min="minPrice"
-                  :max="maxPrice"
-                  :step="step"
-                  v-model.number="priceRange.max"
-                  class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
-                />
+                <div class="absolute h-2 bg-main_300 rounded-full" :style="{
+                  left: `${((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100}%`,
+                  right: `${100 - ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100}%`,
+                }"></div>
+                <input type="range" :min="minPrice" :max="maxPrice" :step="step" v-model.number="priceRange.min"
+                  class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none" />
+                <input type="range" :min="minPrice" :max="maxPrice" :step="step" v-model.number="priceRange.max"
+                  class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none" />
               </div>
               <div class="flex justify-between mt-2">
                 <span class="text-xs text-gray-500">${{ priceRange.min }}</span>
@@ -406,44 +382,25 @@ watch(
               </div>
             </div>
 
-            <div
-              v-for="menu in HotelFiltered"
-              :key="menu.key"
-              class="border-b pb-5 border-gray-100 last:border-0"
-            >
+            <div v-for="menu in HotelFiltered" :key="menu.key" class="border-b pb-5 border-gray-100 last:border-0">
               <div class="flex justify-between items-center mb-2">
                 <h4 class="font-medium text-dark_900">{{ menu.title }}</h4>
-                <button
-                  name="clear-options"
-                  @click="clearOptions(menu.key)"
-                  class="text-xs text-gray-400 hover:text-primary"
-                >
+                <button name="clear-options" @click="clearOptions(menu.key)"
+                  class="text-xs text-gray-400 hover:text-primary">
                   清除
                 </button>
               </div>
               <div class="space-y-2">
-                <label
-                  v-for="option in menu.options.slice(
-                    0,
-                    expandedMenus.includes(menu.key) ? menu.options.length : 4,
-                  )"
-                  :key="option"
-                  class="flex items-center text-sm cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    :value="option"
-                    v-model="menu.selected"
-                    class="mr-2 rounded border-gray-300 text-primary focus:ring-primary"
-                  />
+                <label v-for="option in menu.options.slice(
+                  0,
+                  expandedMenus.includes(menu.key) ? menu.options.length : 4,
+                )" :key="option" class="flex items-center text-sm cursor-pointer">
+                  <input type="checkbox" :value="option" v-model="menu.selected"
+                    class="mr-2 rounded border-gray-300 text-primary focus:ring-primary" />
                   {{ option }}
                 </label>
-                <button
-                  name="expand-more"
-                  v-if="menu.options.length > 4 && !expandedMenus.includes(menu.key)"
-                  @click="toggleMenu(menu.key)"
-                  class="text-xs text-primary mt-2"
-                >
+                <button name="expand-more" v-if="menu.options.length > 4 && !expandedMenus.includes(menu.key)"
+                  @click="toggleMenu(menu.key)" class="text-xs text-primary mt-2">
                   展開更多
                 </button>
               </div>
@@ -454,14 +411,10 @@ watch(
 
       <div class="flex flex-1 flex-col gap-5">
         <div
-          class="lg:hidden relative flex h-[120px] items-center justify-center rounded-[20px] border border-gray-300 overflow-hidden bg-center bg-cover bg-[url('https://res.cloudinary.com/wantrip/image/upload/v1768379566/MapSearch_cezz0b.png')]"
-        >
+          class="lg:hidden relative flex h-[120px] items-center justify-center rounded-20 border border-gray-300 overflow-hidden bg-center bg-cover bg-[url('https://res.cloudinary.com/wantrip/image/upload/v1768379566/MapSearch_cezz0b.png')]">
           <div class="absolute inset-0 bg-white/30"></div>
-          <button
-            name="map-search"
-            @click="goToMapSearch"
-            class="relative z-10 rounded-full bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition"
-          >
+          <button name="map-search" @click="goToMapSearch"
+            class="relative z-10 rounded-full bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition">
             地圖找房
           </button>
         </div>
@@ -471,63 +424,48 @@ watch(
         </h3>
 
         <div class="flex flex-row items-center gap-2 overflow-x-auto scrollbar-hide">
-          <button
-            name="filter-drawer"
-            @click="isFilterDrawerOpen = true"
-            class="lg:hidden flex items-center gap-2 rounded-[20px] bg-white border border-gray-300 text-dark px-4 py-2 shadow-sm transition whitespace-nowrap"
-          >
+          <button name="filter-drawer" @click="isFilterDrawerOpen = true"
+            class="lg:hidden flex items-center gap-2 rounded-20 bg-white border border-gray-300 text-dark px-4 py-2 shadow-sm transition whitespace-nowrap">
             <font-awesome-icon icon="sliders" />
             篩選
           </button>
-          <button
-            name="price-high-to-low"
-            @click="
-              () => {
-                sortBy = 'price_desc'
-                fetchHotels(1)
-              }
-            "
-            :class="[
-              'rounded-[20px] px-6 py-2 shadow-sm font-bold transition whitespace-nowrap border',
-              sortBy === 'price_desc'
-                ? 'bg-primary text-white border-primary hover:bg-main'
-                : 'bg-white text-dark border-gray-300 hover:bg-main_100',
-            ]"
-          >
+          <button name="price-high-to-low" @click="
+            () => {
+              sortBy = 'price_desc'
+              fetchHotels(1)
+            }
+          " :class="[
+            'rounded-full px-6 py-2 shadow-sm font-bold transition whitespace-nowrap border',
+            sortBy === 'price_desc'
+              ? 'bg-primary text-white border-primary hover:bg-main'
+              : 'bg-white text-dark border-gray-300 hover:bg-main_100',
+          ]">
             價格高到低
           </button>
-          <button
-            name="price-low-to-high"
-            @click="
-              () => {
-                sortBy = 'price_asc'
-                fetchHotels(1)
-              }
-            "
-            :class="[
-              'rounded-[20px] px-6 py-2 shadow-sm font-bold transition whitespace-nowrap border',
-              sortBy === 'price_asc'
-                ? 'bg-primary text-white border-primary hover:bg-main'
-                : 'bg-white text-dark border-gray-300 hover:bg-main_100',
-            ]"
-          >
+          <button name="price-low-to-high" @click="
+            () => {
+              sortBy = 'price_asc'
+              fetchHotels(1)
+            }
+          " :class="[
+            'rounded-full px-6 py-2 shadow-sm font-bold transition whitespace-nowrap border',
+            sortBy === 'price_asc'
+              ? 'bg-primary text-white border-primary hover:bg-main'
+              : 'bg-white text-dark border-gray-300 hover:bg-main_100',
+          ]">
             價格低到高
           </button>
-          <button
-            name="popular-high-to-low"
-            @click="
-              () => {
-                sortBy = 'star_desc'
-                fetchHotels(1)
-              }
-            "
-            :class="[
-              'rounded-[20px] px-6 py-2 shadow-sm font-bold transition whitespace-nowrap border',
-              sortBy === 'star_desc'
-                ? 'bg-primary text-white border-primary hover:bg-main'
-                : 'bg-white text-dark border-gray-300 hover:bg-main_100',
-            ]"
-          >
+          <button name="popular-high-to-low" @click="
+            () => {
+              sortBy = 'star_desc'
+              fetchHotels(1)
+            }
+          " :class="[
+            'rounded-full px-6 py-2 shadow-sm font-bold transition whitespace-nowrap border',
+            sortBy === 'star_desc'
+              ? 'bg-primary text-white border-primary hover:bg-main'
+              : 'bg-white text-dark border-gray-300 hover:bg-main_100',
+          ]">
             星級高到低
           </button>
         </div>
@@ -538,32 +476,19 @@ watch(
 
         <div class="flex flex-col gap-5">
           <!-- Loading State [NEW] -->
-          <div
-            v-if="isLoading"
-            class="text-center py-20 text-gray-500 text-lg flex flex-col items-center gap-4"
-          >
-            <div
-              class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"
-            ></div>
+          <div v-if="isLoading" class="text-center py-20 text-gray-500 text-lg flex flex-col items-center gap-4">
+            <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
             正在搜尋中...
           </div>
 
           <template v-else>
-            <div
-              v-for="hotel in hotels"
-              :key="hotel.id"
-              @click="handleGoToDetail(hotel.id)"
-              class="cursor-pointer"
-            >
-              <HotelCard
-                :hotel="hotel"
-                :search-params="{
-                  start_date: range?.[0] ? formatDate(range[0]) : '',
-                  end_date: range?.[1] ? formatDate(range[1]) : '',
-                  adults: peopleConfig.people,
-                  rooms: peopleConfig.rooms,
-                }"
-              />
+            <div v-for="hotel in hotels" :key="hotel.id" @click="handleGoToDetail(hotel.id)" class="cursor-pointer">
+              <HotelCard :hotel="hotel" :search-params="{
+                start_date: range?.[0] ? formatDate(range[0]) : '',
+                end_date: range?.[1] ? formatDate(range[1]) : '',
+                adults: peopleConfig.people,
+                rooms: peopleConfig.rooms,
+              }" />
             </div>
             <div v-if="hotels.length === 0 && !error" class="text-center py-20 text-gray-400">
               沒有符合條件的飯店，試著調整篩選條件吧！<br />
@@ -573,35 +498,22 @@ watch(
         </div>
 
         <div class="flex justify-center items-center gap-2 mt-10 mb-20">
-          <button
-            name="previous-page"
-            @click="goToPage(currentPage - 1)"
-            :disabled="currentPage === 1"
-            class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 disabled:opacity-30"
-          >
+          <button name="previous-page" @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"
+            class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 disabled:opacity-30">
             &lt;
           </button>
-          <button
-            name="switch-page"
-            v-for="p in visiblePagination"
-            :key="p"
-            @click="typeof p === 'number' && goToPage(p)"
-            :class="[
+          <button name="switch-page" v-for="p in visiblePagination" :key="p"
+            @click="typeof p === 'number' && goToPage(p)" :class="[
               'w-10 h-10 rounded-full border transition',
               p === currentPage
                 ? 'bg-primary text-white border-primary'
                 : 'border-gray-200 hover:bg-gray-50',
               p === '...' ? 'border-transparent pointer-events-none' : '',
-            ]"
-          >
+            ]">
             {{ p }}
           </button>
-          <button
-            name="next-page"
-            @click="goToPage(currentPage + 1)"
-            :disabled="currentPage === totalPages"
-            class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 disabled:opacity-30"
-          >
+          <button name="next-page" @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages"
+            class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 disabled:opacity-30">
             &gt;
           </button>
         </div>
@@ -612,34 +524,19 @@ watch(
     <Teleport to="body">
       <div v-if="isFilterDrawerOpen" class="fixed inset-0 z-[100] lg:hidden">
         <!-- Backdrop -->
-        <Transition
-          enter-active-class="transition-opacity ease-out duration-300"
-          enter-from-class="opacity-0"
-          enter-to-class="opacity-100"
-          leave-active-class="transition-opacity ease-in duration-200"
-          leave-from-class="opacity-100"
-          leave-to-class="opacity-0"
-        >
-          <div
-            v-if="isFilterDrawerOpen"
-            @click="isFilterDrawerOpen = false"
-            class="absolute inset-0 bg-black/50 backdrop-blur-sm"
-          ></div>
+        <Transition enter-active-class="transition-opacity ease-out duration-300" enter-from-class="opacity-0"
+          enter-to-class="opacity-100" leave-active-class="transition-opacity ease-in duration-200"
+          leave-from-class="opacity-100" leave-to-class="opacity-0">
+          <div v-if="isFilterDrawerOpen" @click="isFilterDrawerOpen = false"
+            class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
         </Transition>
 
         <!-- Drawer Content -->
-        <Transition
-          enter-active-class="transition-transform ease-out duration-300"
-          enter-from-class="-translate-x-full"
-          enter-to-class="translate-x-0"
-          leave-active-class="transition-transform ease-in duration-200"
-          leave-from-class="translate-x-0"
-          leave-to-class="-translate-x-full"
-        >
-          <div
-            v-if="isFilterDrawerOpen"
-            class="absolute top-0 left-0 h-[calc(100%-40px)] w-[80%] m-5 rounded-[20px] bg-white/65 backdrop-blur-sm shadow-xl flex flex-col p-5 overflow-y-auto scrollbar-hide"
-          >
+        <Transition enter-active-class="transition-transform ease-out duration-300" enter-from-class="-translate-x-full"
+          enter-to-class="translate-x-0" leave-active-class="transition-transform ease-in duration-200"
+          leave-from-class="translate-x-0" leave-to-class="-translate-x-full">
+          <div v-if="isFilterDrawerOpen"
+            class="absolute top-0 left-0 h-[calc(100%-40px)] w-[80%] m-5 rounded-10 bg-white/65 backdrop-blur-sm shadow-xl flex flex-col p-5 overflow-y-auto scrollbar-hide">
             <div class="flex items-center justify-between mb-6">
               <h3 class="font-bold text-xl text-dark">篩選條件</h3>
               <button @click="isFilterDrawerOpen = false" class="text-dark_500 text-2xl">
@@ -653,29 +550,14 @@ watch(
                 <h4 class="font-medium text-dark mb-4">每晚預算</h4>
                 <div class="flex flex-col gap-2">
                   <div class="relative h-2 w-full bg-main_100 rounded-full">
-                    <div
-                      class="absolute h-2 bg-main_300 rounded-full"
-                      :style="{
-                        left: `${((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100}%`,
-                        right: `${100 - ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100}%`,
-                      }"
-                    ></div>
-                    <input
-                      type="range"
-                      :min="minPrice"
-                      :max="maxPrice"
-                      :step="step"
-                      v-model.number="priceRange.min"
-                      class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
-                    />
-                    <input
-                      type="range"
-                      :min="minPrice"
-                      :max="maxPrice"
-                      :step="step"
-                      v-model.number="priceRange.max"
-                      class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none"
-                    />
+                    <div class="absolute h-2 bg-main_300 rounded-full" :style="{
+                      left: `${((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100}%`,
+                      right: `${100 - ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100}%`,
+                    }"></div>
+                    <input type="range" :min="minPrice" :max="maxPrice" :step="step" v-model.number="priceRange.min"
+                      class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none" />
+                    <input type="range" :min="minPrice" :max="maxPrice" :step="step" v-model.number="priceRange.max"
+                      class="absolute w-full h-2 bg-transparent pointer-events-none appearance-none" />
                   </div>
                   <div class="flex justify-between mt-2">
                     <span class="text-xs text-dark">${{ priceRange.min }}</span>
@@ -684,44 +566,27 @@ watch(
                 </div>
               </div>
 
-              <div
-                v-for="menu in HotelFiltered"
-                :key="menu.key"
-                class="border-t pt-6 border-gray-300"
-              >
+              <div v-for="menu in HotelFiltered" :key="menu.key" class="border-t pt-6 border-gray-300">
                 <div class="flex justify-between items-center mb-4">
                   <h4 class="font-medium text-dark">{{ menu.title }}</h4>
-                  <button
-                    name="clear-options"
-                    @click="clearOptions(menu.key)"
-                    class="text-xs text-dark hover:text-primary"
-                  >
+                  <button name="clear-options" @click="clearOptions(menu.key)"
+                    class="text-xs text-dark hover:text-primary">
                     清除
                   </button>
                 </div>
                 <div class="space-y-3">
-                  <label
-                    v-for="option in menu.options"
-                    :key="option"
-                    class="flex items-center text-sm text-dark cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      :value="option"
-                      v-model="menu.selected"
-                      class="mr-2 rounded border-gray-300 text-dark focus:ring-dark h-4 w-4"
-                    />
+                  <label v-for="option in menu.options" :key="option"
+                    class="flex items-center text-sm text-dark cursor-pointer">
+                    <input type="checkbox" :value="option" v-model="menu.selected"
+                      class="mr-2 rounded border-gray-300 text-dark focus:ring-dark h-4 w-4" />
                     {{ option }}
                   </label>
                 </div>
               </div>
             </div>
 
-            <button
-              name="filter-complete"
-              @click="isFilterDrawerOpen = false"
-              class="mt-8 mb-4 w-full bg-primary text-white py-3 rounded-full font-bold shadow-md hover:bg-main transition"
-            >
+            <button name="filter-complete" @click="isFilterDrawerOpen = false"
+              class="mt-8 mb-4 w-full bg-primary text-white py-3 rounded-full font-bold shadow-md hover:bg-main transition">
               完成
             </button>
           </div>
@@ -755,6 +620,7 @@ input[type='range']::-moz-range-thumb {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;

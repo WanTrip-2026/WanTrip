@@ -1,35 +1,24 @@
 <template>
-  <RouterLink
-    :to="type === 'ticket' ? `/tickets/${id}` : `/hotels/${id}`"
-    :class="[
-      'group relative flex h-[270px] w-[183px] lg:hover:w-[408px] z-[1] lg:hover:z-[20] bg-white rounded-[20px] lg:hover:rounded-[30px] overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
-      expandLeft ? 'lg:hover:-translate-x-[225px]' : '',
-    ]"
-  >
+  <RouterLink :to="type === 'ticket' ? `/tickets/${id}` : `/hotels/${id}`" :class="[
+    'group relative flex h-[270px] w-[183px] lg:hover:w-[388px] z-[1] lg:hover:z-[20] bg-white rounded-24 lg:hover:rounded-30 overflow-hidden border border-gray-300 transition-all duration-500 ease-in-out cursor-pointer shadow-sm hover:shadow-xl flex-shrink-0',
+    expandLeft ? 'lg:hover:-translate-x-[225px]' : '',
+  ]">
     <div class="relative h-full w-[183px] flex-shrink-0">
       <img :src="imageUrl" :alt="name" class="h-full w-full object-cover" />
       <div
-        class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent group-hover:opacity-0 transition-opacity duration-300"
-      >
+        class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent group-hover:opacity-0 transition-opacity duration-300">
         <h3 class="text-white font-bold text-base text-nowrap line-clamp-1 lg:text-lg">
           {{ name }}
         </h3>
         <p class="text-white/90 text-sm">NT$ {{ (price || 0).toLocaleString() }} /起</p>
       </div>
       <div
-        class="absolute bottom-[20px] right-[20px] flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
-      >
-        <button
-          aria-label="加入比較"
-          name="add-compare"
-          @click.stop.prevent="toggleCompare"
-          class="flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-sm"
-          :class="
-            isInCompare
-              ? 'bg-white text-red-500 hover:bg-white/65 cursor-pointer'
-              : 'bg-white/65 backdrop-blur-sm hover:bg-white text-black cursor-pointer'
-          "
-        >
+        class="absolute bottom-[20px] right-[20px] flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+        <button aria-label="加入比較" name="add-compare" @click.stop.prevent="toggleCompare"
+          class="flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-sm" :class="isInCompare
+            ? 'bg-white text-red-500 hover:bg-white/65 cursor-pointer'
+            : 'bg-white/65 backdrop-blur-sm hover:bg-white text-black cursor-pointer'
+            ">
           <template v-if="isLoading">處理中...</template>
           <template v-else-if="isInCompare">取消比較</template>
           <template v-else>加入比較</template>
@@ -37,8 +26,7 @@
       </div>
     </div>
     <div
-      class="flex flex-col flex-1 p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150 w-full"
-    >
+      class="flex flex-col flex-1 p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150 w-full">
       <div class="flex-1">
         <h3 class="text-lg lg:text-xl font-bold text-black">{{ name }}</h3>
 
@@ -51,39 +39,21 @@
       </div>
       <div class="mt-auto">
         <div class="text-right mb-1 text-xs text-dark_500 text-nowrap">
-          <span class="text-red-500 font-bold text-lg"
-            >NT$ {{ (price || 0).toLocaleString() }}</span
-          >
+          <span class="text-red-500 font-bold text-lg">NT$ {{ (price || 0).toLocaleString() }}</span>
           /起
         </div>
         <div class="flex justify-end gap-3">
-          <button
-            aria-label="加入收藏"
-            name="add-favorite"
-            @click.stop.prevent="onFavoriteClick"
-            class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 transition-colors"
-              :class="isFav ? 'text-red-500 fill-red-500' : 'text-dark_500'"
-              :fill="isFav ? 'currentColor' : 'none'"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              />
+          <button aria-label="加入收藏" name="add-favorite" @click.stop.prevent="onFavoriteClick"
+            class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors"
+              :class="isFav ? 'text-red-500 fill-red-500' : 'text-dark_500'" :fill="isFav ? 'currentColor' : 'none'"
+              viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </button>
-          <button
-            name="details"
-            aria-label="前往飯店詳細頁"
-            class="h-10 bg-primary hover:bg-main text-white px-6 rounded-full font-medium text-nowrap transition-colors"
-          >
+          <button name="details" aria-label="前往飯店詳細頁"
+            class="h-10 bg-primary hover:bg-main text-white px-6 rounded-full font-medium text-nowrap transition-colors">
             了解更多
           </button>
         </div>

@@ -86,7 +86,7 @@ const updatePassword = async () => {
       setTimeout(() => reject(new Error('密碼更新請求超時，請檢查網路連線或稍後再試')), 15000)
     })
 
-    const result = (await Promise.race([updatePromise, timeoutPromise])) as any
+    const result = (await Promise.race([updatePromise, timeoutPromise])) as { error?: Error }
 
     if ('error' in result && result.error) {
       throw result.error
@@ -177,7 +177,10 @@ const loadMe = async () => {
 
     const fetchPromise = supabase.from('profiles').select('*').eq('id', currentUser.id).single()
 
-    const { data, error } = (await Promise.race([fetchPromise, timeoutPromise])) as any
+    const { data, error } = (await Promise.race([fetchPromise, timeoutPromise])) as {
+      data: Record<string, unknown> | null
+      error: { status?: number; message?: string } | null
+    }
 
     if (error) {
       console.error('[UserProfile] fetchProfile error:', error)
@@ -336,111 +339,57 @@ onUnmounted(() => {
     <section class="mx-5">
       <div class="relative grid grid-cols-1 lg:grid-cols-4 gap-5">
         <aside
-          class="sticky top-[96px] h-fit self-start hidden lg:block lg:col-span-1 px-4 py-8 border bg-white border-gray-300 rounded-[20px] items-center gap-2"
-        >
+          class="sticky top-[96px] h-fit self-start hidden lg:block lg:col-span-1 px-4 py-8 border bg-white border-gray-300 rounded-30 items-center gap-2">
           <div class="flex flex-col items-center gap-5">
-            <a
-              v-for="menu in menus"
-              :key="menu.href"
-              :href="menu.href"
-              @click="setActive(menu.href)"
-              :class="[
-                'w-[160px] rounded-[20px] px-12 py-3 hover:text-main_800 transition-colors',
-                activeMenu === menu.href ? 'bg-primary text-white' : '',
-              ]"
-              >{{ menu.label }}
+            <a v-for="menu in menus" :key="menu.href" :href="menu.href" @click="setActive(menu.href)" :class="[
+              'w-[160px] rounded-full px-12 py-3 text-dark hover:text-main_800 transition-colors',
+              activeMenu === menu.href ? 'bg-primary text-white' : '',
+            ]">{{ menu.label }}
             </a>
           </div>
         </aside>
         <div class="lg:col-span-3 gap-5 pb-24">
           <!-- 帳號管理區 -->
-          <div
-            class="scroll-mt-[96px] bg-white w-full rounded-[20px] border border-gray-300 p-5 mb-5"
-            id="account-section"
-          >
+          <div class="scroll-mt-[96px] bg-white w-full rounded-30 border border-gray-300 p-5 mb-5" id="account-section">
             <h3 class="font-bold text-2xl border-b-gray-300 border-b pb-2 text-dark">我的帳號</h3>
-            <form
-              class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2 text-black"
-              @submit.prevent="updatePassword"
-            >
+            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2 text-black"
+              @submit.prevent="updatePassword">
               <!-- Email -->
               <div>
                 <label for="email" class="block mb-1 font-medium text-black">帳號</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  v-model="form.email"
-                  disabled
-                  placeholder="example@email.com"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3"
-                />
+                <input id="email" name="email" type="email" required v-model="form.email" disabled
+                  placeholder="example@email.com" class="w-full rounded-full border border-gray-300 px-5 py-3" />
               </div>
               <div>
-                <label for="currentPassword" class="block mb-1 font-medium text-black"
-                  >原密碼</label
-                >
-                <input
-                  id="currentPassword"
-                  type="password"
-                  v-model="passwordForm.currentPassword"
-                  required
-                  minlength="8"
-                  placeholder="請輸入原密碼"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
-                />
+                <label for="currentPassword" class="block mb-1 font-medium text-black">原密碼</label>
+                <input id="currentPassword" type="password" v-model="passwordForm.currentPassword" required
+                  minlength="8" placeholder="請輸入原密碼"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black" />
               </div>
               <!-- Password -->
               <div>
                 <label for="newPassword" class="block mb-1 font-medium text-black">新密碼</label>
-                <input
-                  id="newPassword"
-                  name="password"
-                  type="password"
-                  v-model="passwordForm.newPassword"
-                  required
-                  minlength="8"
-                  placeholder="至少 8 碼"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
-                />
+                <input id="newPassword" name="password" type="password" v-model="passwordForm.newPassword" required
+                  minlength="8" placeholder="至少 8 碼"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black" />
               </div>
 
               <div>
-                <label for="confirmPassword" class="block mb-1 font-medium text-black"
-                  >確認密碼</label
-                >
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  v-model="passwordForm.confirmPassword"
-                  required
-                  minlength="8"
-                  placeholder="請再次輸入密碼"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
-                />
+                <label for="confirmPassword" class="block mb-1 font-medium text-black">確認密碼</label>
+                <input id="confirmPassword" name="confirmPassword" type="password"
+                  v-model="passwordForm.confirmPassword" required minlength="8" placeholder="請再次輸入密碼"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black" />
               </div>
 
-              <button
-                type="submit"
-                :disabled="updatingPassword"
-                class="self-end rounded-full bg-primary hover:bg-main px-4 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+              <button type="submit" :disabled="updatingPassword"
+                class="self-end rounded-full bg-primary hover:bg-main px-4 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed">
                 {{ updatingPassword ? '修改中...' : '修改密碼' }}
               </button>
             </form>
           </div>
           <!-- 個資管理區 -->
-          <div
-            class="scroll-mt-[96px] bg-white w-full rounded-[20px] border border-gray-300 p-5 mb-5"
-            id="admin-section"
-          >
-            <button
-              type="button"
-              class="float-right text-dark_700 hover:text-main_800 font-medium"
-              @click="toggleEdit"
-            >
+          <div class="scroll-mt-[96px] bg-white w-full rounded-30 border border-gray-300 p-5 mb-5" id="admin-section">
+            <button type="button" class="float-right text-dark_700 hover:text-main_800 font-medium" @click="toggleEdit">
               {{ isEditing ? '取消' : '編輯' }}
             </button>
             <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">
@@ -449,63 +398,32 @@ onUnmounted(() => {
             <p v-if="loadingProfile" class="text-sm text-gray-500 mt-2">載入中...</p>
             <p v-if="errorMsg" class="text-sm text-red-500 mt-2">{{ errorMsg }}</p>
 
-            <form
-              class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2"
-              @submit.prevent="saveProfile"
-            >
+            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2" @submit.prevent="saveProfile">
               <!-- 使用者名稱 -->
               <div>
                 <label for="fullName" class="block mb-1 font-medium text-black">使用者名稱</label>
-                <input
-                  id="fullName"
-                  name="fullName"
-                  :disabled="!isEditing"
-                  type="text"
-                  required
-                  placeholder="請輸入姓名"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
-                  v-model="form.fullName"
-                />
+                <input id="fullName" name="fullName" :disabled="!isEditing" type="text" required placeholder="請輸入姓名"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black" v-model="form.fullName" />
               </div>
               <!-- 生日 -->
               <div>
                 <label for="birthday" class="block mb-1 font-medium text-black"> 生日 </label>
-                <input
-                  id="birthday"
-                  name="birthday"
-                  :disabled="!isEditing"
-                  type="date"
-                  required
-                  placeholder="YYYY-MM-DD"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
-                  v-model="form.birthday"
-                />
+                <input id="birthday" name="birthday" :disabled="!isEditing" type="date" required
+                  placeholder="YYYY-MM-DD" class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
+                  v-model="form.birthday" />
               </div>
               <!-- 性別 -->
               <div>
                 <span class="block mb-1 font-medium text-black">性別</span>
                 <div class="flex items-center gap-4">
                   <label class="flex items-center gap-1 text-black">
-                    <input
-                      type="radio"
-                      :disabled="!isEditing"
-                      name="gender"
-                      v-model="form.gender"
-                      value="male"
-                      class="accent-primary"
-                      required
-                    />
+                    <input type="radio" :disabled="!isEditing" name="gender" v-model="form.gender" value="male"
+                      class="accent-primary" required />
                     男
                   </label>
                   <label class="flex items-center gap-1 text-black">
-                    <input
-                      type="radio"
-                      :disabled="!isEditing"
-                      name="gender"
-                      v-model="form.gender"
-                      value="female"
-                      class="accent-primary"
-                    />
+                    <input type="radio" :disabled="!isEditing" name="gender" v-model="form.gender" value="female"
+                      class="accent-primary" />
                     女
                   </label>
                 </div>
@@ -513,33 +431,19 @@ onUnmounted(() => {
               <!-- 電話 -->
               <div>
                 <label for="phone" class="block mb-1 font-medium text-black">電話</label>
-                <input
-                  id="phone"
-                  name="phone"
-                  :disabled="!isEditing"
-                  type="tel"
-                  required
-                  placeholder="請輸入電話號碼"
-                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black"
-                  v-model="form.phone"
-                />
+                <input id="phone" name="phone" :disabled="!isEditing" type="tel" required placeholder="請輸入電話號碼"
+                  class="w-full rounded-full border border-gray-300 px-5 py-3 text-black" v-model="form.phone" />
               </div>
 
-              <button
-                type="submit"
-                v-if="isEditing"
-                :disabled="saving"
-                class="self-end rounded-full bg-primary hover:bg-main px-4 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+              <button type="submit" v-if="isEditing" :disabled="saving"
+                class="self-end rounded-full bg-primary hover:bg-main px-4 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed">
                 {{ saving ? '修改中...' : '修改資料' }}
               </button>
             </form>
           </div>
           <!-- 我的訂單 -->
-          <div
-            class="scroll-mt-[96px] bg-white rounded-[20px] border border-gray-300 p-5 mb-5 text-black"
-            id="order-section"
-          >
+          <div class="scroll-mt-[96px] bg-white rounded-30 border border-gray-300 p-5 mb-5 text-black"
+            id="order-section">
             <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">
               我的訂單
             </h3>
@@ -547,23 +451,14 @@ onUnmounted(() => {
               <div v-if="orders.length === 0" class="text-center text-gray-500 py-10">
                 目前沒有訂單
               </div>
-              <div
-                v-else
-                v-for="order in orders"
-                :key="order.id"
-                class="flex justify-between rounded-[20px] border border-gray-300 overflow-hidden"
-              >
+              <div v-else v-for="order in orders" :key="order.id"
+                class="flex justify-between rounded-30 border border-gray-300 overflow-hidden">
                 <div class="flex h-[120px]">
-                  <img
-                    class="aspect-[4/3] object-cover min-w-10 hidden lg:block"
-                    :src="
-                      (order.attraction_id ? order.image : order.image_url) ||
-                      order.image ||
-                      order.image_url ||
-                      'https://fakeimg.pl/300x200/'
-                    "
-                    alt="產品照片"
-                  />
+                  <img class="aspect-[4/3] object-cover min-w-10 hidden lg:block" :src="(order.attraction_id ? order.image : order.image_url) ||
+                    order.image ||
+                    order.image_url ||
+                    'https://fakeimg.pl/300x200/'
+                    " alt="產品照片" />
                   <div class="flex flex-col justify-center gap-1 px-5">
                     <h3 class="text-md lg:text-xl font-bold text-black">
                       {{ order.hotel_name || order.title }}
@@ -588,10 +483,7 @@ onUnmounted(() => {
                 </div>
                 <!-- 按鈕區可依需求加上功能 -->
                 <div class="flex flex-col justify-center gap-2 px-5">
-                  <button
-                    class="text-nowrap text-black hover:text-main_800"
-                    @click="goToOrder(order)"
-                  >
+                  <button class="text-nowrap text-black hover:text-main_800" @click="goToOrder(order)">
                     訂單詳情
                   </button>
                   <!-- <button class="text-nowrap hover:text-main_800">取消訂單</button> -->
@@ -600,53 +492,30 @@ onUnmounted(() => {
             </div>
           </div>
           <!-- 收藏清單 -->
-          <div
-            class="scroll-mt-[96px] bg-white rounded-[20px] border border-gray-300 p-5 mb-5"
-            id="favorite-section"
-          >
+          <div class="scroll-mt-[96px] bg-white rounded-30 border border-gray-300 p-5 mb-5" id="favorite-section">
             <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">
               收藏清單
             </h3>
 
             <!-- Tabs -->
             <div class="flex gap-4 mt-5 border-b border-gray-200">
-              <button
-                v-for="cat in ['all', 'hotel', 'ticket']"
-                :key="cat"
-                @click="selectedCategory = cat"
-                class="pb-2 px-4 text-dark_500 font-medium transition-colors border-b-2"
-                :class="
-                  selectedCategory === cat
-                    ? 'border-primary text-primary'
-                    : 'border-transparent hover:text-dark_900'
-                "
-              >
+              <button v-for="cat in ['all', 'hotel', 'ticket']" :key="cat" @click="selectedCategory = cat"
+                class="pb-2 px-4 text-dark_500 font-medium transition-colors border-b-2" :class="selectedCategory === cat
+                  ? 'border-primary text-primary'
+                  : 'border-transparent hover:text-dark_900'
+                  ">
                 {{ cat === 'all' ? '全部' : cat === 'hotel' ? '住宿' : '體驗' }}
               </button>
             </div>
 
             <div class="h-[270px] flex items-center gap-2.5 mt-5 overflow-x-auto flex-nowrap">
-              <div
-                v-if="filteredFavorites.length === 0"
-                class="w-full text-center py-10 text-gray-500"
-              >
+              <div v-if="filteredFavorites.length === 0" class="w-full text-center py-10 text-gray-500">
                 尚無收藏項目
               </div>
-              <HomePageCard
-                v-for="item in filteredFavorites"
-                :key="item.id"
-                :id="item.id"
-                :name="item.name"
-                :imageUrl="item.imageUrl"
-                :price="item.price"
-                :venue="item.venue"
-                :category="item.category"
-                :date="item.date"
-                :address="item.address"
-                :rating="Number(item.rating)"
-                :type="item.type"
-                class="shrink-0"
-              />
+              <HomePageCard v-for="item in filteredFavorites" :key="item.id" :id="item.id" :name="item.name"
+                :imageUrl="item.imageUrl" :price="item.price" :venue="item.venue" :category="item.category"
+                :date="item.date" :address="item.address" :rating="Number(item.rating)" :type="item.type"
+                class="shrink-0" />
             </div>
           </div>
         </div>

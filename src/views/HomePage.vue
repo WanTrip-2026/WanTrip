@@ -5,18 +5,12 @@
       <!-- Banner -->
       <section class="relative pb-32 md:pb-20">
         <div class="relative">
-          <div class="relative w-full overflow-hidden rounded-[40px] bg-gray-200 shadow-sm">
-            <img
-              :src="
-                getOptimizedImageUrl(
-                  'https://res.cloudinary.com/wantrip/image/upload/v1768481888/IMG_7318_dizpjn.jpg',
-                  { w: 1240 },
-                )
-              "
-              class="aspect-[3/4] absolute inset-0 w-full h-full object-cover"
-              alt="banner"
-              fetchpriority="high"
-            />
+          <div class="relative w-full overflow-hidden rounded-30 bg-gray-200 shadow-sm">
+            <img :src="getOptimizedImageUrl(
+              'https://res.cloudinary.com/wantrip/image/upload/v1768481888/IMG_7318_dizpjn.jpg',
+              { w: 1240 },
+            )
+              " class="aspect-[3/4] absolute inset-0 w-full h-full object-cover" alt="banner" fetchpriority="high" />
             <div class="h-[340px] md:h-[420px]"></div>
           </div>
 
@@ -25,44 +19,30 @@
             <div class="w-full lg:max-w-[1024px]">
               <!-- Tabs -->
               <div
-                class="relative w-fit h-11 flex items-center rounded-full border border-gray-300 bg-white p-0.5 mb-2 mx-auto md:mx-0 overflow-hidden"
-              >
+                class="relative w-fit h-11 flex items-center rounded-full border border-gray-300 bg-white p-0.5 mb-2 mx-auto md:mx-0 overflow-hidden">
                 <!-- Sliding Background Indicator -->
                 <div
                   class="absolute top-0.5 bottom-0.5 left-0.5 w-[96px] rounded-full bg-primary shadow-sm transition-all duration-300 ease-in-out z-0"
-                  :style="{ transform: `translateX(${activeTab === 'stay' ? '96px' : '0px'})` }"
-                ></div>
+                  :style="{ transform: `translateX(${activeTab === 'stay' ? '96px' : '0px'})` }"></div>
 
-                <button
-                  name="ticket-tab"
-                  type="button"
+                <button name="ticket-tab" type="button"
                   class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
                   :class="activeTab === 'package' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
-                  @click="activeTab = 'package'"
-                >
+                  @click="activeTab = 'package'">
                   找門票
                 </button>
-                <button
-                  name="hotel-tab"
-                  type="button"
+                <button name="hotel-tab" type="button"
                   class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
                   :class="activeTab === 'stay' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
-                  @click="activeTab = 'stay'"
-                >
+                  @click="activeTab = 'stay'">
                   找住宿
                 </button>
               </div>
 
-              <SearchBar
-                mode="redirect"
-                :search-type="activeTab"
-                :initial-keyword="hotelConfig.destination"
-                :initial-range="hotelConfig.dateRange"
-                :initial-people="hotelConfig.guests"
-                :initial-destination="ticketConfig.destination"
-                :initial-ticket-guests="ticketConfig.guests"
-                @search="handleSearch"
-              />
+              <SearchBar mode="redirect" :search-type="activeTab" :initial-keyword="hotelConfig.destination"
+                :initial-range="hotelConfig.dateRange" :initial-people="hotelConfig.guests"
+                :initial-destination="ticketConfig.destination" :initial-ticket-guests="ticketConfig.guests"
+                @search="handleSearch" />
             </div>
           </div>
         </div>
@@ -73,22 +53,13 @@
         <h2 class="mb-5 text-xl font-bold text-dark">想去哪裡玩？</h2>
 
         <div class="grid grid-cols-6 sm:grid-cols-5 gap-5">
-          <button
-            name="ticket-region"
-            v-for="(r, index) in regions"
-            :key="r.key"
-            type="button"
-            class="relative group overflow-hidden rounded-[20px] bg-white/70 border border-gray-300 transition shadow-sm hover:shadow-xl"
-            :class="[index < 3 ? 'col-span-2 sm:col-span-1' : 'col-span-3 sm:col-span-1']"
-            @click="onClickRegion(r)"
-          >
-            <div
-              class="h-[110px] w-full aspect-[3/4]"
-              :style="{
-                backgroundImage: `url(${getOptimizedImageUrl(r.img, { w: 400 })})`,
-                backgroundSize: 'cover',
-              }"
-            ></div>
+          <button name="ticket-region" v-for="(r, index) in regions" :key="r.key" type="button"
+            class="relative group overflow-hidden rounded-24 bg-white/70 border border-gray-300 transition shadow-sm hover:shadow-xl"
+            :class="[index < 3 ? 'col-span-2 sm:col-span-1' : 'col-span-3 sm:col-span-1']" @click="onClickRegion(r)">
+            <div class="h-[110px] w-full aspect-[3/4]" :style="{
+              backgroundImage: `url(${getOptimizedImageUrl(r.img, { w: 400 })})`,
+              backgroundSize: 'cover',
+            }"></div>
 
             <div class="absolute inset-0 flex items-center justify-center">
               <span class="text-xl font-black text-white drop-shadow-sm">{{ r.label }}</span>
@@ -101,60 +72,36 @@
       <section class="mt-20">
         <h2 class="mb-5 text-xl font-bold text-dark">熱門飯店</h2>
         <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar">
-          <HomePageCard
-            v-for="(hotel, index) in hotHotelsA"
-            :key="hotel.id"
-            v-bind="hotel"
-            :expand-left="index >= hotHotelsA.length - 2"
-            @book="handleBookHotel"
-          />
+          <HomePageCard v-for="(hotel, index) in hotHotelsA" :key="hotel.id" v-bind="hotel"
+            :expand-left="index >= hotHotelsA.length - 2" @book="handleBookHotel" />
         </div>
       </section>
 
       <!-- 熱門飯店（第二排） -->
       <section class="mt-20">
         <h2 class="mb-5 text-xl font-bold text-dark">推薦飯店</h2>
-        <div
-          class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar text-nowrap"
-        >
-          <HomePageCard
-            v-for="(hotel, index) in hotHotelsB"
-            :key="hotel.id"
-            v-bind="hotel"
-            :expand-left="index >= hotHotelsB.length - 2"
-            @book="handleBookHotel"
-          />
+        <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar text-nowrap">
+          <HomePageCard v-for="(hotel, index) in hotHotelsB" :key="hotel.id" v-bind="hotel"
+            :expand-left="index >= hotHotelsB.length - 2" @book="handleBookHotel" />
         </div>
       </section>
 
       <section class="mt-20">
         <h2 class="font-bold text-xl mb-5 text-dark">熱門體驗</h2>
-        <div
-          class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar text-nowrap"
-        >
-          <HomePageTicketCard
-            v-for="(recommend, index) in recommendations"
-            :key="recommend.id"
-            v-bind="recommend"
-            :expand-left="index >= recommendations.length - 2"
-            @book="handleBookTicket"
-          />
+        <div class="flex flex-row xl:grid xl:grid-cols-6 gap-5 overflow-x-auto pb-10 no-scrollbar text-nowrap">
+          <HomePageTicketCard v-for="(recommend, index) in recommendations" :key="recommend.id" v-bind="recommend"
+            :expand-left="index >= recommendations.length - 2" @book="handleBookTicket" />
         </div>
       </section>
 
       <!-- 關鍵字（全台住宿｜可點選 Toggle） -->
       <section class="my-20">
-        <div class="rounded-[20px] bg-white/75 p-5 text-center shadow-sm border border-gray-300">
+        <div class="rounded-30 bg-white/75 p-5 text-center shadow-sm border border-gray-300">
           <p class="text-2xl font-bold text-dark">大家都在找...</p>
           <div class="mt-5 flex flex-wrap justify-center gap-2">
-            <button
-              name="keyword-btn"
-              v-for="k in stayKeywords"
-              :key="k"
-              type="button"
+            <button name="keyword-btn" v-for="k in stayKeywords" :key="k" type="button"
               class="rounded-full px-4 py-1 text-sm font-semibold border transition bg-gray-100 text-primary/80 border-primary/10 hover:bg-main_100"
-              @click="handleKeywordClick(k)"
-            >
+              @click="handleKeywordClick(k)">
               {{ k }}
             </button>
           </div>

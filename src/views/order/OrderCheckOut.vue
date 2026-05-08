@@ -398,31 +398,25 @@ function applyCoupon() {
 
 <template>
   <div
-    class="fixed top-20 left-0 right-0 z-50 mx-5 rounded-[20px] border border-gray-300 bg-white px-4 py-3 shadow-sm lg:hidden"
-  >
+    class="fixed top-20 left-0 right-0 z-50 mx-5 rounded-30 border border-gray-300 bg-white px-4 py-3 shadow-sm lg:hidden">
     <div class="mx-auto flex max-w-[1200px] justify-between items-start text-sm">
       <div class="flex flex-col gap-2">
         <span class="font-bold text-xl">{{ product.title }} </span>
 
-        <span class="text-dark_700 text-sm"
-          >原價
+        <span class="text-dark_700 text-sm">原價
           <span class="text-sm text-dark_500">
             / {{ roomQuantity }} 間 x {{ nights }} 晚 x NT$ {{ product.price.toLocaleString() }}
-          </span></span
-        >
+          </span></span>
         <span class="text-dark_700 text-sm">續住優惠</span>
         <span class="text-dark_700 text-sm">折扣碼優惠</span>
         <span class="font-bold text-dark text-xl">總計</span>
       </div>
       <div class="flex flex-col items-end self-end gap-2">
         <span class="font-bold text-dark text-sm"> NT$ {{ subtotal.toLocaleString() }}</span>
-        <span class="font-bold text-red-500 text-sm"
-          >- NT$ {{ longStayDiscount.toLocaleString() }}</span
-        >
+        <span class="font-bold text-red-500 text-sm">- NT$ {{ longStayDiscount.toLocaleString() }}</span>
         <span class="font-bold text-red-500 text-sm">- NT$ {{ discount.toLocaleString() }}</span>
         <span class="font-bold text-dark text-xl border-t pt-1">
-          NT$ {{ total.toLocaleString() }}</span
-        >
+          NT$ {{ total.toLocaleString() }}</span>
       </div>
     </div>
   </div>
@@ -430,28 +424,19 @@ function applyCoupon() {
   <div class="w-full min-h-screen">
     <div class="mx-auto max-w-[1240px] px-5 pt-[200px] pb-24 lg:pt-24">
       <!-- Error Display -->
-      <div
-        v-if="errorMessage"
-        class="mb-5 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"
-      >
+      <div v-if="errorMessage" class="mb-5 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
         <p class="font-bold">訂單建立失敗 / Order Creation Failed</p>
         <pre class="mt-2 text-sm whitespace-pre-wrap">{{ errorMessage }}</pre>
       </div>
 
       <div class="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
         <div class="flex flex-col gap-5">
-          <section class="rounded-[20px] border border-gray-300 bg-white p-5 shadow-sm">
+          <section class="rounded-30 border border-gray-300 bg-white p-5 shadow-sm">
             <h2 class="text-xl font-semibold text-dark">商品資訊</h2>
             <div class="mt-5 flex gap-5">
               <div
-                class="flex h-22 w-[140px] items-center justify-center rounded-[10px] border border-gray-300 bg-black/5 text-sm text-black/40 overflow-hidden"
-              >
-                <img
-                  v-if="product.image"
-                  :src="product.image"
-                  alt="商品圖片"
-                  class="w-full h-full object-cover"
-                />
+                class="flex h-22 w-[140px] items-center justify-center rounded-10 border border-gray-300 bg-black/5 text-sm text-black/40 overflow-hidden">
+                <img v-if="product.image" :src="product.image" alt="商品圖片" class="w-full h-full object-cover" />
                 <span v-else>image</span>
               </div>
               <div class="min-w-0">
@@ -478,15 +463,9 @@ function applyCoupon() {
                   <!-- Ticket Name -->
                   <div class="text-sm text-dark_500">{{ product.date }}</div>
 
-                  <div
-                    v-if="product.highlights && product.highlights.length > 0"
-                    class="mt-1.5 flex flex-wrap gap-1.5"
-                  >
-                    <span
-                      v-for="(tag, i) in product.highlights.slice(0, 3)"
-                      :key="i"
-                      class="px-2 py-0.5 bg-gray-100 text-gray-600 text-sm rounded-md border border-gray-200"
-                    >
+                  <div v-if="product.highlights && product.highlights.length > 0" class="mt-1.5 flex flex-wrap gap-1.5">
+                    <span v-for="(tag, i) in product.highlights.slice(0, 3)" :key="i"
+                      class="px-2 py-0.5 bg-gray-100 text-gray-600 text-sm rounded-md border border-gray-200">
                       {{ tag }}
                     </span>
                   </div>
@@ -495,63 +474,39 @@ function applyCoupon() {
             </div>
           </section>
 
-          <section class="rounded-[20px] border border-gray-300 bg-white p-5 shadow-sm">
+          <section class="rounded-30 border border-gray-300 bg-white p-5 shadow-sm">
             <h2 class="text-xl font-semibold text-dark">訂購人資料</h2>
             <div class="mt-5 grid grid-cols-1 gap-y-5 gap-x-10 md:grid-cols-2">
               <div class="flex flex-col gap-3">
-                <label class="text-sm text-black/60"
-                  >姓名 <span class="text-red-500">*</span></label
-                >
-                <input
-                  v-model="form.name"
-                  type="text"
-                  placeholder="請輸入姓名"
-                  class="h-[44px] rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary"
-                />
+                <label class="text-sm text-black/60">姓名 <span class="text-red-500">*</span></label>
+                <input v-model="form.name" type="text" placeholder="請輸入姓名"
+                  class="h-[44px] rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary" />
               </div>
               <div class="flex flex-col gap-3">
-                <label class="text-sm text-black/60"
-                  >Email <span class="text-red-500">*</span></label
-                >
-                <input
-                  v-model="form.email"
-                  type="email"
-                  placeholder="example@email.com"
-                  class="h-[44px] rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary"
-                />
+                <label class="text-sm text-black/60">Email <span class="text-red-500">*</span></label>
+                <input v-model="form.email" type="email" placeholder="example@email.com"
+                  class="h-[44px] rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary" />
               </div>
               <div class="flex flex-col gap-3">
                 <label class="text-sm text-black/60">
                   電話 <span class="text-red-500">*</span>
                 </label>
-                <input
-                  v-model="form.phone"
-                  type="tel"
-                  placeholder="09xxxxxxxx"
-                  class="h-[44px] w-full rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary"
-                />
+                <input v-model="form.phone" type="tel" placeholder="09xxxxxxxx"
+                  class="h-[44px] w-full rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary" />
               </div>
             </div>
           </section>
 
-          <section class="rounded-[20px] border border-gray-300 bg-white p-5 shadow-sm">
+          <section class="rounded-30 border border-gray-300 bg-white p-5 shadow-sm">
             <h2 class="text-xl font-semibold text-dark">優惠</h2>
             <div class="mt-5 flex flex-col gap-2 md:flex-row md:items-end">
               <div class="flex flex-1 flex-col gap-2">
                 <label class="text-sm text-dark">優惠代碼</label>
-                <input
-                  v-model="form.coupon"
-                  type="text"
-                  placeholder="輸入優惠碼"
-                  class="h-11 rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary"
-                />
+                <input v-model="form.coupon" type="text" placeholder="輸入優惠碼"
+                  class="h-11 rounded-full border border-gray-300 px-4 text-sm outline-none focus:border-primary" />
               </div>
-              <button
-                name="apply-coupon"
-                type="button"
-                @click="applyCoupon"
-                class="h-11 rounded-full border bg-primary px-6 text-sm text-white transition hover:bg-main active:scale-[0.99]"
-              >
+              <button name="apply-coupon" type="button" @click="applyCoupon"
+                class="h-11 rounded-full border bg-primary px-6 text-sm text-white transition hover:bg-main active:scale-[0.99]">
                 套用
               </button>
             </div>
@@ -560,63 +515,41 @@ function applyCoupon() {
                 輸入優惠碼
                 <span
                   class="cursor-pointer select-all font-semibold text-primary underline underline-offset-2 hover:opacity-80"
-                  @click="copyCoupon"
-                >
-                  WANTRIP200</span
-                >，立即折扣200元
+                  @click="copyCoupon">
+                  WANTRIP200</span>，立即折扣200元
               </p>
             </div>
           </section>
 
-          <section class="rounded-[20px] border border-gray-300 bg-white p-5 shadow-sm">
+          <section class="rounded-30 border border-gray-300 bg-white p-5 shadow-sm">
             <h2 class="text-xl font-semibold text-dark">選擇付款方式</h2>
 
             <div class="mt-5 flex flex-col gap-4">
-              <label
-                v-for="option in paymentOptions"
-                :key="option.key"
-                class="flex h-[60px] cursor-pointer items-center justify-between overflow-hidden rounded-full border border-gray-300 px-4 transition hover:bg-main_100"
-              >
+              <label v-for="option in paymentOptions" :key="option.key"
+                class="flex h-[60px] cursor-pointer items-center justify-between overflow-hidden rounded-full border border-gray-300 px-4 transition hover:bg-main_100">
                 <div class="flex items-center gap-4">
-                  <input
-                    type="radio"
-                    name="pay"
-                    :value="option.key"
-                    v-model="selectedPayment"
-                    class="h-5 w-5 rounded-full accent-primary active:scale-[0.99]"
-                  />
+                  <input type="radio" name="pay" :value="option.key" v-model="selectedPayment"
+                    class="h-5 w-5 rounded-full accent-primary active:scale-[0.99]" />
                   <div class="flex flex-col gap-0">
                     <span class="text-base font-medium text-dark_900 line-clamp-1">{{
                       option.label
                     }}</span>
-                    <p
-                      v-if="['credit', 'atm', 'applepay', 'jkopay'].includes(option.key)"
-                      class="text-xs text-dark_500 mt-1"
-                    >
+                    <p v-if="['credit', 'atm', 'applepay', 'jkopay'].includes(option.key)"
+                      class="text-xs text-dark_500 mt-1">
                       由綠界科技 ECPay 提供的安全支付服務
                     </p>
                   </div>
                 </div>
 
                 <div class="flex h-full items-center lg:justify-end gap-3">
-                  <img
-                    v-for="icon in option.icons"
-                    :key="icon.src"
-                    :src="icon.src"
-                    :alt="icon.alt"
-                    class="block w-auto object-contain"
-                    :class="icon.large ? 'h-7 sm:h-9' : 'h-3 sm:h-4'"
-                  />
+                  <img v-for="icon in option.icons" :key="icon.src" :src="icon.src" :alt="icon.alt"
+                    class="block w-auto object-contain" :class="icon.large ? 'h-7 sm:h-9' : 'h-3 sm:h-4'" />
                 </div>
               </label>
             </div>
             <div class="w-full">
-              <button
-                name="checkout"
-                @click="handleCheckout"
-                :disabled="!selectedPayment || isProcessing"
-                class="mt-5 rounded-full float-right bg-primary hover:bg-main h-11 px-8 text-white font-bold transition disabled:bg-gray-400 disabled:cursor-not-allowed active:scale-[0.99]"
-              >
+              <button name="checkout" @click="handleCheckout" :disabled="!selectedPayment || isProcessing"
+                class="mt-5 rounded-full float-right bg-primary hover:bg-main h-11 px-8 text-white font-bold transition disabled:bg-gray-400 disabled:cursor-not-allowed active:scale-[0.99]">
                 <span v-if="isProcessing">處理中，請稍候...</span>
                 <span v-else>立即結帳</span>
               </button>
@@ -625,13 +558,10 @@ function applyCoupon() {
         </div>
 
         <aside class="hidden h-fit lg:block lg:sticky lg:top-[96px]">
-          <section class="rounded-[20px] border border-gray-300 bg-white p-5 shadow-sm">
+          <section class="rounded-30 border border-gray-300 bg-white p-5 shadow-sm">
             <h2 class="text-xl font-semibold text-primary">費用明細</h2>
             <div class="mt-5 flex flex-col gap-5 text-sm">
-              <div
-                v-if="product.type === 'hotel'"
-                class="text-sm text-black/40 mb-1 flex items-center justify-end"
-              >
+              <div v-if="product.type === 'hotel'" class="text-sm text-black/40 mb-1 flex items-center justify-end">
                 {{ roomQuantity }} 間 x {{ nights }} 晚 x NT$ {{ product.price.toLocaleString() }}
               </div>
               <div class="flex items-center justify-between">
@@ -642,9 +572,7 @@ function applyCoupon() {
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-dark_500">續住優惠</span>
-                <span class="font-medium text-red-500"
-                  >- NT$ {{ longStayDiscount.toLocaleString() }}</span
-                >
+                <span class="font-medium text-red-500">- NT$ {{ longStayDiscount.toLocaleString() }}</span>
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-dark_500">折扣碼優惠</span>

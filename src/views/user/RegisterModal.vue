@@ -1,111 +1,63 @@
 <template>
   <Teleport to="body">
     <Transition name="fade">
-      <div
-        v-if="modelValue"
-        class="fixed inset-0 z-[9999] flex items-center justify-center"
-        aria-modal="true"
-        role="dialog"
-        @keydown.esc="close"
-        tabindex="-1"
-      >
+      <div v-if="modelValue" class="fixed inset-0 z-[9999] flex items-center justify-center" aria-modal="true"
+        role="dialog" @keydown.esc="close" tabindex="-1">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="close"></div>
 
-        <div
-          class="relative mx-5 p-4 w-full max-w-[920px] overflow-hidden rounded-[40px] bg-white shadow-2xl"
-          @click.stop
-        >
+        <div class="relative mx-5 p-4 w-full max-w-[920px] overflow-hidden rounded-30 bg-white shadow-2xl" @click.stop>
           <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div>
               <form class="space-y-4 pt-6 sm:pt-8" @submit.prevent="onSubmit">
                 <div>
                   <label class="sr-only" for="username">username</label>
-                  <input
-                    id="username"
-                    v-model.trim="username"
-                    type="text"
-                    autocomplete="username"
-                    placeholder="使用者名稱"
-                    class="w-full rounded-[20px] border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700"
-                  />
+                  <input id="username" v-model.trim="username" type="text" autocomplete="username" placeholder="使用者名稱"
+                    class="w-full rounded-10 border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700" />
                 </div>
 
                 <!-- 生日 -->
                 <div>
                   <label class="sr-only" for="birthday">生日</label>
-                  <input
-                    id="birthday"
-                    v-model="birthday"
-                    type="date"
-                    required
-                    placeholder="YYYY-MM-DD"
-                    class="w-full rounded-[20px] border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700"
-                  />
+                  <input id="birthday" v-model="birthday" type="date" required placeholder="YYYY-MM-DD"
+                    class="w-full rounded-10 border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700" />
                 </div>
 
                 <div>
                   <label class="sr-only" for="email">email</label>
-                  <input
-                    id="email"
-                    v-model.trim="email"
-                    type="email"
-                    autocomplete="email"
-                    placeholder="email"
-                    class="w-full rounded-[20px] border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700"
-                  />
+                  <input id="email" v-model.trim="email" type="email" autocomplete="email" placeholder="email"
+                    class="w-full rounded-10 border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700" />
                 </div>
 
                 <div>
                   <label class="sr-only" for="password">password</label>
-                  <input
-                    id="password"
-                    v-model="password"
-                    type="password"
-                    autocomplete="new-password"
-                    placeholder="密碼"
-                    class="w-full rounded-[20px] border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700"
-                  />
+                  <input id="password" v-model="password" type="password" autocomplete="new-password" placeholder="密碼"
+                    class="w-full rounded-10 border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700" />
                 </div>
 
                 <div>
                   <label class="sr-only" for="password2">confirm password</label>
-                  <input
-                    id="password2"
-                    v-model="password2"
-                    type="password"
-                    autocomplete="new-password"
+                  <input id="password2" v-model="password2" type="password" autocomplete="new-password"
                     placeholder="確認密碼"
-                    class="w-full rounded-[20px] border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700"
-                  />
+                    class="w-full rounded-10 border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700" />
                 </div>
 
                 <!-- buttons -->
                 <div class="pt-2 space-y-4">
-                  <button
-                    name="signup"
-                    type="submit"
-                    class="w-full rounded-[20px] bg-primary px-6 py-3 font-semibold text-white shadow-sm hover:bg-main"
-                  >
+                  <button name="signup" type="submit"
+                    class="w-full rounded-10 bg-primary px-6 py-3 font-semibold text-white shadow-sm hover:bg-main">
                     註冊
                   </button>
 
-                  <button
-                    name="go-login"
-                    type="button"
-                    class="w-full rounded-[20px] bg-dark_100 px-6 py-3 font-semibold text-dark shadow-sm hover:bg_dark_300"
-                    @click="$emit('go-login')"
-                  >
+                  <button name="go-login" type="button"
+                    class="w-full rounded-10 bg-dark_100 px-6 py-3 font-semibold text-dark shadow-sm hover:bg_dark_300"
+                    @click="$emit('go-login')">
                     已有帳號？去登入
                   </button>
                 </div>
 
                 <div class="text-center">
-                  <button
-                    name="close"
-                    type="button"
-                    class="text-sm text-dark hover:text-dark_700 hover:underline hover:cursor-pointer"
-                    @click="close"
-                  >
+                  <button name="close" type="button"
+                    class="text-sm text-dark hover:text-dark_700 hover:underline hover:cursor-pointer" @click="close">
                     Close
                   </button>
                 </div>
@@ -114,14 +66,8 @@
 
             <!-- Right: image card -->
             <div class="hidden md:block p-1 lg:p-2">
-              <div
-                class="relative h-full min-h-[400px] lg:min-h-[500px] overflow-hidden rounded-[28px]"
-              >
-                <img
-                  :src="heroImage"
-                  :alt="rightSubtitle"
-                  class="absolute inset-0 h-full w-full object-cover"
-                />
+              <div class="relative h-full min-h-[400px] lg:min-h-[500px] overflow-hidden rounded-30">
+                <img :src="heroImage" :alt="rightSubtitle" class="absolute inset-0 h-full w-full object-cover" />
                 <div class="absolute inset-0 bg-black/10"></div>
 
                 <div class="absolute left-6 top-6 text-left text-white drop-shadow">
@@ -133,13 +79,9 @@
           </div>
 
           <!-- close button (top-right) -->
-          <button
-            name="close"
-            type="button"
+          <button name="close" type="button"
             class="absolute right-8 top-8 grid h-10 w-10 place-items-center rounded-full bg-white/80 text-dark shadow hover:bg-dark_100"
-            aria-label="Close modal"
-            @click="close"
-          >
+            aria-label="Close modal" @click="close">
             ✕
           </button>
         </div>

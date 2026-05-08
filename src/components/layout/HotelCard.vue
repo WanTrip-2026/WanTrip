@@ -93,27 +93,16 @@ const onFavoriteClick = async () => {
 <template>
   <div class="flex flex-col w-full">
     <div
-      class="bg-white rounded-[20px] border border-gray-200 overflow-hidden flex flex-col sm:flex-row shadow-sm hover:shadow-md transition-shadow"
-    >
+      class="bg-white rounded-20 border border-gray-200 overflow-hidden flex flex-col sm:flex-row shadow-sm hover:shadow-md transition-shadow">
       <!-- 圖片 -->
-      <div
-        class="relative flex-shrink-0"
-        :class="
-          isCompact
-            ? 'h-[160px] aspect-[16/9] sm:aspect-[2/3]'
-            : 'h-[200px] aspect-[16/9] sm:aspect-[4/3]'
-        "
-      >
-        <img
-          :src="getOptimizedImageUrl(hotel.image_url, { w: 600 })"
-          :alt="hotel.name"
-          class="w-full h-full object-cover"
-          loading="lazy"
-        />
-        <button
-          name="add-compare"
-          @click.stop="toggleCompare"
-          class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 rounded-full border border-white/80 sm:rounded-[20px] h-[40px] w-[110px] text-sm transition-all shadow-lg"
+      <div class="relative flex-shrink-0" :class="isCompact
+        ? 'h-[160px] aspect-[16/9] sm:aspect-[2/3]'
+        : 'h-[200px] aspect-[16/9] sm:aspect-[4/3]'
+        ">
+        <img :src="getOptimizedImageUrl(hotel.image_url, { w: 600 })" :alt="hotel.name"
+          class="w-full h-full object-cover" loading="lazy" />
+        <button name="add-compare" @click.stop="toggleCompare"
+          class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 rounded-full border border-white/80 sm:rounded-10 h-[40px] w-[110px] text-sm transition-all shadow-lg"
           :class="[
             isInCompare
               ? 'bg-white backdrop-blur-sm text-red-500 hover:bg-white/65 cursor-pointer'
@@ -121,8 +110,7 @@ const onFavoriteClick = async () => {
             isCompact
               ? 'sm:scale-75 sm:origin-center sm:bottom-1.5 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto'
               : '',
-          ]"
-        >
+          ]">
           <template v-if="isInCompare">取消比較</template>
           <template v-else>加入比較</template>
         </button>
@@ -138,17 +126,10 @@ const onFavoriteClick = async () => {
           <div class="flex flex-col">
             <div class="flex items-center">
               <div class="flex text-yellow-500">
-                <svg
-                  v-for="(n, index) in starCount(hotel.star_rating)"
-                  :key="index"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 640 640"
-                  class="w-5 h-5"
-                  fill="currentColor"
-                >
+                <svg v-for="(n, index) in starCount(hotel.star_rating)" :key="index" xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 640 640" class="w-5 h-5" fill="currentColor">
                   <path
-                    d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z"
-                  />
+                    d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z" />
                 </svg>
               </div>
             </div>
@@ -164,51 +145,32 @@ const onFavoriteClick = async () => {
 
         <!-- 底部 -->
         <div
-          class="flex flex-row sm:flex-col justify-between sm:justify-end items-center sm:items-end gap-2 border-t sm:border-0 pt-3 sm:pt-0"
-        >
+          class="flex flex-row sm:flex-col justify-between sm:justify-end items-center sm:items-end gap-2 border-t sm:border-0 pt-3 sm:pt-0">
           <div v-if="!isCompact" class="text-red-500 text-lg sm:text-xl font-bold">
             NT${{ hotel.min_price.toLocaleString() }}
           </div>
           <div class="flex gap-2 sm:gap-4">
-            <button
-              name="add-favorite"
-              @click.stop.prevent="onFavoriteClick"
-              class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 sm:h-6 sm:w-6 transition-colors"
-                :class="isFav ? 'text-red-500 fill-red-500' : 'text-dark_500'"
-                :fill="isFav ? 'currentColor' : 'none'"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                />
+            <button name="add-favorite" @click.stop.prevent="onFavoriteClick"
+              class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 transition-colors"
+                :class="isFav ? 'text-red-500 fill-red-500' : 'text-dark_500'" :fill="isFav ? 'currentColor' : 'none'"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </button>
-            <RouterLink
-              v-if="!isCompact"
-              target="_blank"
-              :to="{
-                path: `/hotels/${hotel.id}`,
-                query: {
-                  keyword: hotel.name,
-                  start_date: searchParams?.start_date,
-                  end_date: searchParams?.end_date,
-                  adults: searchParams?.adults,
-                  rooms: searchParams?.rooms,
-                },
-              }"
-            >
-              <button
-                name="details"
-                class="bg-primary text-white px-4 sm:px-6 py-2 rounded-full sm:rounded-[20px] text-sm sm:text-base hover:bg-main transition shadow-sm"
-              >
+            <RouterLink v-if="!isCompact" target="_blank" :to="{
+              path: `/hotels/${hotel.id}`,
+              query: {
+                keyword: hotel.name,
+                start_date: searchParams?.start_date,
+                end_date: searchParams?.end_date,
+                adults: searchParams?.adults,
+                rooms: searchParams?.rooms,
+              },
+            }">
+              <button name="details"
+                class="bg-primary text-white px-4 sm:px-6 py-2 rounded-full sm:rounded-10 text-sm sm:text-base hover:bg-main transition shadow-sm">
                 查看詳情
               </button>
             </RouterLink>

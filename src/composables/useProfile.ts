@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { supabase } from '@/utils/supabaseClient'
 
 export function useProfile() {
-  const profile = ref<any>(null)
+  const profile = ref<Record<string, unknown> | null>(null)
   const loading = ref(false)
   const error = ref<unknown>(null)
 

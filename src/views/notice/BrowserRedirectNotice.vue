@@ -51,7 +51,7 @@ onMounted(() => {
 <template>
   <div v-if="isVisible"
        class="notice-container fixed bottom-[86px] left-1/2 -translate-x-1/2 w-[calc(100%-40px)] md:max-w-[500px] z-[9999]
-              bg-white/80 backdrop-blur-sm rounded-[32px] p-5 shadow-2xl">
+              bg-white/80 backdrop-blur-sm rounded-30 p-5 shadow-2xl">
 
     <div class="flex flex-col items-start gap-4">
       <p class="text-gray-800 text-base leading-relaxed m-0 text-left">

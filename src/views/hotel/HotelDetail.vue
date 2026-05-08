@@ -1,89 +1,55 @@
 <template>
   <main class="max-w-[1200px] mx-auto min-h-screen lg:px-0 px-5">
     <div class="pt-24 pb-24">
-      <SearchBar
-        mode="emit"
-        :initial-keyword="keyword"
-        :initial-range="range"
-        :initial-people="{ rooms: peopleConfig.rooms, people: peopleConfig.people }"
-        @search="handleSearchUpdate"
-        @update:range="(val) => (range = val)"
-        @update:people="
+      <SearchBar mode="emit" :initial-keyword="keyword" :initial-range="range"
+        :initial-people="{ rooms: peopleConfig.rooms, people: peopleConfig.people }" @search="handleSearchUpdate"
+        @update:range="(val) => (range = val)" @update:people="
           (val) => {
             peopleConfig.people = val.people
             peopleConfig.rooms = val.rooms
           }
-        "
-      />
+        " />
       <div v-if="error" class="text-red-600 p-4 bg-red-100 rounded mb-4">
         {{ error }}
       </div>
       <div class="md:hidden relative mb-10">
-        <div class="overflow-hidden rounded-[20px]">
-          <div
-            class="flex transition-transform duration-500"
-            :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
-            @touchstart="onTouchStart"
-            @touchmove="onTouchMove"
-            @touchend="onTouchEnd"
-          >
+        <div class="overflow-hidden rounded-30">
+          <div class="flex transition-transform duration-500"
+            :style="{ transform: `translateX(-${currentIndex * 100}%)` }" @touchstart="onTouchStart"
+            @touchmove="onTouchMove" @touchend="onTouchEnd">
             <div class="min-w-full h-72" v-for="(img, index) in images" :key="index">
-              <img :src="img" class="w-full h-full object-cover" alt="飯店圖片" />
+              <img :src="img" class="w-full h-full object-cover rounded-30" alt="飯店圖片" />
             </div>
           </div>
         </div>
         <div class="flex justify-center gap-2 mt-3">
-          <button
-            v-for="(img, index) in images"
-            :key="index"
-            @click="goTo(index)"
-            class="w-2.5 h-2.5 rounded-full"
-            :class="index === currentIndex ? 'bg-primary' : 'bg-gray-300'"
-          ></button>
+          <button v-for="(img, index) in images" :key="index" @click="goTo(index)" class="w-2.5 h-2.5 rounded-full"
+            :class="index === currentIndex ? 'bg-primary' : 'bg-gray-300'"></button>
         </div>
       </div>
 
       <div class="hidden md:grid md:grid-cols-[2fr_1fr_1fr_1fr] gap-2.5 mb-10">
-        <div
-          v-for="(column, colIndex) in desktopGallery"
-          :key="colIndex"
-          :class="
-            column.type === 'large'
-              ? 'relative h-[400px] rounded-[20px] overflow-hidden border border-gray-300 shadow-sm'
-              : 'grid grid-rows-2 gap-[10px] h-[400px]'
-          "
-        >
-          <div
-            v-for="(img, imgIndex) in column.images"
-            :key="imgIndex"
-            class="relative h-full rounded-[20px] overflow-hidden border border-gray-300 shadow-sm"
-          >
-            <img
-              :src="img"
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125"
-            />
+        <div v-for="(column, colIndex) in desktopGallery" :key="colIndex" :class="column.type === 'large'
+          ? 'relative h-[400px] rounded-30 overflow-hidden border border-gray-300 shadow-sm'
+          : 'grid grid-rows-2 gap-[10px] h-[400px]'
+          ">
+          <div v-for="(img, imgIndex) in column.images" :key="imgIndex"
+            class="relative h-full rounded-30 overflow-hidden border border-gray-300 shadow-sm">
+            <img :src="img"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-125" />
           </div>
         </div>
       </div>
 
-      <div
-        class="bg-white p-5 md:p-[20px] rounded-[20px] mb-[40px] border border-gray-300 shadow-sm"
-      >
+      <div class="bg-white p-5 md:p-[20px] rounded-30 mb-[40px] border border-gray-300 shadow-sm">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-5">
           <div>
             <h2 class="text-2xl md:text-xl font-bold text-dark flex flex-wrap items-center gap-2">
               {{ hotel?.name }}
-              <span
-                ><svg
-                  v-for="n in starCount(hotel?.star_rating)"
-                  :key="n"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 640 640"
-                  class="w-5 h-5 inline-block fill-current text-yellow-400"
-                >
+              <span><svg v-for="n in starCount(hotel?.star_rating)" :key="n" xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 640 640" class="w-5 h-5 inline-block fill-current text-yellow-400">
                   <path
-                    d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z"
-                  />
+                    d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z" />
                 </svg>
               </span>
             </h2>
@@ -91,17 +57,13 @@
               {{ hotel?.city }}{{ hotel?.district }}{{ hotel?.address }}
             </p>
           </div>
-          <div
-            class="w-full md:w-auto text-left md:text-right border-t md:border-none pt-4 md:pt-0"
-          >
+          <div class="w-full md:w-auto text-left md:text-right border-t md:border-none pt-4 md:pt-0">
             <span class="text-dark_500 text-xs md:text-sm">每晚最低自</span>
             <div class="text-red-600 text-2xl md:text-3xl font-bold">
               NT$ {{ hotel?.min_price.toLocaleString() }}
             </div>
-            <button
-              @click="scrollToRooms"
-              class="w-full md:w-auto bg-primary text-white text-base px-10 py-3 md:py-[10px] rounded-xl md:rounded-[20px] hover:bg-main transition mt-3"
-            >
+            <button @click="scrollToRooms"
+              class="w-full md:w-auto bg-primary text-white text-base px-10 py-3 md:py-[10px] rounded-xl md:rounded-10 hover:bg-main transition mt-3">
               查看房間詳情
             </button>
           </div>
@@ -109,48 +71,36 @@
 
         <div class="flex flex-col md:grid md:grid-cols-12 gap-5">
           <div class="w-full md:col-span-8 space-y-5">
-            <div class="bg-main_100 rounded-[20px] p-5 flex flex-col">
+            <div class="bg-main_100 rounded-10 p-5 flex flex-col">
               <h3 class="font-bold text-lg mb-4 text-dark">設施與服務</h3>
               <ul class="grid grid-cols-2 md:grid-cols-3 gap-4 text-dark_700">
-                <li class="flex flex-col items-center justify-center bg-white rounded-[20px] py-4">
-                  <img
-                    src="/src/assets/hoteldetail_img/icon/freeParking.png"
-                    class="w-12 h-12 md:w-16 md:h-16 mb-2"
-                    alt="免費停車"
-                  />
+                <li class="flex flex-col items-center justify-center bg-white rounded-10 py-4">
+                  <img src="/src/assets/hoteldetail_img/icon/freeParking.png" class="w-12 h-12 md:w-16 md:h-16 mb-2"
+                    alt="免費停車" />
                   <span class="text-sm">免費停車</span>
                 </li>
-                <li class="flex flex-col items-center justify-center bg-white rounded-[20px] py-4">
-                  <img
-                    src="/src/assets/hoteldetail_img/icon/convenient.png"
-                    class="w-12 h-12 md:w-16 md:h-16 mb-2"
-                    alt="位置便利"
-                  />
+                <li class="flex flex-col items-center justify-center bg-white rounded-10 py-4">
+                  <img src="/src/assets/hoteldetail_img/icon/convenient.png" class="w-12 h-12 md:w-16 md:h-16 mb-2"
+                    alt="位置便利" />
                   位置便利
                 </li>
-                <li class="flex flex-col items-center justify-center bg-white rounded-[20px] py-4">
-                  <img
-                    src="/src/assets/hoteldetail_img/icon/breakfast.png"
-                    class="w-12 h-12 md:w-16 md:h-16 mb-2"
-                    alt="美味早餐"
-                  />
+                <li class="flex flex-col items-center justify-center bg-white rounded-10 py-4">
+                  <img src="/src/assets/hoteldetail_img/icon/breakfast.png" class="w-12 h-12 md:w-16 md:h-16 mb-2"
+                    alt="美味早餐" />
                   美味早餐
                 </li>
               </ul>
               <div v-if="hotel?.facilities?.length" class="mt-4 pt-4 border-t border-gray-300/50">
                 <div class="flex flex-wrap gap-2">
-                  <span
-                    v-for="(fac, i) in hotel.facilities"
-                    :key="i"
-                    class="text-xs text-dark_700 bg-white px-2 py-1 rounded"
-                  >
+                  <span v-for="(fac, i) in hotel.facilities" :key="i"
+                    class="text-xs text-dark_700 bg-white px-2 py-1 rounded">
                     {{ fac }}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div class="bg-main_100 rounded-[20px] p-5">
+            <div class="bg-main_100 rounded-10 p-5">
               <h3 class="font-bold text-lg mb-2 text-dark">住宿簡介</h3>
               <ul class="text-gray-600 text-sm leading-relaxed space-y-2">
                 <li><span class="font-medium text-dark">電話：</span>{{ hotel?.phone }}</li>
@@ -165,7 +115,7 @@
           </div>
 
           <div class="w-full md:col-span-4 space-y-5 md:space-y-0 md:flex md:flex-col md:gap-5">
-            <div class="bg-main_100 rounded-[20px] p-5">
+            <div class="bg-main_100 rounded-10 p-5">
               <div class="flex items-center gap-3 pb-[10px]">
                 <div class="text-3xl font-bold text-primary">8.8</div>
                 <div>
@@ -177,27 +127,15 @@
                 除了飯店地理位置方便，還提供行李寄放以及退房後的洗澡需求，真的很感謝！
               </p>
             </div>
-            <div class="bg-main_100 rounded-2xl p-5 md:flex-1 md:flex md:flex-col">
+            <div class="bg-main_100 rounded-10 p-5 md:flex-1 md:flex md:flex-col">
               <h3 class="font-bold text-lg mb-[10px] text-dark">地圖 & 周邊景點</h3>
               <div
-                class="bg-white w-full h-[200px] md:h-auto md:flex-1 rounded-xl overflow-hidden border border-gray-300 shadow-sm relative"
-              >
-                <iframe
-                  v-if="hotel?.latitude && hotel?.longitude"
-                  width="100%"
-                  height="100%"
-                  frameborder="0"
-                  style="border: 0"
-                  loading="lazy"
-                  allowfullscreen
-                  referrerpolicy="no-referrer-when-downgrade"
+                class="bg-white w-full h-[200px] md:h-auto md:flex-1 rounded-xl overflow-hidden border border-gray-300 shadow-sm relative">
+                <iframe v-if="hotel?.latitude && hotel?.longitude" width="100%" height="100%" frameborder="0"
+                  style="border: 0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"
                   :src="`https://maps.google.com/maps?q=${hotel.latitude},${hotel.longitude}&z=15&output=embed`"
-                  sandbox="allow-scripts allow-same-origin allow-popups"
-                ></iframe>
-                <div
-                  v-else
-                  class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm"
-                >
+                  sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+                <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
                   暫無地圖資訊
                 </div>
               </div>
@@ -207,34 +145,19 @@
       </div>
 
       <section class="mb-10" id="room-section">
-        <div
-          class="bg-white border border-gray-300 rounded-full p-2 hidden md:flex md:gap-[12px] z-50 shadow-sm"
-        >
-          <button
-            v-for="tag in ['房型', '服務及設施', '房客評論']"
-            :key="tag"
-            @click="handleTagClick(tag)"
-            class="px-6 py-2 bg-primary text-white rounded-full text-lg hover:bg-main transition-colors"
-          >
+        <div class="bg-white border border-gray-300 rounded-30 p-2 hidden md:flex md:gap-[12px] z-50 shadow-sm">
+          <button v-for="tag in ['房型', '服務及設施', '房客評論']" :key="tag" @click="handleTagClick(tag)"
+            class="px-6 py-2 bg-primary text-white rounded-full text-lg hover:bg-main transition-colors">
             {{ tag }}
           </button>
         </div>
 
-        <div class="space-y-[20px] pt-5 rounded-[20px]">
-          <div
-            v-for="room in rooms"
-            :key="room.id"
-            class="flex flex-col md:flex-row bg-white rounded-[20px] overflow-hidden border border-gray-300 shadow-sm"
-          >
+        <div class="space-y-[20px] pt-5 rounded-30">
+          <div v-for="room in rooms" :key="room.id"
+            class="flex flex-col md:flex-row bg-white rounded-30 overflow-hidden border border-gray-300 shadow-sm">
             <div class="w-full md:w-[30%] bg-main_100 flex flex-col">
-              <div
-                class="bg-main_100 flex items-center p-5 justify-center aspect-[4/3] overflow-hidden"
-              >
-                <img
-                  :src="room.image_url"
-                  :alt="room.name"
-                  class="w-full h-full rounded-[20px] object-cover"
-                />
+              <div class="bg-main_100 flex items-center p-5 justify-center aspect-[4/3] overflow-hidden">
+                <img :src="room.image_url" :alt="room.name" class="w-full h-full object-cover rounded-10" />
               </div>
 
               <div class="px-5 pb-5 text-left">
@@ -245,43 +168,25 @@
               </div>
             </div>
 
-            <div
-              class="w-full md:w-[35%] p-[20px] flex flex-col border-t md:border-t-0 md:border-l border-gray-300"
-            >
-              <span
-                v-for="(feature, index) in room.features"
-                :key="index"
-                class="text-gray-600 text-sm md:px-3 md:py-1"
-              >
+            <div class="w-full md:w-[35%] p-[20px] flex flex-col border-t md:border-t-0 md:border-l border-gray-300">
+              <span v-for="(feature, index) in room.features" :key="index"
+                class="text-gray-600 text-sm md:px-3 md:py-1">
                 {{ feature }}
               </span>
             </div>
 
             <div
-              class="w-full md:w-[10%] p-[20px] flex md:flex-col border-t md:border-t-0 md:border-l border-gray-300 justify-start items-start gap-2"
-            >
+              class="w-full md:w-[10%] p-[20px] flex md:flex-col border-t md:border-t-0 md:border-l border-gray-300 justify-start items-start gap-2">
               <p class="text-gray-600">可入住 {{ room.capacity }} 人</p>
 
               <!-- [NEW] Room Quantity Selector -->
-              <div
-                v-if="room.status === 'available' || room.status === 'sold_out'"
-                class="flex items-center gap-1"
-              >
-                <select
-                  v-model="room.selectedQuantity"
-                  @click.stop
-                  :disabled="
-                    room.status === 'sold_out' && (!room.maxAvailable || room.maxAvailable <= 0)
+              <div v-if="room.status === 'available' || room.status === 'sold_out'" class="flex items-center gap-1">
+                <select v-model="room.selectedQuantity" @click.stop :disabled="room.status === 'sold_out' && (!room.maxAvailable || room.maxAvailable <= 0)
                   "
-                  class="border border-gray-300 rounded px-2 py-2 text-sm bg-white cursor-pointer hover:border-primary focus:outline-none focus:border-primary"
-                >
-                  <option
-                    v-for="n in room.maxAvailable && room.maxAvailable < 999
-                      ? room.maxAvailable
-                      : 10"
-                    :key="n"
-                    :value="n"
-                  >
+                  class="border border-gray-300 rounded px-2 py-2 text-sm bg-white cursor-pointer hover:border-primary focus:outline-none focus:border-primary">
+                  <option v-for="n in room.maxAvailable && room.maxAvailable < 999
+                    ? room.maxAvailable
+                    : 10" :key="n" :value="n">
                     {{ n }} 間
                   </option>
                 </select>
@@ -289,25 +194,18 @@
             </div>
 
             <div
-              class="w-full md:w-[25%] p-[20px] bg-white flex flex-col justify-start border-t md:border-t-0 md:border-l border-gray-300"
-            >
+              class="w-full md:w-[25%] p-[20px] bg-white flex flex-col justify-start border-t md:border-t-0 md:border-l border-gray-300">
               <span class="text-[#D14D4D] font-bold text-2xl self-end">
-                NT$ {{ (room.price ?? 0).toLocaleString() }}</span
-              >
-              <button
-                @click="handleBook(room)"
-                :disabled="
-                  room.status === 'capacity_exceeded' ||
-                  (room.status === 'sold_out' && (!room.maxAvailable || room.maxAvailable <= 0))
-                "
-                :class="[
+                NT$ {{ (room.price ?? 0).toLocaleString() }}</span>
+              <button @click="handleBook(room)" :disabled="room.status === 'capacity_exceeded' ||
+                (room.status === 'sold_out' && (!room.maxAvailable || room.maxAvailable <= 0))
+                " :class="[
                   'w-full px-[40px] py-[10px] rounded-full mt-4 font-bold transition-colors',
                   room.status === 'available' ||
-                  (room.status === 'sold_out' && room.maxAvailable && room.maxAvailable > 0)
+                    (room.status === 'sold_out' && room.maxAvailable && room.maxAvailable > 0)
                     ? 'bg-primary text-white hover:bg-main'
                     : 'bg-gray-300 text-white cursor-not-allowed',
-                ]"
-              >
+                ]">
                 <span v-if="room.status === 'sold_out'">
                   {{
                     room.maxAvailable && room.maxAvailable > 0
@@ -318,10 +216,8 @@
                 <span v-else-if="room.status === 'capacity_exceeded'">超過人數上限</span>
                 <span v-else>立即預定</span>
               </button>
-              <span
-                v-if="room.status === 'available' && room.maxAvailable && room.maxAvailable <= 3"
-                class="text-xs text-red-500 text-center mt-2"
-              >
+              <span v-if="room.status === 'available' && room.maxAvailable && room.maxAvailable <= 3"
+                class="text-xs text-red-500 text-center mt-2">
                 僅剩 {{ room.maxAvailable }} 間
               </span>
             </div>
@@ -329,10 +225,7 @@
         </div>
       </section>
 
-      <section
-        class="mb-10 p-5 rounded-[20px] border border-gray-300 bg-white"
-        id="facilities-section"
-      >
+      <section class="mb-10 p-5 rounded-30 border border-gray-300 bg-white" id="facilities-section">
         <h3 class="text-2xl font-bold mb-6 text-dark flex items-center gap-2">服務及設施</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -398,22 +291,19 @@
         <div v-if="hotel?.facilities?.length" class="mt-8 pt-8 border-t border-gray-200">
           <h4 class="font-bold text-lg text-dark mb-4">其他設施</h4>
           <div class="flex flex-wrap gap-3">
-            <span
-              v-for="(facility, index) in hotel.facilities"
-              :key="index"
-              class="px-4 py-2 bg-gray-50 text-gray-700 rounded-lg text-sm border border-gray-100"
-            >
+            <span v-for="(facility, index) in hotel.facilities" :key="index"
+              class="px-4 py-2 bg-gray-50 text-gray-700 rounded-lg text-sm border border-gray-100">
               {{ facility }}
             </span>
           </div>
         </div>
       </section>
 
-      <section class="p-5 rounded-[20px] border border-gray-300 bg-white" id="reviews-section">
+      <section class="p-5 rounded-30 border border-gray-300 bg-white" id="reviews-section">
         <h3 class="text-2xl font-bold mb-6 text-dark">房客評論</h3>
 
         <div class="flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-8 mb-5">
-          <div class="rounded-[20px] p-5 bg-main_100">
+          <div class="rounded-10 p-5 bg-main_100">
             <div class="font-bold text-lg mb-2">綜合評論</div>
             <div class="flex items-end gap-2 mb-2">
               <div class="text-3xl font-bold text-primary">{{ filteredAverageRating }}</div>
@@ -424,7 +314,7 @@
             </p>
           </div>
 
-          <div class="bg-main_100 rounded-[20px] p-[20px]">
+          <div class="bg-main_100 rounded-10 p-[20px]">
             <div class="font-bold text-lg mb-2">AI 摘要</div>
             <p class="text-gray-600 text-sm">
               多數房客稱讚房間整潔與飯店地點便利，少數建議增加早餐選擇。
@@ -434,26 +324,20 @@
 
         <div class="pb-[20px] flex flex-col md:flex-row gap-3 md:gap-[20px]">
           <div class="grid grid-cols-2 md:flex md:flex-row gap-3 w-full text-dark_900">
-            <select
-              v-model="filterMemberType"
-              class="w-full md:w-auto rounded-[20px] px-4 md:px-5 py-[10px] border border-gray-300 text-sm md:text-base"
-            >
+            <select v-model="filterMemberType"
+              class="w-full md:w-auto rounded-10 px-4 md:px-5 py-[10px] border border-gray-300 text-sm md:text-base">
               <option value="" class="px-5">所有住客類型</option>
               <option v-for="type in memberTypes" :key="type" :value="type">{{ type }}</option>
             </select>
 
-            <select
-              v-model="filterRoomType"
-              class="w-full md:w-auto rounded-[20px] px-4 md:px-5 py-[10px] border border-gray-300 text-sm md:text-base"
-            >
+            <select v-model="filterRoomType"
+              class="w-full md:w-auto rounded-10 px-4 md:px-5 py-[10px] border border-gray-300 text-sm md:text-base">
               <option value="">所有房型</option>
               <option v-for="room in roomTypes" :key="room" :value="room">{{ room }}</option>
             </select>
 
-            <select
-              v-model="sortOption"
-              class="w-full md:w-auto rounded-[20px] px-4 md:px-5 py-[10px] border border-gray-300 text-sm md:text-base"
-            >
+            <select v-model="sortOption"
+              class="w-full md:w-auto rounded-10 px-4 md:px-5 py-[10px] border border-gray-300 text-sm md:text-base">
               <option value="ratingDesc">評分高到低</option>
               <option value="ratingAsc">評分低到高</option>
               <option value="recent">最新評論</option>
@@ -462,24 +346,18 @@
         </div>
 
         <div class="space-y-5">
-          <div
-            v-for="review in paginatedReviews"
-            :key="review.id"
-            class="bg-[#EEF2F7] rounded-[20px] p-5 flex flex-col gap-5"
-          >
+          <div v-for="review in paginatedReviews" :key="review.id"
+            class="bg-[#EEF2F7] rounded-10 p-5 flex flex-col gap-5">
             <div class="flex justify-between items-start">
               <div class="flex items-center gap-3">
                 <div
-                  class="w-12 h-12 bg-primary/20 text-primary rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0"
-                >
+                  class="w-12 h-12 bg-primary/20 text-primary rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
                   {{ review.memberName.charAt(0) }}
                 </div>
                 <div>
                   <div class="font-bold text-dark_900 flex items-center gap-2">
                     {{ review.memberName }}
-                    <span
-                      class="text-xs font-normal bg-white/90 text-dark_500 px-2 py-0.5 rounded-full"
-                    >
+                    <span class="text-xs font-normal bg-white/90 text-dark_500 px-2 py-0.5 rounded-full">
                       {{ review.memberType }}
                     </span>
                   </div>
@@ -507,23 +385,14 @@
                 {{ review.comment }}
               </p>
 
-              <div
-                v-if="review.photos && review.photos.length"
-                class="flex gap-3 overflow-x-auto py-2 snap-x snap-mandatory"
-              >
-                <img
-                  v-for="(photo, idx) in review.photos"
-                  :key="idx"
-                  :src="photo"
-                  class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-[20px] flex-shrink-0 snap-start"
-                  alt="評論照片"
-                />
+              <div v-if="review.photos && review.photos.length"
+                class="flex gap-3 overflow-x-auto py-2 snap-x snap-mandatory">
+                <img v-for="(photo, idx) in review.photos" :key="idx" :src="photo"
+                  class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-10 flex-shrink-0 snap-start" alt="評論照片" />
               </div>
             </div>
 
-            <div
-              class="bg-white/90 rounded-[20px] md:rounded-[20px] p-5 flex flex-wrap gap-y-2 gap-x-6 items-center"
-            >
+            <div class="bg-white/90 rounded-10 p-5 flex flex-wrap gap-y-2 gap-x-6 items-center">
               <div class="flex items-center gap-2 text-sm text-dark_500">
                 <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
                 <span class="text-sm font-medium text-dark_700">房型：</span>{{ review.roomType }}
@@ -537,16 +406,11 @@
           </div>
         </div>
         <div class="flex justify-center gap-2 mt-4">
-          <button
-            v-for="page in totalPages"
-            :key="page"
-            @click="currentPage = page"
-            class="border hover:bg-main_100"
+          <button v-for="page in totalPages" :key="page" @click="currentPage = page" class="border hover:bg-main_100"
             :class="{
-              'bg-primary text-white px-3 py-1 rounded-[20px] hover:bg-main': currentPage === page,
-              'text-primary hover:text-black px-3 py-1 rounded-[20px]': currentPage !== page,
-            }"
-          >
+              'bg-primary text-white w-10 h-10 flex justify-center items-center rounded-full hover:bg-main': currentPage === page,
+              'text-primary hover:text-black w-10 h-10 flex justify-center items-center rounded-full': currentPage !== page,
+            }">
             {{ page }}
           </button>
         </div>
@@ -827,7 +691,7 @@ const fetchHotelDetail = async () => {
           )
           if (listRes.ok) {
             const listData = await listRes.json()
-            const found = (listData.hotels || []).find((h: any) => h.id === hotelData.id)
+            const found = (listData.hotels || []).find((h: { id: unknown }) => h.id === hotelData.id)
             if (found && found.facilities) {
               hotelData.facilities = found.facilities
               hotel.value = { ...hotelData } // trigger reactivity

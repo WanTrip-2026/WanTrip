@@ -3,6 +3,14 @@ export default {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      borderRadius: {
+        '10': '10px',
+        '20': '20px',
+        '30': '30px',
+        '24': '24px',
+        '30': '30px',
+        '40': '40px',
+      },
       colors: {
         main: '#365475', // Primary btn hover color
         main_900: '#4A6583',
