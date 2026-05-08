@@ -31,13 +31,13 @@ jobs:
           echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID }}" >> .env.production
 
       - name: Check env file (Debug)
-          run: grep -c "VITE_" .env.production
+        run: grep -c "VITE_" .env.production
 
       - name: Build Project
         run: npm run build
 
       - name: Deploy to EC2 via SCP
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
