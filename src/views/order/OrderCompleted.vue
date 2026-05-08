@@ -3,7 +3,7 @@ import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { supabase } from '@/utils/supabaseClient'
-import { getOrderById } from '@/services/orderApi'
+import { getOrderById, type Order } from '@/services/orderApi'
 import Redenvelop from '@/components/layout/RedEnvelope.vue'
 
 const route = useRoute()
@@ -22,7 +22,7 @@ const orderId = queryOrderId
 
 const isVerifying = ref(false)
 const verificationError = ref('')
-const fetchedOrder = ref<Record<string, unknown> | null>(null)
+const fetchedOrder = ref<Order | null>(null)
 
 const order = computed(() => {
   // Priority: 1. Fetched from API (Real) 2. Store (Just paid) 3. Mock (Fallback)
@@ -33,8 +33,8 @@ const order = computed(() => {
       name: fetchedOrder.value.hotel_name || fetchedOrder.value.title || '旅宿行程',
       amount: fetchedOrder.value.price,
       createdAt: `${d.getFullYear()}年${String(d.getMonth() + 1).padStart(2, '0')}月${String(d.getDate()).padStart(2, '0')}日`,
-      telephone: fetchedOrder.value.hotel_phone || fetchedOrder.value.phone || '無聯絡電話',
-      address: fetchedOrder.value.address || fetchedOrder.value.city + fetchedOrder.value.district,
+      telephone: fetchedOrder.value.hotel_phone || '無聯絡電話',
+      address: fetchedOrder.value.address || `${fetchedOrder.value.city ?? ''}${fetchedOrder.value.district ?? ''}`,
       image: fetchedOrder.value.image_url || fetchedOrder.value.image,
       roomType: fetchedOrder.value.room_type || fetchedOrder.value.subtitle || '未知房型',
     }
@@ -150,8 +150,8 @@ onMounted(async () => {
               <p class="text-dark text-xl font-bold">
                 {{ order.name }}
               </p>
-              <p v-if="(fetchedOrder?.quantity || 1) > 1" class="text-dark text-base font-bold">
-                <span class="text-dark font-bold">{{ order.roomType }}</span>* {{ fetchedOrder.quantity }} 間
+              <p v-if="(fetchedOrder?.quantity ?? 1) > 1" class="text-dark text-base font-bold">
+                <span class="text-dark font-bold">{{ order.roomType }}</span>* {{ fetchedOrder?.quantity }} 間
               </p>
             </div>
             <div class="flex flex-col items-center lg:items-stretch">

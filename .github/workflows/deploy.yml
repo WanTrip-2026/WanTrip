@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install Dependencies
@@ -31,7 +31,7 @@ jobs:
           echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID }}" >> .env.production
 
       - name: Check env file (Debug)
-        run: cat .env.production # 這行可以讓你在 Actions 的 Log 裡看到檔案是否正確生成
+          run: grep -c "VITE_" .env.production
 
       - name: Build Project
         run: npm run build

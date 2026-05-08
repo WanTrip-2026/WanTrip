@@ -178,7 +178,7 @@ const loadMe = async () => {
     const fetchPromise = supabase.from('profiles').select('*').eq('id', currentUser.id).single()
 
     const { data, error } = (await Promise.race([fetchPromise, timeoutPromise])) as {
-      data: Record<string, unknown> | null
+      data: ProfileRow | null
       error: { status?: number; message?: string } | null
     }
 
