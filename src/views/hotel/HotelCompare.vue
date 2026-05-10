@@ -3,13 +3,13 @@
     <div class="mx-5">
       <!-- 上方操作：只出現一次 -->
       <button name="open-picker" v-if="compareStore.hotels.length !== 0" type="button" @click="openPicker"
-        class="w-fit mx-auto px-6 py-3 my-5 rounded-20 text-center text-white text-lg font-bold shadow-sm bg-primary hover:bg-main transition-all">
+        class="w-fit mx-auto px-6 py-3 my-5 rounded-20 text-center text-white text-base font-bold shadow-sm bg-primary hover:bg-main transition-all">
         選擇住宿（已加入 {{ compareStore.hotels.length }}/5）
       </button>
 
       <!-- 空狀態：沒有任何比較飯店 -->
       <div v-if="compareStore.hotels.length === 0"
-        class="bg-main_100 w-fit p-5 rounded-20 mx-auto mt-5 text-center text-dark_700 shadow-sm">
+        class="bg-main-100 w-fit p-5 rounded-20 mx-auto mt-5 text-center text-dark-700 shadow-sm">
         目前沒有加入任何飯店可以比較。請先回飯店列表按「加入比較」。
         <div class="mt-4">
           <button name="go-hotellist" class="px-5 py-2 rounded-20 bg-primary hover:bg-main text-white transition-all"
@@ -20,7 +20,7 @@
       </div>
 
       <!-- 有資料才顯示卡片 -->
-      <div v-else class="grid grid-cols-2 lg:grid-cols-3 gap-5">
+      <div v-else class="grid grid-cols-2 lg:grid-cols-3 gap-2">
         <div v-for="hotel in limitedHotels" :key="hotel.id" class="flex flex-col space-y-2">
           <button name="remove-hotel"
             class="w-full py-3 rounded-20 bg-red-100 border-2 border-red-500 text-dark font-bold hover:bg-rose-400 transition-all"
@@ -33,22 +33,22 @@
               " class="w-full h-full object-cover" alt="Hotel Photo" />
           </div>
 
-          <div class="bg-main/5 p-5 rounded-20 text-center w-full font-bold text-xl text-dark_900 shadow-sm">
+          <div class="bg-main/5 p-5 rounded-20 text-center w-full font-bold text-xl text-dark-900 shadow-sm">
             {{ hotel.name }}
           </div>
 
-          <div class="h-20 bg-main/5 p-5 rounded-20 text-center text-dark_700 w-full shadow-sm">
+          <div class="h-20 bg-main/5 p-5 rounded-20 text-center text-dark-700 w-full shadow-sm">
             {{ (hotel.types ?? []).join(' / ') }}
           </div>
 
           <div class="h-[400px] bg-main/5 p-5 rounded-20 min-h-[320px] shadow-sm">
-            <p class="font-bold mb-2 text-center text-dark_700">設施 & 服務</p>
+            <p class="font-bold mb-2 text-center text-dark-700">設施 & 服務</p>
             <ul class="space-y-1">
-              <li v-for="f in getDisplayFacilities(hotel)" :key="f" class="text-dark_500">
+              <li v-for="f in getDisplayFacilities(hotel)" :key="f" class="text-dark-500">
                 - {{ f }}
               </li>
             </ul>
-            <li v-if="getDisplayFacilities(hotel).length === 0" class="text-dark_400 text-center italic">
+            <li v-if="getDisplayFacilities(hotel).length === 0" class="text-dark-400 text-center italic">
               尚未提供設施資訊
             </li>
           </div>
@@ -56,21 +56,21 @@
           <!-- distance / rules 都要防呆 -->
           <div v-if="hotel.distance != null"
             class="h-50 bg-main/5 p-5 rounded-20 text-center min-h-[100px] flex flex-col justify-center shadow-sm">
-            <p class="font-bold text-dark_700">交通資訊</p>
+            <p class="font-bold text-dark-700">交通資訊</p>
             <p class="text-sm">距離市中心 {{ hotel.distance }} km</p>
           </div>
 
           <div v-if="(hotel.rules ?? []).length" class="h-50 bg-main/5 p-5 rounded-20 min-h-[80px] shadow-sm">
             <div v-for="rule in hotel.rules ?? []" :key="rule"
-              class="bg-main/5 rounded-20 text-center text-sm text-dark_500">
+              class="bg-main/5 rounded-20 text-center text-sm text-dark-500">
               {{ rule }}
             </div>
           </div>
 
           <div class="bg-main/5 p-5 rounded-20 text-center shadow-sm">
-            <p class="font-bold text-dark_700">價格</p>
+            <p class="font-bold text-dark-700">價格</p>
             <p class="text-base lg:text-xl font-bold text-red-500">
-              NT$ {{ formatPrice(hotel.min_price) }} <span class="text-dark_500 text-sm">/起</span>
+              NT$ {{ formatPrice(hotel.min_price) }} <span class="text-dark-500 text-sm">/起</span>
             </p>
           </div>
 
@@ -80,7 +80,7 @@
           </RouterLink>
         </div>
 
-        <div v-if="!canCompare" class="col-span-2 p-5 text-center text-dark_700">
+        <div v-if="!canCompare" class="col-span-2 p-5 text-center text-dark-700">
           請至少選 2 間飯店進行比較（目前 {{ visibleHotels.length }} 間）
         </div>
       </div>
@@ -92,13 +92,13 @@
           class="absolute left-1/2 top-1/2 w-[92%] max-w-[720px] -translate-x-1/2 -translate-y-1/2 bg-white rounded-20 p-5 shadow-lg">
           <div class="flex items-center justify-between mb-4">
             <p class="font-bold text-lg text-dark">已加入比較的飯店（最多 5 間）</p>
-            <button name="close-picker" class="w-8 h-8 rounded-full transition-all text-dark_700 hover:bg-main_100"
+            <button name="close-picker" class="w-8 h-8 rounded-full transition-all text-dark-700 hover:bg-main-100"
               @click="showPicker = false">
               ✕
             </button>
           </div>
 
-          <div v-if="compareStore.hotels.length === 0" class="text-dark_700">
+          <div v-if="compareStore.hotels.length === 0" class="text-dark-700">
             尚未加入飯店。請回列表按「加入比較」。
           </div>
 
@@ -108,9 +108,9 @@
               <img :src="h.image_url" class="w-20 h-14 object-cover rounded-lg" alt="" />
               <div class="flex-1">
                 <div class="font-bold text-dark">{{ h.name }}</div>
-                <div class="text-sm text-dark_500">{{ (h.types ?? []).join(' / ') }}</div>
+                <div class="text-sm text-dark-500">{{ (h.types ?? []).join(' / ') }}</div>
               </div>
-              <button name="remove-hotel-in-picker" class="text-sm text-dark_700 hover:text-dark_500"
+              <button name="remove-hotel-in-picker" class="text-sm text-dark-700 hover:text-dark-500"
                 @click="removeFromCompare(h.id)">
                 移除
               </button>
@@ -118,7 +118,7 @@
           </div>
 
           <div class="flex justify-end gap-3 mt-5">
-            <button name="clear-all" class="px-4 py-2 rounded-xl border text-dark bg-dark_100 hover:bg-dark_300"
+            <button name="clear-all" class="px-4 py-2 rounded-xl border text-dark bg-dark-100 hover:bg-dark-300"
               @click="clearAll">
               清空
             </button>

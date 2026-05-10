@@ -140,7 +140,7 @@
     </div>
     <div class="fixed bottom-[200px] right-[10px] z-10">
       <button @click="toggleMapType"
-        class="w-[40px] h-[40px] bg-white rounded-10 shadow-md hover:bg-main_100 transition-colors flex items-center justify-center">
+        class="w-[40px] h-[40px] bg-white rounded-10 shadow-md hover:bg-main-100 transition-colors flex items-center justify-center">
         <div class="text-base">
           {{ currentMapType === 'roadmap' ? '🛰️' : '🗺️' }}
         </div>
@@ -154,7 +154,7 @@
         : 'top-[145px] h-[calc(100vh-170px)] md:top-[165px] md:h-[calc(100vh-190px)]',
     ]" class="w-[80vw] md:w-[400px]">
       <button @click="isListOpen = !isListOpen" :class="[
-        'absolute top-0 z-20 bg-white border shadow-md flex items-center justify-center text-primary hover:text-main_800 transition-all duration-500 ease-in-out',
+        'absolute top-0 z-20 bg-white border shadow-md flex items-center justify-center text-primary hover:text-main-800 transition-all duration-500 ease-in-out',
         isListOpen
           ? 'left-full w-8 h-12 rounded-r-lg border-l-0'
           : 'left-[calc(100%+20px)] w-12 h-12 rounded-lg',
@@ -162,13 +162,19 @@
         <font-awesome-icon :icon="isListOpen ? 'chevron-left' : 'chevron-right'" />
       </button>
       <div v-show="isListOpen" class="relative flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar">
-        <div v-if="isMapLoading"
-          class="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-10">
-          <div class="animate-spin">
-            <font-awesome-icon icon="circle-notch" spin class="text-accent/60 text-5xl" />
+        <!-- Loading Skeleton -->
+        <template v-if="isMapLoading">
+          <div v-for="i in 4" :key="i"
+            class="animate-pulse flex h-[132px] rounded-10 overflow-hidden border border-gray-200 bg-white">
+            <div class="w-[140px] bg-gray-200 flex-shrink-0"></div>
+            <div class="flex-1 p-3 flex flex-col gap-2">
+              <div class="h-4 bg-gray-200 rounded-full w-3/4"></div>
+              <div class="h-3 bg-gray-200 rounded-full w-1/2"></div>
+              <div class="h-3 bg-gray-200 rounded-full w-1/3"></div>
+              <div class="mt-auto h-5 bg-gray-200 rounded-full w-1/2"></div>
+            </div>
           </div>
-          <p class="text-primary font-bold mt-4">搜尋中 ···</p>
-        </div>
+        </template>
 
         <div v-else-if="!isMapLoading && hotels.length === 0"
           class="flex flex-col items-center justify-center h-full py-10 text-center">
@@ -208,9 +214,9 @@
               <h4 class="font-medium text-dark">每晚預算<br /></h4>
               <div class="flex flex-col gap-2">
                 <!-- 滑桿 -->
-                <div class="relative h-2 w-full bg-main_100 rounded-full">
+                <div class="relative h-2 w-full bg-main-100 rounded-full">
                   <!-- 已選範圍 -->
-                  <div class="absolute h-2 bg-main_300 rounded-full" :style="{
+                  <div class="absolute h-2 bg-main-300 rounded-full" :style="{
                     left: `${((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100}%`,
                     right: `${100 - ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100}%`,
                   }"></div>
@@ -226,34 +232,34 @@
                 <!-- 顯示數值 -->
                 <div class="flex justify-between mt-2">
                   <input type="number" v-model.number="priceRange.min" :min="minPrice" :max="maxPrice" :step="step"
-                    class="border border-gray-300 rounded-full p-1 w-24 text-dark_900 text-center" />
+                    class="border border-gray-300 rounded-full p-1 w-24 text-dark-900 text-center" />
                   <input type="number" v-model.number="priceRange.max" :min="minPrice" :max="maxPrice" :step="step"
-                    class="border border-gray-300 rounded-full p-1 w-24 text-dark_900 text-center" />
+                    class="border border-gray-300 rounded-full p-1 w-24 text-dark-900 text-center" />
                 </div>
               </div>
 
               <!-- Option Filter -->
-              <div class="border-b-[1px] pb-[20px] border-main_800 border-solid last:border-b-0"
+              <div class="border-b-[1px] pb-[20px] border-main-800 border-solid last:border-b-0"
                 v-for="HotelMenu in HotelFiltered" :key="HotelMenu.key">
                 <div class="flex justify-between items-center mb-2">
-                  <h4 class="font-medium text-base text-dark_900">{{ HotelMenu.title }}</h4>
-                  <button class="text-xs text-dark_500 hover:text-primary" @click="clearOptions(HotelMenu.key)">
+                  <h4 class="font-medium text-base text-dark-900">{{ HotelMenu.title }}</h4>
+                  <button class="text-xs text-dark-500 hover:text-primary" @click="clearOptions(HotelMenu.key)">
                     清除
                   </button>
                 </div>
                 <div class="space-y-2">
-                  <label class="flex cursor-pointer text-sm text-dark_900 items-center" v-for="option in HotelMenu.options.slice(
+                  <label class="flex cursor-pointer text-sm text-dark-900 items-center" v-for="option in HotelMenu.options.slice(
                     0,
                     expandedMenus.includes(HotelMenu.key) ? HotelMenu.options.length : 4,
                   )" :key="option">
-                    <input type="checkbox" class="mr-2 text-dark_900 focus:ring-primary" :value="option"
+                    <input type="checkbox" class="mr-2 text-dark-900 focus:ring-primary" :value="option"
                       v-model="HotelMenu.selected" />
                     <span>
                       {{ HotelMenu.key === 'star_rating' ? `${option} 星級` : option }}
                     </span>
                   </label>
                   <button v-if="HotelMenu.options.length > 4 && !expandedMenus.includes(HotelMenu.key)"
-                    class="text-dark_500 hover:text-primary text-sm mt-1" @click="toggleMenu(HotelMenu.key)">
+                    class="text-dark-500 hover:text-primary text-sm mt-1" @click="toggleMenu(HotelMenu.key)">
                     展開更多選項
                   </button>
                 </div>

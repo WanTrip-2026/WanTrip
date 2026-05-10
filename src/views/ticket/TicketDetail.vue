@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen max-w-[1240px] mx-auto pt-24 pb-5">
-    <!-- <div class="mx-5 text-sm text-dark_500 space-x-1 py-2">
+    <!-- <div class="mx-5 text-sm text-dark-500 space-x-1 py-2">
       <RouterLink to="/" class="hover:underline underline-offset-2">首頁</RouterLink> >
       <RouterLink to="/" class="hover:underline underline-offset-2">體驗</RouterLink> >
       <RouterLink to="/" class="hover:underline underline-offset-2">景點門票</RouterLink> >
@@ -54,10 +54,10 @@
     <div class="max-w-[1200px] mx-auto px-5 lg:px-0 grid grid-cols-1 lg:grid-cols-12 gap-5 relative">
       <div class="col-span-12 lg:col-span-8 space-y-5 mb-[300px] lg:mb-0">
         <section class="bg-white p-5 rounded-30 shadow-sm border border-gray-300">
-          <h2 class="text-xl line-clamp-2 md:text-2xl font-bold text-dark_900 mb-4">
+          <h2 class="text-xl line-clamp-2 md:text-2xl font-bold text-dark-900 mb-4">
             {{ ticketIntro.title }}
           </h2>
-          <div class="flex flex-wrap items-center text-sm text-dark_500 mb-4 gap-2">
+          <div class="flex flex-wrap items-center text-sm text-dark-500 mb-4 gap-2">
             <span class="flex items-center">
               <span class="text-yellow-400 mr-1">★</span>
               {{ ticketIntro.rating }} ({{ ticketIntro.reviewCount }} 評價)
@@ -69,11 +69,11 @@
           </div>
           <hr class="border-gray-300 my-4" />
           <div>
-            <h4 class="font-bold text-dark_900 mb-3">行程特色</h4>
+            <h4 class="font-bold text-dark-900 mb-3">行程特色</h4>
             <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
               <li v-for="(feature, index) in ticketIntro.highlights" :key="index"
-                class="flex items-start text-dark_600">
-                <svg class="w-5 h-5 text-dark_700 mr-2 flex-shrink-0" fill="none" stroke="currentColor"
+                class="flex items-start text-dark-600">
+                <svg class="w-5 h-5 text-dark-700 mr-2 flex-shrink-0" fill="none" stroke="currentColor"
                   viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
@@ -84,12 +84,12 @@
         </section>
 
         <section class="bg-white p-5 rounded-30 shadow-sm border border-gray-300">
-          <h3 class="text-xl font-bold text-dark_900">詳細說明</h3>
+          <h3 class="text-xl font-bold text-dark-900">詳細說明</h3>
           <hr class="border-gray-300 my-2" />
 
           <div class="space-y-6 mt-4">
             <div v-for="detail in ticketDetail" :key="detail.id">
-              <div v-if="detail.type === 'text'" class="prose max-w-none text-dark_700 text-sm leading-relaxed">
+              <div v-if="detail.type === 'text'" class="prose max-w-none text-dark-700 text-sm leading-relaxed">
                 <p class="whitespace-pre-line">{{ detail.content }}</p>
               </div>
               <div v-else-if="detail.type === 'image'" class="overflow-hidden rounded-10">
@@ -99,7 +99,7 @@
                 <div class="overflow-hidden rounded-10">
                   <img :src="detail.url" class="w-full h-auto object-cover" loading="lazy" />
                 </div>
-                <p class="text-xs md:text-sm text-dark_700">
+                <p class="text-xs md:text-sm text-dark-700">
                   {{ detail.caption }}
                 </p>
               </div>
@@ -108,17 +108,17 @@
         </section>
 
         <section class="bg-white p-5 rounded-30 shadow-sm border border-gray-300">
-          <h3 class="text-xl font-bold text-dark_900">使用說明與注意事項</h3>
+          <h3 class="text-xl font-bold text-dark-900">使用說明與注意事項</h3>
           <hr class="border-gray-300 my-2" />
-          <div class="space-y-6 mt-4 text-sm text-dark_700">
+          <div class="space-y-6 mt-4 text-sm text-dark-700">
             <div v-for="(policy, index) in policies" :key="index">
-              <h4 class="font-bold text-dark_700 mb-2">{{ policy.title }}</h4>
+              <h4 class="font-bold text-dark-700 mb-2">{{ policy.title }}</h4>
               <p v-if="policy.type === 'text'">
                 {{ policy.content }}
               </p>
               <ul v-else-if="policy.type === 'list'" :class="[
                 'list-disc list-inside space-y-1',
-                policy.highlight ? 'bg-main_100 p-5 rounded-10 border border-white-300' : '',
+                policy.highlight ? 'bg-main-100 p-5 rounded-10 border border-white-300' : '',
               ]">
                 <li v-for="(item, i) in policy.items" :key="i">
                   {{ item }}
@@ -129,16 +129,16 @@
         </section>
 
         <section class="bg-white p-5 rounded-30 shadow-sm border border-gray-300">
-          <h3 class="text-xl font-bold text-dark_900 mb-2">常見問題</h3>
+          <h3 class="text-xl font-bold text-dark-900 mb-2">常見問題</h3>
           <div class="space-y-2.5">
             <div v-for="(faq, index) in faqs" :key="index" class="border rounded-lg overflow-hidden">
               <button name="toggle-faq" @click="toggleFaq(index)"
-                class="w-full flex justify-between items-center px-5 py-4 bg-main_100 hover:bg-main_200 transition text-left">
-                <span class="font-medium text-dark_900">{{ faq.question }}</span>
-                <span class="text-dark_700 transform transition-transform duration-200"
+                class="w-full flex justify-between items-center px-5 py-4 bg-main-100 hover:bg-main-200 transition text-left">
+                <span class="font-medium text-dark-900">{{ faq.question }}</span>
+                <span class="text-dark-700 transform transition-transform duration-200"
                   :class="{ 'rotate-180': activeIndex === index }">▼</span>
               </button>
-              <div v-show="activeIndex === index" class="px-5 py-4 bg-white text-md text-dark_700">
+              <div v-show="activeIndex === index" class="px-5 py-4 bg-white text-md text-dark-700">
                 {{ faq.answer }}
               </div>
             </div>
@@ -150,15 +150,15 @@
           <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
             <RouterLink v-for="recommend in recommendations" :key="recommend.id" :to="`/tickets/${recommend.id}`"
               class="group bg-white rounded-20 shadow-sm overflow-hidden border border-gray-300 hover:shadow-lg transition-all duration-300 cursor-pointer">
-              <div class="h-32 bg-dark_100 overflow-hidden">
+              <div class="h-32 bg-dark-100 overflow-hidden">
                 <img :src="recommend.image_url" :alt="recommend.name"
                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               </div>
               <div class="p-5">
-                <div class="text-sm font-bold truncate mb-1 text-dark_900 group-hover:text-main_800 transition-colors">
+                <div class="text-sm font-bold truncate mb-1 text-dark-900 group-hover:text-main-800 transition-colors">
                   {{ recommend.name }}
                 </div>
-                <div class="text-xs text-dark_700 font-medium">
+                <div class="text-xs text-dark-700 font-medium">
                   TWD {{ Math.floor(recommend.price).toLocaleString() }} 起
                 </div>
               </div>
@@ -189,18 +189,18 @@
               <span class="text-lg md:text-xl font-bold text-red-500">
                 TWD {{ Math.floor(displayPrice).toLocaleString() }}
               </span>
-              <span v-if="displayPrice > 0" class="text-xs md:text-sm text-dark_500 line-through">
+              <span v-if="displayPrice > 0" class="text-xs md:text-sm text-dark-500 line-through">
                 TWD {{ Math.floor(displayPrice * 1.5).toLocaleString() }}
               </span>
-              <span v-if="totalPrice === 0" class="text-xs md:text-sm text-dark_500">起</span>
+              <span v-if="totalPrice === 0" class="text-xs md:text-sm text-dark-500">起</span>
             </div>
           </div>
 
           <!-- Controls: Date, Plans, and Button -->
           <div v-if="displayPrice === 0 && tickets.length > 0" class="mt-2">
-            <div class="w-full rounded-10 border border-gray-300 bg-main_100 p-3 text-dark">
+            <div class="w-full rounded-10 border border-gray-300 bg-main-100 p-3 text-dark">
               <div class="font-bold text-sm">此地點為免費入場</div>
-              <div class="text-xs text-dark_600 mt-1">無需選擇日期與方案，可直接前往。</div>
+              <div class="text-xs text-dark-600 mt-1">無需選擇日期與方案，可直接前往。</div>
             </div>
           </div>
           <Transition v-else enter-active-class="transition-all duration-1000 ease-out"
@@ -213,7 +213,7 @@
                   <div
                     class="px-3 py-2 w-full border rounded-10 hover:border-primary cursor-pointer transition flex flex-col justify-center"
                     v-on="inputEvents">
-                    <div class="text-xs text-dark_700 mb-0.5 font-bold">選擇日期</div>
+                    <div class="text-xs text-dark-700 mb-0.5 font-bold">選擇日期</div>
                     <div class="font-medium text-dark text-sm">
                       {{ inputValue || '請選擇日期' }}
                     </div>
@@ -223,9 +223,9 @@
 
               <div class="relative group mt-0 lg:mt-2">
                 <div class="w-full border rounded-10 transition hover:border-primary px-3 py-2.5">
-                  <div class="text-xs text-dark_700 mb-2 font-bold">選擇方案</div>
+                  <div class="text-xs text-dark-700 mb-2 font-bold">選擇方案</div>
 
-                  <div v-if="tickets.length === 0" class="text-sm text-dark_500">
+                  <div v-if="tickets.length === 0" class="text-sm text-dark-500">
                     目前無可用方案
                   </div>
 
@@ -233,18 +233,18 @@
                     <div v-for="t in tickets" :key="t.id" class="flex items-center justify-between gap-3">
                       <div class="flex flex-col min-w-0">
                         <span class="font-bold text-dark text-sm truncate">{{ t.name }}</span>
-                        <span class="text-xs text-dark_500 font-medium">NT$ {{ Math.floor(t.price).toLocaleString()
+                        <span class="text-xs text-dark-500 font-medium">NT$ {{ Math.floor(t.price).toLocaleString()
                           }}</span>
                       </div>
                       <div class="flex items-center gap-2 shrink-0">
                         <button name="quantity-minus" @click="decreaseQuantity(t.id)"
-                          class="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100 disabled:opacity-50 transition text-sm"
+                          class="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center text-dark-500 hover:bg-gray-100 disabled:opacity-50 transition text-sm"
                           :disabled="t.quantity <= 0">
                           -
                         </button>
                         <span class="w-4 text-center text-sm font-bold">{{ t.quantity }}</span>
                         <button name="quantity-plus" @click="increaseQuantity(t.id)"
-                          class="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center text-dark_500 hover:bg-gray-100 transition text-sm">
+                          class="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center text-dark-500 hover:bg-gray-100 transition text-sm">
                           +
                         </button>
                       </div>

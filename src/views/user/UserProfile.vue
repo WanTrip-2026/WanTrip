@@ -342,7 +342,7 @@ onUnmounted(() => {
           class="sticky top-[96px] h-fit self-start hidden lg:block lg:col-span-1 px-4 py-8 border bg-white border-gray-300 rounded-30 items-center gap-2">
           <div class="flex flex-col items-center gap-5">
             <a v-for="menu in menus" :key="menu.href" :href="menu.href" @click="setActive(menu.href)" :class="[
-              'w-[160px] rounded-full px-12 py-3 text-dark hover:text-main_800 transition-colors',
+              'w-[160px] rounded-full px-12 py-3 text-dark hover:text-main-800 transition-colors',
               activeMenu === menu.href ? 'bg-primary text-white' : '',
             ]">{{ menu.label }}
             </a>
@@ -389,16 +389,23 @@ onUnmounted(() => {
           </div>
           <!-- 個資管理區 -->
           <div class="scroll-mt-[96px] bg-white w-full rounded-30 border border-gray-300 p-5 mb-5" id="admin-section">
-            <button type="button" class="float-right text-dark_700 hover:text-main_800 font-medium" @click="toggleEdit">
+            <button type="button" class="float-right text-dark-700 hover:text-main-800 font-medium" @click="toggleEdit">
               {{ isEditing ? '取消' : '編輯' }}
             </button>
             <h3 class="font-bold text-2xl border-b-gray-300 border-b-2 pb-2 text-black">
               我的資料
             </h3>
-            <p v-if="loadingProfile" class="text-sm text-gray-500 mt-2">載入中...</p>
             <p v-if="errorMsg" class="text-sm text-red-500 mt-2">{{ errorMsg }}</p>
 
-            <form class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2" @submit.prevent="saveProfile">
+            <!-- Loading Skeleton -->
+            <div v-if="loadingProfile" class="animate-pulse max-w-md pt-5 flex flex-col gap-4">
+              <div v-for="i in 4" :key="i" class="flex flex-col gap-2">
+                <div class="h-4 bg-gray-200 rounded-full w-24"></div>
+                <div class="h-11 bg-gray-200 rounded-full w-full"></div>
+              </div>
+            </div>
+
+            <form v-else class="max-w-md space-y-4 justify-between pt-5 flex flex-col gap-2" @submit.prevent="saveProfile">
               <!-- 使用者名稱 -->
               <div>
                 <label for="fullName" class="block mb-1 font-medium text-black">使用者名稱</label>
@@ -483,10 +490,10 @@ onUnmounted(() => {
                 </div>
                 <!-- 按鈕區可依需求加上功能 -->
                 <div class="flex flex-col justify-center gap-2 px-5">
-                  <button class="text-nowrap text-black hover:text-main_800" @click="goToOrder(order)">
+                  <button class="text-nowrap text-black hover:text-main-800" @click="goToOrder(order)">
                     訂單詳情
                   </button>
-                  <!-- <button class="text-nowrap hover:text-main_800">取消訂單</button> -->
+                  <!-- <button class="text-nowrap hover:text-main-800">取消訂單</button> -->
                 </div>
               </div>
             </div>
@@ -500,9 +507,9 @@ onUnmounted(() => {
             <!-- Tabs -->
             <div class="flex gap-4 mt-5 border-b border-gray-200">
               <button v-for="cat in ['all', 'hotel', 'ticket']" :key="cat" @click="selectedCategory = cat"
-                class="pb-2 px-4 text-dark_500 font-medium transition-colors border-b-2" :class="selectedCategory === cat
+                class="pb-2 px-4 text-dark-500 font-medium transition-colors border-b-2" :class="selectedCategory === cat
                   ? 'border-primary text-primary'
-                  : 'border-transparent hover:text-dark_900'
+                  : 'border-transparent hover:text-dark-900'
                   ">
                 {{ cat === 'all' ? '全部' : cat === 'hotel' ? '住宿' : '體驗' }}
               </button>

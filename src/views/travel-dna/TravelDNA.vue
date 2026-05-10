@@ -8,7 +8,7 @@
     <div
       class="relative z-10 w-full max-w-[1200px] mx-auto px-4 pt-16 md:pt-[160px] pb-24 md:pb-10 flex-1 flex flex-col">
       <div class="relative w-full max-w-[800px] h-2.5 md:h-4 mt-12 md:mt-0 mb-10 md:mb-0 mx-auto px-2">
-        <div class="w-full h-full bg-main_100 rounded-full"></div>
+        <div class="w-full h-full bg-main-100 rounded-full"></div>
         <div
           class="absolute top-0 left-2 right-2 h-full bg-primary rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-primary via-white/30 to-primary bg-[length:200%_100%] animate-progress-flow"
           :style="{ width: `calc(${(currentStep / totalSteps) * 100}% - 16px)` }"></div>
@@ -37,7 +37,7 @@
             class="p-4 md:p-5 rounded-full text-base md:text-lg font-medium border transition-all duration-200 active:scale-[0.98] shadow-md w-full"
             :class="selectedOptionIndex === index
               ? ' bg-primary/80 text-white font-bold scale-105 shadow-xl'
-              : 'bg-main_100 border-transparent text-black'
+              : 'bg-main-100 border-transparent text-black'
               ">
             {{ option.text }}
           </button>

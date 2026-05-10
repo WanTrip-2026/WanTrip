@@ -119,13 +119,13 @@ const goToProduct = () => {
             </div>
           </div>
           <div
-            class="w-full md:w-auto text-left md:text-right text-xs text-dark_700 space-y-1 border-t md:border-t-0 pt-4 md:pt-0">
+            class="w-full md:w-auto text-left md:text-right text-xs text-dark-700 space-y-1 border-t md:border-t-0 pt-4 md:pt-0">
             <p>
-              訂單編號 <span class="text-dark_900 font-mono">{{ order.order_id || order.id }}</span>
+              訂單編號 <span class="text-dark-900 font-mono">{{ order.order_id || order.id }}</span>
             </p>
             <p>
               訂單日期
-              <span class="text-dark_900 font-mono">{{
+              <span class="text-dark-900 font-mono">{{
                 new Date(order.created_at).toLocaleDateString()
                 }}</span>
             </p>
@@ -135,13 +135,13 @@ const goToProduct = () => {
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-[40px] mt-[40px]">
           <template v-if="!isTicket">
             <div class="rounded-10 border border-gray-300 p-5 md:p-6">
-              <p class="text-xs font-bold text-main_800 mb-2">入住</p>
+              <p class="text-xs font-bold text-main-800 mb-2">入住</p>
               <p class="text-lg md:text-xl font-bold">
                 {{ order.check_in_date || order.date?.split(' ')[0] }}
               </p>
             </div>
             <div class="rounded-10 border border-gray-300 p-5 md:p-6">
-              <p class="text-xs font-bold text-main_800 mb-2">退房</p>
+              <p class="text-xs font-bold text-main-800 mb-2">退房</p>
               <p class="text-lg md:text-xl font-bold">
                 {{
                   order.check_out_date ||
@@ -152,15 +152,15 @@ const goToProduct = () => {
           </template>
           <template v-else>
             <div class="rounded-10 border border-gray-300 p-5 md:p-6 sm:col-span-2 md:col-span-2">
-              <p class="text-xs font-bold text-main_800 mb-2">日期</p>
+              <p class="text-xs font-bold text-main-800 mb-2">日期</p>
               <p class="text-lg md:text-xl font-bold">
                 {{ order.check_in_date || order.date?.split(' ')[0] }}
               </p>
             </div>
           </template>
 
-          <div class="rounded-10 bg-main_100 p-5 md:p-6 sm:col-span-2 md:col-span-1">
-            <p class="text-xs font-bold text-main_800 mb-2">{{ isTicket ? '方案' : '房型' }}</p>
+          <div class="rounded-10 bg-main-100 p-5 md:p-6 sm:col-span-2 md:col-span-1">
+            <p class="text-xs font-bold text-main-800 mb-2">{{ isTicket ? '方案' : '房型' }}</p>
             <p class="text-lg md:text-xl font-bold">
               {{ order.room_type || order.subtitle }}
               <span class="text-lg font-bold" v-if="!isTicket && (order.quantity || 1) > 1">
@@ -181,20 +181,20 @@ const goToProduct = () => {
             <h2 class="text-lg md:text-xl font-black mb-10">訂購人資訊</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
               <div class="space-y-1">
-                <p class="text-dark_700 text-xs uppercase">姓名</p>
+                <p class="text-dark-700 text-xs uppercase">姓名</p>
                 <p class="font-bold text-base">{{ (order as any).contact_name || 'N/A' }}</p>
               </div>
               <div class="space-y-1">
-                <p class="text-dark_700 text-xs uppercase">電子郵件</p>
+                <p class="text-dark-700 text-xs uppercase">電子郵件</p>
                 <p class="font-bold text-base break-all">{{ order.contact_email || 'N/A' }}</p>
               </div>
               <div class="space-y-1">
-                <p class="text-dark_700 text-xs uppercase">電話</p>
+                <p class="text-dark-700 text-xs uppercase">電話</p>
                 <p class="font-bold text-base">{{ (order as any).contact_phone || 'N/A' }}</p>
               </div>
               <div class="space-y-1">
                 <!-- Status -->
-                <p class="text-dark_700 text-xs uppercase">狀態</p>
+                <p class="text-dark-700 text-xs uppercase">狀態</p>
                 <p class="font-bold text-base">
                   {{ order.status === 'completed' ? '完成訂購' : order.status }}
                 </p>
@@ -222,14 +222,14 @@ const goToProduct = () => {
           <template v-if="!isTicket">
             <section class="rounded-10 border border-gray-300 p-5">
               <h3 class="font-bold mb-4 text-dark">房間設施</h3>
-              <p class="text-sm leading-relaxed text-dark_700">
+              <p class="text-sm leading-relaxed text-dark-700">
                 牙刷、牙膏、洗手乳、沐浴乳、洗髮乳、冷氣、暖氣、浴缸、乾濕分離浴室、香皂、浴帽、梳子、毛巾、浴巾、拋棄式拖鞋、吹風機、冰箱、水、茶包、濾掛式咖啡、杯子、無線網路、有線網路插槽、110V插座、USB插座、Netflix、Disney+
               </p>
             </section>
 
-            <section class="rounded-10 bg-main_100 p-5">
+            <section class="rounded-10 bg-main-100 p-5">
               <h3 class="font-bold mb-4 text-dark">住宿付費提供</h3>
-              <p class="text-sm text-dark_700">洗衣機、冰箱內飲料(瓶裝水免費)</p>
+              <p class="text-sm text-dark-700">洗衣機、冰箱內飲料(瓶裝水免費)</p>
             </section>
           </template>
 
@@ -242,7 +242,7 @@ const goToProduct = () => {
 
             <div class="space-y-3">
               <a href="https://irs.thsrc.com.tw/IMINT/" target="_blank" rel="noopener noreferrer"
-                class="group flex items-center justify-between p-4 rounded-xl border border-primary/5 bg-main_100 hover:bg-white hover:border-main_800/50 hover:shadow-md transition-all duration-300">
+                class="group flex items-center justify-between p-4 rounded-xl border border-primary/5 bg-main-100 hover:bg-white hover:border-main-800/50 hover:shadow-md transition-all duration-300">
                 <div class="flex items-center gap-4">
                   <span class="text-2xl">🚄</span>
                   <div>
@@ -254,7 +254,7 @@ const goToProduct = () => {
 
               <a href="https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip121/query" target="_blank"
                 rel="noopener noreferrer"
-                class="group flex items-center justify-between p-4 rounded-xl border border-primary/5 bg-main_100 hover:bg-white hover:border-main_800/50 hover:shadow-md transition-all duration-300">
+                class="group flex items-center justify-between p-4 rounded-xl border border-primary/5 bg-main-100 hover:bg-white hover:border-main-800/50 hover:shadow-md transition-all duration-300">
                 <div class="flex items-center gap-4">
                   <span class="text-2xl">🚇</span>
                   <div>

@@ -1,10 +1,10 @@
 <template>
   <main class="my-[116px] max-w-[1240px] min-h-screen mx-auto">
     <div class="flex flex-col items-left mx-5 bg-white px-10 py-20 md:p-20 rounded-30">
-      <h2 class="w-full md:w-[60%] text-2xl md:text-3xl font-bold text-primary border-b-2 border-dark_300 pb-2 mb-2">
+      <h2 class="w-full md:w-[60%] text-2xl md:text-3xl font-bold text-primary border-b-2 border-dark-300 pb-2 mb-2">
         WanTrip 隱私權聲明
       </h2>
-      <p class="text-dark_500 mb-10">最後更新日期：2026年1月28日</p>
+      <p class="text-dark-500 mb-10">最後更新日期：2026年1月28日</p>
       <p class="text-black text-lg font-bold">
         歡迎使用 WanTrip（以下簡稱「本平台」）。
       </p>

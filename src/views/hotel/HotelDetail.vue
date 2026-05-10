@@ -58,7 +58,7 @@
             </p>
           </div>
           <div class="w-full md:w-auto text-left md:text-right border-t md:border-none pt-4 md:pt-0">
-            <span class="text-dark_500 text-xs md:text-sm">每晚最低自</span>
+            <span class="text-dark-500 text-xs md:text-sm">每晚最低自</span>
             <div class="text-red-600 text-2xl md:text-3xl font-bold">
               NT$ {{ hotel?.min_price.toLocaleString() }}
             </div>
@@ -71,9 +71,9 @@
 
         <div class="flex flex-col md:grid md:grid-cols-12 gap-5">
           <div class="w-full md:col-span-8 space-y-5">
-            <div class="bg-main_100 rounded-10 p-5 flex flex-col">
+            <div class="bg-main-100 rounded-10 p-5 flex flex-col">
               <h3 class="font-bold text-lg mb-4 text-dark">設施與服務</h3>
-              <ul class="grid grid-cols-2 md:grid-cols-3 gap-4 text-dark_700">
+              <ul class="grid grid-cols-2 md:grid-cols-3 gap-4 text-dark-700">
                 <li class="flex flex-col items-center justify-center bg-white rounded-10 py-4">
                   <img src="/src/assets/hoteldetail_img/icon/freeParking.png" class="w-12 h-12 md:w-16 md:h-16 mb-2"
                     alt="免費停車" />
@@ -93,14 +93,14 @@
               <div v-if="hotel?.facilities?.length" class="mt-4 pt-4 border-t border-gray-300/50">
                 <div class="flex flex-wrap gap-2">
                   <span v-for="(fac, i) in hotel.facilities" :key="i"
-                    class="text-xs text-dark_700 bg-white px-2 py-1 rounded">
+                    class="text-xs text-dark-700 bg-white px-2 py-1 rounded">
                     {{ fac }}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div class="bg-main_100 rounded-10 p-5">
+            <div class="bg-main-100 rounded-10 p-5">
               <h3 class="font-bold text-lg mb-2 text-dark">住宿簡介</h3>
               <ul class="text-gray-600 text-sm leading-relaxed space-y-2">
                 <li><span class="font-medium text-dark">電話：</span>{{ hotel?.phone }}</li>
@@ -115,7 +115,7 @@
           </div>
 
           <div class="w-full md:col-span-4 space-y-5 md:space-y-0 md:flex md:flex-col md:gap-5">
-            <div class="bg-main_100 rounded-10 p-5">
+            <div class="bg-main-100 rounded-10 p-5">
               <div class="flex items-center gap-3 pb-[10px]">
                 <div class="text-3xl font-bold text-primary">8.8</div>
                 <div>
@@ -127,7 +127,7 @@
                 除了飯店地理位置方便，還提供行李寄放以及退房後的洗澡需求，真的很感謝！
               </p>
             </div>
-            <div class="bg-main_100 rounded-10 p-5 md:flex-1 md:flex md:flex-col">
+            <div class="bg-main-100 rounded-10 p-5 md:flex-1 md:flex md:flex-col">
               <h3 class="font-bold text-lg mb-[10px] text-dark">地圖 & 周邊景點</h3>
               <div
                 class="bg-white w-full h-[200px] md:h-auto md:flex-1 rounded-xl overflow-hidden border border-gray-300 shadow-sm relative">
@@ -155,8 +155,8 @@
         <div class="space-y-[20px] pt-5 rounded-30">
           <div v-for="room in rooms" :key="room.id"
             class="flex flex-col md:flex-row bg-white rounded-30 overflow-hidden border border-gray-300 shadow-sm">
-            <div class="w-full md:w-[30%] bg-main_100 flex flex-col">
-              <div class="bg-main_100 flex items-center p-5 justify-center aspect-[4/3] overflow-hidden">
+            <div class="w-full md:w-[30%] bg-main-100 flex flex-col">
+              <div class="bg-main-100 flex items-center p-5 justify-center aspect-[4/3] overflow-hidden">
                 <img :src="room.image_url" :alt="room.name" class="w-full h-full object-cover rounded-10" />
               </div>
 
@@ -303,7 +303,7 @@
         <h3 class="text-2xl font-bold mb-6 text-dark">房客評論</h3>
 
         <div class="flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-8 mb-5">
-          <div class="rounded-10 p-5 bg-main_100">
+          <div class="rounded-10 p-5 bg-main-100">
             <div class="font-bold text-lg mb-2">綜合評論</div>
             <div class="flex items-end gap-2 mb-2">
               <div class="text-3xl font-bold text-primary">{{ filteredAverageRating }}</div>
@@ -314,7 +314,7 @@
             </p>
           </div>
 
-          <div class="bg-main_100 rounded-10 p-[20px]">
+          <div class="bg-main-100 rounded-10 p-[20px]">
             <div class="font-bold text-lg mb-2">AI 摘要</div>
             <p class="text-gray-600 text-sm">
               多數房客稱讚房間整潔與飯店地點便利，少數建議增加早餐選擇。
@@ -323,7 +323,7 @@
         </div>
 
         <div class="pb-[20px] flex flex-col md:flex-row gap-3 md:gap-[20px]">
-          <div class="grid grid-cols-2 md:flex md:flex-row gap-3 w-full text-dark_900">
+          <div class="grid grid-cols-2 md:flex md:flex-row gap-3 w-full text-dark-900">
             <select v-model="filterMemberType"
               class="w-full md:w-auto rounded-10 px-4 md:px-5 py-[10px] border border-gray-300 text-sm md:text-base">
               <option value="" class="px-5">所有住客類型</option>
@@ -355,13 +355,13 @@
                   {{ review.memberName.charAt(0) }}
                 </div>
                 <div>
-                  <div class="font-bold text-dark_900 flex items-center gap-2">
+                  <div class="font-bold text-dark-900 flex items-center gap-2">
                     {{ review.memberName }}
-                    <span class="text-xs font-normal bg-white/90 text-dark_500 px-2 py-0.5 rounded-full">
+                    <span class="text-xs font-normal bg-white/90 text-dark-500 px-2 py-0.5 rounded-full">
                       {{ review.memberType }}
                     </span>
                   </div>
-                  <div class="text-xs text-dark_500 mt-0.5">
+                  <div class="text-xs text-dark-500 mt-0.5">
                     {{ review.memberLocation }} · {{ review.date }}
                   </div>
                 </div>
@@ -378,10 +378,10 @@
             </div>
 
             <div class="space-y-3">
-              <h4 class="font-bold text-dark_900 text-lg leading-snug">
+              <h4 class="font-bold text-dark-900 text-lg leading-snug">
                 {{ review.title }}
               </h4>
-              <p class="text-dark_500 text-sm leading-relaxed">
+              <p class="text-dark-500 text-sm leading-relaxed">
                 {{ review.comment }}
               </p>
 
@@ -393,20 +393,20 @@
             </div>
 
             <div class="bg-white/90 rounded-10 p-5 flex flex-wrap gap-y-2 gap-x-6 items-center">
-              <div class="flex items-center gap-2 text-sm text-dark_500">
+              <div class="flex items-center gap-2 text-sm text-dark-500">
                 <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
-                <span class="text-sm font-medium text-dark_700">房型：</span>{{ review.roomType }}
+                <span class="text-sm font-medium text-dark-700">房型：</span>{{ review.roomType }}
               </div>
-              <div class="flex items-center gap-2 text-sm text-dark_500">
+              <div class="flex items-center gap-2 text-sm text-dark-500">
                 <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
-                <span class="text-sm font-medium text-dark_700">入住：</span>{{ review.nights }} 晚
+                <span class="text-sm font-medium text-dark-700">入住：</span>{{ review.nights }} 晚
                 ({{ review.stayDate }})
               </div>
             </div>
           </div>
         </div>
         <div class="flex justify-center gap-2 mt-4">
-          <button v-for="page in totalPages" :key="page" @click="currentPage = page" class="border hover:bg-main_100"
+          <button v-for="page in totalPages" :key="page" @click="currentPage = page" class="border hover:bg-main-100"
             :class="{
               'bg-primary text-white w-10 h-10 flex justify-center items-center rounded-full hover:bg-main': currentPage === page,
               'text-primary hover:text-black w-10 h-10 flex justify-center items-center rounded-full': currentPage !== page,

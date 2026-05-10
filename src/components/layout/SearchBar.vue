@@ -26,7 +26,7 @@ const props = defineProps({
   },
 })
 
-// 當從首頁跳轉過來，Props 改變時，手動同步內部的 ref
+// 當從首頁跳轉過來，Props 改變時，手動同步內部的 ref（initialKeyword 含 package 關鍵字見下方 Ticket State 後）
 watch(
   () => props.initialKeyword,
   (newVal) => {
@@ -144,8 +144,24 @@ const allCities = [
 
 // Ticket State
 const ticketDestination = ref(props.initialDestination)
-const ticketKeyword = ref('')
+const ticketKeyword = ref(props.searchType === 'package' ? props.initialKeyword : '')
 const ticketSearchKeyword = ref('') // For filtering cities in dropdown
+
+watch(
+  () => props.initialKeyword,
+  (newVal) => {
+    if (props.searchType === 'package') {
+      ticketKeyword.value = newVal
+    }
+  },
+)
+
+watch(
+  () => props.initialDestination,
+  (newVal) => {
+    ticketDestination.value = newVal ?? ''
+  },
+)
 
 // Filtered Cities
 const filteredCities = computed(() => {
@@ -174,11 +190,13 @@ const onSearch = () => {
     emit('search', payload)
 
     if (props.mode === 'redirect') {
-      const query: Record<string, string> = {
-        keyword: payload.keyword,
-      }
-      if (payload.destination) {
-        query.destination = payload.destination
+      const query: Record<string, string> = {}
+      const kw = payload.keyword?.trim() ?? ''
+      const dest = payload.destination?.trim() ?? ''
+      if (kw) query.keyword = kw
+      if (dest) {
+        query.destination = dest
+        query.city = dest
       }
       router.push({
         path: '/tickets/search',
@@ -240,35 +258,56 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
 <template>
   <section
-    class="max-w-[1240px] mx-auto p-1 mb-10 bg-white rounded-30 md:rounded-full border border-gray-200 shadow-lg flex flex-col md:flex-row items-stretch md:items-center gap-1 z-20 search-bar-container">
+    class="max-w-[1240px] mx-auto p-[10px] md:p-1 mb-10 bg-white rounded-40 md:rounded-full border border-gray-200 shadow-lg flex flex-col md:flex-row items-stretch md:items-center gap-1 z-20 overflow-visible search-bar-container">
     <!-- Mode Transition Wrapper -->
     <Transition name="mode-slide" mode="out-in">
-      <div :key="searchType" class="flex flex-col md:flex-row items-stretch md:items-center gap-1 flex-grow">
+      <div
+        :key="searchType"
+        class="flex flex-col md:flex-row items-stretch md:items-center gap-1 flex-grow overflow-visible min-w-0">
         <template v-if="searchType === 'package'">
-          <!-- City Picker -->
-          <div class="relative flex-1">
+          <!-- City Picker：常態較高 z-index，避免右側「關鍵字」欄疊在上面擋住點擊；開啟下拉時再拉高 -->
+          <div
+            class="relative flex-1 min-w-0 touch-manipulation"
+            :class="activePicker === 'ticketCity' ? 'z-[80]' : 'z-[35]'">
+            <!-- 不可使用 <button> 包住 input（無效 HTML）；用 div + role="button" -->
             <div
-              class="w-full h-[64px] rounded-10 md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
+              role="button"
+              tabindex="0"
+              class="ticket-city-trigger group w-full h-[64px] rounded-30 md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer text-left outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               :class="[
                 activePicker === 'ticketCity'
                   ? 'bg-white ring-1 ring-gray-300'
                   : 'bg-gray-50 border-transparent hover:bg-gray-100',
-              ]" @click="togglePicker('ticketCity')">
-              <p class="text-xs font-bold text-primary/70 uppercase tracking-wider pointer-events-none">
-                目的地
-              </p>
-              <div class="flex items-center justify-between min-h-[24px]">
-                <input v-if="activePicker === 'ticketCity'" v-model="ticketSearchKeyword" type="text"
-                  class="w-full text-base text-black bg-transparent border-none outline-none placeholder:text-gray-400"
-                  placeholder="搜尋城市..." @click.stop autoFocus />
-                <p v-else class="text-base font-medium text-black truncate flex-1">
-                  {{ ticketDestination || '選擇城市' }}
-                </p>
+              ]"
+              :aria-expanded="activePicker === 'ticketCity'"
+              aria-haspopup="listbox"
+              @click.stop="togglePicker('ticketCity')"
+              @keydown.enter.prevent="togglePicker('ticketCity')"
+              @keydown.space.prevent="togglePicker('ticketCity')"
+            >
+              <span class="text-xs font-bold text-primary/70 uppercase tracking-wider">目的地</span>
+              <div class="flex items-center justify-between min-h-[26px] gap-2">
+                <input
+                  v-if="activePicker === 'ticketCity'"
+                  v-model="ticketSearchKeyword"
+                  type="text"
+                  class="min-w-0 flex-1 text-base text-black bg-transparent border-none outline-none placeholder:text-gray-400"
+                  placeholder="搜尋城市..."
+                  autofocus
+                  @click.stop
+                />
+                <span v-else class="min-w-0 flex-1 text-base font-medium text-black truncate">{{
+                  ticketDestination || '選擇城市'
+                }}</span>
 
-                <!-- Chevron Icon for City -->
-                <svg class="h-5 w-5 text-primary/40 transition-transform duration-300 ml-2 flex-shrink-0"
-                  :class="{ 'rotate-180': activePicker === 'ticketCity' }" fill="none" stroke="currentColor"
-                  viewBox="0 0 24 24">
+                <svg
+                  class="h-5 w-5 text-primary/40 transition-transform duration-300 flex-shrink-0 pointer-events-none"
+                  :class="{ 'rotate-180': activePicker === 'ticketCity' }"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
@@ -276,7 +315,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
             <transition name="fade">
               <div v-if="activePicker === 'ticketCity'"
-                class="city-picker-content absolute top-[calc(100%+12px)] left-0 z-[100] w-full md:w-[480px] max-h-[80vh] md:max-h-[400px] overflow-y-auto text-dark rounded-30 bg-white p-5 border border-gray-200 shadow-[0px_8px_32px_rgba(0,0,0,0.12)]"
+                class="city-picker-content absolute top-[calc(100%+8px)] left-0 z-[100] w-full md:w-[480px] max-h-[80vh] md:max-h-[400px] overflow-y-auto text-dark rounded-30 bg-white p-5 border border-gray-200 shadow-[0px_8px_32px_rgba(0,0,0,0.12)]"
                 style="scrollbar-width: thin" @click.stop>
                 <!-- Hot Cities -->
                 <div v-if="!ticketSearchKeyword" class="mb-4">
@@ -294,7 +333,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
                   <p class="text-xs font-bold text-gray-400 mb-2">{{ group.region }}</p>
                   <div class="grid grid-cols-6 gap-1">
                     <button name="city" v-for="city in group.cities" :key="city" @click="selectCity(city)"
-                      class="text-sm text-nowrap py-1.5 px-3 rounded-full text-dark_700 hover:bg-primary hover:text-white transition-all">
+                      class="text-sm text-nowrap py-1.5 px-3 rounded-full text-dark-700 hover:bg-primary hover:text-white transition-all">
                       {{ city }}
                     </button>
                   </div>
@@ -306,9 +345,9 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
             </transition>
           </div>
 
-          <!-- Ticket Keyword Input -->
-          <div class="relative flex-[1.5]">
-            <div class="h-[64px] rounded-10 md:rounded-full px-5 flex flex-col justify-center border transition-all"
+          <!-- Ticket Keyword Input（維持較低 stacking，避免遮住左側已開啟的城市選單） -->
+          <div class="relative z-0 flex-[1.5] min-w-0">
+            <div class="h-[64px] rounded-30 md:rounded-full px-5 flex flex-col justify-center border transition-all"
               :class="[
                 activePicker === 'ticketKeyword'
                   ? 'bg-white ring-1 ring-gray-300'
@@ -328,7 +367,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
           <!-- Stay Mode Template (Existing) -->
           <div class="relative flex-1">
             <div
-              class="w-full h-[64px] rounded-10 md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
+              class="w-full h-[64px] rounded-30 md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
               :class="[
                 activePicker === 'keyword'
                   ? 'bg-white ring-1 ring-gray-300'
@@ -349,7 +388,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
               @update:model-value="handleDateChange" @open="activePicker = 'date'" @closed="activePicker = 'none'">
               <template #dp-input>
                 <div
-                  class="w-full h-[64px] rounded-10 md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
+                  class="w-full h-[64px] rounded-30 md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
                   :class="[
                     activePicker === 'date'
                       ? 'bg-white ring-1 ring-gray-300'
@@ -368,7 +407,7 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
           <div class="relative flex-1" ref="peoplePickerRef">
             <div @click="togglePicker('people')"
-              class="w-full h-[64px] rounded-10 md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
+              class="w-full h-[64px] rounded-30 md:rounded-full px-5 flex flex-col justify-center border transition-all cursor-pointer"
               :class="[
                 activePicker === 'people'
                   ? 'bg-white ring-1 ring-gray-300'
@@ -435,8 +474,9 @@ onUnmounted(() => window.removeEventListener('click', handleClickOutside))
 
     <div class="flex items-center justify-center">
       <button aria-label="開始搜尋" name="search-btn" @click="onSearch"
-        class="w-[64px] h-[64px] rounded-full bg-primary hover:bg-main text-white transition-all shadow-lg hover:shadow-primary/30 flex items-center justify-center group">
-        <font-awesome-icon icon="search" class="text-xl group-hover:scale-110 transition-transform" />
+        class="w-full md:w-16 h-16 rounded-30 md:rounded-full text-lg font-bold bg-primary hover:bg-main text-white transition-all shadow-lg hover:shadow-primary/30 flex items-center justify-center group">
+        <font-awesome-icon icon="search" class="text-xl mr-2 md:mr-0 group-hover:scale-110 transition-transform" />
+        <span class="block md:hidden">搜尋</span>
       </button>
     </div>
   </section>

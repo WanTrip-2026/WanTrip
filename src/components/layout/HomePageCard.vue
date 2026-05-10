@@ -33,20 +33,20 @@
         <div class="flex">
           <span v-for="i in starCount" :key="i" class="text-amber-400">★</span>
         </div>
-        <p class="text-dark_500 text-sm leading-relaxed">
+        <p class="text-dark-500 text-sm leading-relaxed">
           {{ venue || address }}
         </p>
       </div>
       <div class="mt-auto">
-        <div class="text-right mb-1 text-xs text-dark_500 text-nowrap">
+        <div class="text-right mb-1 text-xs text-dark-500 text-nowrap">
           <span class="text-red-500 font-bold text-lg">NT$ {{ (price || 0).toLocaleString() }}</span>
           /起
         </div>
         <div class="flex justify-end gap-3">
           <button aria-label="加入收藏" name="add-favorite" @click.stop.prevent="onFavoriteClick"
-            class="p-2 rounded-full border border-gray-300 hover:bg-main_100 transition-colors">
+            class="p-2 rounded-full border border-gray-300 hover:bg-main-100 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors"
-              :class="isFav ? 'text-red-500 fill-red-500' : 'text-dark_500'" :fill="isFav ? 'currentColor' : 'none'"
+              :class="isFav ? 'text-red-500 fill-red-500' : 'text-dark-500'" :fill="isFav ? 'currentColor' : 'none'"
               viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />

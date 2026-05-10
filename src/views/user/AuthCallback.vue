@@ -1,9 +1,11 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-50">
     <div class="text-center">
-      <div v-if="loading" class="space-y-4">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-        <p class="text-gray-600">正在處理登入...</p>
+      <!-- Loading Skeleton -->
+      <div v-if="loading" class="animate-pulse flex flex-col items-center gap-4">
+        <div class="h-16 w-16 rounded-full bg-gray-200"></div>
+        <div class="h-4 w-40 bg-gray-200 rounded-full"></div>
+        <div class="h-3 w-28 bg-gray-200 rounded-full"></div>
       </div>
 
       <div v-else-if="error" class="space-y-4">

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import SearchBar from '@/components/layout/SearchBar.vue'
 import HomePageTicketCard from '@/components/layout/HomePageTicketCard.vue'
 import axios from 'axios'
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
@@ -57,63 +58,6 @@ const nextSlide = () => {
 }
 const prevSlide = () => {
   currentSlide.value = (currentSlide.value - 1 + hotelImages.length) % hotelImages.length
-}
-
-// --- 搜尋狀態與邏輯 ---
-const searchInput = ref('')
-const selectedCity = ref('')
-const isOpen = ref(false)
-
-const cityGroups = [
-  {
-    label: '熱門城市',
-    cities: ['台北市', '新北市', '台中市', '台南市', '高雄市'],
-  },
-  {
-    label: '其他城市',
-    cities: [
-      '基隆市',
-      '新竹市',
-      '新竹縣',
-      '苗栗縣',
-      '彰化縣',
-      '南投縣',
-      '雲林縣',
-      '嘉義市',
-      '嘉義縣',
-      '屏東縣',
-      '宜蘭縣',
-      '花蓮縣',
-      '台東縣',
-    ],
-  },
-  {
-    label: '離島地區',
-    cities: ['澎湖縣', '金門縣', '連江縣'],
-  },
-]
-
-function selectCity(city: string) {
-  selectedCity.value = city
-  isOpen.value = false
-  router.push({
-    path: '/tickets/search',
-    query: {
-      city: city, // Use 'city' to match TicketSearch logic preferences
-    },
-  })
-}
-
-function onLocalSearch() {
-  router.push({
-    path: '/tickets/search',
-    query: {
-      keyword: searchInput.value || undefined,
-      // If city is selected but we didn't redirect instantly (unlikely given selectCity logic), we could send it.
-      // But adhering to TicketSearch "select causes redirect", we just send keyword here.
-      // If user typed keyword without selecting city.
-    },
-  })
 }
 
 // --- Restore Lifecycle & Fetch Logic ---
@@ -303,46 +247,7 @@ function onClickRegion(tc: { label: string }) {
             "></button>
       </div>
     </section>
-    <section class="flex justify-center -mt-8 relative z-10 px-4">
-      <div
-        class="w-full max-w-[800px] border border-gray-300 p-2 mx-auto bg-white rounded-10 md:rounded-full flex flex-col md:flex-row justify-between gap-2 shadow-xl text-nowrap">
-        <div class="relative flex-auto h-full focus:border focus:border-primary" @mouseenter="isOpen = true"
-          @mouseleave="isOpen = false">
-          <div
-            class="rounded-full border border-gray-300 px-6 py-3 flex items-center justify-center text-dark_500 hover:text-primary bg-white cursor-pointer h-full"
-            @click="isOpen = !isOpen">
-            {{ selectedCity || '選擇城市' }}
-          </div>
-
-          <div v-if="isOpen"
-            class="absolute top-full left-0 w-full overflow-hidden px-5 bg-white/80 backdrop-blur-lg border border-white/25 z-10 rounded-10 shadow-md mt-2">
-            <template v-for="group in cityGroups" :key="group.label">
-              <div class="px-6 py-2 text-sm text-primary border-b border-gray-300 font-bold text-center">
-                {{ group.label }}
-              </div>
-              <div class="grid grid-cols-3 py-2">
-                <div v-for="city in group.cities" :key="city"
-                  class="px-4 py-2 text-dark hover:bg-main_100 hover:font-bold cursor-pointer whitespace-nowrap text-center rounded-full"
-                  @click="selectCity(city)">
-                  {{ city }}
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-        <div class="flex-auto">
-          <input v-model="searchInput" type="text" placeholder="搜尋目的地/當地體驗" @keyup.enter="onLocalSearch"
-            class="w-full h-full border text-center text-black border-gray-300 rounded-full px-6 py-3 focus:ring-2 focus:ring-primary outline-none" />
-        </div>
-
-        <div class="text-dark_500 rounded-full flex-none">
-          <button @click="onLocalSearch"
-            class="text-center bg-primary hover:bg-main text-white font-bold w-full px-6 py-3 rounded-full transition-colors text-nowrap h-full">
-            搜尋
-          </button>
-        </div>
-      </div>
-    </section>
+    <SearchBar mode="redirect" search-type="package" class="mt-12" />
 
     <template v-if="isLoading">
       <section v-for="n in 2" :key="n" class="mb-10">

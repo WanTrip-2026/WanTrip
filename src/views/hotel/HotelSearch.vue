@@ -344,7 +344,7 @@ watch(
 </script>
 
 <template>
-  <main class="max-w-[1240px] mx-auto pt-24 bg-page px-5">
+  <main class="max-w-[1240px] mx-auto pt-24 mb-40 bg-page px-5">
     <SearchBar mode="emit" :initial-keyword="keyword" :initial-range="range"
       :initial-people="{ rooms: peopleConfig.rooms, people: peopleConfig.people }" @search="handleSearchUpdate" />
 
@@ -352,7 +352,7 @@ watch(
       <!-- 桌面版側邊欄 -->
       <aside class="hidden lg:flex flex-col gap-5 w-[285px]">
         <div
-          class="relative flex h-[120px] items-center justify-center rounded-10 border border-gray-300 overflow-hidden bg-center bg-cover bg-[url('https://res.cloudinary.com/wantrip/image/upload/v1768379566/MapSearch_cezz0b.png')]">
+          class="relative flex h-[120px] items-center justify-center rounded-20 border border-gray-300 overflow-hidden bg-center bg-cover bg-[url('https://res.cloudinary.com/wantrip/image/upload/v1768379566/MapSearch_cezz0b.png')]">
           <div class="absolute inset-0 bg-white/30"></div>
           <button name="map-search" @click="goToMapSearch"
             class="relative z-10 rounded-full bg-primary hover:bg-main text-white px-6 py-2 shadow-sm transition">
@@ -360,14 +360,14 @@ watch(
           </button>
         </div>
 
-        <div class="rounded-10 p-10 bg-white border border-gray-300 shadow-sm">
+        <div class="rounded-20 p-10 bg-white border border-gray-300 shadow-sm">
           <h3 class="font-bold text-xl text-dark mb-[20px]">篩選條件</h3>
           <div class="flex flex-col gap-5">
             <!-- Price Filter -->
             <h4 class="font-medium text-dark">每晚預算</h4>
             <div class="flex flex-col gap-2 border-b pb-5 border-gray-100 last:border-0">
-              <div class="relative h-2 w-full bg-main_100 rounded-full">
-                <div class="absolute h-2 bg-main_300 rounded-full" :style="{
+              <div class="relative h-2 w-full bg-main-100 rounded-full">
+                <div class="absolute h-2 bg-main-300 rounded-full" :style="{
                   left: `${((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100}%`,
                   right: `${100 - ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100}%`,
                 }"></div>
@@ -384,7 +384,7 @@ watch(
 
             <div v-for="menu in HotelFiltered" :key="menu.key" class="border-b pb-5 border-gray-100 last:border-0">
               <div class="flex justify-between items-center mb-2">
-                <h4 class="font-medium text-dark_900">{{ menu.title }}</h4>
+                <h4 class="font-medium text-dark-900">{{ menu.title }}</h4>
                 <button name="clear-options" @click="clearOptions(menu.key)"
                   class="text-xs text-gray-400 hover:text-primary">
                   清除
@@ -425,7 +425,7 @@ watch(
 
         <div class="flex flex-row items-center gap-2 overflow-x-auto scrollbar-hide">
           <button name="filter-drawer" @click="isFilterDrawerOpen = true"
-            class="lg:hidden flex items-center gap-2 rounded-20 bg-white border border-gray-300 text-dark px-4 py-2 shadow-sm transition whitespace-nowrap">
+            class="lg:hidden flex items-center gap-2 rounded-20 bg-primary border border-gray-300 text-white px-4 py-2 shadow-sm transition whitespace-nowrap">
             <font-awesome-icon icon="sliders" />
             篩選
           </button>
@@ -438,7 +438,7 @@ watch(
             'rounded-full px-6 py-2 shadow-sm font-bold transition whitespace-nowrap border',
             sortBy === 'price_desc'
               ? 'bg-primary text-white border-primary hover:bg-main'
-              : 'bg-white text-dark border-gray-300 hover:bg-main_100',
+              : 'bg-white text-dark border-gray-300 hover:bg-main-100',
           ]">
             價格高到低
           </button>
@@ -451,7 +451,7 @@ watch(
             'rounded-full px-6 py-2 shadow-sm font-bold transition whitespace-nowrap border',
             sortBy === 'price_asc'
               ? 'bg-primary text-white border-primary hover:bg-main'
-              : 'bg-white text-dark border-gray-300 hover:bg-main_100',
+              : 'bg-white text-dark border-gray-300 hover:bg-main-100',
           ]">
             價格低到高
           </button>
@@ -464,7 +464,7 @@ watch(
             'rounded-full px-6 py-2 shadow-sm font-bold transition whitespace-nowrap border',
             sortBy === 'star_desc'
               ? 'bg-primary text-white border-primary hover:bg-main'
-              : 'bg-white text-dark border-gray-300 hover:bg-main_100',
+              : 'bg-white text-dark border-gray-300 hover:bg-main-100',
           ]">
             星級高到低
           </button>
@@ -475,11 +475,23 @@ watch(
         </div>
 
         <div class="flex flex-col gap-5">
-          <!-- Loading State [NEW] -->
-          <div v-if="isLoading" class="text-center py-20 text-gray-500 text-lg flex flex-col items-center gap-4">
-            <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-            正在搜尋中...
-          </div>
+          <!-- Loading Skeleton -->
+          <template v-if="isLoading">
+            <div v-for="i in 4" :key="i"
+              class="animate-pulse bg-white rounded-20 border border-gray-200 overflow-hidden flex flex-col sm:flex-row shadow-sm">
+              <div class="h-[200px] sm:h-auto sm:w-[280px] bg-gray-200 flex-shrink-0"></div>
+              <div class="flex-1 p-5 flex flex-col gap-3">
+                <div class="h-5 bg-gray-200 rounded-full w-3/4"></div>
+                <div class="h-4 bg-gray-200 rounded-full w-1/4"></div>
+                <div class="h-3 bg-gray-200 rounded-full w-1/3"></div>
+                <div class="h-3 bg-gray-200 rounded-full w-1/2"></div>
+                <div class="mt-auto flex justify-between items-center">
+                  <div class="h-6 bg-gray-200 rounded-full w-24"></div>
+                  <div class="h-10 bg-gray-200 rounded-full w-24"></div>
+                </div>
+              </div>
+            </div>
+          </template>
 
           <template v-else>
             <div v-for="hotel in hotels" :key="hotel.id" @click="handleGoToDetail(hotel.id)" class="cursor-pointer">
@@ -536,10 +548,10 @@ watch(
           enter-to-class="translate-x-0" leave-active-class="transition-transform ease-in duration-200"
           leave-from-class="translate-x-0" leave-to-class="-translate-x-full">
           <div v-if="isFilterDrawerOpen"
-            class="absolute top-0 left-0 h-[calc(100%-40px)] w-[80%] m-5 rounded-10 bg-white/65 backdrop-blur-sm shadow-xl flex flex-col p-5 overflow-y-auto scrollbar-hide">
+            class="absolute top-0 left-0 h-[calc(100%-40px)] w-[80%] m-5 rounded-20 bg-white/65 backdrop-blur-sm shadow-xl flex flex-col p-5 overflow-y-auto scrollbar-hide">
             <div class="flex items-center justify-between mb-6">
               <h3 class="font-bold text-xl text-dark">篩選條件</h3>
-              <button @click="isFilterDrawerOpen = false" class="text-dark_500 text-2xl">
+              <button @click="isFilterDrawerOpen = false" class="text-dark-500 text-2xl">
                 &times;
               </button>
             </div>
@@ -549,8 +561,8 @@ watch(
               <div class="text-dark">
                 <h4 class="font-medium text-dark mb-4">每晚預算</h4>
                 <div class="flex flex-col gap-2">
-                  <div class="relative h-2 w-full bg-main_100 rounded-full">
-                    <div class="absolute h-2 bg-main_300 rounded-full" :style="{
+                  <div class="relative h-2 w-full bg-main-100 rounded-full">
+                    <div class="absolute h-2 bg-main-300 rounded-full" :style="{
                       left: `${((priceRange.min - minPrice) / (maxPrice - minPrice)) * 100}%`,
                       right: `${100 - ((priceRange.max - minPrice) / (maxPrice - minPrice)) * 100}%`,
                     }"></div>

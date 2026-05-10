@@ -27,19 +27,20 @@
 
                 <button name="ticket-tab" type="button"
                   class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
-                  :class="activeTab === 'package' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
+                  :class="activeTab === 'package' ? 'text-white' : 'text-dark hover:bg-main-100/50'"
                   @click="activeTab = 'package'">
                   找門票
                 </button>
                 <button name="hotel-tab" type="button"
                   class="relative z-10 h-full rounded-full text-nowrap w-24 text-sm font-semibold transition-colors duration-300 px-4"
-                  :class="activeTab === 'stay' ? 'text-white' : 'text-dark hover:bg-main_100/50'"
+                  :class="activeTab === 'stay' ? 'text-white' : 'text-dark hover:bg-main-100/50'"
                   @click="activeTab = 'stay'">
                   找住宿
                 </button>
               </div>
 
-              <SearchBar mode="redirect" :search-type="activeTab" :initial-keyword="hotelConfig.destination"
+              <SearchBar mode="redirect" :search-type="activeTab"
+                :initial-keyword="activeTab === 'package' ? ticketConfig.keyword : hotelConfig.destination"
                 :initial-range="hotelConfig.dateRange" :initial-people="hotelConfig.guests"
                 :initial-destination="ticketConfig.destination" :initial-ticket-guests="ticketConfig.guests"
                 @search="handleSearch" />
@@ -100,7 +101,7 @@
           <p class="text-2xl font-bold text-dark">大家都在找...</p>
           <div class="mt-5 flex flex-wrap justify-center gap-2">
             <button name="keyword-btn" v-for="k in stayKeywords" :key="k" type="button"
-              class="rounded-full px-4 py-1 text-sm font-semibold border transition bg-gray-100 text-primary/80 border-primary/10 hover:bg-main_100"
+              class="rounded-full px-4 py-1 text-sm font-semibold border transition bg-gray-100 text-primary/80 border-primary/10 hover:bg-main-100"
               @click="handleKeywordClick(k)">
               {{ k }}
             </button>
@@ -139,6 +140,7 @@ const hotelConfig = reactive({
 // Ticket Config
 const ticketConfig = reactive({
   destination: '',
+  keyword: '',
   guests: { adults: 2, children: 0, hasPet: false },
 })
 
@@ -239,6 +241,7 @@ function handleSearch(payload: SearchPayload) {
   // Search logic is handled by SearchBar's redirect mode
   if (activeTab.value === 'package') {
     ticketConfig.destination = payload.destination || ''
+    ticketConfig.keyword = payload.keyword || ''
     if (payload.guests) {
       Object.assign(ticketConfig.guests, payload.guests)
     }

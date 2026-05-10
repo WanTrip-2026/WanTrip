@@ -7,11 +7,11 @@
 
         <!-- modal card -->
         <div
-          class="relative mx-5 p-4 w-full max-w-[920px] overflow-hidden rounded-30 bg-white border border-white/60 shadow-2xl"
+          class="relative mx-5 p-5 w-full max-w-[920px] overflow-hidden rounded-40 bg-white border border-white/60 shadow-2xl"
           @click.stop>
-          <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <div class="">
-              <div class="mb-6 pt-6 sm:pt-8 flex justify-center">
+          <div class="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
+            <div class="flex flex-col gap-5">
+              <div class="flex justify-center">
                 <svg viewBox="0 0 517 140" fill="none" xmlns="http://www.w3.org/2000/svg"
                   preserveAspectRatio="xMidYMid meet" class="block w-[200px] sm:w-[200px] md:w-[240px] h-auto">
                   <path
@@ -38,21 +38,19 @@
                 </svg>
               </div>
 
-              <form class="space-y-4" @submit.prevent="onSubmit">
-                <div>
-                  <span class="text-dark_900 pl-3 mb-2 font-bold">帳號</span>
-                  <label class="sr-only" for="email"></label>
+              <form class="flex flex-col gap-5" @submit.prevent="onSubmit">
+                <div class="flex flex-col gap-2">
+                  <label class="block pl-3 text-base font-bold text-dark-900" for="email">帳號</label>
                   <input id="email" v-model.trim="email" type="email" autocomplete="email" placeholder="請輸入電子郵件"
-                    class="w-full rounded-full border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700" />
+                    class="w-full rounded-full border border-gray-300 bg-white px-5 py-3 text-base text-dark outline-none ring-0 placeholder:text-dark-300 focus:border-wan-main-800 focus:ring-2 focus:ring-wan-main-700" />
                 </div>
 
-                <div>
-                  <span class="text-dark_900 pl-3 mb-2 font-bold block">密碼</span>
+                <div class="flex flex-col gap-2">
+                  <label class="block pl-3 text-base font-bold text-dark-900" for="password">密碼</label>
                   <div class="relative">
-                    <label class="sr-only" for="password"></label>
                     <input id="password" v-model="password" :type="showPassword ? 'text' : 'password'"
                       autocomplete="current-password" placeholder="請輸入密碼"
-                      class="w-full rounded-full border border-gray-300 bg-white px-5 py-3 pr-12 text-base text-dark outline-none ring-0 placeholder:text-dark_300 focus:border-wan-main_800 focus:ring-2 focus:ring-wan-main_700" />
+                      class="w-full rounded-full border border-gray-300 bg-white px-5 py-3 pr-12 text-base text-dark outline-none ring-0 placeholder:text-dark-300 focus:border-wan-main-800 focus:ring-2 focus:ring-wan-main-700" />
                     <button name="toggle-password-visibility" type="button"
                       class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
                       @click="showPassword = !showPassword">
@@ -71,42 +69,42 @@
                   </div>
                 </div>
 
-                <div class="flex items-center justify-between pt-1 px-5">
-                  <label class="flex items-center gap-2 text-sm cursor-pointer text-dark hover:text-dark_700">
+                <div class="flex items-center justify-between gap-4 px-3">
+                  <label class="flex items-center gap-2 text-sm cursor-pointer text-dark hover:text-dark-700">
                     <input v-model="remember" type="checkbox" class="h-4 w-4 text-dark bg-white focus:bg-primary" />
                     保持登入
                   </label>
 
                   <button name="forgot-password" type="button"
-                    class="text-sm text-dark hover:text-dark_700 hover:underline hover:cursor-pointer"
+                    class="text-sm text-dark hover:text-dark-700 hover:underline hover:cursor-pointer"
                     @click="$emit('forgot-password')">
                     忘記密碼？
                   </button>
                 </div>
 
-                <div class="pt-2 space-y-4">
+                <div class="flex flex-col gap-3">
                   <button name="login" type="submit"
                     class="w-full rounded-full bg-primary px-6 py-3 font-semibold text-white shadow-sm hover:bg-main">
                     登入
                   </button>
 
                   <button name="signup" type="button"
-                    class="w-full rounded-full bg-main_100 px-6 py-3 font-semibold text-dark shadow-sm hover:bg_main_300"
+                    class="w-full rounded-full border border-main-300 bg-main-200 px-6 py-3 font-semibold text-dark shadow-sm hover:bg-main-300"
                     @click="$emit('signup')">
                     註冊
                   </button>
                 </div>
 
-                <div class="relative flex items-center">
-                  <div class="flex-grow border-t border-gray-300"></div>
-                  <span class="flex-shrink mx-4 text-gray-500">或使用以下方式登入</span>
-                  <div class="flex-grow border-t border-gray-300"></div>
+                <div class="relative flex items-center gap-3 px-1">
+                  <div class="min-w-0 flex-1 border-t border-gray-300"></div>
+                  <span class="shrink-0 text-center text-sm text-gray-500">或使用以下方式登入</span>
+                  <div class="min-w-0 flex-1 border-t border-gray-300"></div>
                 </div>
 
                 <!-- social -->
-                <div class="flex items-center justify-center gap-4">
+                <div class="flex flex-col gap-3">
                   <button name="google-login" type="button"
-                    class="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white border border-gray-300 hover:bg-main_100"
+                    class="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white border border-gray-300 hover:bg-main-100"
                     aria-label="Continue with Google" @click="$emit('social', 'google')">
                     <!-- Google icon (simple) -->
                     <svg viewBox="0 0 48 48" class="h-5 w-5" aria-hidden="true">
@@ -122,18 +120,11 @@
                     <p class="text-dark">使用Gmail登入</p>
                   </button>
                 </div>
-
-                <div class="text-center">
-                  <button name="close" type="button"
-                    class="text-sm text-dark hover:text-dark_800 hover:underline cursor-pointer" @click="close">
-                    Close
-                  </button>
-                </div>
               </form>
             </div>
 
-            <div class="hidden md:block p-1 lg:p-2">
-              <div class="relative h-full min-h-[400px] lg:min-h-[500px] overflow-hidden rounded-30">
+            <div class="hidden min-h-0 md:flex md:flex-col">
+              <div class="relative h-full min-h-[400px] min-w-0 flex-1 overflow-hidden rounded-20 lg:min-h-[500px]">
                 <img
                   src="https://images.unsplash.com/photo-1531934985319-1fc5317d8ce1?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                   alt="Taipei 101" class="absolute inset-0 h-full w-full object-cover" />
@@ -147,7 +138,7 @@
           </div>
 
           <button name="close" type="button"
-            class="absolute right-8 top-8 grid h-10 w-10 place-items-center rounded-full bg-white/80 text-dark shadow hover:bg-dark_100"
+            class="absolute right-5 top-5 grid h-10 w-10 place-items-center rounded-full bg-white/80 text-dark shadow hover:bg-dark-100"
             aria-label="Close modal" @click="close">
             ✕
           </button>

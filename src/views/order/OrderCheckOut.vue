@@ -403,12 +403,12 @@ function applyCoupon() {
       <div class="flex flex-col gap-2">
         <span class="font-bold text-xl">{{ product.title }} </span>
 
-        <span class="text-dark_700 text-sm">原價
-          <span class="text-sm text-dark_500">
+        <span class="text-dark-700 text-sm">原價
+          <span class="text-sm text-dark-500">
             / {{ roomQuantity }} 間 x {{ nights }} 晚 x NT$ {{ product.price.toLocaleString() }}
           </span></span>
-        <span class="text-dark_700 text-sm">續住優惠</span>
-        <span class="text-dark_700 text-sm">折扣碼優惠</span>
+        <span class="text-dark-700 text-sm">續住優惠</span>
+        <span class="text-dark-700 text-sm">折扣碼優惠</span>
         <span class="font-bold text-dark text-xl">總計</span>
       </div>
       <div class="flex flex-col items-end self-end gap-2">
@@ -444,14 +444,14 @@ function applyCoupon() {
 
                 <!-- Hotel View -->
                 <div v-if="product.type === 'hotel'" class="mt-1">
-                  <div class="line-clamp-2 text-sm text-dark_500">{{ product.subtitle }}</div>
-                  <div class="mt-1 text-sm text-dark_500">{{ product.date }}</div>
-                  <div class="mt-1 text-sm text-dark_500">{{ product.note }}</div>
+                  <div class="line-clamp-2 text-sm text-dark-500">{{ product.subtitle }}</div>
+                  <div class="mt-1 text-sm text-dark-500">{{ product.date }}</div>
+                  <div class="mt-1 text-sm text-dark-500">{{ product.note }}</div>
                 </div>
 
                 <!-- Attraction View -->
                 <div v-else class="mt-1 flex flex-col gap-1">
-                  <div class="text-sm text-dark_500">
+                  <div class="text-sm text-dark-500">
                     {{ product.city }} |
                     {{
                       Array.isArray(product.category)
@@ -459,9 +459,9 @@ function applyCoupon() {
                         : product.category
                     }}
                   </div>
-                  <div class="text-sm text-dark_500 mt-1">{{ product.subtitle }}</div>
+                  <div class="text-sm text-dark-500 mt-1">{{ product.subtitle }}</div>
                   <!-- Ticket Name -->
-                  <div class="text-sm text-dark_500">{{ product.date }}</div>
+                  <div class="text-sm text-dark-500">{{ product.date }}</div>
 
                   <div v-if="product.highlights && product.highlights.length > 0" class="mt-1.5 flex flex-wrap gap-1.5">
                     <span v-for="(tag, i) in product.highlights.slice(0, 3)" :key="i"
@@ -511,7 +511,7 @@ function applyCoupon() {
               </button>
             </div>
             <div>
-              <p class="w-full m-2 text-sm text-dark_500">
+              <p class="w-full m-2 text-sm text-dark-500">
                 輸入優惠碼
                 <span
                   class="cursor-pointer select-all font-semibold text-primary underline underline-offset-2 hover:opacity-80"
@@ -526,16 +526,16 @@ function applyCoupon() {
 
             <div class="mt-5 flex flex-col gap-4">
               <label v-for="option in paymentOptions" :key="option.key"
-                class="flex h-[60px] cursor-pointer items-center justify-between overflow-hidden rounded-full border border-gray-300 px-4 transition hover:bg-main_100">
+                class="flex h-[60px] cursor-pointer items-center justify-between overflow-hidden rounded-full border border-gray-300 px-4 transition hover:bg-main-100">
                 <div class="flex items-center gap-4">
                   <input type="radio" name="pay" :value="option.key" v-model="selectedPayment"
                     class="h-5 w-5 rounded-full accent-primary active:scale-[0.99]" />
                   <div class="flex flex-col gap-0">
-                    <span class="text-base font-medium text-dark_900 line-clamp-1">{{
+                    <span class="text-base font-medium text-dark-900 line-clamp-1">{{
                       option.label
                     }}</span>
                     <p v-if="['credit', 'atm', 'applepay', 'jkopay'].includes(option.key)"
-                      class="text-xs text-dark_500 mt-1">
+                      class="text-xs text-dark-500 mt-1">
                       由綠界科技 ECPay 提供的安全支付服務
                     </p>
                   </div>
@@ -565,17 +565,17 @@ function applyCoupon() {
                 {{ roomQuantity }} 間 x {{ nights }} 晚 x NT$ {{ product.price.toLocaleString() }}
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-dark_500">原價</span>
+                <span class="text-dark-500">原價</span>
                 <span class="font-medium text-dark text-right">
                   NT$ {{ subtotal.toLocaleString() }}
                 </span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-dark_500">續住優惠</span>
+                <span class="text-dark-500">續住優惠</span>
                 <span class="font-medium text-red-500">- NT$ {{ longStayDiscount.toLocaleString() }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-dark_500">折扣碼優惠</span>
+                <span class="text-dark-500">折扣碼優惠</span>
                 <span class="font-medium text-red-500">- NT$ {{ discount.toLocaleString() }}</span>
               </div>
               <div class="my-2 h-px bg-gray-300"></div>

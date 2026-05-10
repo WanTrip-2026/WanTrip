@@ -80,7 +80,7 @@
         </div>
       </div>
     </div>
-    <div class="bg-main_800 py-2 w-full">
+    <div class="bg-main-800 py-2 w-full">
       <p class="mx-5 text-sm text-center text-white">copyright © 2025-2026 WanTrip 版權所有</p>
     </div>
   </footer>

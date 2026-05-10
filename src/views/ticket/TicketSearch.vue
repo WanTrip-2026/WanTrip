@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import TicketCard from '@/components/layout/TicketCard.vue'
+import SearchBar from '@/components/layout/SearchBar.vue'
 import { ref, reactive, computed, onMounted, watch } from 'vue' // Added reactive
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter, useRoute, type LocationQueryRaw } from 'vue-router'
 import axios from 'axios'
 import type { Attraction } from '@/types/database'
 
@@ -18,7 +19,6 @@ const allAttractions = ref<AttractionWithUI[]>([]) // Store all fetched data
 const attractions = ref<AttractionWithUI[]>([]) // Displayed (filtered) data
 const loading = ref<boolean>(true)
 const errorMsg = ref<string>('')
-const searchInput = ref<string>('')
 const router = useRouter()
 
 interface FilterMenu {
@@ -28,14 +28,7 @@ interface FilterMenu {
   selected: string[]
 }
 
-const isAutoCleaningUrl = ref(false)
-
 const fetchAttractions = async (): Promise<void> => {
-  if (isAutoCleaningUrl.value) {
-    isAutoCleaningUrl.value = false
-    return
-  }
-
   loading.value = true
   errorMsg.value = ''
 
@@ -64,21 +57,7 @@ const fetchAttractions = async (): Promise<void> => {
       }
     }
 
-    // Auto-clean URL logic for filters (category, cities, city/destination, keyword)
-    if (keyword || category || cities || (city && city !== '選擇城市' && city !== '全部城市')) {
-      const newQuery = { ...route.query }
-      if (keyword) delete newQuery.keyword
-      if (category) delete newQuery.category
-      if (cities) delete newQuery.cities
-      if (city) {
-        delete newQuery.city
-        delete newQuery.destination
-      }
-
-      isAutoCleaningUrl.value = true
-      router.replace({ path: '/tickets/search', query: newQuery })
-    }
-    // Removed else block that forced clearing UI, allowing state to persist during auto-clean
+    // 保留 URL 上的 keyword / city / destination，搜尋結果頁 SearchBar 才能與首頁／體驗首頁帶入的條件一致顯示。
 
     // Note: We do NOT send districts to backend, so we get all data for the city/keyword.
     // We filter districts client-side to ensure sidebar options reflect available data.
@@ -109,11 +88,6 @@ const fetchAttractions = async (): Promise<void> => {
 
     // 2. Update Display List
     applyClientSideFilters()
-
-    // Update selectedCity if filtering by city
-    if (city && city !== '選擇城市' && city !== '全部城市') {
-      selectedCity.value = city
-    }
   } catch (err: unknown) {
     console.error('Fetch attractions error:', err)
     errorMsg.value = err instanceof Error ? err.message : String(err)
@@ -204,56 +178,46 @@ const setSort = (sortType: string) => {
 watch(() => route.query, fetchAttractions, { deep: true })
 
 onMounted(() => {
-  if (route.query.keyword) {
-    searchInput.value = route.query.keyword as string
-  }
   fetchAttractions()
 })
 
-// City Selection Logic
-const selectedCity = ref<string>('選擇城市')
-const isOpen = ref<boolean>(false)
 const expandedMenus = ref<string[]>([])
 const isFilterDrawerOpen = ref(false)
 
-const cities = [
-  {
-    label: '熱門城市',
-    cities: ['台北市', '新北市', '台中市', '台南市', '高雄市'],
-  },
-  {
-    label: '其他城市',
-    cities: [
-      '基隆市',
-      '新竹市',
-      '新竹縣',
-      '苗栗縣',
-      '彰化縣',
-      '南投縣',
-      '雲林縣',
-      '嘉義市',
-      '嘉義縣',
-      '屏東縣',
-      '宜蘭縣',
-      '花蓮縣',
-      '台東縣',
-    ],
-  },
-  {
-    label: '離島地區',
-    cities: ['澎湖縣', '金門縣', '連江縣'],
-  },
-]
-function selectCity(city: string): void {
-  selectedCity.value = city
-  isOpen.value = false
-  router.push({
-    path: '/tickets/search',
-    query: {
-      ...route.query,
-      city: city,
-    },
-  })
+/** 與 SearchBar（package）同步：URL → 表單初始值 */
+const initialTicketKeyword = computed(() => (route.query.keyword as string) || '')
+
+const initialTicketDestination = computed(() => {
+  const raw = (route.query.city as string) || (route.query.destination as string) || ''
+  if (!raw || raw === '選擇城市' || raw === '全部城市') return ''
+  return raw
+})
+
+interface TicketSearchBarPayload {
+  destination: string
+  keyword: string
+}
+
+function handleTicketSearch(payload: TicketSearchBarPayload): void {
+  const queryParams = { ...route.query } as LocationQueryRaw
+
+  const kw = payload.keyword?.trim() ?? ''
+  if (kw) {
+    queryParams.keyword = kw
+  } else {
+    delete queryParams.keyword
+  }
+
+  const dest = payload.destination?.trim() ?? ''
+  if (dest && dest !== '選擇城市' && dest !== '全部城市') {
+    queryParams.city = dest
+    queryParams.destination = dest
+  } else {
+    delete queryParams.city
+    delete queryParams.destination
+  }
+
+  router.replace({ path: '/tickets/search', query: queryParams })
 }
 
 const ticketFiltered = reactive<FilterMenu[]>([
@@ -317,16 +281,6 @@ function goToPage(page: number): void {
   }
 }
 
-function onLocalSearch() {
-  router.push({
-    path: '/tickets/search',
-    query: {
-      ...route.query,
-      keyword: searchInput.value || undefined,
-    },
-  })
-}
-
 function clearOptions(key: string) {
   const item = ticketFiltered.find((m) => m.key === key)
   if (item) {
@@ -343,50 +297,10 @@ function clearOptions(key: string) {
 </script>
 
 <template>
-  <main class="max-w-[1240px] mx-auto w-full bg-page pt-24 min-h-screen">
-    <div class="mx-5">
-      <section
-        class="max-w-[800px] border border-gray-300 p-2 mx-auto bg-white rounded-10 md:rounded-full flex flex-col md:flex-row justify-between gap-2 shadow-sm text-nowrap">
-        <div class="relative flex-auto h-full focus:border focus:border-primary" @mouseenter="isOpen = true"
-          @mouseleave="isOpen = false">
-          <div
-            class="rounded-full border border-gray-300 px-6 py-3 flex items-center justify-center text-dark_500 hover:text-primary bg-white cursor-pointer"
-            @click="isOpen = !isOpen">
-            {{ selectedCity || '選擇城市' }}
-          </div>
-
-          <div v-if="isOpen"
-            class="absolute top-full left-0 w-full overflow-hidden px-5 bg-white/80 backdrop-blur-lg border border-white/25 z-10 rounded-10 shadow-md">
-            <template v-for="group in cities" :key="group.label">
-              <!-- group 標題 -->
-              <div class="px-6 py-2 text-sm text-primary border-b border-gray-300 font-bold text-center">
-                {{ group.label }}
-              </div>
-
-              <!-- 城市 grid，每排 3 個 -->
-              <div class="grid grid-cols-3 py-2">
-                <div v-for="city in group.cities" :key="city"
-                  class="px-4 py-2 text-dark hover:bg-main_100 hover:font-bold cursor-pointer whitespace-nowrap text-center rounded-full"
-                  @click="selectCity(city)">
-                  {{ city }}
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-        <div class="flex-auto">
-          <label class="text-dark_500 rounded-full"></label>
-          <input v-model="searchInput" type="text" placeholder="搜尋目的地/當地體驗" @keyup.enter="onLocalSearch"
-            class="w-full border text-center text-black border-gray-300 rounded-full px-6 py-3 focus:ring-2 focus:ring-primary outline-none" />
-        </div>
-
-        <div class="text-dark_500 rounded-full flex-none">
-          <button @click="onLocalSearch"
-            class="text-center bg-primary hover:bg-main text-white font-bold w-full px-6 py-3 rounded-full transition-colors text-nowrap">
-            搜尋
-          </button>
-        </div>
-      </section>
+  <main class="max-w-[1240px] mx-auto w-full bg-page pt-24 min-h-screen px-5">
+    <div class="mx-auto">
+      <SearchBar mode="emit" search-type="package" :initial-keyword="initialTicketKeyword"
+        :initial-destination="initialTicketDestination" @search="handleTicketSearch" />
 
       <section class="gap-5 mt-10 mx-auto flex">
         <aside class="hidden shadow-sm md:flex flex-col gap-5 w-[285px]">
@@ -414,7 +328,7 @@ function clearOptions(key: string) {
                   </label>
                   <button v-if="
                     TicketMenu.options.length > 5 && !expandedMenus.includes(TicketMenu.title)
-                  " class="text-dark_500 text-sm mt-1" @click="expandedMenus.push(TicketMenu.title)">
+                  " class="text-dark-500 text-sm mt-1" @click="expandedMenus.push(TicketMenu.title)">
                     查看更多選項
                   </button>
                 </div>
@@ -431,21 +345,21 @@ function clearOptions(key: string) {
           </h3>
           <div class="flex flex-row items-center gap-2 overflow-x-auto scrollbar-hide">
             <button @click="isFilterDrawerOpen = true"
-              class="md:hidden flex items-center gap-2 rounded-10 bg-white border border-gray-300 text-dark px-4 py-2 shadow-sm transition whitespace-nowrap">
-              <font-awesome-icon icon="sliders" />
+              class="md:hidden flex items-center gap-2 rounded-full bg-primary text-white border border-gray-300 px-4 py-2 shadow-sm transition whitespace-nowrap">
+              <font-awesome-icon icon="sliders" class="text-white" />
               篩選
             </button>
             <button @click="setSort('price-desc')" class="rounded-full h-10 px-4 font-bold transition-colors border"
               :class="currentSort === 'price-desc'
                 ? 'bg-primary text-white border-primary hover:bg-main'
-                : 'bg-white text-dark border-gray-300 hover:bg-main_100'
+                : 'bg-white text-dark border-gray-300 hover:bg-main-100'
                 ">
               價格高到低
             </button>
             <button @click="setSort('price-asc')" class="rounded-full h-10 px-4 font-bold transition-colors border"
               :class="currentSort === 'price-asc'
                 ? 'bg-primary text-white border-primary hover:bg-main'
-                : 'bg-white text-dark border-gray-300 hover:bg-main_100'
+                : 'bg-white text-dark border-gray-300 hover:bg-main-100'
                 ">
               價格低到高
             </button>
@@ -454,7 +368,22 @@ function clearOptions(key: string) {
             <div v-if="errorMsg" class="col-span-full p-4 text-red-700 bg-red-100 rounded">
               {{ errorMsg }}
             </div>
-            <div v-else-if="!loading && attractions.length === 0"
+            <!-- Loading Skeleton -->
+            <template v-else-if="loading">
+              <div v-for="i in 6" :key="i"
+                class="animate-pulse rounded-20 overflow-hidden border border-gray-200 bg-white shadow-sm">
+                <div class="h-[200px] bg-gray-200"></div>
+                <div class="p-4 flex flex-col gap-2">
+                  <div class="h-4 bg-gray-200 rounded-full w-3/4"></div>
+                  <div class="h-3 bg-gray-200 rounded-full w-1/2"></div>
+                  <div class="flex justify-between items-center mt-2">
+                    <div class="h-3 bg-gray-200 rounded-full w-1/3"></div>
+                    <div class="h-8 bg-gray-200 rounded-full w-20"></div>
+                  </div>
+                </div>
+              </div>
+            </template>
+            <div v-else-if="attractions.length === 0"
               class="col-span-full p-10 text-center text-gray-500 bg-gray-50 rounded">
               <p class="text-xl font-bold mb-2">沒有找到相關體驗</p>
               <p>我們會繼續努力開發的(๑•́ ₃ •̀๑)</p>
@@ -464,7 +393,7 @@ function clearOptions(key: string) {
           </div>
           <div class="flex justify-center gap-2 mt-5 mb-10">
             <button v-for="page in totalPages" :key="page"
-              class="w-10 h-10 border rounded-full text-dark_500 bg-main_100 hover:text-primary hover:bg-main-300"
+              class="w-10 h-10 border rounded-full text-dark-500 bg-main-100 hover:text-primary hover:bg-main-300"
               :class="{
                 'bg-primary text-white hover:bg-main hover:text-white': currentPage === page,
               }" @click="goToPage(page)">
@@ -491,10 +420,10 @@ function clearOptions(key: string) {
             leave-active-class="transition-transform ease-in duration-200" leave-from-class="translate-x-0"
             leave-to-class="-translate-x-full">
             <div v-if="isFilterDrawerOpen"
-              class="absolute top-0 left-0 h-[calc(100%-40px)] w-[80%] m-5 rounded-10 bg-white/65 backdrop-blur-sm shadow-xl flex flex-col p-5 overflow-y-auto scrollbar-hide">
+              class="absolute top-0 left-0 h-[calc(100%-40px)] w-[80%] m-5 rounded-20 bg-white/65 backdrop-blur-sm shadow-xl flex flex-col p-5 overflow-y-auto scrollbar-hide">
               <div class="flex items-center justify-between mb-6">
                 <h3 class="font-bold text-xl text-dark">篩選條件</h3>
-                <button @click="isFilterDrawerOpen = false" class="text-dark_500 text-2xl">
+                <button @click="isFilterDrawerOpen = false" class="text-dark-500 text-2xl">
                   &times;
                 </button>
               </div>
