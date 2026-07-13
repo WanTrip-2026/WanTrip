@@ -1,26 +1,29 @@
-name: Deploy Frontend to AWS EC2
+name: Frontend Build Check
 
 on:
   push:
     branches:
-      - dev # 只有 push 到 main 分支時才觸發 (待推上main分之後改成main)
+      - dev
+  pull_request:
+    branches:
+      - dev
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 20
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Create .env.production
         run: |
@@ -30,19 +33,5 @@ jobs:
           echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" >> .env.production
           echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID }}" >> .env.production
 
-      - name: Check env file (Debug)
-        run: grep -c "VITE_" .env.production
-
       - name: Build Project
         run: npm run build
-
-      - name: Deploy to EC2 via SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: 'dist/*'
-          target: '/home/ubuntu/wantrip-frontend/dist'
-          strip_components: 1
-          overwrite: true
