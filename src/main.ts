@@ -9,6 +9,17 @@ import { FontAwesomeIcon } from '@/fontawesome'
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 
+const redirectPath = new URLSearchParams(window.location.search).get('redirect')
+
+if (redirectPath) {
+  const target = decodeURIComponent(redirectPath)
+  const currentPath = window.location.pathname + window.location.search + window.location.hash
+  if (currentPath === '/' || currentPath === '/?redirect=' + encodeURIComponent(target)) {
+    const nextUrl = target.startsWith('/') ? target : `/${target}`
+    window.history.replaceState({}, '', nextUrl)
+  }
+}
+
 const app = createApp(App)
 
 app.use(createPinia())
